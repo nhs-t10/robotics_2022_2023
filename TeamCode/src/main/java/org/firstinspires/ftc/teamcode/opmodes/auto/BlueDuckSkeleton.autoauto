@@ -1,0 +1,69 @@
+// THIS CODE MIGHT HAVE AN ERROR. THIS IS BECAUSE WE USED driveOmni AS IF IT IS driveOmni(v,h,r)
+// AS OF 1/20/2022 driveOmni WORKED AS IF IT IS driveOmni(v,r,-h)
+
+$
+compatflag_afterStartAtState: true
+$
+
+#init:
+    goto clawout
+
+//The robot starts folded up so that it's inside an 18x18 cube. `clawout` moves it off the wall then folds out the arms to their full extent.
+#clawout:
+    driveOmni(0.5,0,0),after 5cm next;
+    setServoPosition("intakeMoverLeft", -1.0), setServoPosition("intakeMoverRight", 1.0), next;
+    setServoPower("nateMoverLeft", -0.5), setServoPower("nateMoverRight", 0.5), after 3500ms next;
+    setServoPower("nateMoverLeft", 0.0), setServoPower("nateMoverRight", 0.0), next;
+    goto sampling
+
+
+//uses CV, saves CV reading to `value`
+#sampling:
+    let value = getCVPositionNumberWhereZeroIsLeftOneIsMiddleAndTwoIsRight(), log(value), after 2s next;
+    goto duckSpin
+
+//do a 180, drive left, spin carousel for 3sec, drive right to be near the depot, do a 180
+#duckSpin:
+    driveOmni(0, 0, 0.7), after 155degs next;
+    driveOmni(0,-0.7,0),after 40cm next;
+    setMotorPower("Carousel", 0.7), after 3s next;
+    setMotorPower("Carousel", 0), next;
+    driveOmni(0,0.7,0), after 30cm next;
+    driveOmni(0,0,0.7), after 155degs next;
+    driveOmni(0,0,0), goto split
+
+//based on the CV reading, chooses the correct state path to go to (adjusted for blue)
+#split:
+    if(value == 2) goto thirdPosition, if(value == 1) goto secondPosition, if(value == 0) goto firstPosition
+
+//moves claw to position one
+#firstPosition:
+    positionOne(),  when (hasEncodedMovement("ClawMotor") == false) { log("movement done"), next };
+    goto towerDropOff
+
+//moves claw to position two
+#secondPosition:
+    positionTwo(),  when (hasEncodedMovement("ClawMotor") == false) { log("movement done"), next };
+    goto towerDropOff
+
+//moves claw to position three
+#thirdPosition:
+    positionThree(),  when (hasEncodedMovement("ClawMotor") == false) { log("movement done"), next };
+    goto towerDropOff
+
+//moves the robot forwards so the claw is where it should be to drop off the freight
+#towerDropOff:
+    driveOmni(0.7,0,0), after 10cm next;
+    setClawOpen(true), after 3s goto finalMovement;
+
+//moves the robot away from the depot, closes the claw, turns left and moves forward
+#finalMovement:
+    driveOmni(-0.7,0,0), after 10cm next;
+    setClawOpen(false), next;
+    driveOmni(0,0,-0.7), after 90degs next;
+    driveOmni(0.7,0,0), after 30cm next;
+    positionNeutral(), goto parking
+
+//brings the robot to a complete stop
+#parking:
+    driveRaw(0,0,0,0)

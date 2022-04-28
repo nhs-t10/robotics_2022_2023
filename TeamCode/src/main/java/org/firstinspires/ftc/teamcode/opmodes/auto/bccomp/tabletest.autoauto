@@ -1,0 +1,8 @@
+$
+compilerMode: "optimized-bytecode"
+$
+
+let t = [2 = true], let f = 2, next;
+let t[f] = true, next;
+log(t[f]), log(t), log(f), next;
+pass

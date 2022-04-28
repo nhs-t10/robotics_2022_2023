@@ -1,0 +1,6 @@
+#init:
+    goto ninety;
+
+#ninety:
+     if (delegate("helpers/pid-turn.autoauto", 90) < 5) next;
+     pass

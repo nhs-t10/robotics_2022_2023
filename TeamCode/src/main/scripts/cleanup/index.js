@@ -1,0 +1,1 @@
+(require("./delete-old-files"));

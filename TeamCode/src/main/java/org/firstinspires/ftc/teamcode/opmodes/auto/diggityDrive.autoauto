@@ -1,0 +1,8 @@
+#init:
+    driveOmni(0.5, 0, 0), after 20cm next;
+    after 10s next;
+    driveOmni(0, 0.5, 0), after 20cm next;
+    log("Droven!"), next;
+    after 10s next;
+    driveOmni(0, 0, 0.5), log(getThirdAngleOrientation()), after 180degs next;
+    after 10s next

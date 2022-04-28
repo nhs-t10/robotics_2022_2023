@@ -1,0 +1,25 @@
+$
+compilerMode: "optimized-bytecode"
+$
+
+let highest = 1000,
+let primes = [2 = true], let isComposite = [], goto startAlgorithm;
+
+#startAlgorithm:
+let currentLowestPrime = 2, goto startNextStep;
+
+#startNextStep:
+let i = currentLowestPrime * currentLowestPrime, goto markComposites;
+
+#markComposites:
+if(i >= highest) goto moveToNextPrime else next;
+let isComposite[i] = true, let i = i + currentLowestPrime, skip -1;
+
+#moveToNextPrime:
+let i = currentLowestPrime + 1, next;
+if(i >= highest) goto outputDone else if(isComposite[i]) let i = i + 1 else next;
+let currentLowestPrime = i, let primes[currentLowestPrime] = true, goto startNextStep;
+
+#outputDone:
+log(primes), next;
+exit()

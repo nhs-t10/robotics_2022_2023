@@ -1,0 +1,18 @@
+#init:
+    goto clawout
+
+#clawout:
+    log(getTicks()), driveOmni(1, 0, 0), after 1s next;
+    setServoPosition("intakeMoverLeft", -1.0), setServoPosition("intakeMoverRight", 1.0), next;
+    setServoPower("nateMoverLeft", -1.0), setServoPower("nateMoverRight", 1.0), after 2650ms next;
+    setServoPower("nateMoverLeft", 0.0), setServoPower("nateMoverRight", 0.0), next;
+    goto start
+
+#start:
+    driveOmni(0,0,-1), after 90degs next;
+    driveOmni(1,0,0), after 10cm next;
+    setMotorPower("Carousel", 1), after 3s next;
+    setMotorPower("Carousel", 0), driveOmni(-1, 0, 0), after 5s goto end
+
+#end:
+    driveOmni(0,0,0)

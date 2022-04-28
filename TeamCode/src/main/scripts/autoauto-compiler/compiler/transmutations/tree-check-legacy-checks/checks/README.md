@@ -1,0 +1,1 @@
+https://github.com/zawn/android-gradle-plugin-src/blob/908b391a9c006af569dfaff08b37f8fdd6c4da89/sdk-common/src/main/java/com/android/ide/common/blame/MessageJsonSerializer.java

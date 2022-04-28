@@ -1,0 +1,64 @@
+#init:
+    goto FirstAuto
+
+#FirstAuto:
+    driveRaw (1,1,1,1), after 1s next;
+    // Check for the Color of what's in front of us
+    // if(Color == *Color of the Shipping Element*){goto Position1}
+    driveRaw (1,-1,1,-1), after 1s next;
+    // Check for the Color of what's in front of us
+    // if(Color == *Color of the Shipping Element*){goto Position2}
+    driveRaw (1,-1,1,-1), after 1s next;
+    // Check for the Color of what's in front of us
+    // if(Color == *Color of the Shipping Element*){goto Position3}
+    goto Error
+
+#PositionOne:
+    driveRaw (-1,-1,1,1), after 90degs next;
+    driveRaw (1,1,1,1), after 3s next;
+    driveRaw (1,1,-1,-1), after 90degs next;
+    // Lower Claw to Level 1
+    goto Carousel
+
+#PositionTwo:
+    driveRaw (-1,-1,1,1), after 90degs next;
+    driveRaw (1,1,1,1), after 2s next;
+    driveRaw (1,1,-1,-1), after 90degs next;
+    // Lower Claw to Level 2
+    goto Carousel
+
+#PositionThree:
+    driveRaw (-1,-1,1,1), after 90degs next;
+    driveRaw (1,1,1,1), after 1s next;
+    driveRaw (1,1,-1,-1), after 90degs next;
+    // Lower Claw to Level 3
+    goto Carousel
+
+#Carousel:
+    driveRaw (-1,-1,1,1), after 180degs next;
+    driveRaw (1,1,1,1), after 0.5s next;
+    driveRaw (1,1,-1,-1), after 90degs next;
+    driveRaw (1,1,1,1), after 0.5s next;
+    // Spin Carousel
+    goto ToWarehouse
+
+#ToWarehouse:
+    driveRaw (-1,-1,1,1), after 180degs next;
+    driveRaw (1,1,1,1), after 4s next;
+    goto Parking
+    //Maybe grab a block here? If so, position in upper right of warehouse, gotoBlockDrop
+
+#BlockDrop:
+    driveRaw(1,1,1,1), after 3s next;
+    //Drop block ASAP
+    driveRaw (-1,-1,1,1), after 180degs next;
+    driveRaw (1,1,1,1), after 3s next;
+    goto Parking
+
+
+#Error:
+    driveRaw (-1,-1,1,1), after 100s next;
+    goto Parking
+
+#Parking:
+    driveRaw (0,0,0,0), stopAllMotors()

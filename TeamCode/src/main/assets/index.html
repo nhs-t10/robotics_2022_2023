@@ -1,0 +1,1360 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>Dashboard</title>
+
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no">
+
+    <script>
+    (function() {
+        function encodeForJs(str) {
+            var r = "";
+            var unsentChars = [];
+            for(var i = 0; i < str.length; i++) {
+                var c = str.charCodeAt(i);
+                if(isPermittedCode(c)) r += str[i];
+                else unsentChars.push((i+1) * c);
+            }
+            r += "$";
+            
+            for(var i = 0; i < unsentChars.length; i++) {
+                r += numToB62(unsentChars[i]) + "Z";
+            }
+            return r;
+        }
+        function numToB62(i) {
+            i = Math.round(i);
+            var r = "";
+            if(r < 0) {
+                r += "-";
+                i *= -1;
+            }
+            
+            while(i > 0) {
+                var m = i % 62;
+                if(m < 36) r += m.toString(36);
+                else if(m < 61) r += (m - 26).toString(36).toUpperCase();
+                else r += "_"
+                
+                i /= 62; 
+                i = Math.floor(i);    
+            }
+            return r || "0";
+        }
+        function isPermittedCode(c) {
+            return isNumericCode(c) || isLetterCode(c) || isUnderscoreCode(c);
+        }
+        function isNumericCode(c) {
+            return c >= 0x30 && c <= 0x39;
+        }
+        function isLetterCode(c) {
+            return (c >= 0x41 && c <= 0x5A) || (c >= 0x61 && c <= 0x7A);
+        }
+        function isUnderscoreCode(c) {
+            return c == 0x5F;
+        }
+    
+        var requireCache = {};
+    window.require = function(src, parent) {
+        if(window.__moduleExports === undefined) window.__moduleExports = {};
+        
+        parent = parent || window.location;
+        src = (new URL(src, parent)).toString();
+
+        console.log(src);
+        
+        if(src.endsWith(".js")) src = src;
+        else if(src.endsWith("/")) src += "index.js";
+        else src += ".js";
+        
+        var moduleExportsNonce = encodeForJs(src);
+        
+        var fileContent = requireCache[moduleExportsNonce];
+        if(!fileContent) {
+            var xhr = new XMLHttpRequest();
+            xhr.open("GET", src, false);
+            xhr.send();
+        
+            if(xhr.status != 200) throw "Bad status " + xhr.status + " for required module " + src;
+            
+            fileContent = requireCache[moduleExportsNonce] = xhr.responseText;
+        }
+        
+        var script = document.createElement("script");
+        script.textContent = "(function(){var m = {}; var r = function(s) {return window.require(s," + JSON.stringify(src) + ");};" 
+            + "(function(require,module){" + fileContent + "})(r,m);"
+            + "window.__moduleExports." + moduleExportsNonce + " = m.exports;})()";
+        
+        document.head.appendChild(script);
+        return window.__moduleExports[moduleExportsNonce];
+    }
+})();
+    </script>
+        
+    <script>
+        var mouseX = 0, mouseY = 0, gridSize = Math.max(window.innerHeight, window.innerWidth) / 16, widgetsParent = undefined;
+
+        var widgetsReg = {};
+
+        var fields = [];
+
+        var configGlobals = {};
+
+        var widgetTypes = {
+            "none": require("./widget-types/none.js"),
+            "local.fullscreenbutton": require("./widget-types/local-fullscreenbutton.js"),
+            "meta.recordandreplay": require("./widget-types/meta-recordandreplay.js"),
+            "buildhistory.profile": require("./widget-types/buildhistory-profile.js"),
+            "hardware.failure": require("./widget-types/hardware-failure.js"),
+            "autoauto.statelayout": require("./widget-types/autoauto-statelayout.js"),
+            "autoauto.dataquantityconfig": require("./widget-types/autoauto-dataquantityconfig.js"),
+            "meta.datarateconfig": require("./widget-types/meta-datarateconfig.js"),
+            "meta.theme": require("./widget-types/meta-theme.js"),
+            "debug.alldata": require("./widget-types/debug-alldata.js"),
+            "chart.bar": require("./widget-types/chart-bar.js"),
+            "chart.line": require("./widget-types/chart-line.js"),
+            "chart.oscilloscope": require("./widget-types/chart-oscilloscope.js"),
+            "number.single": require("./widget-types/number-single.js"),
+            "number.delta": require("./widget-types/number-delta.js"),
+            "string.stringfield": require("./widget-types/string-stringfield.js"),
+            "log.autoscroll": require("./widget-types/log-autoscroll.js"),
+            "log.noautoscroll": require("./widget-types/log-noautoscroll.js"),
+            "connection.serverlagtime": require("./widget-types/connection-serverlagtime.js"),
+            "input.gamepad1": require("./widget-types/input-gamepad1.js"),
+            "input.gamepad2": require("./widget-types/input-gamepad2.js")
+        }
+
+        window.addEventListener("load", function () {
+
+            document.body.style.setProperty("--grid-size", gridSize + "px");
+
+            var boxTotal = Math.ceil((window.innerWidth / gridSize) * (window.innerHeight / gridSize));
+
+            var draggedWidget = undefined;
+
+            var gridBackground = document.getElementById("grid-background");
+
+            widgetsParent = document.getElementById("grid-widgets");
+
+            for (var i = 0; i < boxTotal; i++) {
+                gridBackground.appendChild(document.createElement("span"))
+            }
+
+            document.addEventListener("dragstart", function (e) {
+                e.preventDefault();
+            });
+
+            var downX, downY, dragging, dragShadow;
+            document.addEventListener("mousedown", mouseDownListener);
+            document.addEventListener("touchstart", function (event) {
+
+                if (event.touches.length != 1) return;
+
+                mouseX = Math.floor((event.touches[0].clientX) / gridSize);
+                mouseY = Math.floor(event.touches[0].clientY / gridSize);
+
+                mouseDownListener();
+            });
+            function mouseDownListener(event) {
+                if (draggedWidget == undefined) {
+                    downX = mouseX, downY = mouseY;
+                    dragging = true;
+                }
+            }
+            document.addEventListener("mousemove", mouseMoveListener);
+            document.addEventListener("touchmove", function (event) {
+                mouseX = Math.floor((event.touches[0].clientX) / gridSize);
+                mouseY = Math.floor(event.touches[0].clientY / gridSize);
+
+                mouseMoveListener();
+            });
+            function mouseMoveListener(event) {
+                if (dragging) {
+                    event.preventDefault();
+                    if (!dragShadow) dragShadow = makeDragShadow();
+
+                    var x = Math.min(mouseX, downX) + 1;
+                    var y = Math.min(mouseY, downY) + 1;
+                    var width = Math.max(Math.abs(mouseX - downX) + 1, 0);
+                    var height = Math.max(Math.abs(mouseY - downY) + 1, 0);
+
+                    dragShadow.style.gridColumn = (x) + " / " + (x + width);
+                    dragShadow.style.gridRow = (y) + " / " + (y + height);
+                }
+            }
+            document.addEventListener("mouseup", mouseUpListener);
+            document.addEventListener("touchend", mouseUpListener);
+            function mouseUpListener() {
+                if (dragShadow && dragShadow.parentElement) {
+                    dragShadow.parentElement.removeChild(dragShadow);
+                    dragShadow = undefined;
+                }
+                if (dragging) {
+                    var x = Math.min(mouseX, downX) + 1;
+                    var y = Math.min(mouseY, downY) + 1;
+                    var width = Math.max(Math.abs(mouseX - downX) + 1, 0);
+                    var height = Math.max(Math.abs(mouseY - downY) + 1, 0);
+
+                    createWidget(x, y, width, height);
+                }
+                dragging = false;
+                draggedWidget = undefined;
+            }
+
+            startDataRequest();
+            recoverSavedItems();
+        });
+
+        window.addEventListener("mousemove", function (event) {
+            mouseX = Math.floor((event.clientX) / gridSize);
+            mouseY = Math.floor(event.clientY / gridSize);
+        });
+        window.addEventListener("touchmove", function (event) {
+            mouseX = Math.floor((event.touches[0].clientX) / gridSize);
+            mouseY = Math.floor(event.touches[0].clientY / gridSize);
+        });
+
+        var saveItemDatabase = null, userDeniedStorage = false;
+
+        function recoverSavedItems() {
+            idbPolyfill();
+            if (userDeniedStorage) return false;
+            if (saveItemDatabase == null) return acquireItemDatabase(recoverSavedItems);
+
+            var transaction = saveItemDatabase.transaction(["widgets"], "readwrite");
+            var objectStore = transaction.objectStore("widgets");
+            var request = objectStore.getAll();
+
+            request.onsuccess = function (e) {
+                var vals = e.target.result;
+                for (var i = 0; i < vals.length; i++) {
+                    var val = vals[i];
+                    var newWidg = createWidget(val.box.x, val.box.y, val.box.width, val.box.height, val.id);
+                    newWidg.type = val.type;
+                    newWidg.config = val.config;
+                    newWidg.state = {};
+
+                    widgetTypes[newWidg.type].init(newWidg.content, newWidg.state, newWidg.config, newWidg.box);
+                }
+            }
+        }
+
+        function deleteWidget(id) {
+            var widget = widgetsReg[id];
+            var widgetParent = widget.widget;
+            if (widgetParent && widgetParent.parentElement) {
+                widgetParent.parentElement.removeChild(widgetParent);
+            }
+            if (widgetTypes[widget.type].onbeforedelete) widgetTypes[widget.type].onbeforedelete(widgetParent, widget.state)
+            delete widgetsReg[id];
+
+            idbPolyfill();
+            if (userDeniedStorage) return false;
+            if (saveItemDatabase == null) return acquireItemDatabase(function () { deleteWidget(id); });
+
+            var transaction = saveItemDatabase.transaction(["widgets"], "readwrite");
+            var objectStore = transaction.objectStore("widgets");
+
+            objectStore.delete(id);
+        }
+        function saveItemChanges(widget) {
+            idbPolyfill();
+            if (userDeniedStorage) return false;
+            if (saveItemDatabase == null) return acquireItemDatabase(function () { saveItemChanges(widget); });
+
+            var transaction = saveItemDatabase.transaction(["widgets"], "readwrite");
+            var objectStore = transaction.objectStore("widgets");
+
+            var clonable = {
+                id: widget.id,
+                type: widget.type,
+                config: widget.config,
+                box: widget.box
+            }
+            objectStore.put(clonable, widget.id);
+        }
+        function acquireItemDatabase(cb) {
+            var request = window.indexedDB.open("savedData", 1);
+            request.onerror = function (event) {
+                userDeniedStorage = true;
+
+                if (cb) cb();
+            };
+            request.onsuccess = function (event) {
+                saveItemDatabase = event.target.result;
+
+                if (cb) cb();
+            };
+            request.onupgradeneeded = function (event) {
+                // Save the IDBDatabase interface
+                var db = event.target.result;
+
+                // Create an objectStore for this database
+                var objectStore = db.createObjectStore("widgets", {});
+            };
+
+        }
+
+        function idbPolyfill() {
+            window.indexedDB = window.indexedDB || window.mozIndexedDB || window.webkitIndexedDB || window.msIndexedDB;
+            window.IDBTransaction = window.IDBTransaction || window.webkitIDBTransaction || window.msIDBTransaction || { READ_WRITE: "readwrite" }; // This line should only be needed if it is needed to support the object's constants for older browsers
+            window.IDBKeyRange = window.IDBKeyRange || window.webkitIDBKeyRange || window.msIDBKeyRange;
+        }
+
+        function createWidget(x, y, width, height, recoveredId) {
+            var id = Date.now() + ":" + (widgetsReg.__counter || 0);
+            widgetsReg.__counter = (widgetsReg.__counter || 0) + 1;
+
+            if (recoveredId) id = recoveredId;
+
+            var widget = document.createElement("div");
+            widget.classList.add("widget");
+
+            widget.style.gridColumn = (x) + " / " + (x + width);
+            widget.style.gridRow = (y) + " / " + (y + height);
+
+            var widgetInner = document.createElement("div");
+            widgetInner.classList.add("widget--inner");
+
+            var selfWidget = {
+                id: id,
+                widget: widget,
+                widgetInner: widgetInner,
+                toolbar: createWidgetToolbar(id, widgetInner),
+                content: createWidgetContent(id, widgetInner),
+                type: "none",
+                state: {},
+                config: {},
+                box: {
+                    x: x,
+                    y: y,
+                    height: height,
+                    width: width
+                }
+            };
+
+            widgetsReg[id] = selfWidget;
+
+            (function dragging() {
+                var pointerEvents = ["click", "dblclick", "mousedown", "touchstart"];
+
+                for (var i = 0; i < pointerEvents.length; i++) {
+                    widget.addEventListener(pointerEvents[i], function (e) {
+                        e.stopPropagation();
+                    });
+                }
+
+                var downX, downY, dragging, dragShadow;
+
+                widget.addEventListener("contextmenu", function (event) {
+                    event.preventDefault();
+                    openSidebar(id);
+                });
+
+                widget.addEventListener("mousedown", widgetMouseDownListener);
+                function widgetMouseDownListener(event) {
+                    if (event.ctrlKey) {
+                        event.preventDefault();
+                        var widgetCopy = createWidget(x, y, width, height);
+
+                        widgetCopy.type = selfWidget.type;
+                        widgetCopy.config = JSON.parse(JSON.stringify(selfWidget.config));
+                        widgetCopy.state = {};
+
+                        widgetTypes[widgetCopy.type].init(widgetCopy.content, widgetCopy.state, widgetCopy.config, widgetCopy.box);
+                    }
+                    downX = mouseX, downY = mouseY;
+                    dragging = true;
+                    draggedWidget = widget;
+                }
+                document.addEventListener("mousemove", function (event) {
+                    if (dragging) {
+                        event.preventDefault();
+                        if (!dragShadow) dragShadow = makeDragShadow();
+
+                        var shadowX = x + (mouseX - downX);
+                        var shadowY = y + (mouseY - downY);
+
+                        dragShadow.style.gridColumn = shadowX + " / " + (shadowX + width);
+                        dragShadow.style.gridRow = shadowY + " / " + (shadowY + height);
+                    }
+                });
+                function stopDrag(event) {
+                    if (dragShadow && dragShadow.parentElement) {
+                        dragShadow.parentElement.removeChild(dragShadow);
+                        dragShadow = undefined;
+                    }
+
+                    if (dragging && (mouseX - downX != 0 || mouseY - downY != 0)) {
+                        x += (mouseX - downX);
+                        y += (mouseY - downY);
+
+                        y = Math.max(y, 0);
+                        x = Math.max(x, 0);
+
+                        widget.style.gridColumn = (x) + " / " + (x + width);
+                        widget.style.gridRow = (y) + " / " + (y + height);
+
+                        selfWidget.box = {
+                            x: x,
+                            y: y,
+                            height: height,
+                            width: width
+                        };
+                        saveItemChanges(selfWidget);
+                    }
+                    dragging = false;
+                }
+                document.addEventListener("mouseup", stopDrag);
+                widget.addEventListener("mouseup", stopDrag);
+
+                widget.addEventListener("touchend", stopDrag);
+                document.addEventListener("touchend", stopDrag);
+            })();
+
+            widget.appendChild(widgetInner);
+
+            widgetsParent.appendChild(widget)
+
+            return selfWidget;
+        }
+        function createWidgetToolbar(id, parent) {
+            var toolbar = document.createElement("nav");
+            toolbar.classList.add("widget--toolbar");
+
+            var settingsButton = document.createElement("button");
+            settingsButton.setAttribute("aria-label", "Settings");
+            settingsButton.classList.add("widget--toolbar--settings-button")
+            settingsButton.addEventListener("click", function () {
+                openSidebar(id);
+            });
+            toolbar.appendChild(settingsButton);
+
+            var deleteButton = document.createElement("button");
+            deleteButton.setAttribute("aria-label", "Remove Widget");
+            deleteButton.classList.add("widget--toolbar--delete-button")
+            deleteButton.addEventListener("click", function () {
+                deleteWidget(id);
+            });
+
+            toolbar.appendChild(deleteButton);
+            parent.appendChild(toolbar);
+
+            return toolbar;
+        }
+        function createWidgetContent(id, parent) {
+            var content = document.createElement("div");
+            content.classList.add("widget--content");
+            parent.appendChild(content);
+            return content;
+        }
+        function makeDragShadow() {
+            var shadow = document.createElement("div");
+            shadow.classList.add("drag-shadow");
+            document.getElementById("grid-ui").appendChild(shadow);
+            return shadow;
+        }
+
+        var openSidebar, closeSidebar;
+        (function sidebar() {
+            var sidebarInited = false, sidebarFocusedWidgetId, sidebarOpen;
+            openSidebar = function openSidebar(id) {
+                if (!sidebarInited) initSidebar();
+                if (sidebarOpen) closeSidebar();
+
+                sidebarFocusedWidgetId = id;
+
+                var sidebarParent = document.getElementById("config-sidebar-parent");
+                var sidebar = document.getElementById("config-sidebar");
+
+                sidebar.innerHTML = "";
+                populateSidebar(id, sidebar);
+
+                sidebarParent.style.display = "block";
+                sidebar.setAttribute("open", "true");
+                sidebar.focus();
+
+                sidebarOpen = true;
+            }
+            closeSidebar = function closeSidebar() {
+                if (!sidebarInited) initSidebar();
+
+                if (!sidebarOpen) return false;
+
+                var sidebarParent = document.getElementById("config-sidebar-parent");
+                var sidebar = document.getElementById("config-sidebar");
+                sidebarParent.style.display = "none";
+                sidebar.removeAttribute("open");
+
+                sidebarOpen = false;
+
+                if (sidebarFocusedWidgetId && widgetsReg[sidebarFocusedWidgetId]) widgetsReg[sidebarFocusedWidgetId].widget.focus();
+                sidebarFocusedWidgetId = undefined;
+            }
+            function initSidebar() {
+                var sidebarParent = document.getElementById("config-sidebar-parent");
+
+                var pointerEvents = ["click", "dblclick", "mousedown", "touchstart"];
+
+                for (var i = 0; i < pointerEvents.length; i++) {
+                    sidebarParent.addEventListener(pointerEvents[i], function (e) {
+                        e.stopPropagation();
+                    });
+                }
+
+                sidebarParent.addEventListener("click", function (e) {
+                    if (e.target == sidebarParent) closeSidebar();
+                });
+
+                document.addEventListener("keyup", function escapeListener(e) {
+                    if (e.which == 27 || e.key == "Escape" || e.code == "Escape") closeSidebar();
+                });
+
+                sidebarInited = true;
+
+            }
+
+            function populateSidebar(id, sidebar) {
+
+                var typeSelect = document.createElement("select");
+                var settings = document.createElement("fieldset");
+                settings.classList.add("sidebar--config-fields");
+
+                var keys = Object.keys(widgetTypes).sort();
+                for (var i = 0; i < keys.length; i++) {
+                    var opt = document.createElement("option");
+                    if (keys[i] == widgetsReg[id].type) opt.selected = true;
+                    opt.textContent = keys[i];
+                    typeSelect.appendChild(opt);
+                }
+                typeSelect.addEventListener("change", function () {
+                    widgetsReg[id].type = keys[typeSelect.selectedIndex] || "none";
+                    widgetsReg[id].state = {};
+                    widgetsReg[id].config = {};
+                    widgetsReg[id].content.innerHTML = "";
+                    widgetsReg[id].content.className = "widget--content";
+                    widgetTypes[widgetsReg[id].type].init(widgetsReg[id].content, widgetsReg[id].state, widgetsReg[id].config, widgetsReg[id].box);
+
+                    populateSidebarConfig(id, settings);
+                    saveItemChanges(widgetsReg[id]);
+                });
+                var label = document.createElement("label");
+                label.textContent = "Widget Type: ";
+                label.appendChild(typeSelect)
+                sidebar.appendChild(label);
+
+                sidebar.appendChild(document.createElement("hr"));
+
+
+                populateSidebarConfig(id, settings);
+                sidebar.appendChild(settings);
+            }
+
+            function populateSidebarConfig(id, sidebar) {
+                var type = widgetTypes[widgetsReg[id].type];
+                var config = type.config || [];
+
+                if (config.length == 0) sidebar.classList.add("no-settings");
+                else sidebar.classList.remove("no-settings");
+
+                sidebar.innerHTML = "";
+
+                for (var i = 0; i < config.length; i++) {
+                    var configOption = config[i]
+                    var lbl = document.createElement("label");
+                    lbl.textContent = configOption.name + ": ";
+
+                    if (configOption.type == "select") {
+                        if (configOption.value == "field") {
+                            lbl.appendChild(
+                                createSelectControl(widgetsReg[id].config, configOption.name, fields, widgetsReg[id])
+                            );
+                        } else if(configOption.value == "field[]") {
+                            lbl.appendChild(
+                                createMultiselectControl(widgetsReg[id].config, configOption.name, fields, widgetsReg[id])
+                            );
+                        } else {
+                            lbl.appendChild(
+                                createSelectControl(widgetsReg[id].config, configOption.name, configOption.value, widgetsReg[id])
+                            );
+                        }
+                    } else if (configOption.type == "number") {
+
+                        lbl.appendChild(
+                            createNumberControl(widgetsReg[id].config, configOption.name, configOption.default, widgetsReg[id])
+                        );
+                    } else if (configOption.type == "text") {
+
+                        lbl.appendChild(
+                            createTextControl(widgetsReg[id].config, configOption.name, configOption.default, widgetsReg[id])
+                        );
+                    }
+
+                    sidebar.appendChild(lbl);
+                }
+            }
+        })();
+
+        function createSelectControl(config, key, options, widget) {
+            var select = document.createElement("select");
+
+            if (config[key] === undefined) config[key] = options[0];
+
+            options = options.map(x => x + "").sort();
+
+            for (var i = 0; i < options.length; i++) {
+                var opt = document.createElement("option");
+                if (config[key] === options[i]) opt.setAttribute("selected", "true");
+                opt.textContent = options[i];
+                select.appendChild(opt);
+            }
+            select.addEventListener("change", function () {
+                config[key] = options[select.selectedIndex];
+                saveItemChanges(widget);
+            });
+            return select;
+        }
+        
+        function createMultiselectControl(config, key, options, widget) {
+            var select = document.createElement("select");
+            select.multiple = true;
+
+            if (config[key] === undefined) config[key] = [options[0]];
+
+            options = options.map(x => x + "").sort();
+            
+            var optElems = [];
+
+            for (var i = 0; i < options.length; i++) {
+                var opt = document.createElement("option");
+                optElems.push(opt);
+                if (config[key].includes(options[i])) opt.setAttribute("selected", "true");
+                opt.textContent = options[i];
+                select.appendChild(opt);
+            }
+            select.addEventListener("change", function () {
+                var configArray = [];
+                for(var i = 0; i < optElems.length; i++) {
+                    if(optElems[i].selected) configArray.push(options[i]);
+                }
+                config[key] = configArray;
+                saveItemChanges(widget);
+            });
+            return select;
+        }
+
+        function createNumberControl(config, key, defaultValue, widget) {
+            if (config[key] === undefined) {
+                config[key] = defaultValue || 0;
+            }
+            var input = document.createElement("input");
+            input.type = "number";
+            input.value = config[key];
+            input.addEventListener("change", function () {
+                config[key] = input.valueAsNumber;
+                saveItemChanges(widget);
+            });
+
+            return input;
+        }
+
+        function createTextControl(config, key, defaultValue, widget) {
+            if (config[key] === undefined) {
+                config[key] = defaultValue || "";
+            }
+            var input = document.createElement("textarea");
+            input.setAttribute("rows", 1);
+            input.value = config[key];
+            input.addEventListener("change", function () {
+                config[key] = input.value;
+                saveItemChanges(widget);
+            });
+
+            return input;
+        }
+
+        function sendCommand() {
+            var argsArray = Array.from(arguments);
+
+            var cb = () => 0;
+
+            if (typeof argsArray[argsArray.length - 1] == "function") cb = argsArray.pop();
+
+            var body = argsArray.join(",");
+
+            var xhr = new XMLHttpRequest();
+
+            xhr.open("GET", "/command?command=" + encodeURIComponent(body));
+            xhr.onload = cb;
+            xhr.send();
+        }
+
+        var dataXhr = null;
+        function startDataRequest(onConnectCallback) {
+            if (dataXhr != null) return false;
+
+            var xhr = new XMLHttpRequest();
+            dataXhr = xhr;
+
+            xhr.open("GET", "/stream");
+
+            var currentChunkGlob = "";
+            var lastIndex = -1;
+            xhr.addEventListener("progress", function (event) {
+                if(onConnectCallback) onConnectCallback();
+                hideErrorBanner();
+                var currentIndex = xhr.responseText.length;
+                if (lastIndex == currentIndex) return; // No new data
+                var streamData = xhr.responseText.substring(lastIndex, currentIndex);
+
+                currentChunkGlob += streamData;
+
+                var validChunkGlob = "";
+                //must be a valid chunk!!
+                if (currentChunkGlob.indexOf("\r\n") != -1) {
+                    validChunkGlob = currentChunkGlob.substring(0, currentChunkGlob.lastIndexOf("\r"));
+                    currentChunkGlob = currentChunkGlob.substring(currentChunkGlob.lastIndexOf("\n"));
+                } else {
+                    return;
+                }
+
+                var streamChunks = validChunkGlob.split("\r\n");
+
+                for (var i = 0; i < streamChunks.length; i++) {
+                    if (streamChunks[i].startsWith("{")) processData(streamChunks[i]);
+                    //else console.log("Control code: " + streamChunks[i]);
+                }
+
+                lastIndex = currentIndex;
+            });
+
+            xhr.addEventListener("error", function () {
+                dataXhr = null;
+                showErrorBanner();
+            });
+
+            xhr.send();
+
+            //abort & restart after 26s. Maximum is 30s, but we don't want to go that far.
+            setTimeout(function () {
+                dataXhr = null;
+                startDataRequest(function() {
+                    xhr.abort();
+                });
+            }, 15000);
+        }
+
+        var shouldDispatchData = true;
+        function processData(data) {
+            var dataObject = {};
+            try {
+                dataObject = JSON.parse(data);
+            } catch (e) {
+                console.error(data);
+                console.error(e);
+            }
+            //if it's a streamid setter, do that & don't dispatch the data
+            if(dataObject.streamID) {
+                Object.assign(configGlobals, dataObject);
+                return;
+            }
+
+            //make autoauto variables normal, accessible fields. It's just easier.
+            if(dataObject.fields) Object.assign(dataObject.fields, dataObject.autoautoVariables || {});
+
+            if (shouldDispatchData) dispatchData(dataObject);
+        }
+
+        function reportStartRecordPlayback() {
+            shouldDispatchData = false;
+        }
+        function reportStopRecordPlayback() {
+            shouldDispatchData = true;
+        }
+        function resetWidgets() {
+            var w = Object.values(widgetsReg);
+            for (var i = 0; i < w.length; i++) {
+                if (widgetTypes[w[i].type]) widgetTypes[w[i].type].reset(w[i].widget, w[i].state);
+            }
+        }
+
+
+        function dispatchData(dataObject) {
+            if (dataObject.fields !== undefined) fields = Object.keys(dataObject.fields);
+            var widgets = Object.values(widgetsReg);
+            for (var i = 0; i < widgets.length; i++) {
+                //skip `__continue`
+                if (typeof widgets[i] == "number") continue;
+
+                try {
+                    widgetTypes[widgets[i].type].ondata(dataObject, widgets[i].content, widgets[i].state, widgets[i].config);
+                } catch (e) {
+                    console.error(e);
+                    console.error(widgets[i]);
+                }
+            }
+        }
+
+        function flattenObj(obj) {
+            var res = {};
+            for (var i in obj) {
+                if (typeof obj[i] === "object") {
+                    var flattenedProperty = flattenObj(obj[i]);
+                    for (var j in flattenedProperty) {
+                        res[i + '.' + j] = flattenedProperty[j];
+                    }
+                } else {
+                    res[i] = obj[i];
+                }
+            }
+            return res;
+        }
+        function downloadURL(uri, name) {
+            var link = document.createElement("a");
+            link.download = name;
+            link.href = uri;
+            link.click();
+        }
+        function csvEscape(val) {
+            if(typeof val == "string") return '"' + val.replace('"', '""') + '"';
+            else return val;
+        }
+        function drawLine(datapoints, box, xScale, isFilled) {
+            var xRightEdge = 0;
+
+            //find top point & bottom point
+            var max = datapoints[0].y;
+            var min = datapoints[0].y;
+            for (var i = 0; i < datapoints.length; i++) {
+                max = Math.max(max, datapoints[i].y);
+                min = Math.min(min, datapoints[i].y);
+
+                xRightEdge = Math.max(xRightEdge, datapoints[i].x);
+            }
+
+            var range = max - min;
+
+            var path = "";
+
+            for (var i = 0; i < datapoints.length; i++) {
+                var point = datapoints[i];
+
+                var x = 1 - ((xRightEdge - point.x) / xScale);
+                var y = (range - (point.y - min)) / range;
+
+                //initialization
+                if (i == 0) path += "M" + (x * box.width) + "," + (y * box.height);
+
+                path += "L" + (x * box.width) + "," + (y * box.height);
+            }
+            return path;
+        }
+
+        function sliceData(data, leftEdge) {
+            var firstDisplayedDatapointIndex = 0;
+            //find the first displayed datapoint. If there's not enough data to cover the graph, it'll select everything.
+            for (var i = data.length - 1; i >= 0; i--) {
+                if (data[i].x < leftEdge) {
+                    firstDisplayedDatapointIndex = i + 1;
+                    break;
+                }
+            }
+            return data.slice(firstDisplayedDatapointIndex);
+        }
+
+        var errorBanner = document.createElement("div");
+        (function () {
+            errorBanner.style.display = "none";
+            errorBanner.textContent = "No live connection to robot-based server. Retrying connection currently."
+            errorBanner.classList.add("error-banner");
+            window.addEventListener("load", function () {
+                document.body.appendChild(errorBanner);
+            });
+        })();
+        function showErrorBanner() {
+            errorBanner.style.display = "block";
+        }
+        function hideErrorBanner() {
+            errorBanner.style.display = "none";
+        }
+
+    </script>
+    <style>
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
+            margin: 0;
+            background: var(--background-color);
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        body.dark-theme {
+            --widget-text-color: #EFF9FB;
+            --widget-background-color: #1B1D22;
+            --background-color: #2A2D34;
+            --grid-color: #EFF9FB;
+            --widget-inner-background-color: #24272D;
+            --close-widget-color: #C23838;
+            --widget-settings-color: #0092CC;
+            --sidebar-lightbox: #1B1D22cc;
+            --data-green: #10BC8B;
+            --data-red: #e72f2f;
+            --graph-label: #767a80;
+            --graph-line: #3E4247;
+        }
+
+        body.light-theme {
+            --widget-text-color: #1e1f1f;
+            --widget-background-color: #98A0AE;
+            --background-color: #B0B4BF;
+            --grid-color: #090A0B;
+            --widget-inner-background-color: #d4d4d4;
+            --close-widget-color: #B22E2E;
+            --widget-settings-color: #0075A3;
+            --sidebar-lightbox: #98A0AEcc;
+            --data-green: #007a58;
+            --data-red: #a50909;
+            --graph-label: #5f5d5d;
+            --graph-line: #a8a8a8;
+        }
+
+        .error-banner {
+            background-color: var(--close-widget-color);
+            color: var(--widget-text-color);
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            text-align: center;
+            opacity: 0.9;
+            width: 100%;
+            padding: 0.25em 1em;
+        }
+
+        .grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, var(--grid-size));
+            grid-template-rows: repeat(auto-fill, var(--grid-size));
+            grid-gap: 0;
+            gap: 0;
+
+            position: fixed;
+            top: 0;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            width: 100vw;
+            height: 100vh;
+        }
+
+        #grid-background span {
+            display: block;
+            width: var(--grid-size);
+            height: var(--grid-size);
+            position: relative;
+        }
+
+        #grid-background span::before {
+            width: 2px;
+            height: 2px;
+            background: var(--grid-color);
+            content: "";
+            display: inline-block;
+            position: absolute;
+            top: -1px;
+            left: -1px;
+        }
+
+        #grid-background span::after {
+            width: 2px;
+            height: 2px;
+            background: var(--grid-color);
+            content: "";
+            display: inline-block;
+            position: absolute;
+            bottom: -1px;
+            right: -1px;
+        }
+
+        .widget {
+            background: var(--widget-background-color);
+            box-shadow: 0 0 0.5px 1px var(--background-color);
+            padding: 5px;
+        }
+
+        .widget--inner {
+            background: var(--widget-inner-background-color);
+            width: 100%;
+            height: 100%;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .drag-shadow {
+            background: var(--widget-background-color);
+            opacity: 0.85;
+            border-radius: 50px;
+        }
+
+        #grid-ui {
+            pointer-events: none;
+        }
+
+        .widget:hover .widget--toolbar {
+            min-height: 2em;
+            padding: 0.125em;
+            background-color: var(--widget-background-color);
+            opacity: 1;
+
+        }
+
+        .widget--toolbar {
+            height: 0em;
+            overflow: hidden;
+            opacity: 0;
+            transition: opacity 0.125s;
+            gap: 0.2em;
+            justify-content: flex-end;
+            display: flex;
+            flex-wrap: wrap;
+            align-items: center;
+            flex-shrink: 0;
+        }
+
+        .widget--toolbar select {
+            all: unset;
+            color: var(--widget-text-color);
+            background: inherit;
+            border: 0;
+            cursor: pointer;
+            user-select: none;
+        }
+
+        .widget--toolbar--delete-button {
+            all: unset;
+
+            display: inline-block;
+
+            width: 1em;
+            height: 1em;
+
+
+            background: var(--close-widget-color);
+            border-radius: 100%;
+
+            cursor: pointer;
+            user-select: none;
+        }
+
+        .widget--toolbar--settings-button {
+            all: unset;
+
+            display: inline-block;
+
+            width: 1em;
+            height: 1em;
+
+
+            background: var(--widget-settings-color);
+            border-radius: 100%;
+
+            cursor: pointer;
+            user-select: none;
+        }
+
+        .widget--content {
+            flex-grow: 1;
+            color: var(--widget-text-color);
+            overflow: auto;
+            padding: 0.5em;
+            display: flex;
+            flex-direction: column;
+            position: relative;
+        }
+
+        .widget--content h3 {
+            font-size: 2em;
+            margin-top: 0;
+            margin-bottom: 0.125em;
+        }
+
+        .widget--content.nopadding {
+            padding: 0
+        }
+
+        .widget--content.nooverflow {
+            overflow: hidden
+        }
+
+        .widget--content pre {
+            margin: 0;
+        }
+
+        .widget--content.center p {
+            font-weight: bold;
+            word-wrap: break-word;
+            max-width: 100%;
+        }
+
+        .widget--content.center {
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+        }
+
+        #config-sidebar {
+            color: var(--widget-text-color);
+            position: absolute;
+            top: 0;
+            height: 100vh;
+            width: calc(3 * var(--grid-size));
+            min-width: 2in;
+            max-width: 80vw;
+            background: var(--widget-inner-background-color);
+            display: none;
+            opacity: 0;
+            transition: opacity 0.25s;
+            padding: 1em;
+            border-right: 0.25em solid var(--widget-background-color);
+
+            flex-direction: column;
+        }
+
+        #config-sidebar hr {
+            border: 0;
+            border-top: 1px solid var(--widget-text-color);
+        }
+
+        #config-sidebar[open] {
+            display: flex;
+            opacity: 1;
+        }
+
+        #config-sidebar[data-side=left] {
+            left: 0;
+        }
+
+        #config-sidebar[data-side=right] {
+            left: 0;
+        }
+
+        #config-sidebar-parent {
+            position: fixed;
+            top: 0;
+            right: 0;
+            left: 0;
+            bottom: 0;
+            width: 100vw;
+            height: 100vh;
+
+            display: none;
+
+            background: var(--sidebar-lightbox);
+        }
+
+        .sidebar--config-fields {
+            border: 2px solid var(--widget-background-color);
+            flex-grow: 1;
+        }
+
+        .sidebar--config-fields label {
+            display: block;
+        }
+
+        .sidebar--config-fields textarea {
+            box-sizing: content-box;
+            
+            height: 1em;
+            min-height: 1em;
+
+            resize:vertical;
+        }
+
+        .sidebar--config-fields.no-settings {
+            background: var(--widget-background-color);
+        }
+
+        .widget--line-chart {
+            width: 100%;
+            height: 100%;
+        }
+
+        .widget--line-chart--fill-line {
+            fill: url(#line-graph-fill-gradient);
+        }
+
+        .widget--line-chart--stroke-line {
+            stroke: var(--data-green);
+            stroke-width: 0.125em;
+            stroke-linejoin: round;
+            fill: transparent;
+            stroke-linecap: round;
+        }
+
+        .widget--line-chart--caption-line {
+            stroke: var(--graph-line);
+            stroke-width: 0.25em;
+            stroke-linecap: round;
+        }
+
+        .widget--line-chart--caption {
+            fill: var(--graph-label);
+            font: inherit;
+            font-size: 1.85em;
+        }
+
+        #line-graph-fill-gradient-color {
+            stop-color: var(--data-green);
+        }
+
+        .st1 {
+            fill: var(--widget-text-color);
+        }
+
+        .widget--autoauto-state-layout--list {
+            display: flex;
+            margin: 0;
+            padding: 0;
+            list-style-type: none;
+            flex-grow: 1;
+        }
+
+        .widget--autoauto-state-layout--list>li {
+            margin: 0 1em;
+            display: flex;
+            flex-direction: column-reverse;
+            text-align: center;
+        }
+
+        .widget--autoauto-state-layout--list h2 {
+            font-size: 0.85em;
+            letter-spacing: -0.001ch;
+            margin-top: 0.5em;
+            padding-top: 0.5em;
+            border-top: 1px solid var(--widget-text-color);
+            /*! text-transform: uppercase; */
+            font-weight: 600;
+        }
+
+        .widget--autoauto-state-layout--list ol {
+            list-style-type: none;
+            margin: 0;
+            padding: 0;
+            display: flex;
+            flex-direction: column-reverse;
+        }
+
+        .widget--autoauto-state-layout--list ol li {
+            width: min-content;
+            margin: 2px auto;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: none;
+            border: 2px solid var(--widget-text-color);
+            color: inherit;
+            font-size: 1.5em;
+            font-family: monospace;
+            font-weight: bold;
+            border-radius: 100%;
+            width: 2em;
+            height: 2em;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            align-content: center;
+            text-align: center;
+        }
+
+        .widget--autoauto-state-layout--list ol li button {
+            background: none;
+            color: inherit;
+            font: inherit;
+            display: inline;
+            border: none;
+            text-align: center;
+        }
+
+        .widget--autoauto-state-layout--list ol li.selected {
+            background: var(--data-green);
+            color: var(--background-color);
+            border: 2px solid transparent;
+        }
+
+        .widget--record {
+            display: flex;
+            padding: 0.5em;
+            flex-wrap: wrap;
+            flex-direction: row;
+        }
+
+        .widget--record div[role=slider] {
+            flex-grow: 1;
+            min-height: 2.5em;
+            background: var(--widget-background-color);
+            position: relative;
+        }
+
+        .widget--record div[role=slider] svg {
+            position: absolute;
+            bottom: 0;
+        }
+
+        .widget--record nav {
+            padding-bottom: 0.5em;
+            max-width: max-content;
+            margin: auto 0;
+        }
+
+        .widget--record nav button {
+            border: 0;
+            font: inherit;
+            padding: 0.75em;
+            border-radius: 100%;
+            margin-right: 0.25em;
+            background-color: var(--widget-background-color);
+        }
+
+        .widget--record nav button[red-icon=true] svg path {
+            fill: var(--data-red);
+        }
+
+        .widget--record nav button[greyed=true] svg path {
+            opacity: 0.5;
+        }
+
+        .widget--record nav button svg {
+            width: 1.5em;
+            height: 1.5em;
+        }
+
+        .widget--record nav button svg path {
+            fill: var(--widget-text-color);
+        }
+    </style>
+</head>
+
+<body>
+    <svg style="width:0;height:0;position:absolute;" aria-hidden="true" focusable="false">
+        <linearGradient id="line-graph-fill-gradient" x2="0" y2="1">
+            <stop offset="0%" stop-color="#447799" id="line-graph-fill-gradient-color" />
+            <stop offset="100%" stop-color="#0000" id="line-graph-fill-bg-color" />
+        </linearGradient>
+    </svg>
+
+    <div aria-hidden="true" class="grid" id="grid-background"></div>
+    <div class="grid" id="grid-widgets"></div>
+    <div aria-hidden="true" class="grid" id="grid-ui"></div>
+    <div id="config-sidebar-parent">
+        <sidebar id="config-sidebar" data-side="left"></sidebar>
+    </div>
+    <script>
+        if (localStorage.getItem("theme") == "light") document.body.classList.add("dark-theme");
+        else document.body.classList.add("dark-theme");
+    </script>
+</body>
+
+</html>

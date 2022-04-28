@@ -1,0 +1,41 @@
+#init:
+    goto clawout
+
+#clawout:
+    log(getTicks()), driveOmni(1, 0, 0), after 20cm next;
+    setServoPosition("intakeMoverLeft", -1.0), setServoPosition("intakeMoverRight", 1.0), next;
+    setServoPower("nateMoverLeft", -1.0), setServoPower("nateMoverRight", 1.0), after 2650ms next;
+    setServoPower("nateMoverLeft", 0.0), setServoPower("nateMoverRight", 0.0), next;
+    goto start
+
+#start:
+    let CLAW_CLOSED = false, function depositFreight(a, b, c) {
+        if(getClawStatus() == CLAW_CLOSED) toggleClawOpen(), log(getClawStatus())
+    }, goto a
+
+#a:
+    let CVReading = getCVPositionNumberWhereZeroIsLeftOneIsMiddleAndTwoIsRight(),
+        if (CVReading == 0) goto Position1 else if (CVReading == 1) goto Position2 else goto Position3
+
+#Position1:
+    driveOmni(1, 0, 0), after 13.5in next;
+    driveOmni(-1, 0, 0), after 6.5in next;
+    positionOne(), when (hasEncodedMovement("ClawMotor") == false) { log("movement done"), next };
+    toggleClaw(), next;
+    goto finalMovement
+
+#Position2:
+    driveOmni(1, 0, 0), after 13.5in next;
+    positionTwo(), when (hasEncodedMovement("ClawMotor") == false) { log("movement done"), next };
+    toggleClaw(), next;
+    goto finalMovement
+
+#Position3:
+    driveOmni(1, 0, 0), after 13.5in next;
+    driveOmni(-1, 0, 0), after 6.5in next;
+    positionThree(), when (hasEncodedMovement("ClawMotor") == false) { log("movement done"), next };
+    toggleClaw(), next;
+    goto finalMovement
+
+#finalMovement:
+    stopDrive()

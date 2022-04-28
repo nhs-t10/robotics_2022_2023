@@ -1,0 +1,18 @@
+$
+testIterations: 10000
+$
+
+#init:
+    goto clawout
+
+#clawout:
+    driveOmni(0.5,0,0),after 2in next;
+    neckTall(), when (hasEncodedMovement("NeckMotor") == false) { log("movement done"), next };
+    goto deliver;
+
+#deliver:
+    positionOne(), when (hasEncodedMovement("ClawMotor") == false) { log("movement done"), next };
+
+#park:
+    positionNeutral(), when (hasEncodedMovement("ClawMotor") == false) { log("movement done"), next };
+    driveOmni(0,0,0)

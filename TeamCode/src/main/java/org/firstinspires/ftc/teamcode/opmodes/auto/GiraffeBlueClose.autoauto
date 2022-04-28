@@ -1,0 +1,61 @@
+// THIS CODE MIGHT HAVE AN ERROR. THIS IS BECAUSE WE USED driveOmni AS IF IT IS driveOmni(v,h,r)
+// AS OF 1/20/2022 driveOmni WORKED AS IF IT IS driveOmni(v,r,-h)
+
+#init:
+    goto sampling
+
+
+//uses CV, saves CV reading to `value`
+#sampling:
+    let value = getCVPositionNumberWhereZeroIsLeftOneIsMiddleAndTwoIsRight(), log(value), after 1s next;
+    goto clawout
+
+//The robot starts folded up so that it's inside an 18x18 cube. `clawout` moves it off the wall then folds out the arms to their full extent.
+#clawout:
+    driveOmni(0.5,0,0),after 2in next;
+    neckShort(), when (neckMovementFinished()) { log("movement done"), next };
+    goto duckspin;
+
+#duckspin:
+    let tError = delegate("helpers/pid-turn.autoauto", -90), if (tError < 5) next;
+    driveOmni(0.7,0,0), after 5.1in next;
+    driveOmni(0.3,0,0), after 1.5in next, after 2000ms next;
+    setMotorPower("Carousel", 0.5), after 3000ms next;
+    setMotorPower("Carousel", 0), next;
+    neckTall(), when (neckMovementFinished()) { log("movement done"), next };
+    driveOmni(0,0,0.7), after 10in next;
+    let tError = delegate("helpers/pid-turn.autoauto", -90), if (tError < 5) next;
+    goto split;
+
+#split:
+    if(value == 0) goto thirdPosition, if(value == 1) goto secondPosition, if(value == 2) goto firstPosition
+
+#firstPosition:
+    positionOne(),  when (hasEncodedMovement("ClawMotor") == false) { log("movement done"), next };
+    after 3000ms next;
+    goto towerDropOff
+
+#secondPosition:
+    positionTwo(),  when (hasEncodedMovement("ClawMotor") == false) { log("movement done"), next };
+    after 3000ms next;
+    goto towerDropOff
+
+#thirdPosition:
+    positionThree(),  when (hasEncodedMovement("ClawMotor") == false) { log("movement done"), next };
+    after 3000ms next;
+    goto towerDropOff
+
+#towerDropOff:
+    driveOmni(-0.7,0,0), after 6in next;
+    setClawOpen(true), after 1000ms goto finalMovement;
+
+#finalMovement:
+    driveOmni(0.7,0,0), after 2in next;
+    setClawOpen(false), neckNeutral(), when (hasEncodedMovement("NeckMotor") == false) { log("movement done"), next };
+    positionNeutral(), when (hasEncodedMovement("ClawMotor") == false) { log("netural movement done"), next };
+    driveOmni(0.7,0,0), after 6in next, after 3000ms next;
+    driveOmni(0,0,-0.7), after 5.5in next, after 3000ms next;
+    goto parking
+
+#parking:
+    driveRaw(0,0,0,0)

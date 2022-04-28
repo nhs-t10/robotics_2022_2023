@@ -1,0 +1,23 @@
+#init:
+    log("init"), after 2s next;
+    log("finished init"), next;
+    goto one
+
+#one:
+    log("one"), after 2s goto two
+
+#two:
+    log("two"), after 2s next;
+    log("2.2"), after 2s goto twopointfive
+
+#twopointfive:
+    log("2.5"), after 2s goto three
+
+#three:
+    log("three"), after 2s next;
+    let five = 5, log("3.1"), after 2s next;
+    if(five == 5) log("3.2"), after 2s next;
+    goto end
+
+#end:
+    driveOmni(0,0,0)

@@ -1,0 +1,174 @@
+package org.firstinspires.ftc.teamcode.auxilary.buildhistory;
+
+import android.os.Build;
+
+import androidx.annotation.RequiresApi;
+
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.time.Instant;
+import java.util.Arrays;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Set;
+import org.firstinspires.ftc.teamcode.auxilary.FileSaver;
+import org.firstinspires.ftc.teamcode.auxilary.PaulMath;
+import org.firstinspires.ftc.teamcode.managers.feature.FeatureManager;
+import org.jetbrains.annotations.NotNull;
+
+
+public class not_BuildHistory {
+    public static String builderBrowserFingerprint = "BUILDER_BROWSER_FINGERPRINT";
+    public static String buildTimeIso = "BUILD_TIME_ISO";
+    public static String buildName = "BUILD_NAME";
+    public static String buildHistory = "BUILD_HISTORY";
+    public static String buildHistoryIncludeLocal = "";
+    public static String buildContentPhrase = "BUILD_PHRASE";
+    public static String buildContentPhraseLong = "BUILD_PHRASE_LONG";
+    public static String buildContentHash = "BUILD_HASH";
+    public static String buildContentHashImage = "BUILD_HASH_IMAGE";
+    public static int buildNumber = BUILD_COUNT;
+
+    public static final String MEMORY_FILE = "build-history.csv";
+    public static final int MOST_RECENT_INCLUDE_NUM = 200;
+
+    public static String getJSON() {
+        String json = "{";
+        json += PaulMath.JSONify("builderBrowser") + ":" + PaulMath.JSONify(builderBrowserFingerprint) + ",";
+        json += PaulMath.JSONify("time") + ":" + PaulMath.JSONify(buildTimeIso) + ",";
+        json += PaulMath.JSONify("name") + ":" + PaulMath.JSONify(buildName) + ",";
+        json += PaulMath.JSONify("historyCsv") + ":" + PaulMath.JSONify(buildHistory) + ",";
+        json += PaulMath.JSONify("historyCsvLocal") + ":" + PaulMath.JSONify(buildHistoryIncludeLocal) + ",";
+        json += PaulMath.JSONify("w3w") + ":" + PaulMath.JSONify(buildContentPhrase) + ",";
+        json += PaulMath.JSONify("phrase") + ":" + PaulMath.JSONify(buildContentPhraseLong) + ",";
+        json += PaulMath.JSONify("hash") + ":" + PaulMath.JSONify(buildContentHash) + ",";
+        json += PaulMath.JSONify("img") + ":" + PaulMath.JSONify(buildContentHashImage) + ",";
+        json += PaulMath.JSONify("num") + ":" + PaulMath.JSONify(buildNumber);
+        json += "}";
+
+        return json;
+    }
+
+    public static void init() {
+        loadLocalMemory();
+    }
+    private static void loadLocalMemory() {
+        FileSaver localFile = new FileSaver(MEMORY_FILE);
+        String localFileContent = PaulMath.join("\n", localFile.readLines().toArray(new String[0]));
+
+        String[][] localBuildTable = parseCsvToTable(localFileContent);
+        String[][] builtBuildTable = getBuildHistoryAsTable();
+
+        HashMap<String, String> records = new HashMap<>();
+
+
+        for(String[] row : builtBuildTable) {
+            if(row.length < 2) continue;
+            records.put(row[0], row[1]);
+        }
+        for(String[] row : localBuildTable) {
+            if(row.length < 2) continue;
+            records.put(row[0], row[1]);
+        }
+
+
+        Set<Map.Entry<String, String>> entrySet = records.entrySet();
+
+        //copy over to an array
+        BuildMemoryData[] rowData = new BuildMemoryData[records.size()];
+        int index = 0;
+        for(Map.Entry<String, String> entry : entrySet) {
+            try {
+                Date date = (new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'")).parse(entry.getValue());
+                long ms = date.getTime();
+                rowData[index] = new BuildMemoryData(entry.getKey(), ms, entry.getValue());
+            } catch (ParseException e) {
+                rowData[index] = new BuildMemoryData(entry.getKey(), 0, entry.getValue());
+            }
+            index++;
+        }
+
+        //sort ascending
+        for(int i = 0; i < rowData.length; i++) {
+            long maxTime = rowData[i].getTime();
+            int maxIndex = i;
+
+            for(int j = i + 1; j < rowData.length; j++) {
+                if(rowData[j].getTime() > maxTime) {
+                    maxTime = rowData[j].getTime();
+                    maxIndex = j;
+                }
+            }
+            if(maxIndex != i) {
+                BuildMemoryData swap = rowData[i];
+                rowData[i] = rowData[maxIndex];
+                rowData[maxIndex] = swap;
+            }
+        }
+
+        //only include the most recent 200 values
+        String[] sliceRows = new String[Math.min(rowData.length, MOST_RECENT_INCLUDE_NUM)];
+        for(int i = sliceRows.length - 1; i >= 0; i--) {
+            sliceRows[i] = rowData[i + (rowData.length - sliceRows.length)].toString();
+        }
+
+        //save values, both in the file and in the static variable so that others can have up-to-date data
+        String content = PaulMath.join("\n", sliceRows);
+        localFile.overwriteFile(content);
+        buildHistoryIncludeLocal = content;
+    }
+    public static String[][] getBuildHistoryAsTable() {
+        return parseCsvToTable(buildHistory);
+    }
+
+    private static String[][] parseCsvToTable(String csv) {
+        String[] rows = csv.split("\n");
+        String[][] table = new String[rows.length][];
+
+        for(int i = 0; i < rows.length; i++) {
+            table[i] = rows[i].split(",");
+        }
+        return table;
+    }
+    private static class BuildMemoryData {
+        public String name;
+        public long time;
+        public String isoTime;
+
+        public String getName() {
+            return name;
+        }
+
+        public void setName(String name) {
+            this.name = name;
+        }
+
+        public long getTime() {
+            return time;
+        }
+
+        public void setTime(long time) {
+            this.time = time;
+        }
+
+        public String getIsoTime() {
+            return isoTime;
+        }
+
+        public void setIsoTime(String isoTime) {
+            this.isoTime = isoTime;
+        }
+
+        public BuildMemoryData(String name, long time, String isoTime) {
+            this.name = name;
+            this.time = time;
+            this.isoTime = isoTime;
+        }
+
+        @NotNull
+        public String toString() {
+            return this.name = "," + this.isoTime;
+        }
+    }
+}

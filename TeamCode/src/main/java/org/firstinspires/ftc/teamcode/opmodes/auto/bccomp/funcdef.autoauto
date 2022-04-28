@@ -1,0 +1,8 @@
+$
+compilerMode: "optimized-bytecode"
+$
+function f(e = 3) {
+        return(e + "hah")
+    }, next;
+    log(f(2));
+    pass

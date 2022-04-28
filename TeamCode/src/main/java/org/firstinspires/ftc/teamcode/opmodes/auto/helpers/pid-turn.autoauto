@@ -1,0 +1,7 @@
+
+    let target = module_args[0],
+        let error = target - getThirdAngleOrientation(), log(error),
+        let kP = 0.1,
+        let t = -1*error*kP,
+        driveOmni(0, t.clip(-0.5, 0.5), 0),
+        provide(Math.abs(error))

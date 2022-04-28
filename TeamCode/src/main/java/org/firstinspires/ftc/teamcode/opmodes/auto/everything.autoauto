@@ -1,0 +1,105 @@
+$
+compilerMode: "optimized-bytecode"
+$
+
+/*
+    This is a test of absolutely everything that Autoauto can do,
+    as of Feb 14, 2022
+*/
+
+//this is an unlabeled statepath. It's the first statepath!
+log("ULS!"), goto afterStatements;
+
+#afterStatements:
+    log("zero seconds..."), after 1ms next;
+    //meters, not minutes!
+    log("zero meters..."), after 0m next;
+    log("zero milliseconds..."), after 0ms next;
+    log("zero centimeters..."), after 0cm next;
+    log("zero light-years..."), after 0ly goto ifStatements
+
+#ifStatements:
+    if(true) { log("this works like java"), next };
+    if(false) log("fail"), next; //this next should trigger, because it's outside of the `if`
+    if(false) { log("fail") } else { next }; //else clauses
+    goto letStatements;
+
+#letStatements:
+    //an empty table!
+    let table = [], next;
+    //setting properties in the table
+    let table.foup = "jeremy", next;
+    log(table), next;
+    let table = 3, next; //actually, it's a number now :)
+    let table.foofoo = 2, next; //it can still have properties
+    log(table), log(table.foofoo), next;
+    goto loopingPath
+
+#loopingPath:
+    let counter = 0, next; //this should log the numbers 1-20!
+    let counter = counter + 1, log("count: " + counter), next;
+    if(counter < 20) { skip -1 } else { next };
+    goto functionDefinition;
+
+#functionDefinition:
+    function f(e = 3) {
+        return(e + "hah")
+    }, next;
+    log(f(2)), log(f("ha")), next;
+    let d = func(e, k = "fef") {
+        return(e + k + "oop")
+    }, next;
+    log(d(24, nonexistent = 32)), log(d(k = 2)), log(d(2, 1)), next;
+    let g = func() {
+        log("I don't return anything")
+    }, next;
+    g(), g(3), g(ff = "still nonexistent; do nothing"), next;
+    goto skipWrapping
+
+#skipWrapping:
+    skip -1;
+    log("IF WE GET HERE, SOMETHING IS WRONG!");
+    goto undefinedTesting
+
+#undefinedTesting:
+    let u = undefinedvariablethatwedontknowof, next;
+    log(u), next;
+    log(u.sjkdla), next;
+    log(0/0), next;
+    let fdjk = [], next;
+    if(Math.random() > 0.5) let dd = fdjk / 2 else let dd = ohoho = 0 / 0, next;
+    log(dd), next;
+    goto typing;
+
+#typing:
+    if(Math.random() > 0.5) { let fif = 3 } else { let fif = "" }, next;
+    log(fif), next;
+    if(Math.random() > 0.5) { let ire = 2 }, next;
+    log(ire), next;
+    goto mathOps;
+
+#mathOps:
+    //the variable `two` only exists so that the compiler won't be helpful.
+    //if you do something like `2 + 2`, the compiler sees that & converts it to `4`!
+    //but with `two + 2`, even if `two` always equals `2`, there might be properties in `two`
+    //so it doesn't.
+    let two = 2, next;
+    log(two >= 2), next;
+    log((two > 3) == false), next;
+    log(two < 3), next;
+    log(two <= 2), next;
+    log([two] == [2]), next;
+    log(two == 2), next;
+    log(two != "fefe"), next;
+    log([a=two]+[b=6]==[a=2,b=6]), next;
+    log(two+"e"=="2e"), next;
+    log(two+2 == 4), next;
+    log(two / 4 == 0.5), next;
+    log(two - 2 == 0), next;
+    log(3 ** two == 9), next;
+    log(3 ^ two == 9), next;
+    log(3 % two == 1), next;
+    goto done;
+
+#done:
+    pass
