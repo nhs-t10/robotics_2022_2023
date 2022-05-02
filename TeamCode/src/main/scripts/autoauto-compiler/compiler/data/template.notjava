@@ -26,6 +26,7 @@ import org.firstinspires.ftc.teamcode.managers.movement.MovementManager;
 import org.firstinspires.ftc.teamcode.managers.sensor.SensorManager;
 import org.firstinspires.ftc.teamcode.managers.telemetry.TelemetryManager;
 import org.firstinspires.ftc.teamcode.managers.nate.NateManager;
+import org.firstinspires.ftc.teamcode.managers.autocorrection.AutocorrectionManager;
 
 import static org.firstinspires.ftc.teamcode.auxilary.dsls.autoauto.model.Location.L;
 import static org.firstinspires.ftc.teamcode.auxilary.dsls.autoauto.runtime.AutoautoRuntime.R;
