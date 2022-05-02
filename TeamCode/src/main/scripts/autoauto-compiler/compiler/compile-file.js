@@ -39,8 +39,22 @@ async function tryRunTransmutation(transmutation, fileContext) {
         return true;
     } catch(e) {
         fileContext.status = "fail";
-
-        androidStudioLogging.sendTreeLocationMessage(e, fileContext.sourceFullFileName, "ERROR");
+        
+        if(e instanceof Error) {
+            androidStudioLogging.sendTreeLocationMessage({
+                kind: "ERROR",
+                text: "Internal Compiler Error",
+                original: `There was an internal error. This file will be skipped, but others will still be compiled.\n` + 
+                `Please contact these people in this order: \n` +
+                `1) Connor\n` +
+                `2) Chloe\n` +
+                `\n` +
+                `The stack of the error is below:\n` +
+                e.message + "\n" + e.stack
+            });
+        } else {
+            androidStudioLogging.sendTreeLocationMessage(e, fileContext.sourceFullFileName, "ERROR");
+        }
         
         return false;
     }
