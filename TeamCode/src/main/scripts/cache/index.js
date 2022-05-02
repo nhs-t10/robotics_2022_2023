@@ -2,19 +2,20 @@ var crypto = require("crypto");
 
 var fs = require("fs");
 var path = require("path");
-const commandLineInterface = require("../command-line-interface");
 
 var safeFsUtils = require("../script-helpers/safe-fs-utils");
 const structuredSerialise = require("../script-helpers/structured-serialise");
+const cleanOldCache = require("./clean-old-cache");
+const cacheMetadata = require("./cache-metadata");
 
 const CACHE_DIR = findCacheDirectory();
 const CACHE_MAX_BYTES = 20_000_000; //20 MB
 const CACHE_META_FILE = path.join(__dirname, ".cache.meta.json");
 
-if(!fs.existsSync(CACHE_META_FILE)) fs.writeFileSync(CACHE_META_FILE, "{}");
-var cacheMeta = require(CACHE_META_FILE);
 
-cleanOldCache(cacheMeta);
+var cacheMeta = cacheMetadata(CACHE_META_FILE);
+
+cleanOldCache(cacheMeta.getDataObject(), CACHE_DIR, CACHE_MAX_BYTES);
 
 module.exports = {
     save: function(key, value) {
@@ -22,10 +23,9 @@ module.exports = {
         var filename = keyFile(encodedKey);
         var dataBuffer = serialiseData(value);
 
-        cacheMeta[encodedKey] = { key: encodedKey, file: filename, size: dataBuffer.length, lastWrite: Date.now() };
+        cacheMeta.updateKey(encodedKey, filename, dataBuffer.length);
 
-        safeFsUtils.createDirectoryIfNotExist(filename);
-        fs.writeFileSync(filename, dataBuffer);
+        safeFsUtils.safeWriteFileEventually(filename, dataBuffer);
     },
     get: function(key, defaultValue) {
         var encodedKey = sha(key);
@@ -38,6 +38,7 @@ module.exports = {
     remove: function(key) {
         var encodedKey = sha(key);
         var file = keyFile(encodedKey);
+        cacheMeta.removeKey(encodedKey);
         if(fs.existsSync(file)) fs.unlinkSync(file);
     }
 }
@@ -94,34 +95,3 @@ function sha(k) {
     return crypto.createHash("sha256").update(JSON.stringify(k)).digest("hex");
 }
 
-function cleanOldCache(cacheMeta) {
-    const metaEntries = Object.values(cacheMeta);
-    let cacheFiles = [], totalSize = 0, oldestCacheEntry = undefined, oldestLastWrite = 0;
-    
-    for(const cacheMetaEntry of metaEntries) {
-
-        cacheFiles.push(cacheMetaEntry.file);
-
-        if(cacheMetaEntry.size > CACHE_MAX_BYTES) removeMetaEntry(cacheMeta, cacheMetaEntry);
-        else totalSize += cacheMetaEntry.size;
-
-        if(cacheMetaEntry.lastWrite < oldestLastWrite) {
-            oldestTime = cacheMetaEntry.lastWrite;
-            oldestCacheEntry = cacheMetaEntry;
-        }
-    }
-
-    safeFsUtils.cleanDirectory(CACHE_DIR, cacheFiles, true);
-
-    if(totalSize > CACHE_MAX_BYTES) removeMetaEntry(cacheMeta, oldestCacheEntry);
-}
-
-function removeMetaEntry(cacheMeta, cacheMetaEntry) {
-    console.warn("Flushing cache entry " + cacheMetaEntry.key);
-    delete cacheMeta[cacheMetaEntry.key];
-    fs.unlinkSync(cacheMetaEntry.file);
-}
-
-process.on("exit", function() {
-    fs.writeFileSync(CACHE_META_FILE, JSON.stringify(cacheMeta));
-});

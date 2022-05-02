@@ -77,7 +77,7 @@ function constrainNumeric(type, filename, location, relativeOperatorSide) {
 
     if(!hasNum) androidStudioLogging.sendTreeLocationMessage({
         text: `Uncheckable type mismatch on binary operator`,
-        original: `This operator uses a numeric type, but the type checker could only promise \`${type.join("|")}\` for the ${relativeOperatorSide} side.`,
+        original: `This operator uses a numeric type, but the type checker could only promise \`${type.join("|") || "?"}\` for the ${relativeOperatorSide} side.`,
         kind: "WARNING",
         location: location
     }, filename)

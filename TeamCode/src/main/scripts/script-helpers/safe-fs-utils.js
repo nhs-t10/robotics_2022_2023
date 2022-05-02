@@ -89,6 +89,11 @@ function createDirectoryIfNotExist(fileName) {
 }
 
 function cleanDirectory(dir, dontDeleteFiles, dontDeleteTopDirectory) {
+    if (!fs.existsSync(dir)) return;
+    else if(fs.statSync(dir).isDirectory() == false) return;
+    
+    if(dontDeleteFiles === undefined) dontDeleteFiles = [];
+    
     var files = fs.readdirSync(dir, { withFileTypes: true });
     var filesLeft = files.length;
     files.forEach(x=> {

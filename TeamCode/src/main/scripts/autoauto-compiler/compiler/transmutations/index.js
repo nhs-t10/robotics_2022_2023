@@ -145,13 +145,16 @@ function loadTransmutation(sourceFile, metaFile) {
 }
 
 /**
- * @typedef {object} Transmutation
+ * @typedef {object} TransmutationMetadata
  * @property {string[]} requires
  * @property {string} id
- * @property {"output"|"transformation"|"input"|"information"|"check","codebase_postprocess"|"alias"} type
- * @property {TransmutationFunction} run
- * @property {string[]?} readsFiles
- * @property {string} sourceFile
+ * @property {"output"|"transformation"|"input"|"information"|"check","codebase_postprocess"|"codebase_preprocess"|"alias"} type
+ * @property {string[]?} readsFiles An optional array of files which this transmutation reads. This is important for caching.
+ */
+
+/**
+ * @typedef {TransmutationMetadata} Transmutation
+ * @property {string} sourceFile 
  */
 
 
@@ -159,7 +162,7 @@ function loadTransmutation(sourceFile, metaFile) {
  * @typedef {object} SerializableTransmutationInstance
  * @property {string[]} requires
  * @property {string} id
- * @property {"output"|"transformation"|"input"|"information"|"check","codebase_postprocess"|"alias"} type
+ * @property {"output"|"transformation"|"input"|"information"|"check","codebase_postprocess"|"codebase_postprocess"|"alias"} type
  * @property {string[]?} readsFiles
  * @property {boolean} isDependency
  * @property {string} sourceFile
