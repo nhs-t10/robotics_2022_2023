@@ -11,6 +11,7 @@ import com.qualcomm.robotcore.hardware.TouchSensor;
 
 import org.firstinspires.ftc.teamcode.auxilary.buildhistory.BuildHistory;
 import org.firstinspires.ftc.teamcode.auxilary.integratedasync.PriorityAsyncOpmodeComponent;
+import org.firstinspires.ftc.teamcode.managers.apple.AppleManager;
 import org.firstinspires.ftc.teamcode.managers.feature.FeatureManager;
 import org.firstinspires.ftc.teamcode.managers.input.InputManager;
 import org.firstinspires.ftc.teamcode.managers.input.InputOverlapResolutionMethod;
@@ -42,6 +43,7 @@ public class DualController extends OpMode {
     private boolean dashing = false;
     private double clawCheck;
     private int clawPos;
+    private AppleManager oranges;
 
     @Override
     public void init() {
@@ -65,6 +67,8 @@ public class DualController extends OpMode {
                 servo           ("nateClaw", "rampLeft", "rampRight"),
                 motor           ("Carousel", "ClawMotor", "noodle", "intake")
         );
+
+        oranges = new AppleManager(hands);
 
         clawPosition = new NateManager(hands, hardwareMap.get(TouchSensor.class, "limit"));
         input = new InputManager(gamepad1, gamepad2);
@@ -103,6 +107,7 @@ public class DualController extends OpMode {
         input.registerInput("ClawUp", new ButtonNode("gamepad2dpadup"));
         input.registerInput("ClawDown", new ButtonNode("gamepad2dpaddown"));
         input.registerInput("ClawOpen", new ButtonNode("gamepad2leftbumper"));
+        input.registerInput("Grab", new ButtonNode("gamepad2x"));
         input.registerInput("Intake",
                 new AnyNode(
                         new ButtonNode("righttrigger"),
@@ -202,6 +207,9 @@ public class DualController extends OpMode {
             }
             if (input.getBool("ClawPos2") == true) {
                 clawPosition.positionTwo();
+            }
+            if (input.getBool("Grab") == true) {
+                oranges.grab();
             }
             if (input.getBool("ClawPos3") == true) {
                 clawPosition.positionThree();

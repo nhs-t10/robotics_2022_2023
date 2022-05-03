@@ -12,7 +12,7 @@ import org.firstinspires.ftc.teamcode.managers.movement.MovementManager;
 public class AutocorrectionManager extends FeatureManager {
     MovementManager driving;
     ImuManager imu;
-    
+
     private int lastFL;
     private int lastFR;
     private int lastBL;
