@@ -15,6 +15,11 @@ function getUnitForKey(k) {
     return unitData.data[k];
 }
 
+/**
+ * 
+ * @param {string} abb 
+ * @returns {UnitRecord}
+ */
 function getUnitForAbbreviation(abb) {
     var key = unitData.index[abb];
     
@@ -22,6 +27,14 @@ function getUnitForAbbreviation(abb) {
     else if(key.length > 1) return discriminateToUnique(key);
     else return unitData.data[key[0]];
 }
+
+/**
+ * @typedef {object} UnitRecord
+ * @property {string} unit
+ * @property {string} dimension
+ * @property {string[]} abbs
+ * @property {number} conversionFactors
+ */
 
 function discriminateToUnique(unitNames) {
     var uniq = [];

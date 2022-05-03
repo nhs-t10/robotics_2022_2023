@@ -4,7 +4,9 @@ var query = require("../query");
 
 module.exports = {
     summary: "Unreachable Statepath",
-    run: function(ast) {
+    run: function(ast, frontmatter) {
+        
+        if (frontmatter.ignorewarning_unreachable_statepath == true) return;
 
         var gotoStatements = query.getAllOfType(ast, "GotoStatement");
         var statepaths = query.getAllOfType(ast, "LabeledStatepath");
@@ -25,6 +27,11 @@ module.exports = {
                 warns.push({
                     kind: "WARNING",
                     text: `The program will never reach the statepath \`${statepaths[i].label}\``,
+                    original: `Add \`ignorewarning_unreachable_statepath: true\` to the frontmatter at the start of your file to remove this warning.\n` +
+                        `For example,
+                $
+                ignorewarning_unreachable_statepath: true
+                $`,
                     location: statepaths[i].location,
                 });
             }

@@ -9,7 +9,7 @@ module.exports = function (context) {
 }
 
 
-var dimensionConversions = {
+var DEFAULT_DIMENSION_CONVERSIONS = {
     "L": {//length
         autoautoBase: "cm",
         coefFromMetricBase: 0.01
@@ -25,12 +25,32 @@ var dimensionConversions = {
 }
 
 function convert(tree, loggingFile, frontmatter) {
+    var dimensionConversions = loadDimensionConversionsFromFrontmatter(DEFAULT_DIMENSION_CONVERSIONS, frontmatter);
+    
     var unitvalues = query(tree, "UnitValue");
-    unitvalues.forEach(x => rewriteUnitvalue(x, loggingFile, frontmatter));
+    unitvalues.forEach(x => rewriteUnitvalue(x, loggingFile, frontmatter, dimensionConversions));
     return tree;
 }
 
-function rewriteUnitvalue(unitValue, loggingFile, frontmatter) {
+function loadDimensionConversionsFromFrontmatter(defaultConversions, frontmatter) {
+    var conversions = {};
+    Object.assign(conversions, defaultConversions);
+    
+    const prefix = "measured_dimension_base_unit_";
+    
+    for(const key in frontmatter) {
+        if (key.startsWith(prefix)) {
+            var dim = key.substring(prefix.length);
+            conversions[dim] = {
+                autoautoBase: frontmatter[key],
+                coefFromMetricBase: unitConversion.getUnitForAbbreviation(frontmatter[key]).conversionFactors
+            };
+        }
+    }
+    return conversions;
+}
+
+function rewriteUnitvalue(unitValue, loggingFile, frontmatter, dimensionConversions) {
     if (unitValue.value.type == "NumericValue" && unitValue.unit.type == "Identifier") {
         var uType = unitValue.unit.value;
         var uVal = unitValue.value.v;
@@ -51,7 +71,7 @@ function rewriteUnitvalue(unitValue, loggingFile, frontmatter) {
         }
 
         var valInMetricBase = uVal * unitRecord.conversionFactors;
-        var dimension = unitRecord.dimension;
+        var dimension = unitRecord.dimension.replace(/\W/g, "_");
 
         var dimConv = dimensionConversions[dimension];
         if (dimConv) {
@@ -101,9 +121,9 @@ function errorNoMeasurement(oldUnit, oldUnitQuant, parsedAsUnit, loggingFile, lo
         + `a) Add a unit. If your runtime supports measuring this dimension, add 'measured_dimension_${dimensionKey}_base_unit: "unit abbreviation"
         to the frontmatter at the start of the file. For example,
           $
-          measured_dimension_${dimensionKey}_base_unit: "${oldUnit}"
+          measured_dimension_base_unit_${dimensionKey}: "${oldUnit}"
           $
-        Please make sure that you can *actually* measure ${oldUnit} before doing this!`
+        Please make sure that the runtime can *actually* measure ${oldUnit} before doing this!`
         + `\nb) Rephrase as multiple units. Distance, planar angle, and time are guaranteed support.`
     };
     
@@ -111,9 +131,9 @@ function errorNoMeasurement(oldUnit, oldUnitQuant, parsedAsUnit, loggingFile, lo
 }
 
 function notifyUserOfPrecisionLoss(newUnit, newUnitQuant, newUnitPreciseDescrip, oldUnit, oldUnitQuant, loggingLocation, loggingFile, frontmatter) {
+    if (frontmatter.ignorewarning_unit_conversion_precision_loss === true) return;
+    
     if(newUnitQuant > Number.MAX_SAFE_INTEGER || newUnitQuant < Number.MIN_SAFE_INTEGER) {
-        
-        if (frontmatter.ignorewarning_unit_conversion_precision_loss === true) return;
         
         var crossedBarrierInt = newUnitQuant > 0 ? Number.MAX_SAFE_INTEGER : Number.MIN_SAFE_INTEGER;
         var overagePercentage = (newUnitQuant / crossedBarrierInt) - 1;
@@ -153,7 +173,7 @@ function makeSureUserIsntAFilthyAmerican(loggingLocation, loggingFile, frontmatt
                 $
                 ignorewarning_american_m_unit: true
                 $
-              If you do that, 'm' will STILL mean 'meters', but this warning won't show every time.
+              If you do that, 'm' will STILL mean 'metres', but this warning won't show every time.
             b) Use 'metres' or 'min' instead of 'm'.`,
         location: loggingLocation
     }, loggingFile);

@@ -5,7 +5,7 @@ var androidStudioLogging = require("../../../../../script-helpers/android-studio
 
 var checks = loadChecksFromFiles(require("./check-file-names"));
 
-module.exports = function(ast, filename) {
+module.exports = function (ast, filename, frontmatter) {
     var failed = false;
     for(var i = 0; i < checks.length; i++) {
         var check = checks[i];
@@ -13,7 +13,7 @@ module.exports = function(ast, filename) {
         var tag = "[" + check.id + "] " + check.summary;
         
         try {
-            var res = check.run(ast);
+            var res = check.run(ast, frontmatter);
             if(res) {
                 androidStudioLogging.sendTreeLocationMessage(res, filename);
                 
