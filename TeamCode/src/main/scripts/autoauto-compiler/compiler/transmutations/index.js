@@ -14,9 +14,9 @@ module.exports = {
      * @param {string} s 
      * @returns {SerializableTransmutationInstance[]}
      */
-    expandTasks: function(s) {
-        var tasks = memoizedParseSpecExpandAliases(s);
-        insertDeps(tasks);
+    expandTasks: function(taskSpec, file) {
+        var tasks = memoizedParseSpecExpandAliases(taskSpec, file);
+        insertDeps(tasks, undefined, file);
         
         return idsToTras(tasks);
     },
@@ -41,14 +41,14 @@ function idsToTras(ids) {
     });
 }
 
-function memoizedParseSpecExpandAliases(sp) {
+function memoizedParseSpecExpandAliases(sp, file) {
     
     var t = JSON.stringify(sp);
     
     var cVal = memoizeParsedAliases[t];
     
     if(!cVal) {
-        cVal = parseSpecExpandAliases(sp);
+        cVal = parseSpecExpandAliases(sp, file);
         memoizeParsedAliases[t] = cVal;
     }
     return cVal;
@@ -58,17 +58,14 @@ function memoizedParseSpecExpandAliases(sp) {
      * @param {string|string[]} s
      * @returns {TransmutationTask[]}
      */
-function parseSpecExpandAliases(sp) {
+function parseSpecExpandAliases(sp, file) {
     if(typeof sp === "string") sp = sp.split(/ +/);
 
     var r = [];
     sp.forEach(x => {
         x = x.trim();
 
-        var optional = x.endsWith("?");
-        x = x.replace(/\?/, "");
-
-        var expanded = expandAlias(x);
+        var expanded = expandAlias(x, file);
         
         r = r.concat(expanded);
     });
@@ -76,12 +73,12 @@ function parseSpecExpandAliases(sp) {
     return r;
 }
 
-function insertDeps(insertInto, findDepsIn) {
+function insertDeps(insertInto, findDepsIn, file) {
     if(findDepsIn === undefined) findDepsIn = insertInto;
     
     for(var i = 0; i < findDepsIn.length; i++) {
         var req = transmutations[findDepsIn[i].id].requires;
-        var reqExpanded = memoizedParseSpecExpandAliases(req);
+        var reqExpanded = memoizedParseSpecExpandAliases(req, file);
         
         var intoIndex = insertInto.findIndex(x=>x.id == findDepsIn[i].id);
         
@@ -92,19 +89,24 @@ function insertDeps(insertInto, findDepsIn) {
                 intoIndex++;
             }
         }
-        insertDeps(insertInto, reqExpanded);
+        insertDeps(insertInto, reqExpanded, file);
     }
 }
 
-function expandAlias(spk) {
+function expandAlias(spk, file) {
     spk = spk.trim();
     
     var category = spk.startsWith(":");
     spk = spk.replace(":","");
 
     var keys = Object.keys(transmutations);
-    var rgxp = new RegExp("^" + spk.replace(/\*/g, ".*") + "$");
-
+    var rgxp;
+    try {
+        rgxp = new RegExp("^" + spk.replace(/\*/g, ".*") + "$");
+    } catch(e) {
+        throw `Bad task specifier ${JSON.stringify(spk)} in ${file}`;
+    }
+    
     var globspanded = keys.filter(x => {
         if(category) return rgxp.test(transmutations[x].type);
         else return rgxp.test(x);
@@ -115,7 +117,7 @@ function expandAlias(spk) {
         var e = transmutations[x];
         if (!e) throw "No such transmutation `" + x + "`";
         
-        if (e.type == "alias") return e.aliasesTo.split(" ").map(x=>expandAlias(x));
+        if (e.type == "alias") return e.aliasesTo.split(" ").map(x => expandAlias(x, file));
         else return {id: e.id};
     }).flat(2);
 }

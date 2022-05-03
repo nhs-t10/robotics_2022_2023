@@ -5,7 +5,7 @@ function flCacheToTypes(flCache) {
     
     for(var k in flCache) {
         if(k == "cacheVersion") continue;
-        var allFileMethods = flCache[k].data.methods;
+        var allFileMethods = flCache[k].methods;
         for (var i = 0; i < allFileMethods.length; i++) {
             insertMethod(allFileMethods[i], methodTypeMap);
         }

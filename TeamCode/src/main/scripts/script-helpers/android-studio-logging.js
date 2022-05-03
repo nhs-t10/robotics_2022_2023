@@ -114,12 +114,14 @@ function sendRawText(txt) {
 function humanReadableFormat(msg) {
     var mForm = "";
 
-    if (msg.sources[0]) {
-        mForm += msg.sources[0].file + ":";
-        if (msg.sources[0].location) {
-            mForm += msg.sources[0].location.startLine + ":";
+    if(msg.sources) {
+        if (msg.sources[0]) {
+            mForm += msg.sources[0].file + ":";
+            if (msg.sources[0].location) {
+                mForm += msg.sources[0].location.startLine + ":";
+            }
+            mForm += " ";
         }
-        mForm += " ";
     }
 
     mForm += msg.kind.toLowerCase() + ": ";

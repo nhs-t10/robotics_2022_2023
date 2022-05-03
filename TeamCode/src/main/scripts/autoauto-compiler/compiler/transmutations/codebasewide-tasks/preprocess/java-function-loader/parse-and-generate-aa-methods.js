@@ -13,6 +13,7 @@ var processTemplate = require("./make-robotfunction-class.js");
 
 var parserTools = require("../../../../../../script-helpers/parser-tools");
 const safeFsUtils = require("../../../../../../script-helpers/safe-fs-utils.js");
+const androidStudioLogging = require("../../../../../../script-helpers/android-studio-logging.js");
 
 module.exports = function(javaSource, preexistingNames) {
     try {
@@ -21,8 +22,7 @@ module.exports = function(javaSource, preexistingNames) {
     } catch(e) {
         var classDeclarationIndex = javaSource.indexOf("public class");
         var classDeclarationIndexEnd = javaSource.indexOf("\n", classDeclarationIndex);
-        console.error(e);
-        console.error("Error parsing java source code! Make sure that it's correct: " + javaSource.substring(classDeclarationIndex,classDeclarationIndexEnd));
+        androidStudioLogging.warning("Error parsing java source code! Make sure that it's correct: " + javaSource.substring(classDeclarationIndex,classDeclarationIndexEnd));
 
         return null;
     }
@@ -39,10 +39,7 @@ module.exports = function(javaSource, preexistingNames) {
     var overloads = groupMethodsIntoOverloads(methods);
 
     var processedMethodClassLocs = overloads.map(x=>generateRobotFunction(x, fullClassName, preexistingNames));
-    return {
-        sourceClass: fullClassName,
-        methods: processedMethodClassLocs
-    };
+    return processedMethodClassLocs;
 }
 
 function packageNameToString(packageName) {

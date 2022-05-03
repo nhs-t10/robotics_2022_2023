@@ -14,9 +14,6 @@ var cacheManagers = cache.get(functionLoaderConfig.CACHE_KEY, { managers: {} });
 
 if (cacheManagers.cacheVersion != functionLoaderConfig.CACHE_VERSION) cacheManagers = { managers: {} };
 
-var robotFunctionsDirectory = path.join(rootDirectory, "TeamCode/gen/org/firstinspires/ftc/teamcode/auxilary/dsls/autoauto/runtime/robotfunctions");
-if (!fs.existsSync(robotFunctionsDirectory)) cacheManagers = { data: {} };
-
 cacheManagers.cacheVersion = functionLoaderConfig.CACHE_VERSION;
 
 var managerArgs = {};
@@ -27,8 +24,9 @@ const safeFsUtils = require("../../../../../../script-helpers/safe-fs-utils");
 
 if (!fs.existsSync(managersDir)) throw "Managers directory `" + managersDir + "` doesn't exist";
 
-var managers = loadManagersFromFolder(managersDir);
 module.exports = async function() {
+    var managers = loadManagersFromFolder(managersDir);
+    
     var methods = [];
     for (var i = 0; i < managers.length; i++) {
         var manager = managers[i];
@@ -36,19 +34,20 @@ module.exports = async function() {
 
         var sha = crypto.createHash("sha256").update(fileContent).digest("hex");
 
-        if (cacheManagers.managers[manager] === undefined) cacheManagers.managers[manager] = {};
+        if (cacheManagers.managers[manager] === undefined) cacheManagers.managers[manager] = { methods: [] };
 
         if (cacheManagers.managers[manager].javaSha === sha) {
-            methods = methods.concat(cacheManagers.managers[manager].data.methods);
+            methods = methods.concat(cacheManagers.managers[manager].methods);
         } else {
-            cacheManagers.managers[manager].javaSha = sha;
             var preexistingNames = methods.map(x => x.shimClassFunction.nameToUseInAutoauto).flat();
 
             var generated = generateAaMethods(fileContent, preexistingNames);
 
-            if (generated) cacheManagers.managers[manager].data = generated;
-
-            methods = methods.concat(cacheManagers.managers[manager].data.methods);
+            cacheManagers.managers[manager] = {
+                methods: generated || [],
+                javaSha: sha
+            };
+            methods = methods.concat(cacheManagers.managers[manager].methods);
         }
     }
 

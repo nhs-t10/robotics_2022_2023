@@ -6,7 +6,7 @@ module.exports = function(functionLoaderCache) {
     var cachedManagers = Object.values(functionLoaderCache).filter(x => typeof x === "object");
     var invertedMapByFunctionName = {};
     cachedManagers.forEach(x =>
-        x.data.methods.forEach(y =>
+        x.methods.forEach(y =>
             invertedMapByFunctionName[y.shimClassFunction.nameToUseInAutoauto] = y.originalSourceClass)
     );
 

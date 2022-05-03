@@ -10,6 +10,8 @@ var robotFunctionsDirectory = path.join(rootDirectory, "TeamCode/gen/org/firstin
  * @param {string[]} methodClassNames An array of class names that are used in this build.
  */
 module.exports = function(methodClassNames) {
+    if(!fs.existsSync(robotFunctionsDirectory)) return;
+    
     var javaFileNames = fs.readdirSync(robotFunctionsDirectory);
     for(var i = 0; i < javaFileNames.length; i++) {
         if(!javaFileNames[i].endsWith(".java")) continue;

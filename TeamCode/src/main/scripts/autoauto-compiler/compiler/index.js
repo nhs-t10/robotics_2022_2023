@@ -11,6 +11,7 @@ const commandLineInterface = require("../../command-line-interface");
 const safeFsUtils = require("../../script-helpers/safe-fs-utils");
 const makeWorkersPool = require("./workers-pool");
 const folderScanner = require("./folder-scanner");
+const loadFrontmatter = require("./frontmatter-parser");
 
 const SRC_DIRECTORY = __dirname.substring(0 , __dirname.indexOf("src") + "src".length + 1);
 const COMPILED_RESULT_DIRECTORY = path.join(SRC_DIRECTORY, "../gen/org/firstinspires/ftc/teamcode/__compiledautoauto");
@@ -117,7 +118,7 @@ function makeFileContext(file, preprocessInputs) {
     var fileContent = fs.readFileSync(file).toString();
     var frontmatter = loadFrontmatter(fileContent);
 
-    var tPath = transmutations.expandTasks(frontmatter.compilerMode || "default");
+    var tPath = transmutations.expandTasks(frontmatter.compilerMode || "default", file);
     
     var ctx = {
         sourceBaseFileName: path.basename(file),
@@ -190,22 +191,4 @@ function jClassIfy(str) {
 }
 function capitalize(str) {
     return str[0].toUpperCase() + str.substring(1);
-}
-
-function loadFrontmatter(fCont) {
-    
-    try {
-        var fmI = fCont.indexOf("$");
-        if(fmI == -1) return {};
-        
-        var fmE = fCont.indexOf("$", fmI + 1);
-        if(fmE == -1) return {};
-        
-        var fmPar = (new Function(`return ({${fCont.substring(fmI + 1, fmE)}})`))();
-        
-        return fmPar;
-        
-    } catch(e) {
-        return {};
-    }
 }
