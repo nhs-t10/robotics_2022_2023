@@ -54,7 +54,6 @@ module.exports = async function() {
     deleteUnusedMethodClasses(methods.map(x => x.shimClassFunction.javaImplementationClass).flat());
 
     var robotFunctionLoaderAddress = path.join(rootDirectory, "TeamCode/gen/org/firstinspires/ftc/teamcode/auxilary/dsls/autoauto/runtime/RobotFunctionLoader.java");
-    if (!fs.existsSync(path.dirname(robotFunctionLoaderAddress))) fs.mkdirSync(path.dirname(robotFunctionLoaderAddress), { recursive: true });
 
     var robotFunctionsTemplate = require("./make-robotfunctionloader.js");
     var robotFunctionLoader = robotFunctionsTemplate(

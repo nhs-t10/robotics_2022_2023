@@ -61,7 +61,7 @@ function findCacheDirectory() {
         folder = path.join(require("os").homedir(), SIGIL);
     }
 
-    if(!fs.existsSync(folder)) fs.mkdirSync(folder);
+    if(!fs.existsSync(folder)) safeFsUtils.createDirectoryIfNotExist(folder);
     return folder;
 }
 

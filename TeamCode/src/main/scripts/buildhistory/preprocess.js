@@ -5,6 +5,7 @@ var fs = require("fs");
 const getDirectorySha = require("./get-dir-sha.js");
 const what3Words = require("./what-3-words-hash.js");
 const buildPng = require("./build-png");
+const safeFsUtils = require("../script-helpers/safe-fs-utils.js");
 
 var HASH_SECRET = "autoauto family";
 var BUILD_HASH_IGNORED = ["gen", "genealogy", ".cache", "buildimgs"];
@@ -32,8 +33,7 @@ var computerHash = crypto.createHmac("sha256", HASH_SECRET)
 var familyTreeRecordsDirectory = path.join(srcDirectory, "main/assets/genealogy");
 var familyLineFile = path.join(familyTreeRecordsDirectory, computerHash + ".json");
 
-if (!fs.existsSync(familyTreeRecordsDirectory)) fs.mkdirSync(familyTreeRecordsDirectory, { recursive: true });
-if (!fs.existsSync(familyLineFile)) fs.writeFileSync(familyLineFile, "{}"); //SAFE
+if (!fs.existsSync(familyLineFile)) safeFsUtils.safeWriteFile(familyLineFile, "{}"); //SAFE
 
 var familyLine = readJsonFile(familyLineFile);
 
@@ -93,9 +93,8 @@ function updateTemplate(familyLine, time, name, history, hash, phrase, pngFileAd
     var template = fs.readFileSync(path.join(__dirname, "not_BuildHistory.notjava")).toString();
 
     var resPath = path.join(srcDirectory, "../gen/org/firstinspires/ftc/teamcode/auxilary/buildhistory", "BuildHistory.java");
-    fs.mkdirSync(path.dirname(resPath), { recursive: true });
-
-    fs.writeFileSync(resPath, template //SAFE
+    
+    safeFsUtils.safeWriteFileEventually(resPath, template 
         .replace("BUILDER_BROWSER_FINGERPRINT", familyLine.browser)
         .replace("BUILD_TIME_ISO", time)
         .replace("BUILD_NAME", name)

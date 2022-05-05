@@ -4,7 +4,8 @@ const androidStudioLogging = require("./android-studio-logging");
 const cachedFs = require("./cached-fs");
 
 
-var cachedGitDirectory = getGitRootDirectory();
+const cachedGitDirectory = getGitRootDirectory();
+const cachedGradleRootDirectory = getGradleRootDirectory();
 
 module.exports = {
     safeWriteFile: safeWriteFile,
@@ -14,7 +15,8 @@ module.exports = {
     safeReadFile: safeReadFile,
     cachedSafeReadFile: cachedSafeReadFile,
     safeWriteFileEventually: safeWriteFileEventually,
-    getGitRootDirectory: ()=>cachedGitDirectory
+    getGitRootDirectory: ()=>cachedGitDirectory,
+    getGradleRootDirectory: ()=>cachedGradleRootDirectory
 }
 
 function cachedSafeReadFile(filename) {
@@ -82,9 +84,6 @@ function addToGitignore(globToAdd) {
 function createDirectoryIfNotExist(fileName) {
     var dirName = fileName;
     
-    //if the final term has a dot, assume it's a filename
-    if(path.basename(fileName).includes(".")) dirName = path.dirname(fileName);
-    
     if(!fs.existsSync(dirName)) {
         fs.mkdirSync(dirName, {recursive: true});
     }
@@ -127,6 +126,18 @@ function getGitRootDirectory() {
         else dir.pop();
 
         if(dir.length == 0) return undefined;
+    }
+    return dir.join(path.sep);
+}
+
+function getGradleRootDirectory() {
+    var dir = process.cwd().split(path.sep);
+    while (true) {
+        var dirPath = dir.join(path.sep);
+        if (fs.existsSync(path.join(dirPath, "build.gradle"))) break;
+        else dir.pop();
+
+        if (dir.length == 0) return undefined;
     }
     return dir.join(path.sep);
 }

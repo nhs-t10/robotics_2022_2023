@@ -3,7 +3,7 @@ var path = require("path");
 var maketest = require("./make-test");
 
 module.exports = function(context, contexts) {
-    var testDir = path.join(contexts[0].sourceRoot, "test/java/org/firstinspires/ftc/teamcode/unitTests/__testedautoauto");
+    var testDir = path.join(contexts[0].sourceRoot, "test/java/org/firstinspires/ftc/teamcode/unitTests");
     
     var testRecords = contexts
     .filter(x=>x.status == "pass")

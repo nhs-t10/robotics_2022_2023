@@ -13,9 +13,10 @@ const makeWorkersPool = require("./workers-pool");
 const folderScanner = require("./folder-scanner");
 const loadFrontmatter = require("./frontmatter-parser");
 
-const SRC_DIRECTORY = __dirname.substring(0 , __dirname.indexOf("src") + "src".length + 1);
-const COMPILED_RESULT_DIRECTORY = path.join(SRC_DIRECTORY, "../gen/org/firstinspires/ftc/teamcode/__compiledautoauto");
+const BUILD_ROOT_DIRS = (require("./get-build-root"))();
 
+const SRC_DIRECTORY = BUILD_ROOT_DIRS.src
+const COMPILED_RESULT_DIRECTORY = BUILD_ROOT_DIRS.gen;
 
 module.exports = (async function main() {
     await transmutations.loadTaskList();

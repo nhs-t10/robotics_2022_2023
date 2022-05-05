@@ -1,4 +1,4 @@
-package org.firstinspires.ftc.teamcode.unitTests.__testedautoauto;
+package org.firstinspires.ftc.teamcode.unitTests;
 
 import org.firstinspires.ftc.teamcode.managers.feature.FeatureManager;
 
