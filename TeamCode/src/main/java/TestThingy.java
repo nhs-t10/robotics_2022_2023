@@ -1,7 +1,7 @@
-import org.firstinspires.ftc.teamcode.__compiledautoauto.teamcode.opmodes.auto.Everything____AutoautoProgram;
-import org.firstinspires.ftc.teamcode.__compiledautoauto.teamcode.opmodes.auto.bccomp.Eratosthenes____AutoautoProgram;
-import org.firstinspires.ftc.teamcode.__compiledautoauto.teamcode.opmodes.auto.bccomp.Funcdef____AutoautoProgram;
-import org.firstinspires.ftc.teamcode.__compiledautoauto.teamcode.opmodes.auto.bccomp.Tabletest____AutoautoProgram;
+import org.firstinspires.ftc.teamcode.opmodes.auto.Everything____AutoautoProgram;
+import org.firstinspires.ftc.teamcode.opmodes.auto.bccomp.Eratosthenes____AutoautoProgram;
+import org.firstinspires.ftc.teamcode.opmodes.auto.bccomp.Funcdef____AutoautoProgram;
+import org.firstinspires.ftc.teamcode.opmodes.auto.bccomp.Tabletest____AutoautoProgram;
 import org.firstinspires.ftc.teamcode.auxilary.dsls.autoauto.model.AutoautoProgram;
 import org.firstinspires.ftc.teamcode.auxilary.dsls.autoauto.runtime.nativefunctions.LogFunction;
 
