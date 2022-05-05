@@ -40,7 +40,7 @@ function processLongFlag(schema, arg, aliasMap) {
 
     if(keyVal.length == 1) val = "true";
 
-    if(!schema[key]) throw `No command-line flag '${key}'.`;
+    if (!schema[key]) errorNoFlag(key);
     else schema[key] = castToSchema(schema[key].value, val);
 }
 
@@ -67,9 +67,14 @@ function processAliases(schema, arg, aliasMap) {
 
 
         var k = aliasMap[alias];
-        if(!k) throw `No command-line flag '${alias}'`;
+        if (!k) errorNoFlag(alias);
 
         lastKey = k;
         schema[k] = true;
     }
+}
+
+function errorNoFlag(flag) {
+    console.error(`No command-line flag '${flag}'`);
+    process.exit(1);
 }

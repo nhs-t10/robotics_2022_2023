@@ -35,6 +35,8 @@ function treeBlockToBytecode(block, constantPool) {
         blocks = blocks.concat(stmtBlocks);
     }
     
+    blocks.push(makeInitBlockToStopMotors(constantPool));
+    
     findAndRewriteStateInitBlocks(stateStartBlock, blocks, constantPool);
     
     return blocks.concat([stateStartBlock, stateEndBlock]);
@@ -60,6 +62,18 @@ function findAndRewriteStateInitBlocks(startBlock, allStatementBlocks, constantP
             jumpToLabel(stateInitBlocks[i + 1].label, constantPool)
         ];
     }
+}
+
+function makeInitBlockToStopMotors(constantPool) {
+    return makeStateinitBlock([
+        emitBytecodeWithLocation(bytecodeSpec.callfunction, [
+            emitBytecodeWithLocation(bytecodeSpec.getvar, [
+                emitConstantWithLocation("stopDrive", constantPool)
+            ]),
+            emitConstantWithLocation(0, constantPool),
+            emitConstantWithLocation(0, constantPool)
+        ], {})
+    ], constantPool);
 }
 
 /**
@@ -845,20 +859,26 @@ function emitConstantWithLocation(cons, pool, ast) {
  * 
  * @param {number|{code:number}} code 
  * @param {Bytecode[]} bcArgs
- * @param {*} ast 
+ * @param {object} ast 
  * @returns {Bytecode}
  */
 function emitBytecodeWithLocation(code, bcArgs, ast) {
-    if(arguments.length != 3) throw "aaaa".fefds.tvgr;
     
     var r = {};
     if (typeof code === "number") r.code = code;
     else Object.assign(r, code);
     
     r.args = arrShallowCp(bcArgs);
-    r.location = ast.location;
+    if(ast && ast.location) r.location = ast.location;
+    else r.location = makeSyntheticLocation();
     
     return r;
+}
+
+function makeSyntheticLocation() {
+    return {
+        synthetic: true
+    };
 }
 
 function arrShallowCp(arr) {

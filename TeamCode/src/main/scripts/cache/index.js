@@ -7,6 +7,7 @@ var safeFsUtils = require("../script-helpers/safe-fs-utils");
 const structuredSerialise = require("../script-helpers/structured-serialise");
 const cleanOldCache = require("./clean-old-cache");
 const cacheMetadata = require("./cache-metadata");
+const androidStudioLogging = require("../script-helpers/android-studio-logging");
 
 const CACHE_DIR = findCacheDirectory();
 const CACHE_MAX_BYTES = 20_000_000; //20 MB
@@ -32,7 +33,7 @@ module.exports = {
         
         var file = keyFile(encodedKey);
         
-        if(fs.existsSync(file)) return deserialiseData(fs.readFileSync(file));
+        if(fs.existsSync(file)) return deserialiseData(fs.readFileSync(file), defaultValue);
         else return defaultValue;
     },
     remove: function(key) {
@@ -73,9 +74,14 @@ function serialiseData(data) {
     }
 }
 
-function deserialiseData(dataBuffer) {
-    if(isStructuredSerialised(dataBuffer)) return structuredSerialise.fromBuffer(dataBuffer);
-    else return JSON.parse(dataBuffer.toString());
+function deserialiseData(dataBuffer, defaultValue) {
+    try {
+        if(isStructuredSerialised(dataBuffer)) return structuredSerialise.fromBuffer(dataBuffer);
+        else return JSON.parse(dataBuffer.toString());
+    } catch(e) {
+        androidStudioLogging.sendTreeLocationMessage(e, "", "ERROR");
+        return defaultValue;
+    }
 }
 
 function isStructuredSerialised(dataBuffer) {

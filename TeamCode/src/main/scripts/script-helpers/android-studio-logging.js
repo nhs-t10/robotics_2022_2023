@@ -2,6 +2,7 @@
 
 var cFs = require("./cached-fs");
 const commandLineArguments = require("../command-line-interface");
+const errorResolutionSuggestions = require("./error-resolution-suggestions");
 
 module.exports = {
     sendPlainMessage: sendPlainMessage,
@@ -72,7 +73,8 @@ function sendPlainMessage (msg) {
         if(capturingOutput) {
             captured.push(msg);
         } else {            
-            formatAndSendJsonFormat(msg);
+            if(commandLineArguments["no-agpbi"] == false) formatAndSendJsonFormat(msg);
+            
             formatAndSendHumanyFormat(msg);
         }
     }
@@ -162,7 +164,9 @@ function massageResIntoMessage(res, file, defaultKind) {
         res = {
             kind: "ERROR",
             text: res.toString(),
-            original: res.toString() + "\n" + res.stack,
+            original: res.toString() + ":\n"
+            + errorResolutionSuggestions(res)
+            + "\n" + res.stack,
             location: res.location
         }
     }

@@ -35,7 +35,9 @@ function safeWriteFileEventually(fileName, content) {
             if(err) reportNodeJSFileError(err, fileName);
             else dirMadeWrite();
         })
-    } else dirMadeWrite();
+    } else {
+        dirMadeWrite();
+    }
 
     function dirMadeWrite() {
         fs.writeFile(fileName, content, function(err) {
