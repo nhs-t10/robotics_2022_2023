@@ -178,7 +178,6 @@ function getResultFor(filename) {
     
     var packageFolder = folder
         .replace(SRC_DIRECTORY, "").toLowerCase();
-    packageFolder = packageFolder.substring(packageFolder.indexOf("teamcode"));
     
     var javaFileName = jClassIfy(filename) + ".java";
         

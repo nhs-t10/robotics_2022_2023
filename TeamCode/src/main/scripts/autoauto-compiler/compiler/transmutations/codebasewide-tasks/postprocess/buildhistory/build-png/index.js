@@ -1,7 +1,7 @@
 var fs = require("fs");
 var path = require("path");
 
-var cache = require("../../cache");
+var cache = require("../../../../../../../cache");
 
 var pngFromHash = require("./create-png-from-hash.js");
 var deltaHashDirectory = require("./delta-hash-directory.js");

@@ -1,8 +1,16 @@
 var path = require("path");
 
+/**
+ * 
+ * @param {import("../index").TransmutateContext} context 
+ */
 module.exports = function (context) {
-    var sD = context.resultDir.split(path.sep);
+    var pkgPath = context.resultDir.replace(context.resultRoot, "");
+    
+    if (pkgPath.startsWith(path.sep)) pkgPath = pkgPath.substring(1);
+    
+    const pkg = pkgPath.replace(new RegExp("\\" + path.sep, "g"), ".");
 
-    context.output = sD.slice(sD.indexOf("gen") + 1).join(".");
+    context.output = pkg;
     context.status = "pass";
 }

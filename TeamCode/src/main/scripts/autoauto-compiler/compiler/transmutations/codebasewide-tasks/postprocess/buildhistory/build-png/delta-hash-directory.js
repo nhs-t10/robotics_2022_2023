@@ -1,6 +1,6 @@
 var fs = require("fs");
 var path = require("path");
-var cache = require("../../cache");
+var cache = require("../../../../../../../cache");
 
 var badPerceptualHash = require("./bad-percep-hash");
 
@@ -57,6 +57,8 @@ function getFileHash(file, ignores) {
 
 function hexDiff(a, b) {
     var res = "";
+    
+    if(!a || !b) return "";
     
     for(var i = 0; i < a.length; i++) {
         var counterpoint = b[i] || 0;

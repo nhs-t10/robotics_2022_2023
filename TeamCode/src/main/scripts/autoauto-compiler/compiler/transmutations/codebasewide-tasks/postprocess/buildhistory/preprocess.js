@@ -5,7 +5,7 @@ var fs = require("fs");
 const getDirectorySha = require("./get-dir-sha.js");
 const what3Words = require("./what-3-words-hash.js");
 const buildPng = require("./build-png");
-const safeFsUtils = require("../script-helpers/safe-fs-utils.js");
+const safeFsUtils = require("../../../../../../script-helpers/safe-fs-utils.js");
 
 var HASH_SECRET = "autoauto family";
 var BUILD_HASH_IGNORED = ["gen", "genealogy", ".cache", "buildimgs"];
@@ -37,7 +37,7 @@ if (!fs.existsSync(familyLineFile)) safeFsUtils.safeWriteFile(familyLineFile, "{
 
 var familyLine = readJsonFile(familyLineFile);
 
-(async function () {
+module.exports = async function main() {
     if (!familyLine.browser) {
         familyLine.browser = "Removed_for_privacy_reasons_" + Math.round(Math.random() * 0xFF_FF_FF).toString(16);
     }
@@ -86,15 +86,15 @@ var familyLine = readJsonFile(familyLineFile);
         .map(x => x.name + "," + x.time + "," + x.w3w) //transform to CSV
         .join("\n") //join CSV rows together
 
-    updateTemplate(familyLine, time, name, history, buildHash, w3w, pngFile.imageAddress, familyLine.buildCount, phrase);
-})();
+    return updateTemplate(familyLine, time, name, history, buildHash, w3w, pngFile.imageAddress, familyLine.buildCount, phrase);
+};
 
 function updateTemplate(familyLine, time, name, history, hash, phrase, pngFileAddress, buildNumber, phraseLong) {
     var template = fs.readFileSync(path.join(__dirname, "not_BuildHistory.notjava")).toString();
 
     var resPath = path.join(srcDirectory, "../gen/org/firstinspires/ftc/teamcode/auxilary/buildhistory", "BuildHistory.java");
     
-    safeFsUtils.safeWriteFileEventually(resPath, template 
+    safeFsUtils.safeWriteFile(resPath, template 
         .replace("BUILDER_BROWSER_FINGERPRINT", familyLine.browser)
         .replace("BUILD_TIME_ISO", time)
         .replace("BUILD_NAME", name)
@@ -105,7 +105,9 @@ function updateTemplate(familyLine, time, name, history, hash, phrase, pngFileAd
         .replace("BUILD_PHRASE_LONG", phraseLong)
         .replace("BUILD_HASH_IMAGE", pngFileAddress)
         .replace("BUILD_COUNT", buildNumber)
-    )
+    );
+    
+    return resPath;
 }
 
 function getName(index, lastName) {

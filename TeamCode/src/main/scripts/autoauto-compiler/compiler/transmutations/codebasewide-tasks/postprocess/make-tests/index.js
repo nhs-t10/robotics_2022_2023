@@ -2,8 +2,13 @@ var path = require("path");
 
 var maketest = require("./make-test");
 
+/**
+ * 
+ * @param {*} context 
+ * @param {(import("../../../index").TransmutateContext)[]} contexts
+ */
 module.exports = function(context, contexts) {
-    var testDir = path.join(contexts[0].sourceRoot, "test/java/org/firstinspires/ftc/teamcode/unitTests");
+    var testDir = path.join(contexts[0].resultRoot, "org/firstinspires/ftc/teamcode/unitTests");
     
     var testRecords = contexts
     .filter(x=>x.status == "pass")
