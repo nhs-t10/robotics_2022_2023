@@ -73,7 +73,7 @@ function sendPlainMessage (msg) {
         if(capturingOutput) {
             captured.push(msg);
         } else {            
-            if(commandLineArguments["no-agpbi"] == false) formatAndSendJsonFormat(msg);
+            if(commandLineArguments["agpbi"]) formatAndSendJsonFormat(msg);
             
             formatAndSendHumanyFormat(msg);
         }

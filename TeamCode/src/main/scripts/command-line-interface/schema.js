@@ -6,7 +6,8 @@
  * @property {boolean} no-cache
  * @property {number} threads
  * @property {boolean} progress
- * @property {boolean} no-agpbi
+ * @property {boolean} agpbi
+ * @property {boolean} build-history
  */
 
 
@@ -35,7 +36,11 @@ module.exports = {
         value: require("os").cpus().length,
         short: []
     },
-    "no-agpbi": {
+    "agpbi": {
+        value: false,
+        short: []
+    },
+    "build-history": {
         value: false,
         short: []
     }

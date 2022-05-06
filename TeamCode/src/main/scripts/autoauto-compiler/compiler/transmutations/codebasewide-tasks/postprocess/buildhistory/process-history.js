@@ -6,6 +6,7 @@ const getDirectorySha = require("./get-dir-sha.js");
 const what3Words = require("./what-3-words-hash.js");
 const buildPng = require("./build-png");
 const safeFsUtils = require("../../../../../../script-helpers/safe-fs-utils.js");
+const androidStudioLogging = require("../../../../../../script-helpers/android-studio-logging.js");
 
 var HASH_SECRET = "autoauto family";
 var BUILD_HASH_IGNORED = ["gen", "genealogy", ".cache", "buildimgs"];
@@ -55,10 +56,10 @@ module.exports = async function main() {
     var phrase = what3Words.complexPhrase(buildHash);
     var pngFile = buildPng(familyLine.buildCount, srcDirectory, BUILD_HASH_IGNORED);
     
-    console.error("AGPBI: " + JSON.stringify({
+    androidStudioLogging.sendPlainMessage({
         kind: "INFO",
         text: "Build Name: " + name
-    }));
+    });
 
     familyLine.builds.push({
         name: name,

@@ -58,7 +58,8 @@ function getFileHash(file, ignores) {
 function hexDiff(a, b) {
     var res = "";
     
-    if(!a || !b) return "";
+    if(!a) return b;
+    if(!b) return a;
     
     for(var i = 0; i < a.length; i++) {
         var counterpoint = b[i] || 0;
