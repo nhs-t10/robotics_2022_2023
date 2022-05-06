@@ -24,7 +24,7 @@ const safeFsUtils = require("../../../../../../script-helpers/safe-fs-utils");
 
 if (!fs.existsSync(managersDir)) throw "Managers directory `" + managersDir + "` doesn't exist";
 
-module.exports = async function() {
+module.exports = async function(writtenFiles) {
     var managers = loadManagersFromFolder(managersDir);
     
     var methods = [];
@@ -41,7 +41,7 @@ module.exports = async function() {
         } else {
             var preexistingNames = methods.map(x => x.shimClassFunction.nameToUseInAutoauto).flat();
 
-            var generated = generateAaMethods(fileContent, preexistingNames);
+            var generated = generateAaMethods(fileContent, preexistingNames, writtenFiles);
 
             cacheManagers.managers[manager] = {
                 methods: generated || [],
@@ -67,7 +67,7 @@ module.exports = async function() {
             ),
         Object.entries(managerArgs),
     );
-    safeFsUtils.safeWriteFileEventually(robotFunctionLoaderAddress, robotFunctionLoader);
+    writtenFiles[robotFunctionLoaderAddress] = robotFunctionLoader;
 
     cache.save("autoauto-managers", cacheManagers);
     return cacheManagers.managers;

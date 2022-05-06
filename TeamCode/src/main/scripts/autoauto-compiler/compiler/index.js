@@ -29,8 +29,9 @@ async function compileAllFromSourceDirectory() {
     const compilerWorkers = makeWorkersPool();
     const autoautoFileContexts = [];
     
-    var preprocessInputs = {};
-    await evaluateCodebaseTasks(autoautoFileContexts, transmutations.getPreProcessTransmutations(), preprocessInputs);
+    const preprocessInputs = {};
+    const codebaseTransmutationWrites = {};
+    await evaluateCodebaseTasks(autoautoFileContexts, transmutations.getPreProcessTransmutations(), preprocessInputs, codebaseTransmutationWrites);
 
     //the folderScanner will give once for each file.
     //this way, we don't have to wait for ALL filenames in order to start compiling.
@@ -49,7 +50,9 @@ async function compileAllFromSourceDirectory() {
     
     await Promise.all(jobPromises);
 
-    await evaluateCodebaseTasks(autoautoFileContexts, transmutations.getPostProcessTransmutations(), {});
+    await evaluateCodebaseTasks(autoautoFileContexts, transmutations.getPostProcessTransmutations(), {}, codebaseTransmutationWrites);
+    writeWrittenFiles({ writtenFiles: codebaseTransmutationWrites});
+    
     compilerWorkers.close();
 }
 
@@ -100,9 +103,9 @@ function writeAndCallback(finishedFileContext, autoautoFileContexts, cb) {
     cb(finishedFileContext);
 }
 
-async function evaluateCodebaseTasks(allFileContexts, codebaseTasks, codebaseInputs) {
+async function evaluateCodebaseTasks(allFileContexts, codebaseTasks, codebaseInputs, codebaseTransmutationWrites) {
     for(var transmut of codebaseTasks) {
-        var o = { output: undefined };
+        var o = { output: undefined, writtenFiles: codebaseTransmutationWrites };
         var mutFunc = require(transmut.sourceFile);
         await mutFunc(o, allFileContexts);
         codebaseInputs[transmut.id] = o.output;
@@ -149,7 +152,10 @@ function makeFileContext(file, preprocessInputs) {
 
 function writeWrittenFiles(fileContext) {
     for(var filename in fileContext.writtenFiles) {
-        safeFsUtils.safeWriteFileEventually(filename, fileContext.writtenFiles[filename]);
+        const content = fileContext.writtenFiles[filename];
+        if(typeof content !== "boolean") {
+            safeFsUtils.safeWriteFileEventually(filename, content);
+        }
     }
 }
 

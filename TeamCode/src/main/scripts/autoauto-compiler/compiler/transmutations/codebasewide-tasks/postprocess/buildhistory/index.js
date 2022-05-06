@@ -1,6 +1,10 @@
-var preprocess = require("./preprocess.js");
+var processHistory = require("./process-history.js");
 
 module.exports = async function(context, contexts) {
     
-    var buildHistoryFile = await preprocess();
+    var buildHistoryFile = await processHistory();
+    
+    console.log(buildHistoryFile);
+    
+    context.writtenFiles[buildHistoryFile] = true;
 }

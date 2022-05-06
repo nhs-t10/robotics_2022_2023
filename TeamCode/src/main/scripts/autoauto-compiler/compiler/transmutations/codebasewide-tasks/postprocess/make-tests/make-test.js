@@ -37,7 +37,9 @@ module.exports = function(testRecords, testsDir) {
 
     var resultFile = path.join(testsDir, testName + ".java");
 
-    safeFsUtils.safeWriteFileEventually(resultFile, result);
+    safeFsUtils.safeWriteFile(resultFile, result);
+    
+    return resultFile;
 }
 
 function makeAssert(frontMatter) {

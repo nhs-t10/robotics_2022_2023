@@ -1,6 +1,6 @@
 package org.firstinspires.ftc.teamcode.unitTests.telemetry;
 
-import org.firstinspires.ftc.teamcode.__compiledautoauto.teamcode.opmodes.auto.DiggityDrive;
+import org.firstinspires.ftc.teamcode.opmodes.auto.DiggityDrive;
 import org.firstinspires.ftc.teamcode.opmodes.teleop.DualController;
 import org.firstinspires.ftc.teamcode.unitTests.dummy.DummyGamepad;
 import org.firstinspires.ftc.teamcode.unitTests.dummy.DummyHardwareMap;

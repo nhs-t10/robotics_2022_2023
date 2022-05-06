@@ -29,17 +29,9 @@ dependencies {
     implementation 'org.jetbrains:annotations-java5:23.0.0'
 }
 
-task cleanupOldGeneratedFiles(type: NodeTask) {
-    script = file("src/main/scripts/cleanup/index.js")
-}
 
-task generateAutoautoSources(type: NodeTask) {
+task autoautoCompiler(type: NodeTask) {
     script = file("src/main/scripts/autoauto-compiler/index.js")
-}
-
-
-task recordBuildHistory(type: NodeTask) {
-    script = file("src/main/scripts/buildhistory/index.js")
 }
 
 sonarqube {
@@ -58,9 +50,7 @@ android {
         noCompress 'tflite'
     }
     gradle.projectsEvaluated {
-        preBuild.dependsOn(cleanupOldGeneratedFiles)
-        preBuild.dependsOn(generateAutoautoSources)
-        preBuild.dependsOn(recordBuildHistory)
+        preBuild.dependsOn(autoautoCompiler)
     }
     buildTypes {
         debug {

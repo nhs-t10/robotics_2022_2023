@@ -1,5 +1,5 @@
 module.exports = {
     requires: [],
-    id: "cleanup-old-files",
+    id: "zz-cleanup",
     type: "codebase_postprocess"
 }

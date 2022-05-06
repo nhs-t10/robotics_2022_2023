@@ -31,10 +31,11 @@ function safeReadFile(filename) {
 
 function safeWriteFileEventually(fileName, content) {
     var dir = path.dirname(fileName);
+    var stack = (new Error()).stack;
 
     if(!fs.existsSync(dir)) {
         fs.mkdir(dir, {recursive: true}, function(err) {
-            if(err) reportNodeJSFileError(err, fileName);
+            if (err) reportNodeJSFileError(err, fileName, stack);
             else dirMadeWrite();
         })
     } else {
@@ -43,12 +44,13 @@ function safeWriteFileEventually(fileName, content) {
 
     function dirMadeWrite() {
         fs.writeFile(fileName, content, function(err) {
-            if(err) reportNodeJSFileError(err, fileName);
+            if (err) reportNodeJSFileError(err, fileName, stack);
         })
     }
 }
 
-function reportNodeJSFileError(err, file) {
+function reportNodeJSFileError(err, file, stack) {
+    if(stack) err.stack = stack;
     androidStudioLogging.sendTreeLocationMessage(err, file, "ERROR");
 }
 

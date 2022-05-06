@@ -18,5 +18,7 @@ module.exports = function(context, contexts) {
         package: x.inputs["get-result-package"]
     }));
     
-    maketest(testRecords, testDir);
+    var fileWrittenIn = maketest(testRecords, testDir);
+    
+    context.writtenFiles[fileWrittenIn] = true;
 }

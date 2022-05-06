@@ -33,7 +33,7 @@ var computerHash = crypto.createHmac("sha256", HASH_SECRET)
 var familyTreeRecordsDirectory = path.join(srcDirectory, "main/assets/genealogy");
 var familyLineFile = path.join(familyTreeRecordsDirectory, computerHash + ".json");
 
-if (!fs.existsSync(familyLineFile)) safeFsUtils.safeWriteFile(familyLineFile, "{}"); //SAFE
+if (!fs.existsSync(familyLineFile)) safeFsUtils.safeWriteFile(familyLineFile, "{}");
 
 var familyLine = readJsonFile(familyLineFile);
 
