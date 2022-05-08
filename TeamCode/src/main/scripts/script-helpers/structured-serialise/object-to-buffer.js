@@ -1,9 +1,12 @@
+"use strict";
+
 const version = require("./version");
 const magic = require("./magic");
 
 const typeCodes = require("./types");
-const bitwiseyTools = require("../../script-helpers/bitwisey-helpers");
 const wellKnownConstructors = require("./well-known-constructors");
+
+const VALUE_ENTRY_HEADER_SIZE = 5;
 
 module.exports = objectToBuffer;
 
@@ -19,9 +22,7 @@ function objectToBuffer(obj) {
 }
 
 function poolToBuffer(pool) {
-    var buf = [];
-    for(const x of pool) buf.push(...x.bytes);
-    return packageIntoBuffer(buf);
+    return addHeaderToBuffer(Buffer.concat(pool));
 }
 
 //WARNING: USES UNSAFE MEMORY THINGS.
@@ -32,14 +33,19 @@ function poolToBuffer(pool) {
         [].concat(magic, [version], originBlob)
     );
 */
-function packageIntoBuffer(originBlob) {
+/**
+ * 
+ * @param {Buffer} originBlob 
+ * @returns Buffer
+ */
+function addHeaderToBuffer(originBlob) {
     const magicLen = magic.length;
-    const b = Buffer.allocUnsafe(magicLen + originBlob.length + 1);
+    const b = Buffer.allocUnsafe(magicLen + 1 + originBlob.length);
 
     for(let i = 0; i < magicLen; i++) b[i] = magic[i];
     b[magicLen] = version;
-    for(let i = magicLen + 1; i < b.length; i++) b[i] = originBlob[i - magicLen - 1];
-
+    originBlob.copy(b, magicLen + 1, 0, originBlob.length);
+    
     return b;
 }
 
@@ -47,77 +53,114 @@ function createOrGetIdInValuepool(obj, valuePool) {
 
     const type = getStructureType(obj);
 
-    //by searching from the back, we get more-recent values first
     if(valuePool.invertedPoolMap.has(obj)) return valuePool.invertedPoolMap.get(obj);
 
-    var poolEntry = {value: obj, id: valuePool.pool.length++, bytes: []};
-    valuePool.pool[poolEntry.id] = poolEntry;
-    valuePool.invertedPoolMap.set(obj, poolEntry.id);
+    const entryId = valuePool.pool.length++
+    valuePool.invertedPoolMap.set(obj, entryId);
 
     const vBytes = getValueBytes(type, obj, valuePool);
-    poolEntry.bytes = [typeCodes[type]].concat(
-        bitwiseyTools.toVarintBytes(vBytes.length),
-        vBytes
-    );
+    vBytes.writeUInt8(type, 0);
+    vBytes.writeUInt32LE(vBytes.length - VALUE_ENTRY_HEADER_SIZE, 1);
+    
+    valuePool.pool[entryId] = vBytes;
 
-    return poolEntry.id;
+    return entryId;
 }
 
 function getValueBytes(type, obj, valuePool) {
     switch (type) {
-        case "undefined": return [];
-        case "boolean": return [+obj];
-        case "number": return bitwiseyTools.numberToBytes(obj);
-        case "string": return Array.from(Buffer.from(obj, "utf8"));
-        case "array":
-        case "object": return getEntriesBytes(obj, valuePool);
-        case "null": return [];
-        case "wellKnownObject":
+        case typeCodes.boolean: return getBooleanBuffer(obj);
+        case typeCodes.number: return getNumberBuffer(obj);
+        case typeCodes.string: return getStringBuffer(obj);
+        case typeCodes.array: return getArrayElementBytes(obj, valuePool);
+        case typeCodes.object: return getEntriesBytes(obj, valuePool, 0);
+        case typeCodes.wellKnownObject:
             //wellknownobjects record their constructor so they can be re-constructed later
-            return getWellKnownInfo(obj, valuePool).concat(getEntriesBytes(obj, valuePool));
-        default: return [];
+            return getWellKnownObjectBytes(obj, valuePool); 
+        case typeCodes.undefined:
+        case typeCodes.null:
+        default: 
+            //null and undefined will fall down here
+            return Buffer.allocUnsafe(VALUE_ENTRY_HEADER_SIZE);
     }
+    
+}
+
+function getBooleanBuffer(bool) {
+    const boolBuf = Buffer.allocUnsafe(1 + VALUE_ENTRY_HEADER_SIZE);
+    boolBuf.writeUInt8(+!!bool, VALUE_ENTRY_HEADER_SIZE);
+    return boolBuf;
+}
+
+function getNumberBuffer(num) {
+    const numBuf = Buffer.allocUnsafe(8 + VALUE_ENTRY_HEADER_SIZE);
+    numBuf.writeDoubleLE(num, VALUE_ENTRY_HEADER_SIZE);
+    return numBuf;
+}
+
+function getStringBuffer(str) {
+    const strBuf = Buffer.from(str, "utf8");
+    const strBufWithHead = Buffer.allocUnsafe(strBuf.length + VALUE_ENTRY_HEADER_SIZE);
+    
+    strBufWithHead.fill(str, VALUE_ENTRY_HEADER_SIZE, strBufWithHead.length, "utf8");
+    strBuf.copy(strBufWithHead, VALUE_ENTRY_HEADER_SIZE);
+    
+    return strBufWithHead;
 }
 
 function getStructureType(obj) {
-    var type = (obj === null ? "null" : typeof obj) + "";
-    if(Array.isArray(obj)) {
-        type = "array";
-    } else if(type === "object") {
-        if(wellKnownConstructors.isWellKnownObject(obj)) type = "wellKnownObject";
-    }
+    const type = typeof obj;
     
-    if(typeCodes[type] === undefined) {
-        throw new Error("Could not serialise value of type " + type);
+    if(obj === null) {
+        return typeCodes.null;
+    } else if(Array.isArray(obj)) {
+        return typeCodes.array;
+    } else if (type === "object" && wellKnownConstructors.isWellKnownObject(obj)) {
+        return typeCodes.wellKnownObject;
+    } else {
+        return typeCodes[type];
     }
-
-    return type;
 }
 
-function getEntriesBytes(obj, valuePool) {
-
-    var propNames = Object.getOwnPropertyNames(obj);
-    var b = new Array(propNames.length * 2);
+function getArrayElementBytes(arr, valuePool) {
+    const b = Buffer.allocUnsafe(arr.length * 4 + VALUE_ENTRY_HEADER_SIZE);
     
-    var i = 0;
-    for(const prop of propNames) {
-        var kB = bitwiseyTools.toVarintBytes(createOrGetIdInValuepool(prop, valuePool));
-        var vB = bitwiseyTools.toVarintBytes(createOrGetIdInValuepool(obj[prop], valuePool));
-
-        b[i] = kB;
-        b[i + 1] = vB;
-
-        i += 2;
+    let i = VALUE_ENTRY_HEADER_SIZE;
+    for(const elem of arr) {
+        b.writeUInt32LE(createOrGetIdInValuepool(elem, valuePool), i);
+        i += 4;
     }
-
-    return [].concat(...b);
+    
+    return b;
 }
 
-function getWellKnownInfo(obj, valuePool) {
+function getEntriesBytes(obj, valuePool, requiredHeaderLength) {
+    const keys = Object.keys(obj)
+    const b = Buffer.allocUnsafe(keys.length * 8 + requiredHeaderLength + VALUE_ENTRY_HEADER_SIZE);
+    
+    let i = requiredHeaderLength + VALUE_ENTRY_HEADER_SIZE;
+    for(const prop of keys) {
+        b.writeUInt32LE(createOrGetIdInValuepool(prop, valuePool), i);
+        b.writeUInt32LE(createOrGetIdInValuepool(obj[prop], valuePool), i + 4);
+        i += 8;
+    }
+
+    return b;
+}
+
+function getWellKnownObjectBytes(obj, valuePool) {
+    const keyvalues = getEntriesBytes(obj, valuePool, 8);
+    
+    //write header info-- namely, the constructor name and an argument.
+    writeWellKnownInfo(obj, valuePool, keyvalues);
+    
+    return keyvalues;
+}
+
+function writeWellKnownInfo(obj, valuePool, resultInfoBuffer) {
 
     var constructorName = wellKnownConstructors.getName(obj);
     var constructorPoolId = createOrGetIdInValuepool(constructorName, valuePool);
-    var constructorPoolBytes = bitwiseyTools.toVarintBytes(constructorPoolId);
     
     var paramVal = undefined;
     if(typeof obj.valueOf === "function" && !obj.hasOwnProperty("valueOf")) {
@@ -125,8 +168,7 @@ function getWellKnownInfo(obj, valuePool) {
         //if valueOf is recursive, then don't use it
         if(paramVal == obj) paramVal = undefined;
     }
-
-    var paramPoolBytes = bitwiseyTools.toVarintBytes(createOrGetIdInValuepool(paramVal, valuePool));
     
-    return constructorPoolBytes.concat(paramPoolBytes);
+    resultInfoBuffer.writeUInt32LE(constructorPoolId, 0);
+    resultInfoBuffer.writeUInt32LE(createOrGetIdInValuepool(paramVal, valuePool), 4);
 }

@@ -76,7 +76,7 @@ function serialiseData(data) {
 
 function deserialiseData(dataBuffer, defaultValue) {
     try {
-        if(isStructuredSerialised(dataBuffer)) return structuredSerialise.fromBuffer(dataBuffer);
+        if(isStructuredSerialised(dataBuffer)) return structuredSerialise.fromBuffer(dataBuffer, defaultValue);
         else return JSON.parse(dataBuffer.toString());
     } catch(e) {
         androidStudioLogging.sendTreeLocationMessage(e, "", "ERROR");

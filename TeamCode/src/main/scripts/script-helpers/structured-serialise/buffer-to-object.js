@@ -1,24 +1,25 @@
-var magic = require("./magic");
-var version = require("./version");
-var arrayReader = require("../../script-helpers/array-reader");
-var bitwiseyHelpers = require("../bitwisey-helpers");
-var types = require("./types");
+"use strict";
+
+const magic = require("./magic");
+const version = require("./version");
+const arrayReader = require("../../script-helpers/array-reader");
+const types = require("./types");
 const wellKnownConstructors = require("./well-known-constructors");
 
 module.exports = bufferToObject
 
 
-function bufferToObject(buf) {
+function bufferToObject(buf, valueOnUnreadable) {
     //reader starts at `i=magic.length` to skip over the magic values.
     const reader = arrayReader(buf, magic.length);
-    
-    if(reader.read() != version) throw new Error("Version mismatch in structured-serialise!");
-    
-    let pool = [];
-    
+
+    if (reader.read() != version) return valueOnUnreadable;
+
+    let pool = {};
+
     reconstructPool(pool, reader);
-    
-    return getHydratedValue(pool[0], pool);
+
+    return getHydratedByIndex(0, pool);
 }
 
 function readUndefined(entry) {
@@ -30,43 +31,59 @@ function readBoolean(entry, reader) {
     entry.hydrated = true;
 }
 function readNumber(entry, reader) {
-    entry.value = bitwiseyHelpers.numberFromBytes(reader.readNextBytes(entry.contentLength));
+    entry.value = reader.readNextBytes(entry.contentLength).readDoubleLE(0);
     entry.hydrated = true;
 }
 function readString(entry, reader) {
-    entry.value = reader.readNextBytes(entry.contentLength).toString("utf8");
+    const idx = reader.currentIndex();
+    entry.value = reader.buffer().toString("utf8", idx, idx + entry.contentLength);
     entry.hydrated = true;
+    
+    reader.skip(entry.contentLength);
 }
 function readNull(entry) {
     entry.value = null;
     entry.hydrated = true;
 }
-function readObject(entry, reader, pool) {
-    entry.keyValues = [];
+function readObject(entry, reader) {
+    entry.keyValues = new Array(entry.contentLength / 8);
+    const entryCount = entry.keyValues.length;
 
-    while(reader.hasNext()) {
-        var k = getIntoPool(pool, reader.readVarint());
-        
-        var v = getIntoPool(pool, reader.readVarint());
-
-        entry.keyValues.push([k,v]);
+    for (let i = 0; i < entryCount; i++) {
+        entry.keyValues[i] = ([
+            reader.readUInt32LE(),
+            reader.readUInt32LE()
+        ]);
     }
 }
-function readWellKnownObject(entry, reader, pool) {    
-    entry.constructorName = getIntoPool(pool, reader.readVarint());
-    
-    var constrArgId = reader.readVarint();
-    if(constrArgId && constrArgId != entry.id) {
-        entry.constructorArg = getIntoPool(pool, constrArgId);
+function readWellKnownObject(entry, reader) {
+    entry.constructorName = reader.readUInt32LE();
+
+    const constrArgId = reader.readUInt32LE();
+    if (constrArgId && constrArgId != entry.id) {
+        entry.constructorArg = constrArgId;
     }
 
-    readObject(entry, reader, pool);
+    readObject(entry, reader);
+}
+
+function readArray(entry, reader) {
+    entry.values = new Array(entry.contentLength / 4);
+    
+    const entryCount = entry.values.length;
+    for (let i = 0; i < entryCount; i++) {
+        entry.values[i] = reader.readUInt32LE();
+    }
+}
+
+function getHydratedByIndex(index, pool) {
+    return getHydratedValue(pool[index], pool);
 }
 
 function getHydratedValue(entry, pool) {
-    if(entry.hydrated) return entry.value;
+    if (entry.hydrated) return entry.value;
 
-    switch(entry.typeId) {
+    switch (entry.typeId) {
         case types.array: return getHydratedArray(entry, pool);
         case types.object: return getHydratedObject(entry, pool);
         case types.wellKnownObject: return getHydratedWellKnownObject(entry, pool);
@@ -75,37 +92,40 @@ function getHydratedValue(entry, pool) {
 }
 
 function getHydratedObject(entry, pool) {
-    if(!entry.hydrated) entry.value = {};
+    if (!entry.hydrated) entry.value = {};
     entry.hydrated = true;
 
-    for(const kv of entry.keyValues) {
-        var kH = getHydratedValue(kv[0], pool);
-        var vH = getHydratedValue(kv[1], pool);
-
-        entry.value[kH] = vH;
+    for (const kv of entry.keyValues) {
+        entry.value[getHydratedByIndex(kv[0], pool)] = getHydratedByIndex(kv[1], pool);
     }
 
     return entry.value;
 }
 
 function getHydratedArray(entry, pool) {
-    if(!entry.hydrated) {
-        entry.value = [];
+    if (!entry.hydrated) {
+        entry.value = new Array(entry.values.length);
         entry.hydrated = true;
+        
+        var i = 0;
+        for(const v of entry.values) {
+            entry.value[i] = getHydratedByIndex(v, pool);
+            i++;
+        }
     }
 
-    return getHydratedObject(entry, pool);
+    return entry.value;
 }
 
 function getHydratedWellKnownObject(entry, pool) {
-    if(!entry.hydrated) {
-        var constrName = getHydratedValue(entry.constructorName, pool);
-        var constr = wellKnownConstructors.byName(constrName);
+    if (!entry.hydrated) {
+        const constrName = getHydratedByIndex(entry.constructorName, pool);
+        const constr = wellKnownConstructors.byName(constrName);
 
         try {
-            if("constructorArg" in entry) entry.value = new constr(getHydratedValue(entry.constructorArg, pool));
+            if ("constructorArg" in entry) entry.value = new constr(getHydratedByIndex(entry.constructorArg, pool));
             else entry.value = new constr();
-        } catch(e) {
+        } catch (e) {
             entry.value = Object.create(constr.prototype);
         }
     }
@@ -114,9 +134,10 @@ function getHydratedWellKnownObject(entry, pool) {
     return getHydratedObject(entry, pool);
 }
 
-function readPoolEntry(entry, reader, pool) {
-    reader.setBound(entry.contentLength);
-    switch(entry.typeId) {
+function readPoolEntry(index, reader, pool) {
+    const entry = readPoolHeader(index, reader, pool);
+
+    switch (entry.typeId) {
         case types.undefined: readUndefined(entry); break;
         case types.null: readNull(entry); break;
 
@@ -124,37 +145,36 @@ function readPoolEntry(entry, reader, pool) {
         case types.number: readNumber(entry, reader); break;
         case types.string: readString(entry, reader); break;
 
-        case types.array: 
-        case types.object: readObject(entry, reader, pool); break;
+        case types.array: readArray(entry, reader); break;
+        case types.object: readObject(entry, reader); break;
 
-        case types.wellKnownObject: readWellKnownObject(entry, reader, pool); break;
+        case types.wellKnownObject: readWellKnownObject(entry, reader); break;
 
         default: throw new Error("Unknown structured-serialize'd type '" + entry.typeId + "'");
     }
-    reader.skipToBound();
-    reader.releaseBound();
+}
+
+function readPoolHeader(index, reader, pool) {
+    const typeCode = reader.read();
+    const length = reader.readUInt32LE();
+
+    return (pool[index] = ({
+        typeId: typeCode,
+        contentLength: length,
+        id: index,
+        hydrated: false,
+        value: null,
+        keyValues: [],
+        values: [],
+        constructorName: ""
+    }));
 }
 
 function reconstructPool(pool, reader) {
-    var index = 0;
-    
-    while(reader.hasNext()) {
-        var typeCode = reader.read();
-        var length = reader.readVarint();
-        
-        var entry = upsertIntoPool(pool, index, { typeId: typeCode, contentLength: length, id: index, hydrated: false, value: null, keyValues: [], constructorName: "" });
+    let index = 0;
 
-        readPoolEntry(entry, reader, pool);
-
+    while (reader.hasNext()) {
+        readPoolEntry(index, reader, pool);
         index++;
     }
-}
-
-function upsertIntoPool(pool, id, entry) {
-    return Object.assign(getIntoPool(pool, id), entry);
-}
-
-function getIntoPool(pool, id) {
-    if(pool[id]) return pool[id];
-    else return pool[id] = {};
 }

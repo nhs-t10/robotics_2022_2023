@@ -37,11 +37,11 @@ async function compileAllFromSourceDirectory() {
     //the folderScanner will give once for each file.
     //this way, we don't have to wait for ALL filenames in order to start compiling.
     //it starts after the first one!
-    var aaFiles = folderScanner(SRC_DIRECTORY, ".autoauto");
-    var jobPromises = [];
+    const aaFiles = folderScanner(SRC_DIRECTORY, ".autoauto");
+    const jobPromises = [];
     
     while(true) {
-        var next = await aaFiles.next();
+        const next = await aaFiles.next();
         if(next.done) break;
         
         jobPromises.push(
@@ -58,8 +58,8 @@ async function compileAllFromSourceDirectory() {
 }
 
 function makeContextAndCompileFile(filename, compilerWorkers, autoautoFileContexts, preprocessInputs) {
-    var fileContext = makeFileContext(filename, preprocessInputs);
-    var cacheEntry = getCacheEntry(fileContext);
+    const fileContext = makeFileContext(filename, preprocessInputs);
+    const cacheEntry = getCacheEntry(fileContext);
 
     return new Promise(function(resolve, reject) {
         if(cacheEntry) {
@@ -88,7 +88,7 @@ function saveCacheEntry(finishedRun) {
 function getCacheEntry(fileContext) {
     if(commandLineInterface["no-cache"]) return false;
 
-    var cacheEntry = cache.get(mFileCacheKey(fileContext), false);
+    const cacheEntry = cache.get(mFileCacheKey(fileContext), false);
 
     if(cacheEntry.subkey == fileContext.cacheKey) return cacheEntry;
     else return false;
@@ -105,9 +105,9 @@ function writeAndCallback(finishedFileContext, autoautoFileContexts, cb) {
 }
 
 async function evaluateCodebaseTasks(allFileContexts, codebaseTasks, codebaseInputs, codebaseTransmutationWrites) {
-    for(var transmut of codebaseTasks) {
-        var o = makeCodebaseContext(codebaseTransmutationWrites);
-        var mutFunc = require(transmut.sourceFile);
+    for(const transmut of codebaseTasks) {
+        const o = makeCodebaseContext(codebaseTransmutationWrites);
+        const mutFunc = require(transmut.sourceFile);
         await mutFunc(o, allFileContexts);
         codebaseInputs[transmut.id] = o.output;
     }
@@ -129,13 +129,13 @@ function makeCodebaseContext(codebaseTransmutationWrites) {
 
 function makeFileContext(file, preprocessInputs) {
         
-    var resultFile = getResultFor(file);
-    var fileContent = fs.readFileSync(file).toString();
-    var frontmatter = loadFrontmatter(fileContent);
+    const resultFile = getResultFor(file);
+    const fileContent = fs.readFileSync(file).toString();
+    const frontmatter = loadFrontmatter(fileContent);
 
-    var tPath = transmutations.expandTasks(frontmatter.compilerMode || "default", file);
+    const tPath = transmutations.expandTasks(frontmatter.compilerMode || "default", file);
     
-    var ctx = {
+    const ctx = {
         sourceBaseFileName: path.basename(file),
         sourceDir: path.dirname(file),
         sourceFullFileName: file,
@@ -163,7 +163,7 @@ function makeFileContext(file, preprocessInputs) {
 }
 
 function writeWrittenFiles(fileContext) {
-    for(var filename in fileContext.writtenFiles) {
+    for(const filename in fileContext.writtenFiles) {
         const content = fileContext.writtenFiles[filename];
         if(typeof content !== "boolean") {
             safeFsUtils.safeWriteFileEventually(filename, content);
@@ -177,34 +177,34 @@ function writeWrittenFiles(fileContext) {
  */
 function makeCacheKey(fileContext, preprocessInputs) {
     
-    var preprocessInputSerial = "";
-    for(var ppI in preprocessInputs) {
+    let preprocessInputSerial = "";
+    for(const ppI in preprocessInputs) {
         preprocessInputSerial += sha(JSON.stringify(preprocessInputs[ppI]));
     }
     
-    var readFileShas = fileContext.readsAllFiles.map(x=>sha(safeFsUtils.cachedSafeReadFile(x))).join("\t");
-    var transmutationIdList = fileContext.transmutations.map(x=>x.id).join("\t");
+    const readFileShas = fileContext.readsAllFiles.map(x=>sha(safeFsUtils.cachedSafeReadFile(x))).join("\t");
+    const transmutationIdList = fileContext.transmutations.map(x=>x.id).join("\t");
 
-    var keyDataToSha = [CACHE_VERSION, preprocessInputSerial, readFileShas, 
+    const keyDataToSha = [CACHE_VERSION, preprocessInputSerial, readFileShas, 
         fileContext.sourceFullFileName, fileContext.fileContentText, transmutationIdList];
 
     return sha(keyDataToSha.join("\0"));
 }
 
 function getResultFor(filename) {
-    var folder = path.dirname(filename);
+    const folder = path.dirname(filename);
     
-    var packageFolder = folder
+    const packageFolder = folder
         .replace(SRC_DIRECTORY, "").toLowerCase();
     
-    var javaFileName = jClassIfy(filename) + ".java";
+    const javaFileName = jClassIfy(filename) + ".java";
         
     return path.join(COMPILED_RESULT_DIRECTORY, packageFolder, javaFileName);
 }
 
 function jClassIfy(str) {
-    var p = str.split(/\/|\\/);
-    var s = p[p.length - 1].split(".")[0];
+    const p = str.split(/\/|\\/);
+    const s = p[p.length - 1].split(".")[0];
     return s.split("-").map(x=>capitalize(x)).join("");
 }
 function capitalize(str) {

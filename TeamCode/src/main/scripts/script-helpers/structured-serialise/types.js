@@ -1,4 +1,4 @@
-module.exports = {
+module.exports = Object.freeze({
     "undefined": 85, //ascii U
     "boolean": 66, //ascii B
     "number": 78, //ascii N
@@ -7,4 +7,4 @@ module.exports = {
     "null": 95, //ascii _
     "wellKnownObject": 67, //ascii C (for Constructor)
     "array": 65 //ascii A
-}
+});

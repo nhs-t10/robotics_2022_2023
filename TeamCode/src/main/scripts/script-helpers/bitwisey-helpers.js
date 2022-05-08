@@ -40,26 +40,16 @@ toVarintBytes: function toVarintBytes(num) {
 },
 
 numberToBytes: function(num) {
-    var ab = new ArrayBuffer(8);
-    var buf = new DataView(ab);
-    buf.setFloat64(0, num);
-
-    var b = [];
-    for(var i = 0; i < 8; i++) b.push(buf.getUint8(i));
-    return b;
-},
-
-numberToVarBytes: function(num) {
-    var b = this.numberToBytes(num);
-    while(b[b.length - 1] == 0) b.pop();
-    return b;
+    const buf = Buffer.allocUnsafe(8);
+    buf.writeDoubleLE(num, 0);
+    return buf
 },
 numberFromBytes: function(bytes) {
     var ab = new ArrayBuffer(8);
     bytes.copy(new Uint8Array(ab, 0, 8));
     var buf = new DataView(ab);
 
-    return buf.getFloat64(0);
+    return buf.getFloat64(0, true);
 },
 
 numToB62: function numToB62(i) {
@@ -80,5 +70,10 @@ numToB62: function numToB62(i) {
         i = Math.floor(i);
     }
     return r || "0";
-}
+},
+    numTo32BitLE: function(n) {
+        const buf = Buffer.allocUnsafe(4);
+        buf.writeInt32LE(n, 0);
+        return buf;
+    }
 }

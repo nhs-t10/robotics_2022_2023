@@ -1,14 +1,30 @@
 //Like Java's stream classes, this array-reader keeps a reference of where it is, and allows the user to read 1 item at once.
 
+/**
+ * 
+ * @param {Buffer} buffer 
+ * @param {number?} i 
+ * @returns Reader
+ */
 module.exports = function(buffer, i) {
     var index = i|0;
     var len = buffer.length;
     return {
+        currentIndex: function() {
+            return index;
+        },
+        buffer: function() {
+            return buffer;
+        },
         skip: function(l) {
             index += (l|0);
         },
         read: function() {
             return buffer[index++];
+        },
+        readUInt32LE: function() {
+            index += 4;
+            return buffer.readUInt32LE(index - 4);
         },
         readVarint: function() {
             var result = 0;
