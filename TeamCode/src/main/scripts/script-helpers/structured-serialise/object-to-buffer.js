@@ -54,30 +54,24 @@ function createOrGetIdInValuepool(obj, valuePool) {
     valuePool.pool[poolEntry.id] = poolEntry;
     valuePool.invertedPoolMap.set(obj, poolEntry.id);
 
-
+    const vBytes = getValueBytes(type, obj, valuePool);
     poolEntry.bytes = [typeCodes[type]].concat(
-        bitwiseyTools.toVarintBytes(poolEntry.bytes.length),
-        getValueBytes(type, obj)
+        bitwiseyTools.toVarintBytes(vBytes.length),
+        vBytes
     );
 
     return poolEntry.id;
 }
 
-function getValueBytes(type, obj) {
-    switch (type, obj) {
+function getValueBytes(type, obj, valuePool) {
+    switch (type) {
         case "undefined": return [];
-            break;
         case "boolean": return [+obj];
-            break;
         case "number": return bitwiseyTools.numberToBytes(obj);
-            break;
         case "string": return Array.from(Buffer.from(obj, "utf8"));
-            break;
         case "array":
         case "object": return getEntriesBytes(obj, valuePool);
-            break;
         case "null": return [];
-            break;
         case "wellKnownObject":
             //wellknownobjects record their constructor so they can be re-constructed later
             return getWellKnownInfo(obj, valuePool).concat(getEntriesBytes(obj, valuePool));

@@ -15,6 +15,7 @@ module.exports = {
     safeReadFile: safeReadFile,
     cachedSafeReadFile: cachedSafeReadFile,
     safeWriteFileEventually: safeWriteFileEventually,
+    deleteIfExists: deleteIfExists,
     getGitRootDirectory: ()=>cachedGitDirectory,
     getGradleRootDirectory: ()=>cachedGradleRootDirectory
 }
@@ -88,6 +89,13 @@ function createDirectoryIfNotExist(fileName) {
     
     if(!fs.existsSync(dirName)) {
         fs.mkdirSync(dirName, {recursive: true});
+    }
+}
+
+function deleteIfExists(file) {
+    if (fs.existsSync(dir)) {
+        if (fs.statSync(dir).isDirectory()) cleanDirectory(file, [], false);
+        else fs.unlinkSync(file);
     }
 }
 

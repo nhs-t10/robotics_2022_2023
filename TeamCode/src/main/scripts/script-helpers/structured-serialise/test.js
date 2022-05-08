@@ -25,12 +25,13 @@ var structuredSerialise = require("./index");
 //     return o;
 // }
 
-var t = require("./test-file.json");
+var t = [{ c: "", p: "buildimgs/0.png"}]
 
 var timeStart = Date.now();
 
 var solvedSerial = t.map(x=> {
     var p = structuredSerialise.toBuffer(x);
+    console.log(Array.from(p));
     return structuredSerialise.fromBuffer(p);
 });
 

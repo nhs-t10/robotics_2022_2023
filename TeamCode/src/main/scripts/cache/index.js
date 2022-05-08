@@ -26,7 +26,7 @@ module.exports = {
 
         cacheMeta.updateKey(encodedKey, filename, dataBuffer.length);
 
-        safeFsUtils.safeWriteFileEventually(filename, dataBuffer);
+        safeFsUtils.safeWriteFile(filename, dataBuffer);
     },
     get: function(key, defaultValue) {
         var encodedKey = sha(key);
@@ -76,6 +76,7 @@ function serialiseData(data) {
 
 function deserialiseData(dataBuffer, defaultValue) {
     try {
+        if(defaultValue == 128) console.log(dataBuffer);
         if(isStructuredSerialised(dataBuffer)) return structuredSerialise.fromBuffer(dataBuffer);
         else return JSON.parse(dataBuffer.toString());
     } catch(e) {

@@ -19,13 +19,13 @@ cacheManagers.cacheVersion = functionLoaderConfig.CACHE_VERSION;
 var managerArgs = {};
 
 var generateAaMethods = require("./parse-and-generate-aa-methods.js");
-var deleteUnusedMethodClasses = require("./delete-unused-method-classes.js");
 const safeFsUtils = require("../../../../../../script-helpers/safe-fs-utils");
+const folderScanner = require("../../../../folder-scanner");
 
 if (!fs.existsSync(managersDir)) throw "Managers directory `" + managersDir + "` doesn't exist";
 
 module.exports = async function(writtenFiles) {
-    var managers = loadManagersFromFolder(managersDir);
+    var managers = await loadManagersFromFolder(managersDir);
     
     var methods = [];
     for (var i = 0; i < managers.length; i++) {
@@ -50,8 +50,6 @@ module.exports = async function(writtenFiles) {
             methods = methods.concat(cacheManagers.managers[manager].methods);
         }
     }
-
-    deleteUnusedMethodClasses(methods.map(x => x.shimClassFunction.javaImplementationClass).flat());
 
     var robotFunctionLoaderAddress = path.join(rootDirectory, "TeamCode/gen/org/firstinspires/ftc/teamcode/auxilary/dsls/autoauto/runtime/RobotFunctionLoader.java");
 
@@ -84,21 +82,15 @@ function makeManagerName(name) {
     return managerArgs[name] || "";
 }
 
-function loadManagersFromFolder(folder) {
+async function loadManagersFromFolder(folder) {
     let results = [];
-
-    let folderContents = fs.readdirSync(folder, {
-        withFileTypes: true
-    });
-
-    for (var i = 0; i < folderContents.length; i++) {
-        let subfile = folderContents[i];
-
-        if (subfile.isDirectory()) {
-            results = results.concat(loadManagersFromFolder(path.join(folder, subfile.name)));
-        } else if (subfile.isFile() && (subfile.name.endsWith("Manager.java") || subfile.name == "PaulMath.java")) {
-            results.push(path.join(folder, subfile.name));
-        }
+    
+    const sc = folderScanner(folder, x=>(x.endsWith("Manager.java") || x == "PaulMath.java"));
+    
+    while(true) {
+        const file = await sc.next();
+        if(file.done) break;
+        else results.push(file.value);
     }
 
     return results;

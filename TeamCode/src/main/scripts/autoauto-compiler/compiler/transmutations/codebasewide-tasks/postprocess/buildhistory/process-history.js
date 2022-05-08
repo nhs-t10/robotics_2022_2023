@@ -51,10 +51,10 @@ module.exports = async function main() {
 
     var name = getName(familyLine.buildCount, familyLine.cognomen);
     var time = (new Date()).toISOString();
-    var buildHash = getDirectorySha(srcDirectory, BUILD_HASH_IGNORED);
+    var buildHash = await getDirectorySha(srcDirectory, BUILD_HASH_IGNORED);
     var w3w = what3Words.simpleNouns(buildHash);
     var phrase = what3Words.complexPhrase(buildHash);
-    var pngFile = buildPng(familyLine.buildCount, srcDirectory, BUILD_HASH_IGNORED);
+    var pngFile = await buildPng(familyLine.buildCount, srcDirectory, BUILD_HASH_IGNORED);
     
     androidStudioLogging.sendPlainMessage({
         kind: "INFO",

@@ -1,38 +1,30 @@
 var fs = require("fs");
 var crypto = require("crypto");
-var path = require("path");
+const folderScanner = require("../../../../folder-scanner");
 
 module.exports = getDirectorySha;
 
-function getDirectorySha(directory, ignores) {
+async function getDirectorySha(directory, ignores) {
     ignores = ignores || [];
     
     directory = directory + "";
-    if(!fs.existsSync(directory)) return "tree -1\u0000";
+    if(!fs.existsSync(directory)) return "";
     
-    var dir = fs.readdirSync(directory).sort();
+    const scanner = folderScanner(directory, x=>!ignores.includes(x), true);
     
-    var fileHashBuffers = [Buffer.from("tree " + dir.length + "\u0000")];
-    
-    for(var i = 0; i < dir.length; i++) { 
-        if(ignores.includes(dir[i])) continue;
-        
-        var fileSha = getFileSha(path.join(directory, dir[i]), ignores);
-        fileHashBuffers.push(Buffer.from(dir[i] + "\u0000" + fileSha));
+    const hash = crypto.createHash("sha256");
+    for await (const fileAddress of scanner) {
+        hash.update(getFileSha(fileAddress));
     }
-    var directoryBuffer = Buffer.concat(fileHashBuffers);
-    var hash = crypto.createHash("sha256").update(directoryBuffer).digest("hex");
     
-    return hash;
+    return hash.digest("hex");
 }
 
-function getFileSha(file, ignores) {
-    file = file + "";
-    if(!fs.existsSync(file)) return "blob -1\u0000";
-    if(fs.statSync(file).isDirectory()) return getDirectorySha(file, ignores);
+function getFileSha(fileAddress) {
+    if (!fs.existsSync(fileAddress)) return "blob -1\u0000";
     
-    var fileContent = fs.readFileSync(file);
-    var gitLikeFileContentBlob = Buffer.concat([Buffer.from("blob " + fileContent.length), new Uint8Array([0]), fileContent]);
+    var fileContent = fs.readFileSync(fileAddress);
+    var gitLikeFileContentBlob = Buffer.concat([Buffer.from(fileAddress + "\u0000"), fileContent]);
     var hash = crypto.createHash("sha256").update(gitLikeFileContentBlob).digest("hex");
     
     return hash;

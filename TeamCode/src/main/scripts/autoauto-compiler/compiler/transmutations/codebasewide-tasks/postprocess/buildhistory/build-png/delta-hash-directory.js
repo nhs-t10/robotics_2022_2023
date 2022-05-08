@@ -1,53 +1,38 @@
 var fs = require("fs");
 var path = require("path");
 var cache = require("../../../../../../../cache");
+const folderScanner = require("../../../../../folder-scanner");
 
 var badPerceptualHash = require("./bad-percep-hash");
 
-module.exports = function(directory, ignores) {
-    var hash = getDirectoryHash(directory, ignores).toString("hex");
-    var oldHash = cache.get("last-build-pixels", {c:"",p:"buildimgs/0.png"});
-
-    
-    //translate between old cache and new cache
-    if(typeof oldHash === "string") { 
-        oldHash = {
-            c: oldHash,
-            p: "buildimgs/0.png"
-        };
-    }
+module.exports = async function(directory, oldHashString, ignores) {
+    var hashBuffer = await getDirectoryPerceptualHash(directory, ignores);
+    var hashString = hashBuffer.toString("hex");
     
     return {
-        hash: hash,
-        diff: hexDiff(hash, oldHash.c),
-        oldHash: oldHash
+        hash: hashString,
+        diff: hexDiff(hashString, oldHashString)
     }
 }
 
-function getDirectoryHash(directory, ignores) {
+async function getDirectoryPerceptualHash(directory, ignores) {
     ignores = ignores || [];
     
     directory = directory + "";
     if(!fs.existsSync(directory)) return null;
     
-    var dir = fs.readdirSync(directory).sort();
+    const scanner = folderScanner(directory, x=>!ignores.includes(x));
     
     var hashes = [];
     
-    for(var i = 0; i < dir.length; i++) {
-        if(ignores.includes(dir[i])) continue;
-        
-        hashes.push(getFileHash(path.join(directory, dir[i]), ignores));
+    for await(const file of scanner) {
+        hashes.push(getFilePerceptualHash(file));
     }
     
     return badPerceptualHash.combineHashes(hashes);
 }
 
-function getFileHash(file, ignores) {
-    file = file + "";
-    if(!fs.existsSync(file)) return null;
-    if(fs.statSync(file).isDirectory()) return getDirectoryHash(file, ignores);
-    
+function getFilePerceptualHash(file) {
     var fileContent = fs.readFileSync(file);
     var hash = badPerceptualHash.hash(fileContent);
     
@@ -57,6 +42,10 @@ function getFileHash(file, ignores) {
 
 function hexDiff(a, b) {
     var res = "";
+    
+    console.log(a);
+    console.log("===")
+    console.log(b);
     
     if(!a) return b;
     if(!b) return a;
