@@ -1,4 +1,4 @@
-var query = require("../query");
+const query = require("../query");
 
 module.exports = {
     summary: "No Statepaths",

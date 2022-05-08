@@ -1,6 +1,4 @@
-var path = require("path");
-
-var query = require("../query");
+const query = require("../query");
 
 module.exports = {
     summary: "Empty block",

@@ -2,15 +2,12 @@ var fs = require("fs");
 var path = require("path");
 var androidStudioLogging = require("../../../../../script-helpers/android-studio-logging");
 
-
-var checks = loadChecksFromFiles(require("./check-file-names"));
-
-module.exports = function (ast, filename, frontmatter) {
+module.exports = function (ast, filename, frontmatter, checks) {
     var failed = false;
     for(var i = 0; i < checks.length; i++) {
         var check = checks[i];
 
-        var tag = "[" + check.id + "] " + check.summary;
+        var tag = check.summary;
         
         try {
             var res = check.run(ast, frontmatter);

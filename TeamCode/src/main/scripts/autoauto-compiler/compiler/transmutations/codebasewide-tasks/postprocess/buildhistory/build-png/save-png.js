@@ -1,5 +1,3 @@
-var fs = require("fs");
-var crypto = require("crypto");
 var path = require("path");
 const safeFsUtils = require("../../../../../../../script-helpers/safe-fs-utils");
 

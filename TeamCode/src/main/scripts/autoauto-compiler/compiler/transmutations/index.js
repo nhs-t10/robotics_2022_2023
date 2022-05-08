@@ -20,7 +20,7 @@ module.exports = {
         
         return idsToTras(tasks);
     },
-    loadTaskList: async function(s) {
+    loadTaskList: async function() {
         //TODO: implement `loadTransmutations()` asynchronously. See the file-scanner for example.
         await loadTransmutations(__dirname);
     },
