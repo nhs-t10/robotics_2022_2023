@@ -76,7 +76,6 @@ function serialiseData(data) {
 
 function deserialiseData(dataBuffer, defaultValue) {
     try {
-        if(defaultValue == 128) console.log(dataBuffer);
         if(isStructuredSerialised(dataBuffer)) return structuredSerialise.fromBuffer(dataBuffer);
         else return JSON.parse(dataBuffer.toString());
     } catch(e) {

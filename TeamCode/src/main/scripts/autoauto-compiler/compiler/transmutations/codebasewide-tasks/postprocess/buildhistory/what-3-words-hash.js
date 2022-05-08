@@ -1,8 +1,6 @@
-var sentenceGenerator = require("./sentence-generator");
-
-var simpleNouns = require("./words/simple-nouns.js");
-
-var SIMPLE_NOUNS_LIMIT = 3;
+const sentenceGenerator = require("./sentence-generator");
+const simpleNouns = require("./words/simple-nouns.js");
+const SIMPLE_NOUNS_LIMIT = 3;
 
 module.exports = {
     complexPhrase: complexPhraseHash,

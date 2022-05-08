@@ -31,7 +31,6 @@ var timeStart = Date.now();
 
 var solvedSerial = t.map(x=> {
     var p = structuredSerialise.toBuffer(x);
-    console.log(Array.from(p));
     return structuredSerialise.fromBuffer(p);
 });
 

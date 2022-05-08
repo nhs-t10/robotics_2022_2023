@@ -1,44 +1,23 @@
-var os = require("os");
-var crypto = require("crypto");
-var path = require("path");
-var fs = require("fs");
+const os = require("os");
+const crypto = require("crypto");
+const path = require("path");
+const fs = require("fs");
 const getDirectorySha = require("./get-dir-sha.js");
 const what3Words = require("./what-3-words-hash.js");
 const buildPng = require("./build-png");
 const safeFsUtils = require("../../../../../../script-helpers/safe-fs-utils.js");
 const androidStudioLogging = require("../../../../../../script-helpers/android-studio-logging.js");
 
-var HASH_SECRET = "autoauto family";
-var BUILD_HASH_IGNORED = ["gen", "genealogy", ".cache", "buildimgs"];
+const HASH_SECRET = "autoauto family";
+const BUILD_HASH_IGNORED = ["gen", "genealogy", ".cache", "buildimgs", "scripts"];
 
-var directory = __dirname.split(path.sep);
-var rootDirectory = directory.slice(0, directory.indexOf("TeamCode") + 1).join(path.sep);
-var srcDirectory = directory.slice(0, directory.indexOf("src") + 1).join(path.sep);
-
-if (rootDirectory == "" || rootDirectory == path.sep ||
-    srcDirectory == "" || srcDirectory == path.sep) throw "Unexpected directory structure";
-
-
-var mac = "";
-
-try {
-    mac = Object.values(os.networkInterfaces()).flat().map(x => x.mac).filter(x => x != '00:00:00:00:00:00')[0];
-} catch (e) { }
-
-var computerUniqueIdentifier = ([mac, os.cpus()[0].model, os.hostname(), os.platform()]).join(",");
-
-var computerHash = crypto.createHmac("sha256", HASH_SECRET)
-    .update(computerUniqueIdentifier)
-    .digest("hex");
-
-var familyTreeRecordsDirectory = path.join(srcDirectory, "main/assets/genealogy");
-var familyLineFile = path.join(familyTreeRecordsDirectory, computerHash + ".json");
-
-if (!fs.existsSync(familyLineFile)) safeFsUtils.safeWriteFile(familyLineFile, "{}");
-
-var familyLine = readJsonFile(familyLineFile);
-
-module.exports = async function main() {
+module.exports = async function (srcDirectory, assetsDirectory, genDirectory) {
+    
+    const computerHash = getComputerHash();
+    const familyTreeRecordsDirectory = getFamilyTreeRecordsDirectory(assetsDirectory);
+    const familyLineFile = getFamilyLineFile(familyTreeRecordsDirectory, computerHash);
+    const familyLine = readJsonFile(familyLineFile);
+    
     if (!familyLine.browser) {
         familyLine.browser = "Removed_for_privacy_reasons_" + Math.round(Math.random() * 0xFF_FF_FF).toString(16);
     }
@@ -54,7 +33,7 @@ module.exports = async function main() {
     var buildHash = await getDirectorySha(srcDirectory, BUILD_HASH_IGNORED);
     var w3w = what3Words.simpleNouns(buildHash);
     var phrase = what3Words.complexPhrase(buildHash);
-    var pngFile = await buildPng(familyLine.buildCount, srcDirectory, BUILD_HASH_IGNORED);
+    var pngFile = await buildPng(familyLine.buildCount, srcDirectory, BUILD_HASH_IGNORED, assetsDirectory);
     
     androidStudioLogging.sendPlainMessage({
         kind: "INFO",
@@ -87,13 +66,45 @@ module.exports = async function main() {
         .map(x => x.name + "," + x.time + "," + x.w3w) //transform to CSV
         .join("\n") //join CSV rows together
 
-    return updateTemplate(familyLine, time, name, history, buildHash, w3w, pngFile.imageAddress, familyLine.buildCount, phrase);
+    return updateTemplate(familyLine, time, name, history, buildHash, w3w, pngFile.imageAddress, familyLine.buildCount, phrase, genDirectory);
 };
 
-function updateTemplate(familyLine, time, name, history, hash, phrase, pngFileAddress, buildNumber, phraseLong) {
+function getFamilyTreeRecordsDirectory(assetsDir) {
+    const dirpath = path.join(assetsDir, "genealogy");
+    //if the genealogy directory doesn't already exist, make it and give it some gitattributes to prevent merge errors
+    if(!fs.existsSync(dirpath)) {
+        safeFsUtils.safeWriteFile(dirpath + path.sep + ".gitattributes", "*.json merge=ours\n*.json binary");
+    }
+    return dirpath;
+}
+
+function getFamilyLineFile(genealogyDir, computerHash) {
+    var familyLineFile = path.join(genealogyDir, computerHash + ".json");
+    if (!fs.existsSync(familyLineFile)) safeFsUtils.safeWriteFile(familyLineFile, "{}");
+    
+    return familyLineFile;
+}
+
+function getComputerHash() {
+    var mac = "";
+
+    try {
+        mac = Object.values(os.networkInterfaces()).flat().map(x => x.mac).filter(x => x != '00:00:00:00:00:00')[0];
+    } catch (e) { }
+
+    var computerUniqueIdentifier = ([mac, os.cpus()[0].model, os.hostname(), os.platform()]).join(",");
+
+    var computerHash = crypto.createHmac("sha256", HASH_SECRET)
+        .update(computerUniqueIdentifier)
+        .digest("hex");
+        
+    return computerHash;
+}
+
+function updateTemplate(familyLine, time, name, history, hash, phrase, pngFileAddress, buildNumber, phraseLong, genDirectory) {
     var template = fs.readFileSync(path.join(__dirname, "not_BuildHistory.notjava")).toString();
 
-    var resPath = path.join(srcDirectory, "../gen/org/firstinspires/ftc/teamcode/auxilary/buildhistory", "BuildHistory.java");
+    var resPath = path.join(genDirectory, "org/firstinspires/ftc/teamcode/auxilary/buildhistory", "BuildHistory.java");
     
     safeFsUtils.safeWriteFile(resPath, template 
         .replace("BUILDER_BROWSER_FINGERPRINT", familyLine.browser)

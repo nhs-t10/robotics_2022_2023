@@ -1,7 +1,4 @@
-var path = require("path");
 
-var directory = __dirname.split(path.sep);
-var srcDirectory = directory.slice(0, directory.indexOf("src") + 1).join(path.sep);
 
 var makePhoto = require("./create-png-from-hash.js");
 

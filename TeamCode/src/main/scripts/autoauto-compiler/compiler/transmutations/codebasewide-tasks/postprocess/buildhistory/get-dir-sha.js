@@ -1,5 +1,5 @@
-var fs = require("fs");
-var crypto = require("crypto");
+const fs = require("fs");
+const crypto = require("crypto");
 const folderScanner = require("../../../../folder-scanner");
 
 module.exports = getDirectorySha;

@@ -3,21 +3,17 @@ var cache = require("../../../../../../../cache");
 var pngFromHash = require("./create-png-from-hash.js");
 var deltaHashDirectory = require("./delta-hash-directory.js");
 
-module.exports = async function(buildNumber, directory, ignored) {
+module.exports = async function (buildNumber, srcDir, ignored, assetsDir) {
     var oldHash = getPreviousBuildForDelting();
     
-    var hexHash = await deltaHashDirectory(directory, oldHash.c, ignored);
+    var hexHash = await deltaHashDirectory(srcDir, oldHash.c, ignored);
     
-    var nonzeroBuildAddress = pngFromHash(buildNumber, hexHash.diff) || {address: oldHash.p, colors: ""};
-
-    console.log(oldHash);
+    var nonzeroBuildAddress = pngFromHash(buildNumber, hexHash.diff, 0, assetsDir) || {address: oldHash.p, colors: ""};
     
     cache.save("last-build-pixels", {
         c: hexHash.hash,
         p: nonzeroBuildAddress.address
     });
-    
-    console.log(cache.get("last-build-pixels", 128));
     
     return {
         imageAddress: nonzeroBuildAddress.address,

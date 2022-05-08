@@ -1,6 +1,3 @@
-var fs = require("fs");
-var path = require("path");
-
 var pixelsToMatrix = require("./pixels-to-matrix.js");
 
 var savePng = require("./save-png");
@@ -9,7 +6,7 @@ var PngFile = require("./png-file/png-file");
 var PHI = 1.61803399;
 
 
-module.exports = function(buildNumber, hash, pixelStrategySeed) {
+module.exports = function (buildNumber, hash, pixelStrategySeed, assetsDir) {
 
     var pixels = getHexPixels(hash);
     var normalizedPixels = normalizePixels(pixels);
@@ -33,7 +30,7 @@ module.exports = function(buildNumber, hash, pixelStrategySeed) {
     
     var png = new PngFile(matrix, renderedWidth);
     
-    var nonzeroBuildAddress = savePng(buildNumber, png.toBuffer());
+    var nonzeroBuildAddress = savePng(buildNumber, png.toBuffer(), assetsDir);
     
     return {
         address: nonzeroBuildAddress,

@@ -1,6 +1,4 @@
 var fs = require("fs");
-var path = require("path");
-var cache = require("../../../../../../../cache");
 const folderScanner = require("../../../../../folder-scanner");
 
 var badPerceptualHash = require("./bad-percep-hash");
@@ -42,10 +40,6 @@ function getFilePerceptualHash(file) {
 
 function hexDiff(a, b) {
     var res = "";
-    
-    console.log(a);
-    console.log("===")
-    console.log(b);
     
     if(!a) return b;
     if(!b) return a;

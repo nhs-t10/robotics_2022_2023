@@ -17,6 +17,7 @@ const BUILD_ROOT_DIRS = (require("./get-build-root"))();
 
 const SRC_DIRECTORY = BUILD_ROOT_DIRS.src
 const COMPILED_RESULT_DIRECTORY = BUILD_ROOT_DIRS.gen;
+const ASSETS_DIRECTORY = BUILD_ROOT_DIRS.asset;
 
 module.exports = (async function main() {
     await transmutations.loadTaskList();
@@ -105,7 +106,7 @@ function writeAndCallback(finishedFileContext, autoautoFileContexts, cb) {
 
 async function evaluateCodebaseTasks(allFileContexts, codebaseTasks, codebaseInputs, codebaseTransmutationWrites) {
     for(var transmut of codebaseTasks) {
-        var o = { output: undefined, writtenFiles: codebaseTransmutationWrites };
+        var o = makeCodebaseContext(codebaseTransmutationWrites);
         var mutFunc = require(transmut.sourceFile);
         await mutFunc(o, allFileContexts);
         codebaseInputs[transmut.id] = o.output;
@@ -114,6 +115,16 @@ async function evaluateCodebaseTasks(allFileContexts, codebaseTasks, codebaseInp
 
 function sha(s) {
     return crypto.createHash("sha256").update(s).digest("hex");
+}
+
+function makeCodebaseContext(codebaseTransmutationWrites) {
+    return {
+        output: undefined,
+        writtenFiles: codebaseTransmutationWrites,
+        resultRoot: COMPILED_RESULT_DIRECTORY,
+        assetsRoot: ASSETS_DIRECTORY,
+        sourceRoot: SRC_DIRECTORY
+    }
 }
 
 function makeFileContext(file, preprocessInputs) {
@@ -133,6 +144,7 @@ function makeFileContext(file, preprocessInputs) {
         resultDir: path.dirname(resultFile),
         resultFullFileName: resultFile,
         resultRoot: COMPILED_RESULT_DIRECTORY,
+        assetsRoot: ASSETS_DIRECTORY,
         fileFrontmatter: frontmatter,
         fileContentText: fileContent,
         lastInput: fileContent,

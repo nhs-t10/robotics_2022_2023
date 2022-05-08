@@ -14,7 +14,8 @@ module.exports = function() {
         const cwd = process.cwd();
         return {
             src: cwd,
-            gen: cwd
+            gen: cwd,
+            asset: cwd
         };
     }
     
@@ -24,10 +25,13 @@ module.exports = function() {
         safeFsUtils.createDirectoryIfNotExist(srcDir);
     }
     
+    const assetDir = path.join(gradleRoot, "src", "main", "assets");
+    
     const genDir = path.join(gradleRoot, "gen");
     
     return {
         src: srcDir,
-        gen: genDir
+        gen: genDir,
+        asset: assetDir
     };
 }
