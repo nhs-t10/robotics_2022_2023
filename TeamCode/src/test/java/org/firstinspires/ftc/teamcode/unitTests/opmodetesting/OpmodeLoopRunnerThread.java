@@ -3,7 +3,6 @@ package org.firstinspires.ftc.teamcode.unitTests.opmodetesting;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 
 import org.firstinspires.ftc.teamcode.auxilary.RobotTime;
-import org.firstinspires.ftc.teamcode.unitTests.teleop.longterm.ExampleTeleopCarouselHangingTest;
 
 public class OpmodeLoopRunnerThread extends Thread {
     OpmodeHangingWatchdogThread watchdog;
