@@ -10,21 +10,17 @@ var cache = require("../../../../../../cache");
 
 var functionLoaderConfig = require("../../../../../config");
 
-var cacheManagers = cache.get(functionLoaderConfig.CACHE_KEY, { managers: {} });
-
-if (cacheManagers.cacheVersion != functionLoaderConfig.CACHE_VERSION) cacheManagers = { managers: {} };
-
-cacheManagers.cacheVersion = functionLoaderConfig.CACHE_VERSION;
-
 var managerArgs = {};
 
 var generateAaMethods = require("./parse-and-generate-aa-methods.js");
 const safeFsUtils = require("../../../../../../script-helpers/safe-fs-utils");
 const folderScanner = require("../../../../folder-scanner");
+const commandLineInterface = require("../../../../../../command-line-interface");
 
 if (!fs.existsSync(managersDir)) throw "Managers directory `" + managersDir + "` doesn't exist";
 
 module.exports = async function(writtenFiles) {
+    var cacheManagers = getCacheManagers();
     var managers = await loadManagersFromFolder(managersDir);
     
     var methods = [];
@@ -41,7 +37,7 @@ module.exports = async function(writtenFiles) {
         } else {
             var preexistingNames = methods.map(x => x.shimClassFunction.nameToUseInAutoauto).flat();
 
-            var generated = generateAaMethods(fileContent, preexistingNames, writtenFiles);
+            var generated = generateAaMethods(fileContent, preexistingNames);
 
             cacheManagers.managers[manager] = {
                 methods: generated || [],
@@ -66,10 +62,33 @@ module.exports = async function(writtenFiles) {
         Object.entries(managerArgs),
     );
     writtenFiles[robotFunctionLoaderAddress] = robotFunctionLoader;
+    
+    addAllRobotfunctionFilesToWrittenFiles(writtenFiles, methods);
 
     cache.save("autoauto-managers", cacheManagers);
     return cacheManagers.managers;
 };
+
+function getCacheManagers() {
+    const DEFAULT_CACHE_MANAGERS = { managers: { }, cacheVersion: functionLoaderConfig.CACHE_KEY };
+    
+    
+    if (commandLineInterface["no-cache"]) return DEFAULT_CACHE_MANAGERS;
+    
+    var cacheManagers = cache.get(functionLoaderConfig.CACHE_KEY, DEFAULT_CACHE_MANAGERS);
+
+    if (cacheManagers.cacheVersion != functionLoaderConfig.CACHE_VERSION) cacheManagers = DEFAULT_CACHE_MANAGERS;
+    cacheManagers.cacheVersion = functionLoaderConfig.CACHE_VERSION;
+    
+    return cacheManagers;
+
+}
+
+function addAllRobotfunctionFilesToWrittenFiles(writtenFiles, methods) {
+    for(const method of methods) {
+        writtenFiles[method.shimClassFunction.javaImplementationFile] = true;
+    }
+}
 
 function makeManagerName(name) {
     if (name == "") return "";

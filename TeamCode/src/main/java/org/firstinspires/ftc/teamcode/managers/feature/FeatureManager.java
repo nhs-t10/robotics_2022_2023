@@ -4,7 +4,6 @@ package org.firstinspires.ftc.teamcode.managers.feature;
 import org.firstinspires.ftc.teamcode.auxilary.FileSaver;
 import org.firstinspires.ftc.teamcode.managers.feature.robotconfiguration.OmniCalcComponents;
 import org.firstinspires.ftc.teamcode.managers.feature.robotconfiguration.RobotConfiguration;
-import org.firstinspires.ftc.teamcode.managers.feature.robotconfiguration.WheelCoefficients;
 
 import java.util.ArrayList;
 
@@ -26,56 +25,19 @@ public class FeatureManager {
         isOpModeRunning = b;
     }
 
-    public static final RobotConfiguration tankBoyConfiguration = new RobotConfiguration(
-            W(1,1,1,1), W(1,1,1,1),
-            new OmniCalcComponents(
-                    vertical      (-1f,1f,-1f,-1f),
-                    horizontal    (0f, 0f, 0f, 0f),
-                    rotational    (1f,-1f,-1f,-1f)
-            ),
-            0.03f, 1680, 1, 8.9, 1, 3f,
-            PIDMAP()
-    );
 
-    public static final RobotConfiguration speedyBoyConfiguration = new RobotConfiguration(
-            W(1,1,0,0), W(1,1,0,0),
+    public static final RobotConfiguration hotWheelsConfiguration = new RobotConfiguration(
+            W(1,1,-1,1), W(1,1,-1,1),
             new OmniCalcComponents(
-                    vertical      (1f,-1f,1f,1f),
-                    horizontal    (-0.5f, -0.5f, -1f, -1f),
-                    rotational    (0f,0f,0f,0f)
-            ),
-            0.03f, 1680, 1, 8.9, 1, 3f,
-            PIDMAP()
-    );
-
-    public static final RobotConfiguration bigBoyConfiguration = new RobotConfiguration(
-            W(1,1,-1,1), W(0.83f,0.83f,-1,1),
-            new OmniCalcComponents(
-                vertical      (-1f,-1f,-1f,-1f),
+                vertical      (-1f,-1f,1f,1f),
                 horizontal    (1f, -1f, 1f, -1f),
-                rotational    (1f,-1f,-1f,1f)
+                rotational    (1f,-1f,1f,-1f)
             ),
             0.03f, 1680, 1, 8.9, 1, 3f,
             PIDMAP(
                 PIDC("ClawMotor", 0.05f, 0f, 0f)
             )
         );
-
-    public static final RobotConfiguration giraffeBoyConfiguration = new RobotConfiguration(
-            W(1,1,-1,1), W(1,1,-1,1),
-            new OmniCalcComponents(
-                vertical      (-1f,-1f,-1f,-1f),
-                horizontal    (1f, -1f, 1f, -1f),
-                rotational    (1f,-1f,-1f,1f)
-            ),
-            0.03f, 1680, 1, 8.9, 1, 3f,
-            PIDMAP(
-                    PIDC("NeckMotor", 0.050928f, 1.003e-9f  , 0.05f),
-                    PIDC("ClawMotor", 0.057f, 1.243e-9f, 0f)
-               //    PIDC("ClawMotor", 0.008718f, 1.6917e-7f, 0.0001f)
-
-            )
-    );
 
     public static void reconfigureForTeleop() {
         FeatureManager.logger.log("I am teleop");
@@ -96,7 +58,7 @@ public class FeatureManager {
             PIDMAP()
         );
 
-    public static final RobotConfiguration defaultConfiguration = bigBoyConfiguration;
+    public static final RobotConfiguration defaultConfiguration = hotWheelsConfiguration;
 
 
     private static RobotConfiguration cachedConfiguration;
@@ -138,13 +100,9 @@ public class FeatureManager {
 
         switch (fileContent) {
             case RobotConfiguration.bigBoyFileContent:
-                return cachedConfiguration = bigBoyConfiguration;
+                return cachedConfiguration = hotWheelsConfiguration;
             case RobotConfiguration.littleBoyFileContent:
                 return cachedConfiguration = littleBoyConfiguration;
-            case RobotConfiguration.giraffeBoyFileContent:
-                return cachedConfiguration = giraffeBoyConfiguration;
-            case RobotConfiguration.SpeedyBoyFileContent:
-                return cachedConfiguration = speedyBoyConfiguration;
             default:
                 return cachedConfiguration = defaultConfiguration;
         }

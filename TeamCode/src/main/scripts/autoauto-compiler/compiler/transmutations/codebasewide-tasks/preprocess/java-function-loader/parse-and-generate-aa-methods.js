@@ -15,7 +15,7 @@ var parserTools = require("../../../../../../script-helpers/parser-tools");
 const safeFsUtils = require("../../../../../../script-helpers/safe-fs-utils.js");
 const androidStudioLogging = require("../../../../../../script-helpers/android-studio-logging.js");
 
-module.exports = function(javaSource, preexistingNames, writtenFiles) {
+module.exports = function(javaSource, preexistingNames) {
     try {
         var sourceWithoutComments = parserTools.stripComments(javaSource);
         var ast = parser.parse(sourceWithoutComments);
@@ -38,7 +38,7 @@ module.exports = function(javaSource, preexistingNames, writtenFiles) {
     var methods = findShimableMethods(primaryType);
     var overloads = groupMethodsIntoOverloads(methods);
 
-    var processedMethodClassLocs = overloads.map(x=>generateRobotFunction(x, fullClassName, preexistingNames, writtenFiles));
+    var processedMethodClassLocs = overloads.map(x=>generateRobotFunction(x, fullClassName, preexistingNames));
     return processedMethodClassLocs;
 }
 
@@ -47,7 +47,7 @@ function packageNameToString(packageName) {
     else return packageNameToString(packageName.qualifier) + "." + packageName.name.identifier;
 }
 
-function generateRobotFunction(overload, definedClass, preexistingNames, writtenFiles) {
+function generateRobotFunction(overload, definedClass, preexistingNames) {
     var name = overload.name;
     
     var noConflictName = name;
@@ -105,11 +105,11 @@ function generateRobotFunction(overload, definedClass, preexistingNames, written
     var template = processTemplate(callMethodSource, definedClass, classname, argumentNames);
 
     var ourPath = path.join(robotFunctionsDirectory, classname + ".java");
-
-    writtenFiles[ourPath] = template;
+    
+    safeFsUtils.safeWriteFile(ourPath, template);
 
     return {
-        shimClassFunction: { nameToUseInAutoauto: noConflictName, javaImplementationClass: classname},
+        shimClassFunction: { nameToUseInAutoauto: noConflictName, javaImplementationClass: classname, javaImplementationFile: ourPath},
         functionTypes: functionIndexLines,
         originalSourceClass: definedClass
     }
