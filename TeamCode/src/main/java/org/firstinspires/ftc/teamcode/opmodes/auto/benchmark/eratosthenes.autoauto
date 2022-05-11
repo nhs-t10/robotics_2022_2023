@@ -2,6 +2,9 @@ $
 compilerMode: "optimized-bytecode"
 $
 
+//This function calculates every prime under 1000. It is a benchmark for different versions of Autoauto.
+//So far, the fastest is optimized-bytecode, with 524ms on a core i5.
+
 let highest = 1000,
 let primes = [2 = true], let isComposite = [], goto startAlgorithm;
 

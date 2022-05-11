@@ -13,5 +13,11 @@ function template(package, className, javaParts) {
         public ${className}() {
             super(${javaParts.instructions}, ${javaParts.bytecodes});
         }
+        
+        public static void main(String[] args) {
+            ${className} t = new ${className}();
+            
+            while(true) t.loop();
+        }
     }`
 }

@@ -1,6 +1,5 @@
 package org.firstinspires.ftc.teamcode.unitTests.telemetry;
 
-import org.firstinspires.ftc.teamcode.opmodes.auto.DiggityDrive;
 import org.firstinspires.ftc.teamcode.opmodes.teleop.LearnDual;
 import org.firstinspires.ftc.teamcode.unitTests.dummy.DummyGamepad;
 import org.firstinspires.ftc.teamcode.unitTests.dummy.DummyHardwareMap;
@@ -11,22 +10,22 @@ import org.junit.Test;
 public class MultipleOpmodesTest {
     @Test
     public void test() {
-        runAuto();
+        //runAuto();
         runTeleop();
         //are you satisfied, auto-checker?
         Assert.assertTrue(true);
     }
-
-    private void runAuto() {
-        DiggityDrive a = new DiggityDrive();
-        a.telemetry = new DummyTelemetry();
-        a.hardwareMap = new DummyHardwareMap();
-
-        a.init();
-        a.start();
-        for(int i = 0; i < 100; i++) a.loop();
-        a.stop();
-    }
+//
+//    private void runAuto() {
+//        DiggityDrive a = new DiggityDrive();
+//        a.telemetry = new DummyTelemetry();
+//        a.hardwareMap = new DummyHardwareMap();
+//
+//        a.init();
+//        a.start();
+//        for(int i = 0; i < 100; i++) a.loop();
+//        a.stop();
+//    }
     private void runTeleop() {
         LearnDual a = new LearnDual();
         a.telemetry = new DummyTelemetry();

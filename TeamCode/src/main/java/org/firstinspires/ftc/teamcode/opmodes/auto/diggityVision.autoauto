@@ -1,4 +1,0 @@
-#init:
-    let CVReading = getCVPositionNumberWhereZeroIsLeftOneIsMiddleAndTwoIsRight(),
-    let CVPosition = getCVPrecisePosition(),
-    log("Basic Reading: " + CVReading + " | Precise Reading" + CVPosition)

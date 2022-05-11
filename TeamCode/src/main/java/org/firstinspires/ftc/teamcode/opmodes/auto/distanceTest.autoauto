@@ -1,5 +1,0 @@
-#init:
-    driveOmni(1, 0, 0), after 0.5s next;
-    driveOmni(0, 0, 1), after 0.5s next;
-    log("completed");
-
