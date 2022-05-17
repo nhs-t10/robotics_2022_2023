@@ -129,6 +129,10 @@ public class CVManager extends FeatureManager
         return Math.floor(Math.min(0.9, pipeline.getAnalysisPrecise() * 2.0) * 3);
     }
 
+    public int getCVNumberForTesting() {
+        return 0;
+    }
+
 
     public void stopWebcam() {
             /*

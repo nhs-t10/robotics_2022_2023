@@ -3,8 +3,8 @@ module.exports = function(context) {
     context.status = "pass";
 }
 
-function getCompatModeSetter(frontMatter) {
-    var keys = Object.keys(frontMatter);
+function getCompatModeSetter(frontmatter) {
+    var keys = Object.keys(frontmatter);
 
     var flagRegex = /^[a-z]*flag_/;
     var flagPrefix = "\t@";
