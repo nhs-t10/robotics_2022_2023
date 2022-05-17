@@ -143,9 +143,8 @@ module.exports = /*
 
         peg$c0 = function (c, f, u, s) {
           return {
-            comments: c,
+            
             type: "Program", location: location(),
-            frontMatter: f,
             statepaths: u ? [u].concat(s) : s
           }
         },
@@ -157,17 +156,17 @@ module.exports = /*
         },
         peg$c2 = function (c, k, v) {
           return {
-            comments: c,
+            
             type: "FrontMatterKeyValue", location: location(),
             key: k,
             value: v
           }
         },
         peg$c3 = function (c, s) {
-          return { comments: c, type: "LabeledStatepath", location: location(), statepath: s, label: "<init>" }
+          return {  type: "LabeledStatepath", location: location(), statepath: s, label: "<init>" }
         },
         peg$c4 = function (c, l, s) {
-          return { comments: c, type: "LabeledStatepath", location: location(), statepath: s, label: l.value }
+          return {  type: "LabeledStatepath", location: location(), statepath: s, label: l.value }
         },
         peg$c5 = function (head, tail) {
           return {
@@ -177,7 +176,7 @@ module.exports = /*
         },
         peg$c6 = function (c, head, tail) {
           return {
-            comments: c,
+            
             type: "State", location: location(),
             statement: [head].concat(tail.map(x => x[1]))
           }
@@ -186,16 +185,12 @@ module.exports = /*
         peg$c8 = function (c, s) {
           return {
             type: "Block",
-            state: s || { comments: [], type: "State", location: location(), statement: [] },
+            state: s || {type: "State", location: location(), statement: [] },
             location: location(),
-            comments: c
           };
         },
         peg$c9 = peg$otherExpectation("statement"),
         peg$c10 = function (c, s) {
-          if (s.comments && s.comments.length) s.comments = c.concat(s.comments);
-          else s.comments = c;
-
           return s;
         },
         peg$c11 = function (v) { return { type: "ProvideStatement", value: v, location: location() }; },
@@ -206,7 +201,7 @@ module.exports = /*
             type: "DelegatorExpression",
             delegateTo: f[0],
             location: location(),
-            args: f[1] || { type: "ArgumentList", args: [], location: location() }
+            args: f[1] || { type: "ArgumentList", args: [], len:0, location: location() }
           }
         },
         peg$c15 = function (u) {
@@ -214,13 +209,12 @@ module.exports = /*
         },
         peg$c16 = function (u, s) { return { type: "AfterStatement", location: location(), unitValue: u, statement: s } },
         peg$c17 = function (f) { return { type: "ValueStatement", location: location(), call: f } },
-        peg$c18 = function (name, args, b) { return { type: "FunctionDefStatement", name: name, args: args || { type: "ArgumentList", args: [], location: location() }, body: b, location: location() }; },
+        peg$c18 = function (name, args, b) { return { type: "FunctionDefStatement", name: name, args: args || { type: "ArgumentList", args: [], len:0, location: location() }, body: b, location: location() }; },
         peg$c19 = function (p) { return { type: "GotoStatement", location: location(), path: p } },
         peg$c20 = function (t, s, e) {
           return { type: "IfStatement", location: location(), conditional: t, statement: s, elseClause: e || { type: "PassStatement", location: location() } }
         },
         peg$c21 = function (c, s) {
-          s.comments = c.concat(s.comments);
           return s;
         },
         peg$c22 = function () { return { type: "PassStatement", location: location() } },
@@ -228,8 +222,8 @@ module.exports = /*
         peg$c24 = function (v, val) { return { type: "LetPropertyStatement", location: location(), variable: v, value: val } },
         peg$c25 = function () { return { type: "NextStatement", location: location() } },
         peg$c26 = function (s) { return { type: "SkipStatement", location: location(), skip: s } },
-        peg$c27 = function (c, b) { b.comments = c; return b },
-        peg$c28 = function (c, v) { v.comments = c.concat(v.comments); return v; },
+        peg$c27 = function (c, b) { return b },
+        peg$c28 = function (c, v) { return v; },
         peg$c29 = function (l, r) {
           if (!r) return l;
 
@@ -284,7 +278,7 @@ module.exports = /*
           return value;
         },
         peg$c36 = peg$otherExpectation("function call"),
-        peg$c37 = function (a) { return { type: "FunctionCall", func: null, args: a || { type: "ArgumentList", args: [], location: location() }, location: location() } },
+        peg$c37 = function (a) { return { type: "FunctionCall", func: null, args: a || { type: "ArgumentList", args: [], len:0, location: location() }, location: location() } },
         peg$c38 = peg$otherExpectation("array-style property getter (obj[i])"),
         peg$c39 = function (a) { return { type: "TailedValue", head: null, tail: a, location: location() } },
         peg$c40 = peg$otherExpectation("dot-style property getter (obj.prop)"),
@@ -293,13 +287,13 @@ module.exports = /*
         peg$c43 = function (a) {
           return {
             type: "ArrayLiteral", location: location(),
-            elems: a || { type: "ArgumentList", args: [], location: location() }
+            elems: a || { type: "ArgumentList", args: [], len:0, location: location() }
           }
         },
-        peg$c44 = function (name, args, b) { return { type: "FunctionLiteral", name: name, args: args || { type: "ArgumentList", args: [], location: location() }, body: b, location: location() }; },
+        peg$c44 = function (name, args, b) { return { type: "FunctionLiteral", name: name, args: args || { type: "ArgumentList", args: [], len:0, location: location() }, body: b, location: location() }; },
         peg$c45 = function () { return { type: "BooleanLiteral", location: location(), value: true }; },
         peg$c46 = function () { return { type: "BooleanLiteral", location: location(), value: false }; },
-        peg$c47 = function (l, o, r) { return { type: "ComparisonOperator", location: location(), left: l, operator: o, right: r }; },
+        peg$c47 = function (l, o, r) { return { type: "OperatorExpression", location: location(), left: l, operator: o, right: r }; },
         peg$c48 = function (r) { return r; },
         peg$c49 = peg$otherExpectation("comparison operator"),
         peg$c50 = function (o) { return o; },

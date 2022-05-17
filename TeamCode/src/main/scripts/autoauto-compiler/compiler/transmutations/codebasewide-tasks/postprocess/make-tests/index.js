@@ -13,7 +13,7 @@ module.exports = function(context, contexts) {
     var testRecords = contexts
     .filter(x=>x.status == "pass")
     .map(x=>({
-        frontMatter: x.fileFrontmatter,
+        frontmatter: x.fileFrontmatter,
         className: x.resultBaseFileName.split(".")[0],
         package: x.inputs["get-result-package"]
     }));

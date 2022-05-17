@@ -1,9 +1,9 @@
-var parser = require("./aa-parser");
+var parser = require("./parser");
 var makeHints = require("./hints");
 
 module.exports = function(context) {
     try {
-        context.output = parser.parse(context.lastInput);
+        context.output = parser(context.lastInput);
         context.status = "pass";
     } catch(e) {
         var basic = "Unexpected " + JSON.stringify(e.found);

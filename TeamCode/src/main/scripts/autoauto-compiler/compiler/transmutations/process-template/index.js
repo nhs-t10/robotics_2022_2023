@@ -20,7 +20,7 @@ module.exports = function(context) {
     context.status = "pass";
 }
 
-function processTemplate(className, frontMatter, javaCreationCode, sourceFileName, jsonSettingCode, package, classNameNoConflict, flagSet) {
+function processTemplate(className, frontmatter, javaCreationCode, sourceFileName, jsonSettingCode, package, classNameNoConflict, flagSet) {
     return template
         .replace("public class template", "public class " + className)
         .replace("/*JAVA_CREATION_CODE*/", javaCreationCode)
@@ -28,6 +28,6 @@ function processTemplate(className, frontMatter, javaCreationCode, sourceFileNam
         .replace("/*JSON_SETTING_CODE*/", jsonSettingCode)
         .replace("/*NO_CONFLICT_NAME*/", classNameNoConflict)
         .replace("/*SOURCE_FILE_NAME*/", JSON.stringify(sourceFileName).slice(1, -1))
-        .replace("/*ERROR_STACK_TRACE_HEIGHT*/", (+frontMatter.errorStackTraceHeight) || 1)
+        .replace("/*ERROR_STACK_TRACE_HEIGHT*/", (+frontmatter.errorStackTraceHeight) || 1)
         .replace("/*COMPAT_MODE_SETTING*/", flagSet);
 }
