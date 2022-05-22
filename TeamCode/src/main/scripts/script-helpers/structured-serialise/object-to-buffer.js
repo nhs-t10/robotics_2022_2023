@@ -102,7 +102,6 @@ function getStringBuffer(str) {
     const strBuf = Buffer.from(str, "utf8");
     const strBufWithHead = Buffer.allocUnsafe(strBuf.length + VALUE_ENTRY_HEADER_SIZE);
     
-    strBufWithHead.fill(str, VALUE_ENTRY_HEADER_SIZE, strBufWithHead.length, "utf8");
     strBuf.copy(strBufWithHead, VALUE_ENTRY_HEADER_SIZE);
     
     return strBufWithHead;
@@ -149,15 +148,15 @@ function getEntriesBytes(obj, valuePool, requiredHeaderLength) {
 }
 
 function getWellKnownObjectBytes(obj, valuePool) {
-    const keyvalues = getEntriesBytes(obj, valuePool, 8);
+    const keyvalues = getEntriesBytes(obj, valuePool, 8 + VALUE_ENTRY_HEADER_SIZE);
     
     //write header info-- namely, the constructor name and an argument.
-    writeWellKnownInfo(obj, valuePool, keyvalues);
+    writeWellKnownInfo(obj, valuePool, keyvalues, VALUE_ENTRY_HEADER_SIZE);
     
     return keyvalues;
 }
 
-function writeWellKnownInfo(obj, valuePool, resultInfoBuffer) {
+function writeWellKnownInfo(obj, valuePool, resultInfoBuffer, offset) {
 
     var constructorName = wellKnownConstructors.getName(obj);
     var constructorPoolId = createOrGetIdInValuepool(constructorName, valuePool);
@@ -169,6 +168,6 @@ function writeWellKnownInfo(obj, valuePool, resultInfoBuffer) {
         if(paramVal == obj) paramVal = undefined;
     }
     
-    resultInfoBuffer.writeUInt32LE(constructorPoolId, 0);
-    resultInfoBuffer.writeUInt32LE(createOrGetIdInValuepool(paramVal, valuePool), 4);
+    resultInfoBuffer.writeUInt32LE(constructorPoolId, offset);
+    resultInfoBuffer.writeUInt32LE(createOrGetIdInValuepool(paramVal, valuePool), offset + 4);
 }

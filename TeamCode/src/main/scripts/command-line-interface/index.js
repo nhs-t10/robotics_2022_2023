@@ -1,4 +1,5 @@
 var loadArgv = require("./command-line-arguments");
+const printHelpInfo = require("./help");
 var schema = require("./schema");
 
 
@@ -13,7 +14,10 @@ var schema = require("./schema");
 var cla = {};
 
 module.exports = cla;
+Object.assign(cla, loadArgv(schema));
 
-loadArgv(schema);
 
-Object.assign(cla, schema);
+if(cla.help) {
+    printHelpInfo(schema);
+    process.exit();
+}
