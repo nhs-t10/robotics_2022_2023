@@ -21,8 +21,8 @@ module.exports = function() {
     
     var srcDir = path.join(gradleRoot, "src", "main", "java");
     if(!fs.existsSync(srcDir)) {
-        androidStudioLogging.warning(`The folder src/main/java does not exist in the gradle project root (${gradleRoot})! Creating it...`)
-        safeFsUtils.createDirectoryIfNotExist(srcDir);
+        androidStudioLogging.error(`The folder src/main/java does not exist in the gradle project root (${gradleRoot})!`);
+        process.exit(1);
     }
     
     const assetDir = path.join(gradleRoot, "src", "main", "assets");

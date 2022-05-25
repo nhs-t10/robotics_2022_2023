@@ -168,8 +168,8 @@ function caster(type) {
         "short": "(short)",
         "int": "(int)",
         "long": "(long)",
-        "float": "",
-        "double": "(double)",
+        "float": "(float)",
+        "double": "",
         "boolean": "",
         "char": "",
         "String": ""
@@ -178,12 +178,12 @@ function caster(type) {
 
 function rawValueGetter(type) {
     return  ({
-        "byte": "castToNumber().getFloat()",
-        "short": "castToNumber().getFloat()",
-        "int": "castToNumber().getFloat()",
-        "long": "castToNumber().getFloat()",
-        "float": "castToNumber().getFloat()",
-        "double": "castToNumber().getFloat()",
+        "byte": "castToNumber().getDouble()",
+        "short": "castToNumber().getDouble()",
+        "int": "castToNumber().getDouble()",
+        "long": "castToNumber().getDouble()",
+        "float": "castToNumber().getDouble()",
+        "double": "castToNumber().getDouble()",
         "boolean": "castToBoolean().getBoolean()",
         "char": "getString().charAt(0)",
         "String": "getString()"

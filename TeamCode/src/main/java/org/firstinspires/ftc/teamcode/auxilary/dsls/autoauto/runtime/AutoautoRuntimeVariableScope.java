@@ -116,15 +116,16 @@ public class AutoautoRuntimeVariableScope {
         this.systemSet("Math", new AutoautoMathMethodsTable());
     }
 
-    public void initBuiltinFunctions(AutoautoModule module, RobotFunctionLoader robotFunctions) {
+    public void initStandaloneBuiltins() {
         this.systemSet("log", new LogFunction());
-
         this.systemSet("return", new ReturnFunction());
-
         this.systemSet("typeof", new TypeofFunction());
-
-        this.systemSet("delegate", new DelegateFunction(module.address, robotFunctions));
         this.systemSet("provide", new ProvideFunction());
+    }
+
+    public void initBuiltinFunctions(AutoautoModule module, RobotFunctionLoader robotFunctions) {
+        initStandaloneBuiltins();
+        this.systemSet("delegate", new DelegateFunction(module.address, robotFunctions));
 
         robotFunctions.loadFunctions(this);
     }

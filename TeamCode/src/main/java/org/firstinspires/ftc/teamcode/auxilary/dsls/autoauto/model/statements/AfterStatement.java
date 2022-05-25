@@ -24,7 +24,7 @@ public class AfterStatement extends Statement {
     AutoautoRuntimeVariableScope scope;
 
     private long stepStartTime = 0;
-    private float stepStartTick;
+    private double stepStartTick;
 
     private AutoautoUnitValue waitWithUnit;
     private boolean restartDeltaNextLoop;
@@ -110,7 +110,7 @@ public class AfterStatement extends Statement {
             case DISTANCE:
             case ROTATION:
                 getTicks = (AutoautoCallableValue) scope.get(getUnitMethodFromMapping(waitWithUnit.unit));
-                this.stepStartTick = ((AutoautoNumericValue)getTicks.call(new AutoautoUndefined(), new AutoautoPrimitive[0])).getFloat();
+                this.stepStartTick = ((AutoautoNumericValue)getTicks.call(new AutoautoUndefined(), new AutoautoPrimitive[0])).getDouble();
                 break;
         }
     }
@@ -128,8 +128,8 @@ public class AfterStatement extends Statement {
                 case DISTANCE:
                 case ROTATION:
                     double targetDifference = waitWithUnit.baseAmount;
-                    float referPoint = stepStartTick;
-                    float currentPosition = ((AutoautoNumericValue) getTicks.call(new AutoautoUndefined(), new AutoautoPrimitive[0])).getFloat();
+                    double referPoint = stepStartTick;
+                    double currentPosition = ((AutoautoNumericValue) getTicks.call(new AutoautoUndefined(), new AutoautoPrimitive[0])).getDouble();
 
                     if (Math.abs(currentPosition - referPoint) >= Math.abs(targetDifference))
                         action.loop();

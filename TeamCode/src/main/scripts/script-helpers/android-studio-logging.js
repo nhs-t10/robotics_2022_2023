@@ -9,6 +9,7 @@ module.exports = {
     sendTreeLocationMessage: sendTreeLocationMessage,
     
     warning: sendWarn,
+    error: sendError,
 
     beginOutputCapture: beginOutputCapture,
     getCapturedOutput: getCapturedOutput,
@@ -60,6 +61,13 @@ function sendWarn(msgStr) {
     });
 }
 
+function sendError(msgStr) {
+    sendPlainMessage({
+        kind: "ERROR",
+        text: msgStr
+    });
+}
+
 function sendMessages(msgs) {
     msgs.forEach(x=>sendPlainMessage(x));
 }
@@ -87,13 +95,23 @@ function incrementTypeCount(kind) {
 }
 
 function printTypeCounts() {
+    const cE = counts.ERROR;
+    const cW = counts.WARNING;
+    const cBW = counts.BARELY_WARNING;
+    const cAW = cW + cBW;
+    const cI = counts.INFO;
     sendRawText(
         "Compilation finished. " +
-        colourString(COLOURS.ERROR, counts.ERROR + " errors") + ", " +
-        colourString(COLOURS.WARNING, (counts.WARNING + counts.BARELY_WARNING) + " warnings") + " (" +
+        colourString(COLOURS.ERROR, cE + maybePlural(cE, " error")) + ", " +
+        colourString(COLOURS.WARNING, cAW + maybePlural(cAW, " warning")) + " (" +
         colourString(COLOURS.BARELY_WARNING, counts.BARELY_WARNING + " barely") + "), " +
-        colourString(COLOURS.INFO, counts.INFO + " informational")
+        colourString(COLOURS.INFO, cI + " informational")
     );
+}
+
+function maybePlural(num, word) {
+    if(num == 1) return word;
+    else return word + "s";
 }
 
 function formatAndSendJsonFormat(msg) {

@@ -25,6 +25,7 @@ public class callfunction_Bytecode extends AutoautoBytecode {
             argnames[i] = stack.pop().getString();
         }
 
+
         int numPosArgs = stack.pop().castToNumber().getInt();
         AutoautoPrimitive[] posargs = new AutoautoPrimitive[numPosArgs];
         for(int i = numPosArgs - 1; i>=0; i--) posargs[i] = stack.pop();
@@ -39,6 +40,7 @@ public class callfunction_Bytecode extends AutoautoBytecode {
             stack.push(fFunc.call(bytecodeEvaluationProgram.lastThisContext, finalArgs));
         } else {
             stack.push(new AutoautoUndefined());
+            FeatureManager.logger.warn("Attempt to call a non-callable in Autoauto");
         }
 
         callStack.pop();

@@ -16,8 +16,8 @@ public class acoshNativeFunction extends NativeFunction {
     public AutoautoPrimitive call(AutoautoPrimitive thisArg, AutoautoPrimitive[] args) throws ManagerSetupException {
         if(args.length < 1) return new AutoautoUndefined();
         if(args[0] instanceof AutoautoNumericValue) {
-            float x = ((AutoautoNumericValue)args[0]).getFloat();
-            if(x < 1) return new AutoautoUndefined();
+            double x = ((AutoautoNumericValue)args[0]).getDouble();
+            if(x < 1.0) return new AutoautoUndefined();
 
             return new AutoautoNumericValue(Math.log(x + Math.sqrt(x * x - 1)));
         }

@@ -16,7 +16,7 @@ public class atanNativeFunction extends NativeFunction {
     public AutoautoPrimitive call(AutoautoPrimitive thisArg, AutoautoPrimitive[] args) throws ManagerSetupException {
         if(args.length < 1) return new AutoautoUndefined();
         if(args[0] instanceof AutoautoNumericValue) {
-            return new AutoautoNumericValue(Math.atan(((AutoautoNumericValue)args[0]).getFloat()));
+            return new AutoautoNumericValue(Math.atan(((AutoautoNumericValue)args[0]).getDouble()));
         }
         return new AutoautoUndefined();
     }

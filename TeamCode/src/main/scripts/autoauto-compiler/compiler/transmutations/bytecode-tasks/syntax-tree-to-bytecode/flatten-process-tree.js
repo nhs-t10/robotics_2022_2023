@@ -3,11 +3,11 @@ var cPool = require("./constant-pool");
 var treeBlockToBytecodeBlock = require("./ast-to-bytecode");
 const bytecodeSpec = require("../bytecode-spec");
 
-module.exports = function(ast) {
+module.exports = function(ast, frontmatter) {
     var constantPool = cPool();
     var treeBlocks = programToTreeBlocks(ast);
     
-    var bytecodeBlocks = treeBlocks.map(x=>treeBlockToBytecodeBlock(x, constantPool));
+    var bytecodeBlocks = treeBlocks.map(x => treeBlockToBytecodeBlock(x, constantPool, frontmatter));
     
     var flattedBlocks = bytecodeBlocks.flat(1);
     

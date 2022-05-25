@@ -21,16 +21,11 @@ public class RoundToFunction extends NativeFunction {
 
         AutoautoNumericValue rounder = (AutoautoNumericValue) args[0];
 
-        float t = thisNumber.value;
-        float r = rounder.value;
+        double t = thisNumber.value;
+        double r = rounder.value;
 
         double p = Math.pow(10, -(int)r);
 
-        //mutate a clone. This makes it work properly for UnitValues without blowing up the numericvalue code.
-        AutoautoNumericValue newNum = (AutoautoNumericValue) thisArg.clone();
-
-        newNum.value = (float) (Math.round(t / p) * p);
-
-        return newNum;
+        return new AutoautoNumericValue((float) (Math.round(t / p) * p));
     }
 }

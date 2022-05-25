@@ -83,7 +83,7 @@ public class CommandHandler {
         if(!(lengthOfStatepath instanceof AutoautoNumericValue)) return HttpStatusCodeReplies.Bad_Gateway("Non-numeric variable");
 
         //ensure that the client isn't asking for a nonexistent state (state >= stateArrayLength)
-        if((int)((AutoautoNumericValue)lengthOfStatepath).getFloat() <= state) return HttpStatusCodeReplies.Not_Found("No such state " + state + " in statepath " + statepathName);
+        if(((AutoautoNumericValue)lengthOfStatepath).getInt() <= state) return HttpStatusCodeReplies.Not_Found("No such state " + state + " in statepath " + statepathName);
 
         //yay the checks are done and we can do the things!
         dataSource.autoauto.globalScope.systemSet(AutoautoSystemVariableNames.STATEPATH_NAME, new AutoautoString(statepathName));

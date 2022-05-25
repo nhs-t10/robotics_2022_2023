@@ -2,7 +2,13 @@ var calculateBlockLength = require("./block-length");
 var replaceLabelWithIndex = require("./label-to-index");
 var flattenBlock = require("./block-flatten");
 var makeOrderedBlocks = require("./ordered-block-array");
+const { writeFileSync } = require("fs");
+const { formatFlattened, formatBc } = require("../../bytecode-tools");
 
+/**
+ * 
+ * @param {import("../../../../transmutations").TransmutateContext} context
+ */
 module.exports = function run(context) {
     var bytecode = context.lastInput;
     var blocks = makeOrderedBlocks(bytecode);

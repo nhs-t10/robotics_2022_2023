@@ -60,7 +60,7 @@ public class AutoautoOperation {
     }
     private static AutoautoPrimitive replaceNanWithUndefined(AutoautoPrimitive value) {
         if(value instanceof AutoautoNumericValue) {
-            if(Float.isNaN(((AutoautoNumericValue) value).value)) return new AutoautoUndefined();
+            if(Double.isNaN(((AutoautoNumericValue) value).value)) return new AutoautoUndefined();
         }
         //if we haven't returned undefined,
         return value;

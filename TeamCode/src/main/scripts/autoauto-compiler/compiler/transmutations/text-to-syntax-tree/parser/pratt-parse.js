@@ -94,6 +94,12 @@ function parseStatepathContent(tokenStream) {
         states.push(parseState(tokenStream));
     }
     
+    if(states.length == 0) {
+        throw improperContextError("There must be at least one state in each statepath", tokenStream.peek().location, [
+            "If you want a placeholder that doesn't do anything, try adding a `pass` statement"
+        ])
+    }
+    
     return {
         type: "Statepath",
         location: {start: states[0].location.start, end: states[states.length - 1].location.end},
@@ -113,7 +119,9 @@ function parseState(tokenStream) {
     }
     
     if(statements.length == 0) {
-        throw improperContextError("There must be at least one statement in each state", tokenStream.peek().location)
+        throw improperContextError("There must be at least one statement in each state", tokenStream.peek().location, [
+            "If you want a placeholder that doesn't do anything, try adding a `pass` statement"
+        ]);
     }
     
     if(tokenStream.peek().name == "SEMICOLON") tokenStream.pop();

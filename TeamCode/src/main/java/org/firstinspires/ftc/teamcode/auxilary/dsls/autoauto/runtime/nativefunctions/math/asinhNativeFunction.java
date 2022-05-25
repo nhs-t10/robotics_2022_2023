@@ -16,15 +16,13 @@ public class asinhNativeFunction extends NativeFunction {
     public AutoautoPrimitive call(AutoautoPrimitive thisArg, AutoautoPrimitive[] args) throws ManagerSetupException {
         if(args.length < 1) return new AutoautoUndefined();
         if(args[0] instanceof AutoautoNumericValue) {
-            float x = ((AutoautoNumericValue)args[0]).getFloat();
-
-            return new AutoautoNumericValue(asinh(x));
+            return new AutoautoNumericValue(asinh(((AutoautoNumericValue)args[0]).getDouble()));
         }
         return new AutoautoUndefined();
     }
 
-    private float asinh(float x) {
-        float absX = Math.abs(x), w;
+    private double asinh(double x) {
+        double absX = Math.abs(x), w;
         if (absX < 3.725290298461914e-9) // |x| < 2^-28
         {
             return x;
@@ -36,7 +34,7 @@ public class asinhNativeFunction extends NativeFunction {
         {
             w = (float) Math.log(2 * absX + 1 / (Math.sqrt(x * x + 1) + absX));
         } else {
-            float t = x * x;
+            double t = x * x;
             w = (float) Math.log1p(absX + t / (1 + Math.sqrt(1 + t)));
         }
         return x > 0 ? w : -w;

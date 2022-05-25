@@ -59,11 +59,12 @@ public abstract class UselessClassForNativeJavadoc {
 
     /**
      * Clips a value, such that it won't be **Greater** than **Maximum** or **Lesser** than **Minimum**
+     * @param number the number to clip
      * @param minimum smallest value that the return can be
      * @param maximum largest value that the return can be.
      */
-    @AutoautoNativeJavadoc(name = "provide")
-    public abstract void clip(AutoautoNumericValue minimum, AutoautoNumericValue maximum);
+    @AutoautoNativeJavadoc(name = "Math/clip")
+    public abstract void clip(AutoautoNumericValue number, AutoautoNumericValue minimum, AutoautoNumericValue maximum);
 
 
     @interface AutoautoNativeJavadoc {

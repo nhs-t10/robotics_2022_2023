@@ -18,21 +18,16 @@ public class ClipFunction extends NativeFunction {
         //if the user didn't give us a number, just return the same old value
         if(args.length == 0) return thisNumber;
 
-        float minN = args[0].castToNumber().value;
+        double minN = args[0].castToNumber().value;
 
-        float t = thisNumber.value;
-        float mN = Math.max(minN, t);
+        double t = thisNumber.value;
+        double mN = Math.max(minN, t);
 
         if(args.length == 1) return new AutoautoNumericValue(mN);
 
-        float maxN = args[1].castToNumber().value;
+        double maxN = args[1].castToNumber().value;
 
-        //mutate a clone. This makes it work properly for UnitValues without blowing up the numericvalue code.
-        AutoautoNumericValue newNum = (AutoautoNumericValue) thisArg.clone();
-
-        newNum.value = Math.min(mN, maxN);
-
-        return newNum;
+        return new AutoautoNumericValue(Math.min(mN, maxN));
     }
 }
 

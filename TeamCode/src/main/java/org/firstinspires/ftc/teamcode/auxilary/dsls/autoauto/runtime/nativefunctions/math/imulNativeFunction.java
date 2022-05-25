@@ -16,7 +16,7 @@ public class imulNativeFunction extends NativeFunction {
         int product = 1;
         for(AutoautoPrimitive p : args) {
             if(p instanceof AutoautoNumericValue) {
-                product *= (int)((AutoautoNumericValue)p).getFloat();
+                product *= (int)((AutoautoNumericValue)p).getDouble();
             }
         }
         return new AutoautoNumericValue(product);

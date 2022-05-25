@@ -79,7 +79,6 @@ public class AutoautoUnitValue extends AutoautoNumericValue {
                 this.unitType = UnitType.UNKNOWN;
                 FeatureManager.logger.warn("Unknown unit `" + unit + "`; please use a distance, time, or rotational unit listed under the auxilary.units package.");
             }
-            super.value = (float) this.baseAmount;
         }
     }
 

@@ -8,7 +8,7 @@ import org.firstinspires.ftc.teamcode.auxilary.dsls.autoauto.runtime.errors.Auto
 import org.firstinspires.ftc.teamcode.auxilary.dsls.autoauto.runtime.errors.ManagerSetupException;
 import org.jetbrains.annotations.NotNull;
 
-public class AutoautoUndefined extends AutoautoPrimitive implements AutoautoCallableValue {
+public class AutoautoUndefined extends AutoautoPrimitive {
     private boolean complainAboutUndefinedUsage = false;
 
     public static final int USER_CODE_OR_MATHEMATICAL_USAGE = 0;
@@ -92,15 +92,5 @@ public class AutoautoUndefined extends AutoautoPrimitive implements AutoautoCall
     @Override
     public int dataWidth() {
         return 0;
-    }
-
-    @Override
-    public String[] getArgNames() {
-        return new String[0];
-    }
-
-    @Override
-    public AutoautoPrimitive call(AutoautoPrimitive thisValue, AutoautoPrimitive[] args) throws ManagerSetupException {
-        return this;
     }
 }

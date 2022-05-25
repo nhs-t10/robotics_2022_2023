@@ -6,6 +6,7 @@ import org.firstinspires.ftc.teamcode.auxilary.dsls.autoauto.model.values.primit
 import org.firstinspires.ftc.teamcode.auxilary.dsls.autoauto.model.values.primitives.AutoautoPrimitive;
 import org.firstinspires.ftc.teamcode.auxilary.dsls.autoauto.model.values.primitives.AutoautoUndefined;
 import org.firstinspires.ftc.teamcode.auxilary.dsls.autoauto.model.values.primitives.AutoautoUnitValue;
+import org.firstinspires.ftc.teamcode.auxilary.dsls.autoauto.model.values.primitives.prototype.universal.NoopFunction;
 import org.firstinspires.ftc.teamcode.auxilary.dsls.autoauto.runtime.AutoautoRuntimeVariableScope;
 import org.firstinspires.ftc.teamcode.auxilary.dsls.autoauto.runtime.AutoautoSystemVariableNames;
 import org.firstinspires.ftc.teamcode.auxilary.dsls.autoauto.runtime.errors.AutoautoNameException;
@@ -43,10 +44,10 @@ public class unit_currentv_Bytecode extends AutoautoBytecode {
 
     private void init(AutoautoRuntimeVariableScope scope) {
         getCmFunction = (AutoautoCallableValue) scope.get(AutoautoSystemVariableNames.GET_CENTIMETERS_FUNCTION_NAME);
-        if(getCmFunction == null) getCmFunction = new AutoautoUndefined();
+        if(getCmFunction == null) getCmFunction = new NoopFunction();
 
         getDegsFunction = (AutoautoCallableValue) scope.get(AutoautoSystemVariableNames.GET_DEGREES_FUNCTION_NAME);
-        if(getDegsFunction == null) getDegsFunction = new AutoautoUndefined();
+        if(getDegsFunction == null) getDegsFunction = new NoopFunction();
 
         inited = true;
     }

@@ -89,7 +89,7 @@ public class State implements AutoautoProgramElement {
         this.returnValue = new AutoautoUndefined();
         for(Statement s : statements) {
             if(!storedStatepathVariable.value.getString().equals(this.location.statepath)) break;
-            if(((AutoautoNumericValue)storedStateNumberVariable.value).getFloat() != this.location.stateNumber) break;
+            if(((AutoautoNumericValue)storedStateNumberVariable.value).getInt() != this.location.stateNumber) break;
             if(s != null) s.loop();
 
             //break if there's a return statement

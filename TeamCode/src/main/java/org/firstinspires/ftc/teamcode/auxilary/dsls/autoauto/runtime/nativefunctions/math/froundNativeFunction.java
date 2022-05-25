@@ -16,7 +16,7 @@ public class froundNativeFunction extends NativeFunction {
     public AutoautoPrimitive call(AutoautoPrimitive thisArg, AutoautoPrimitive[] args) throws ManagerSetupException {
         if(args.length > 0 && args[0] instanceof AutoautoNumericValue) {
             //single-precision == a float
-            return new AutoautoNumericValue((((AutoautoNumericValue)args[0]).getFloat()));
+            return new AutoautoNumericValue((((AutoautoNumericValue)args[0]).getDouble()));
         }
         return new AutoautoUndefined();
     }

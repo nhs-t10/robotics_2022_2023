@@ -6,13 +6,11 @@ module.exports = function(context) {
         context.output = parser(context.lastInput);
         context.status = "pass";
     } catch(e) {
-        var basic = "Unexpected " + JSON.stringify(e.found);
-        
         var hints = makeHints(context.lastInput, e);
         
         throw {
             kind: "ERROR",
-            text: basic,
+            text: "Parsing error",
             original: e.message,
             hints: hints,
             location: e.location,

@@ -15,7 +15,7 @@ public class tanhNativeFunction extends NativeFunction {
     @Override
     public AutoautoPrimitive call(AutoautoPrimitive thisArg, AutoautoPrimitive[] args) throws ManagerSetupException {
         if(args.length > 0 && args[0] instanceof AutoautoNumericValue) {
-            float v = ((AutoautoNumericValue)args[0]).getFloat();
+            double v = ((AutoautoNumericValue)args[0]).getDouble();
             double a = Math.exp(+v), b = Math.exp(-v);;
 
             return new AutoautoNumericValue(a == Double.POSITIVE_INFINITY ? 1 : b == Double.POSITIVE_INFINITY ? -1 : (a - b) / (a + b));
