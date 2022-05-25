@@ -19,6 +19,7 @@ import org.firstinspires.ftc.teamcode.managers.input.nodes.ButtonNode;
 import org.firstinspires.ftc.teamcode.managers.input.nodes.IfNode;
 import org.firstinspires.ftc.teamcode.managers.input.nodes.JoystickNode;
 import org.firstinspires.ftc.teamcode.managers.input.nodes.MultiInputNode;
+import org.firstinspires.ftc.teamcode.managers.input.nodes.MultiplyNode;
 import org.firstinspires.ftc.teamcode.managers.input.nodes.PlusNode;
 import org.firstinspires.ftc.teamcode.managers.input.nodes.ScaleNode;
 import org.firstinspires.ftc.teamcode.managers.input.nodes.StaticValueNode;
@@ -62,9 +63,9 @@ public class LearnDual extends OpMode {
         driver = new MovementManager(fl, fr, br, bl);
         hands = new ManipulationManager(
                 hardwareMap,
-                crservo         ("nateMoverRight", "nateMoverLeft"),
-                servo           ("nateClaw", "rampLeft", "rampRight"),
-                motor           ("Carousel", "ClawMotor", "noodle", "intake")
+                crservo         (),
+                servo           ("leftWiper", "rightWiper"),
+                motor           ("Catapault")
         );
 
         oranges = new AppleManager(hands);
@@ -72,12 +73,21 @@ public class LearnDual extends OpMode {
         clawPosition = new NateManager(hands, hardwareMap.get(TouchSensor.class, "limit"));
         input = new InputManager(gamepad1, gamepad2);
         input.registerInput("drivingControls",
-                        new MultiInputNode(
-                            new ScaleNode(new JoystickNode("left_stick_y"), 1),
-                            new ScaleNode(new JoystickNode("right_stick_x"), 1),
-                            new ScaleNode(new JoystickNode("left_stick_x"), 1)
+                new MultiplyNode(
+                    new IfNode(new ToggleNode(new ButtonNode("a")), new StaticValueNode(1.1f), new StaticValueNode(1f)),
+                    new MultiInputNode(
+                        new JoystickNode("left_stick_y"),
+                        new JoystickNode("right_stick_x"),
+                        new JoystickNode("left_stick_x")
+                    )
                 )
             );
+
+        input.registerInput("leftWiperControl", new ButtonNode("left_bumper"));
+        input.registerInput("rightWiperControl", new ButtonNode("right_bumper"));
+
+        input.registerInput("catapaultControl", new JoystickNode("right_trigger"));
+
         input.setOverlapResolutionMethod(InputOverlapResolutionMethod.MOST_COMPLEX_ARE_THE_FAVOURITE_CHILD);
 
         PriorityAsyncOpmodeComponent.start(() -> {
@@ -106,7 +116,24 @@ public class LearnDual extends OpMode {
     public void real_loop_Bad_Practice_Fix_Me_Later() {
         input.update();
 
-//        driver.setScale(Math.min(input.getFloat("precisionDriving"), input.getFloat("dashing")));
+        hands.setMotorPower("Catapault",
+                input.getFloat("CatapaultControl")
+        );
+
+
+        if(input.getBool("leftWiperControl")) {
+            hands.setServoPosition("leftWiper", 1);
+        } else {
+            hands.setServoPosition("leftWiper", 0);
+        }
+
+        if(input.getBool("rightWiperControl")) {
+            hands.setServoPosition("rightWiper", 0);
+        } else {
+            hands.setServoPosition("rightWiper", 1);
+        }
+
+
 
 
         //FeatureManager.logger.log(BuildHistory.buildName);
