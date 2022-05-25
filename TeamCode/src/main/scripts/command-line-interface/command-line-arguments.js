@@ -1,13 +1,15 @@
 module.exports = function(schema) {
-    var aliasMap = mapShortToLong(schema);
-    processAllArgv(schema, process.argv, aliasMap);
-    cascadeDefaults(schema);
+    const out = {};
+    const aliasMap = mapShortToLong(schema);
+    processAllArgv(schema, process.argv, aliasMap, out);
+    cascadeDefaults(schema, out);
+    return out;
 }
 
-function cascadeDefaults(schema) {
-    Object.keys(schema).forEach(x=> {
-        if(typeof schema[x] === "object") schema[x] = schema[x].value;
-    });
+function cascadeDefaults(schema, out) {
+    for(const x in schema) {
+        if(!(x in out)) out[x] = schema[x].value;
+    }
 }
 
 function mapShortToLong(schema) {
@@ -18,19 +20,19 @@ function mapShortToLong(schema) {
     return m;
 }
 
-function processAllArgv(schema, argv, aliasMap) {
+function processAllArgv(schema, argv, aliasMap, out) {
     //skip argv[0], since that's the name of the script
     for(var i = 1; i < argv.length; i++) {
-        processArg(schema, argv[i], aliasMap);
+        processArg(schema, argv[i], aliasMap, out);
     }
 }
 
-function processArg(schema, arg, aliasMap) {
-    if(arg.startsWith("--")) processLongFlag(schema, arg, aliasMap);
-    else if(arg.startsWith("-")) processAliases(schema, arg, aliasMap);
+function processArg(schema, arg, aliasMap, out) {
+    if(arg.startsWith("--")) processLongFlag(schema, arg, out);
+    else if(arg.startsWith("-")) processAliases(schema, arg, aliasMap, out);
 }
 
-function processLongFlag(schema, arg, aliasMap) {
+function processLongFlag(schema, arg, out) {
     //remove the `--`
     var a = arg.substring(2);
 
@@ -41,7 +43,7 @@ function processLongFlag(schema, arg, aliasMap) {
     if(keyVal.length == 1) val = "true";
 
     if (!schema[key]) errorNoFlag(key);
-    else schema[key] = castToSchema(schema[key].value, val);
+    else out[key] = castToSchema(schema[key].value, val);
 }
 
 function castToSchema(typeDesired, arg) {
@@ -52,7 +54,7 @@ function castToSchema(typeDesired, arg) {
     }
 }
 
-function processAliases(schema, arg, aliasMap) {
+function processAliases(schema, arg, aliasMap, out) {
     var lastKey = "";
     //start at 1 to cut off the `-`
     for(var i = 1; i < arg.length; i++) {
@@ -60,7 +62,7 @@ function processAliases(schema, arg, aliasMap) {
 
         if(alias == "=") {
             if(lastKey) {
-                schema[lastKey] = arg.substring(i + 1);
+                out[lastKey] = castToSchema(schema[lastKey].value, arg.substring(i + 1));
             }
             break;
         }
@@ -70,7 +72,7 @@ function processAliases(schema, arg, aliasMap) {
         if (!k) errorNoFlag(alias);
 
         lastKey = k;
-        schema[k] = true;
+        out[k] = true;
     }
 }
 
