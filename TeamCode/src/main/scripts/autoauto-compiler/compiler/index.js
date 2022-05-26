@@ -32,9 +32,9 @@ async function compileAllFromSourceDirectory() {
     
     const preprocessInputs = {};
     const codebaseTransmutationWrites = {};
-    
     await evaluateCodebaseTasks(autoautoFileContexts, transmutations.getPreProcessTransmutations(), preprocessInputs, codebaseTransmutationWrites);
-    const preprocessHash = keyJsonHash(preprocessInputs);
+    
+    const environmentHash = makeEnvironmentHash(CACHE_VERSION, preprocessInputs, process.argv);
 
     //the folderScanner will give once for each file.
     //this way, we don't have to wait for ALL filenames in order to start compiling.
@@ -44,7 +44,7 @@ async function compileAllFromSourceDirectory() {
     
     for await(const file of aaFiles) {
         jobPromises.push(
-            makeContextAndCompileFile(file, compilerWorkers, autoautoFileContexts, preprocessInputs, preprocessHash)
+            makeContextAndCompileFile(file, compilerWorkers, autoautoFileContexts, preprocessInputs, environmentHash)
         );
     }
     
@@ -56,8 +56,8 @@ async function compileAllFromSourceDirectory() {
     compilerWorkers.close();
 }
 
-function makeContextAndCompileFile(filename, compilerWorkers, autoautoFileContexts, preprocessInputs, preprocessHash) {
-    const fileContext = makeFileContext(filename, preprocessInputs, preprocessHash);
+function makeContextAndCompileFile(filename, compilerWorkers, autoautoFileContexts, preprocessInputs, environmentHash) {
+    const fileContext = makeFileContext(filename, preprocessInputs, environmentHash);
     const cacheEntry = getCacheEntry(fileContext);
 
     return new Promise(function(resolve, reject) {
@@ -126,7 +126,7 @@ function makeCodebaseContext(codebaseTransmutationWrites) {
     }
 }
 
-function makeFileContext(file, preprocessInputs, preprocessHash) {
+function makeFileContext(file, preprocessInputs, environmentHash) {
         
     const resultFile = getResultFor(file);
     const fileContent = fs.readFileSync(file).toString();
@@ -156,7 +156,7 @@ function makeFileContext(file, preprocessInputs, preprocessHash) {
     };
     
     Object.assign(ctx.inputs, preprocessInputs);
-    ctx.cacheKey = makeCacheKey(ctx, preprocessHash);
+    ctx.cacheKey = makeCacheKey(ctx, environmentHash);
 
     return ctx;
 }
@@ -168,6 +168,10 @@ function writeWrittenFiles(fileContext) {
             safeFsUtils.safeWriteFileEventually(filename, content);
         }
     }
+}
+
+function makeEnvironmentHash(cacheVersion, preprocessInputs, argv) {
+    return cacheVersion + "\0" + keyJsonHash(preprocessInputs) + "\0" + argv.join(" ");
 }
 
 function keyJsonHash(object) {
@@ -182,11 +186,11 @@ function keyJsonHash(object) {
  * 
  * @param {import("./transmutations").TransmutateContext} fileContext 
  */
-function makeCacheKey(fileContext, preprocessHash) {
+function makeCacheKey(fileContext, environmentHash) {
     const readFileShas = fileContext.readsAllFiles.map(x=>sha(safeFsUtils.cachedSafeReadFile(x))).join("\t");
     const transmutationIdList = fileContext.transmutations.map(x=>x.id).join("\t");
 
-    const keyDataToSha = [CACHE_VERSION, preprocessHash, readFileShas,
+    const keyDataToSha = [environmentHash, readFileShas,
         fileContext.sourceFullFileName, fileContext.fileContentText, transmutationIdList];
 
     return sha(keyDataToSha.join("\0"));
