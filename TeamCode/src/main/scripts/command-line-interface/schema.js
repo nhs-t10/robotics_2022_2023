@@ -4,6 +4,7 @@
  * @property {boolean} color
  * @property {boolean} quiet
  * @property {boolean} no-cache
+ * @property {boolean} no-cache-save
  * @property {number} threads
  * @property {boolean} progress
  * @property {boolean} agpbi
@@ -37,6 +38,11 @@ module.exports = {
         value: false,
         short: [],
         description: "Ignore cached calculations from previous compiles"
+    },
+    "no-cache-save": {
+        value: false,
+        short: [],
+        description: "Don't save calculations to the cache"
     },
     threads: {
         value: require("os").cpus().length,

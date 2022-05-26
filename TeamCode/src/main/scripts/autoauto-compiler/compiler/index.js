@@ -32,7 +32,9 @@ async function compileAllFromSourceDirectory() {
     
     const preprocessInputs = {};
     const codebaseTransmutationWrites = {};
+    
     await evaluateCodebaseTasks(autoautoFileContexts, transmutations.getPreProcessTransmutations(), preprocessInputs, codebaseTransmutationWrites);
+    const preprocessHash = keyJsonHash(preprocessInputs);
 
     //the folderScanner will give once for each file.
     //this way, we don't have to wait for ALL filenames in order to start compiling.
@@ -40,12 +42,9 @@ async function compileAllFromSourceDirectory() {
     const aaFiles = folderScanner(SRC_DIRECTORY, ".autoauto");
     const jobPromises = [];
     
-    while(true) {
-        const next = await aaFiles.next();
-        if(next.done) break;
-        
+    for await(const file of aaFiles) {
         jobPromises.push(
-            makeContextAndCompileFile(next.value, compilerWorkers, autoautoFileContexts, preprocessInputs)
+            makeContextAndCompileFile(file, compilerWorkers, autoautoFileContexts, preprocessInputs, preprocessHash)
         );
     }
     
@@ -57,8 +56,8 @@ async function compileAllFromSourceDirectory() {
     compilerWorkers.close();
 }
 
-function makeContextAndCompileFile(filename, compilerWorkers, autoautoFileContexts, preprocessInputs) {
-    const fileContext = makeFileContext(filename, preprocessInputs);
+function makeContextAndCompileFile(filename, compilerWorkers, autoautoFileContexts, preprocessInputs, preprocessHash) {
+    const fileContext = makeFileContext(filename, preprocessInputs, preprocessHash);
     const cacheEntry = getCacheEntry(fileContext);
 
     return new Promise(function(resolve, reject) {
@@ -76,7 +75,7 @@ function makeContextAndCompileFile(filename, compilerWorkers, autoautoFileContex
 }
 
 function saveCacheEntry(finishedRun) {
-    if(finishedRun.success) {
+    if(finishedRun.success && commandLineInterface["no-cache-save"] == false) {
         cache.save(mFileCacheKey(finishedRun.fileContext), {
             subkey: finishedRun.fileContext.cacheKey,
             data: finishedRun.fileContext,
@@ -127,7 +126,7 @@ function makeCodebaseContext(codebaseTransmutationWrites) {
     }
 }
 
-function makeFileContext(file, preprocessInputs) {
+function makeFileContext(file, preprocessInputs, preprocessHash) {
         
     const resultFile = getResultFor(file);
     const fileContent = fs.readFileSync(file).toString();
@@ -157,7 +156,7 @@ function makeFileContext(file, preprocessInputs) {
     };
     
     Object.assign(ctx.inputs, preprocessInputs);
-    ctx.cacheKey = makeCacheKey(ctx, preprocessInputs);
+    ctx.cacheKey = makeCacheKey(ctx, preprocessHash);
 
     return ctx;
 }
@@ -171,21 +170,23 @@ function writeWrittenFiles(fileContext) {
     }
 }
 
+function keyJsonHash(object) {
+    let t = [];
+    for(const key in object) {
+        t.push(sha(JSON.stringify(object[key])));
+    }
+    return t.join("");
+}
+
 /**
  * 
  * @param {import("./transmutations").TransmutateContext} fileContext 
  */
-function makeCacheKey(fileContext, preprocessInputs) {
-    
-    let preprocessInputSerial = "";
-    for(const ppI in preprocessInputs) {
-        preprocessInputSerial += sha(JSON.stringify(preprocessInputs[ppI]));
-    }
-    
+function makeCacheKey(fileContext, preprocessHash) {
     const readFileShas = fileContext.readsAllFiles.map(x=>sha(safeFsUtils.cachedSafeReadFile(x))).join("\t");
     const transmutationIdList = fileContext.transmutations.map(x=>x.id).join("\t");
 
-    const keyDataToSha = [CACHE_VERSION, preprocessInputSerial, readFileShas, 
+    const keyDataToSha = [CACHE_VERSION, preprocessHash, readFileShas,
         fileContext.sourceFullFileName, fileContext.fileContentText, transmutationIdList];
 
     return sha(keyDataToSha.join("\0"));

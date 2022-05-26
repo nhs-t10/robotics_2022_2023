@@ -23,7 +23,9 @@ module.exports = function(cacheMeta, cacheDir, cacheMaxBytes) {
 }
 
 function removeMetaEntry(cacheMeta, cacheMetaEntry) {
-    console.warn("Flushing cache entry " + cacheMetaEntry.key);
-    delete cacheMeta[cacheMetaEntry.key];
-    fs.unlinkSync(cacheMetaEntry.file);
+    if(cacheMetaEntry != undefined) {
+        console.warn("Flushing cache entry " + cacheMetaEntry.key);
+        delete cacheMeta[cacheMetaEntry.key];
+        fs.unlinkSync(cacheMetaEntry.file);
+    }
 }
