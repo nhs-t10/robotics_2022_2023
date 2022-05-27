@@ -10,3 +10,4 @@ goto getBall;
     driveOmni(0, 1, 0), after 10cm next; //go right to set up the final push
     driveOmni(1, 0, 0), after 10cm next; //go forwards. We're now in position to push the ball left.
     driveOmni(0, -1, 0), after 30cm next; //push the ball into the scoring zone
+    stopDrive()

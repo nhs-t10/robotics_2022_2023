@@ -77,8 +77,8 @@ public class LearnDual extends OpMode {
                     new IfNode(new ToggleNode(new ButtonNode("a")), new StaticValueNode(1.1f), new StaticValueNode(1f)),
                     new MultiInputNode(
                         new JoystickNode("left_stick_y"),
-                        new JoystickNode("right_stick_x"),
-                        new JoystickNode("left_stick_x")
+                        new JoystickNode("left_stick_x"),
+                        new JoystickNode("right_stick_x")
                     )
                 )
             );
