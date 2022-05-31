@@ -1,6 +1,6 @@
 const baseTokenTypes = require("./base-token-types");
 
-module.exports = function* lexer(fileText) {
+module.exports = function* lexer(fileText, file) {
     let line = 1, column = 0;
     
     for(var i = 0; i < fileText.length; i++) {
@@ -22,7 +22,7 @@ module.exports = function* lexer(fileText) {
             if(regexResult && regexResult.index == 0) {
                 const lineColInMatch = lineColumnCount(regexResult[0], column, line);
                 
-                yield assembleResultToken(lexRule, regexResult, line, column, i, lineColInMatch.line, lineColInMatch.col, i + regexResult[0].length);
+                yield assembleResultToken(lexRule, regexResult, line, column, i, lineColInMatch.line, lineColInMatch.col, i + regexResult[0].length, file);
                 
                 column = lineColInMatch.col | 0;
                 line = lineColInMatch.line | 0;
@@ -33,15 +33,16 @@ module.exports = function* lexer(fileText) {
             }
         }
         if(!matched) {
+            const ln = { line: line, column: column, offset: i }
             throw {
-                location: { line: line, column: column, offset: i},
+                location: {start: ln, end: ln, file: file},
                 message: "Invalid token '" + forRegex.substring(0, 10) + "...'"
             }
         }
     }
     
     while(true) {
-        yield assembleResultToken({ name: "EOF" }, [""], line, column, fileText.length, line, column, fileText.length);
+        yield assembleResultToken({ name: "EOF" }, [""], line, column, fileText.length, line, column, fileText.length, file);
     }
 }
 
@@ -69,14 +70,15 @@ function occurances(char, str) {
     return count;
 }
 
-function assembleResultToken(lexRule, regexResult, startLine, startColumn, startOffset, endLine, endColumn, endOffset) {
+function assembleResultToken(lexRule, regexResult, startLine, startColumn, startOffset, endLine, endColumn, endOffset, file) {
     return {
         name: lexRule.name,
         content: regexResult[0],
         regex: regexResult,
         location: {
             start: { line: startLine, column: startColumn, offset: startOffset },
-            end: { line: endLine, column: endColumn, offset: endOffset }
+            end: { line: endLine, column: endColumn, offset: endOffset },
+            file: file
         }
     }
 }

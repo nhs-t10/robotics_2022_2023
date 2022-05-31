@@ -178,6 +178,8 @@ function massageResIntoMessage(res, file, defaultKind) {
     
     if(!res.original) res.original = "";
     
+    if(res.location && res.location.file) file = res.location.file;
+    
     if(res instanceof Error) {
         res = {
             kind: "ERROR",

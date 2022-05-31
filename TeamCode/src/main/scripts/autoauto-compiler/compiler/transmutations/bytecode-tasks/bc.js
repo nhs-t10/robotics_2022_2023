@@ -39,6 +39,16 @@ module.exports = {
         "push": 0,
         "mnemom": "yieldto_i"
     },
+    0x008: {
+        "pop": 1,
+        "push": 0,
+        "mnemom": "crret"
+    },
+    0x009: {
+        "pop": 1,
+        "push": 1,
+        "mnemom": "call_coroutine"
+    },
     0x100: {
         "pop": 1,
         "push": 0,

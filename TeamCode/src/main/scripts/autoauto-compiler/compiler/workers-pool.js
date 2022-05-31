@@ -8,9 +8,11 @@ module.exports = function () {
     var workerCount = commandLineInterface.threads;
 
     //avoid the overhead of making a pool when only 1 thread is needed
-    if(workerCount <= 1) return fakeWorkerPool();
-
-    for (var i = workerCount; i >= 0; i--) pool.push(createWorkerWrap(queue, finishListeners, allJobs, jobDependencyGraph));
+    if(workerCount <= 1) {
+        pool.push(fakeWorker(queue, finishListeners, allJobs, jobDependencyGraph));
+    } else {
+        for (var i = workerCount; i >= 0; i--) pool.push(initWorker(queue, finishListeners, allJobs, jobDependencyGraph));
+    }
 
     function findOpenWorker() {
         for(var i = 0; i < pool.length; i++) {
@@ -27,6 +29,14 @@ module.exports = function () {
                 queue.push({job:fileContext,cb:cb});
             }
         },
+        addFinishedJobFromCache: function(fileContext) {
+            const id = fileContext.sourceFullFileName;
+            allJobs[id] = fileContext;
+            callFinishListeners(finishListeners, id, fileContext);
+        },
+        finishGivingJobs: function() {
+            clearNonExistantFinishListeners(allJobs, finishListeners);
+        },
         close: function() {
             pool.forEach(x=>x.close());
         }
@@ -34,27 +44,24 @@ module.exports = function () {
 
 }
 
-function fakeWorkerPool() {
+function fakeWorker(queue, finishListeners, allJobs, jobDependencyGraph) {
     var worker = require("./worker");
-    return {
-        giveJob: async function(fileContext, cb) {
-            var fin = await worker(fileContext);
-            cb(fin);
-        },
-        close: function() {
-
-        }
-    }
+    
+    return createWorkerWrap(worker, queue, finishListeners, allJobs, jobDependencyGraph);
 }
 
-function createWorkerWrap(queue, finishListeners, allJobs, jobDependencyGraph) {
+function initWorker(queue, finishListeners, allJobs, jobDependencyGraph) {
     var worker = new workerThreads.Worker(__dirname + "/worker.js", {
         workerData: process.argv.slice(2)
     });
-    var callbacks = {}, jobNumber = 0;
+    
+    return createWorkerWrap(worker, queue, finishListeners, allJobs, jobDependencyGraph);
+}
+
+function createWorkerWrap(worker, queue, finishListeners, allJobs, jobDependencyGraph) {
+    var callbacks = {};
 
     var wrap = {
-        worker: worker,
         busy: false,
         assignJob: assignJob,
         close: close
@@ -71,6 +78,7 @@ function createWorkerWrap(queue, finishListeners, allJobs, jobDependencyGraph) {
     function assignJob(job, cb) {
         wrap.busy = true;
         const id = job.sourceFullFileName;
+        allJobs[id] = null;
         callbacks[id] = cb;
         worker.postMessage({
             type: "newJob",
@@ -90,7 +98,9 @@ function createWorkerWrap(queue, finishListeners, allJobs, jobDependencyGraph) {
         if(m.type == "jobDone") {
             if(callbacks[m.id]) callbacks[m.id](m.body);
             
-            allJobs[job]
+            console.log("done1 ", m.id);
+            
+            allJobs[m.id] = m.body;
             callFinishListeners(finishListeners, m.id, m.body);
 
             wrap.busy = false;
@@ -99,6 +109,8 @@ function createWorkerWrap(queue, finishListeners, allJobs, jobDependencyGraph) {
             const depId = m.dependencyId;
             const jobId = m.id;
             
+            console.log("waiting on dep", depId);
+            
             if(depId in allJobs) {
                 worker.postMessage({
                     type: "dependencyComplete",
@@ -106,7 +118,10 @@ function createWorkerWrap(queue, finishListeners, allJobs, jobDependencyGraph) {
                     body: allJobs[depId]
                 });
             } else {
+                wrap.busy = false;
                 addFinishListener(finishListeners, depId, function (finishedContext) {
+                    wrap.busy = true;
+                    console.log("finish dep :)");
                     worker.postMessage({
                         type: "dependencyComplete",
                         dependencyId: depId,
@@ -117,13 +132,20 @@ function createWorkerWrap(queue, finishListeners, allJobs, jobDependencyGraph) {
             
             //noteJobDependency is true if it was successful (i.e. there was no circular dependencies)
             if(noteJobDependency(jobDependencyGraph, finishListeners, depId, jobId) == true) {
-                wrap.busy = false;
                 assignFromQueue();
             }
         }
     });
 
     return wrap;
+}
+
+function clearNonExistantFinishListeners(allJobs, finishListeners) {
+    for(const jobId in finishListeners) {
+        if(!(jobId in allJobs)) {
+            callFinishListeners(finishListeners, jobId, null);
+        }
+    }
 }
 
 function finishCircle(finishListeners, circle) {

@@ -1,3 +1,5 @@
+const { requestDependencyToParent } = require("../../worker");
+
 var generalNumberToIncrementWhenSomethingNeedsToBeChanged = 0;
 var stringDefinitions = {};
 var locationSetters = [];

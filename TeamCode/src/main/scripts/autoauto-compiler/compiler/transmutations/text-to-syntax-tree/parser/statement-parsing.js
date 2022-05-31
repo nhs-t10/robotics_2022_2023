@@ -95,41 +95,41 @@ const infixParsers = {
 
 module.exports = parseStatement
 
-function parseStatement(tokenStream) {
+function parseStatement(tokenStream, file) {
 
     let statementSigil = tokenStream.peek().name;
 
     if (statementSigil in statements) {
-        return statements[statementSigil](tokenStream);
+        return statements[statementSigil](tokenStream, file);
     } else {
-        return wrapValueStatement(parseExpression(tokenStream));
+        return wrapValueStatement(parseExpression(tokenStream, file));
     }
 }
 
-function wrapValueStatement(expr) {
+function wrapValueStatement(expr, file) {
     return {
         type: "ValueStatement",
-        location: Object.assign({}, expr.location),
+        location: Object.assign({file: file}, expr.location),
         call: expr
     }
 }
 
-function parseAfterStatement(tokenStream) {
+function parseAfterStatement(tokenStream, file) {
     //pop and discard the 'after'. The only thing we need to save is the 
     //start location.
     const locStart = tokenStream.pop().location.start;
 
-    const condition = parseExpression(tokenStream);
+    const condition = parseExpression(tokenStream, file);
 
     return {
         type: "AfterStatement",
-        location: { start: locStart, end: condition.location.end },
+        location: { start: locStart, end: condition.location.end, file: file },
         unitValue: condition,
-        statement: parseStatement(tokenStream)
+        statement: parseStatement(tokenStream, file)
     };
 }
 
-function parseFunctionDefinition(tokenStream) {
+function parseFunctionDefinition(tokenStream, file) {
     const locStart = tokenStream.pop().location.start;
 
     const name = expect(tokenStream, "IDENTIFIER", "Expected an identifier to name the function; instead, got", [
@@ -138,52 +138,52 @@ function parseFunctionDefinition(tokenStream) {
 
     expect(tokenStream, "OPEN_PAREN", "Expected a open-paren ('(') to start the arguments of this function; got a");
 
-    const parameterList = parseParameterList(tokenStream);
+    const parameterList = parseParameterList(tokenStream, file);
 
     expect(tokenStream, "CLOSE_PAREN", "Expected a close-paren (')') to finish the arguments of this function; got a");
 
-    const body = parseStatement(tokenStream);
+    const body = parseStatement(tokenStream, file);
 
     return {
         type: "FunctionDefStatement",
         name: wrapIdentifierToken(name),
         args: parameterList,
         body: body,
-        location: { start: locStart, end: body.location.end }
+        location: { start: locStart, end: body.location.end, file: file }
     }
 }
 
-function parseGotoStatement(tokenStream) {
+function parseGotoStatement(tokenStream, file) {
     const locStart = tokenStream.pop().location.start;
 
     let name = expect(tokenStream, "IDENTIFIER", "Expected an identifier for this goto statement; got a", ["Make sure that it doesn't start with a numerical digit"]);
 
     return {
         type: "GotoStatement",
-        location: { start: locStart, end: name.location.end },
+        location: { start: locStart, end: name.location.end, file: file },
         path: wrapIdentifierToken(name)
     }
 }
 
-function parseIfStatement(tokenStream) {
+function parseIfStatement(tokenStream, file) {
     const locStart = tokenStream.pop().location.start;
 
     expect(tokenStream, "OPEN_PAREN", "If you're used to Python or Lua, you may have forgot to put (parentheses) around this `if` statement's condition. The parser expected an open-paren ('(') to start the condition, but saw a");
 
-    const conditional = parseExpression(tokenStream);
+    const conditional = parseExpression(tokenStream, file);
 
     expect(tokenStream, "CLOSE_PAREN", "Expected a closing paren (')') to end this `if` condition. Got a");
 
-    const statement = parseStatement(tokenStream);
+    const statement = parseStatement(tokenStream, file);
 
     const elseClause = tokenStream.peek().name == "ELSE" ?
-        parseElseClause(tokenStream)
+        parseElseClause(tokenStream, file)
         : generatePassStatement(statement.location, true, []);
 
 
     return {
         type: "IfStatement",
-        location: { start: locStart, end: elseClause.location.end },
+        location: { start: locStart, end: elseClause.location.end, file },
         conditional: conditional,
         statement: statement,
         elseClause, elseClause
@@ -212,13 +212,13 @@ function generatePassStatement(location, makeSynthetic) {
     }
 }
 
-function parseReturnStatement(tokenStream) {
+function parseReturnStatement(tokenStream, file) {
     const location = tokenStream.pop().location;
 
     let expression = undefined;
     const nextName = tokenStream.peek().name;
     if (nextName != "EOF" && nextName != "SEMICOLON" && nextName != "HASHTAG") {
-        expression = parseExpression(tokenStream);
+        expression = parseExpression(tokenStream, file);
     }
 
     return {
@@ -228,7 +228,7 @@ function parseReturnStatement(tokenStream) {
     };
 }
 
-function parseBlock(tokenStream) {
+function parseBlock(tokenStream, file) {
     const locStart = tokenStream.pop().location.start;
 
     const innerStatements = [];
@@ -240,7 +240,7 @@ function parseBlock(tokenStream) {
         }
 
 
-        innerStatements.push(parseStatement(tokenStream));
+        innerStatements.push(parseStatement(tokenStream, file));
 
         if (tokenStream.peek().name == "COMMA" || tokenStream.peek().name == "SEMICOLON") {
             tokenStream.pop();
@@ -251,17 +251,17 @@ function parseBlock(tokenStream) {
 
     return {
         type: "Block",
-        location: { start: locStart, end: locEnd },
+        location: { start: locStart, end: locEnd, file: file },
         state: { //i don't know why i set the schema up this way :/
             type: "State",
-            location: { start: locStart, end: locEnd },
+            location: { start: locStart, end: locEnd, file: file },
             statement: innerStatements
         }
     };
 
 }
 
-function parseProvideStatement(tokenStream) {
+function parseProvideStatement(tokenStream, file) {
     const location = tokenStream.pop().location;
 
     const nextName = tokenStream.peek().name;
@@ -271,7 +271,7 @@ function parseProvideStatement(tokenStream) {
         ]);
     }
 
-    const expression = parseExpression(tokenStream);
+    const expression = parseExpression(tokenStream, file);
 
     return {
         type: "ProvideStatement",
@@ -280,7 +280,7 @@ function parseProvideStatement(tokenStream) {
     };
 }
 
-function parseNextStatement(tokenStream) {
+function parseNextStatement(tokenStream, file) {
     const location = tokenStream.pop().location;
     return {
         type: "NextStatement",
@@ -288,7 +288,7 @@ function parseNextStatement(tokenStream) {
     }
 }
 
-function parseSkipStatement(tokenStream) {
+function parseSkipStatement(tokenStream, file) {
     const locStart = tokenStream.pop().location.start;
 
     const distance = tokenStream.peek();
@@ -300,12 +300,12 @@ function parseSkipStatement(tokenStream) {
 
     return {
         type: "SkipStatement",
-        location: { start: locStart, end: distance.location.end },
-        skip: parseExpression(tokenStream)
+        location: { start: locStart, end: distance.location.end, file: file },
+        skip: parseExpression(tokenStream, file)
     }
 }
 
-function parseLetStatement(tokenStream) {
+function parseLetStatement(tokenStream, file) {
     const loc = tokenStream.pop().location;
 
     const name = expect(tokenStream, "IDENTIFIER", "Expected an identifier for let variable; got a");
@@ -318,16 +318,16 @@ function parseLetStatement(tokenStream) {
             type: "LetStatement",
             location: loc,
             variable: wrapIdentifierToken(name),
-            value: parseExpression(tokenStream),
+            value: parseExpression(tokenStream, file),
         }
     }
 
     const mainVariable = wrapVariableReferenceOnIdentifierToken(name);
     let setPath;
     if (nextTokenType == "DOT") {
-        setPath = parseDotGetter(tokenStream, mainVariable);
+        setPath = parseDotGetter(tokenStream, mainVariable, file);
     } else if (nextTokenType == "OPEN_SQUARE_BRACKET") {
-        setPath = parseArrayGetter(tokenStream, mainVariable);
+        setPath = parseArrayGetter(tokenStream, mainVariable, file);
     } else {
         throw improperContextError("Expected a property-getting tail (dot-style, e.g. 'a.b', or array style, e.g. 'a[\"b\"]'); got a " + nextTokenType, loc);
     }
@@ -338,20 +338,20 @@ function parseLetStatement(tokenStream) {
         type: "LetPropertyStatement",
         location: loc,
         variable: setPath,
-        value: parseExpression(tokenStream),
+        value: parseExpression(tokenStream, file)
     }
 
 }
 
 
-function parseExpression(tokenStream, precedence) {
+function parseExpression(tokenStream, file, precedence) {
     //make sure precedence is a number
     precedence |= 0;
 
     const next = tokenStream.peek();
     let left;
     if (next.name in prefixParsers) {
-        left = prefixParsers[next.name](tokenStream);
+        left = prefixParsers[next.name](tokenStream, file);
     } else {
         throw improperContextError("Couldn't parse an expression from the token '" + next.name + "'", next.location);
     }
@@ -359,7 +359,7 @@ function parseExpression(tokenStream, precedence) {
     while (precedence < getNextPrecedence(tokenStream)) {
         const maybeInfix = tokenStream.peek();
         if (maybeInfix.name in infixParsers) {
-            left = infixParsers[maybeInfix.name](tokenStream, left);
+            left = infixParsers[maybeInfix.name](tokenStream, left, file);
         } else {
             throw improperContextError("Couldn't parse an expression from the infix token '" + maybeInfix.name + "'", maybeInfix.location);
         }
@@ -490,19 +490,19 @@ function parseFunctionLiteral(tokenStream) {
 //ARGUMENT LIST is different from PARAMETER LIST.
 //Argument list: f(3, 5, 3)
 //Parameter list: function x(arg1, arg2) {...}
-function parseArgumentList(tokenStream) {
+function parseArgumentList(tokenStream, file) {
     const args = [];
 
     let location;
     const peek = tokenStream.peek();
     if (peek.name != "CLOSE_SQUARE_BRACKET" && peek.name != "CLOSE_PAREN") {
         while (true) {
-            args.push(parseExpression(tokenStream));
+            args.push(parseExpression(tokenStream, file));
 
             if (tokenStream.peek().name == "COMMA") tokenStream.pop();
             else break;
         }
-        location = { start: args[0].location.start, end: args[args.length - 1].location.end };
+        location = { start: args[0].location.start, end: args[args.length - 1].location.end, file: file };
     } else {
         location = peek.location;
     }
@@ -586,7 +586,7 @@ function parseFunctionCall(tokenStream, left) {
     }
 }
 
-function parseRelation(tokenStream, left) {
+function parseRelation(tokenStream, left, file) {
     const loc = tokenStream.pop().location;
 
     if (left.type == "VariableReference") left = left.variable;
@@ -598,19 +598,19 @@ function parseRelation(tokenStream, left) {
 
     return {
         type: "TitledArgument",
-        value: parseExpression(tokenStream, 0),
+        value: parseExpression(tokenStream, file, 0),
         name: left,
         location: loc
     }
 }
 
 function binaryLeftAssociativeOperator(precedence) {
-    return function parse(tokenStream, leftSide) {
+    return function parse(tokenStream, leftSide, file) {
         const tkn = tokenStream.pop();
         const loc = tkn.location;
         const op = tkn.content;
 
-        const rightSide = parseExpression(tokenStream, precedence);
+        const rightSide = parseExpression(tokenStream, file, precedence);
 
         return {
             type: "OperatorExpression",
@@ -622,7 +622,7 @@ function binaryLeftAssociativeOperator(precedence) {
     }
 }
 
-function parseDotGetter(tokenStream, left) {
+function parseDotGetter(tokenStream, left, file) {
     //we don't need the dot
     tokenStream.pop();
 
@@ -637,7 +637,7 @@ function parseDotGetter(tokenStream, left) {
         type: "TailedValue",
         head: left,
         tail: wrapIdentifierToken(identifier),
-        location: { start: left.location.start, end: identifier.location.end }
+        location: { start: left.location.start, end: identifier.location.end, file: file }
     };
 }
 
@@ -665,10 +665,10 @@ function wrapVariableReferenceOnIdentifierToken(identifier) {
     };
 }
 
-function parseArrayGetter(tokenStream, left) {
+function parseArrayGetter(tokenStream, left, file) {
     const locStart = tokenStream.pop().location.start;
 
-    const tail = parseExpression(tokenStream, 0);
+    const tail = parseExpression(tokenStream, file, 0);
 
     expect(tokenStream, "CLOSE_SQUARE_BRACKET", "Missing end-square-bracket; instead, got", [
         `It appears that there might be a missing ending squre-bracket (']') after this array-style property get. Its corresponding open-square is on line ${locStart.line}, column ${locStart.column}`
@@ -678,11 +678,11 @@ function parseArrayGetter(tokenStream, left) {
         type: "TailedValue",
         head: left,
         tail: tail,
-        location: { start: locStart, end: tail.location.end }
+        location: { start: locStart, end: tail.location.end, file: file }
     };
 }
 
-function parseDelegatorExpression(tokenStream) {
+function parseDelegatorExpression(tokenStream, file) {
     const locStart = tokenStream.pop().location.start;
 
     let hasParens = false;
@@ -696,7 +696,7 @@ function parseDelegatorExpression(tokenStream) {
 
     if (tokenStream.peek().name == "COMMA") tokenStream.pop();
 
-    const args = parseArgumentList(tokenStream);
+    const args = parseArgumentList(tokenStream, file);
 
     let locEnd;
     if (hasParens) {
@@ -709,6 +709,6 @@ function parseDelegatorExpression(tokenStream) {
         type: "DelegatorExpression",
         delegateTo: delegateTo,
         args: args,
-        location: { start: locStart, end: locEnd }
+        location: { start: locStart, end: locEnd, file: file }
     };
 }

@@ -1,7 +1,7 @@
 const lexer = require("./lexer")
 
-module.exports = function tokenStream(text) {
-    const lexGenerator = lexer(text);
+module.exports = function tokenStream(text, file) {
+    const lexGenerator = lexer(text, file);
     
     let lookahead = undefined;
     

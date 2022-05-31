@@ -1,13 +1,18 @@
-var cPool = require("./constant-pool");
+var cPool = require("../constant-pool");
 
 var treeBlockToBytecodeBlock = require("./ast-to-bytecode");
 const bytecodeSpec = require("../bytecode-spec");
 
-module.exports = function(ast, frontmatter) {
-    var constantPool = cPool();
-    var treeBlocks = programToTreeBlocks(ast);
+module.exports = async function (ast, frontmatter, context) {
+    var constantPool = cPool(context);
+    var treeBlocks = programToTreeBlocks(ast, constantPool.universalPrefix);
     
-    var bytecodeBlocks = treeBlocks.map(x => treeBlockToBytecodeBlock(x, constantPool, frontmatter));
+    var bytecodeBlocks = [];
+    
+    for(const blk of treeBlocks) {
+        const bcb = await treeBlockToBytecodeBlock(blk, constantPool, frontmatter);
+        bytecodeBlocks.push(bcb);
+    }
     
     var flattedBlocks = bytecodeBlocks.flat(1);
     
@@ -32,10 +37,10 @@ module.exports = function(ast, frontmatter) {
     };
 }
 
-function programToTreeBlocks(program) {
+function programToTreeBlocks(program, universalPrefix) {
     var blocks = program.statepaths.map(x=>
         x.statepath.states.map((y,i,a)=>({
-            label: "s/" + x.label + "/" + i,
+            label: "s/" + universalPrefix + "/" + x.label + "/" + i,
             treeStatements: y.statement,
             stateCountInPath: a.length
         }))

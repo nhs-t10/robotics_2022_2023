@@ -6,31 +6,31 @@ const parseStatement = require("./statement-parsing");
 /**
  * @param {import("./token-stream").TokenStream} tokenStream 
  */
-module.exports = function(tokenStream) {
-    return parseFile(tokenStream);
+module.exports = function(tokenStream, file) {
+    return parseFile(tokenStream, file);
 }
 
 /**
  * @param {import("./token-stream").TokenStream} tokenStream
  */
-function parseFile(tokenStream) {
+function parseFile(tokenStream, file) {
     
     const locStart = tokenStream.peek().location.start;
     
-    if(tokenStream.peek().name == "DOLLAR_SIGN") parseFrontmatter(tokenStream);
+    if (tokenStream.peek().name == "DOLLAR_SIGN") parseFrontmatter(tokenStream);
     
     let statepaths = [];
     
     
-    if(tokenStream.peek().name != "HASHTAG") statepaths.push(parseUnlabeledStatepath(tokenStream));
+    if (tokenStream.peek().name != "HASHTAG") statepaths.push(parseUnlabeledStatepath(tokenStream, file));
     
-    while(tokenStream.peek().name != "EOF") statepaths.push(parseLabeledStatepath(tokenStream));
+    while (tokenStream.peek().name != "EOF") statepaths.push(parseLabeledStatepath(tokenStream, file));
     
     const locEnd = tokenStream.pop().location.end;
     
     return {
         type: "Program",
-        location: {start: locStart, end: locEnd},
+        location: { start: locStart, end: locEnd, file: file},
         statepaths: statepaths
     }
 }
@@ -55,8 +55,8 @@ function parseFrontmatter(tokenStream) {
     tokenStream.pop();
 }
 
-function parseUnlabeledStatepath(tokenStream) {
-    const spContent = parseStatepathContent(tokenStream);
+function parseUnlabeledStatepath(tokenStream, file) {
+    const spContent = parseStatepathContent(tokenStream, file);
     return {
         label: "<init>",
         type: "LabeledStatepath",
@@ -65,7 +65,7 @@ function parseUnlabeledStatepath(tokenStream) {
     }
 }
 
-function parseLabeledStatepath(tokenStream) {    
+function parseLabeledStatepath(tokenStream, file) {
     const hashtag = tokenStream.pop();
     if(hashtag.name != "HASHTAG") {
         throw improperContextError("Expected a hashtag (#) to start a statepath label", hashtag.location);
@@ -83,15 +83,15 @@ function parseLabeledStatepath(tokenStream) {
         label: nameContent,
         type: "LabeledStatepath",
         location: name.location,
-        statepath: parseStatepathContent(tokenStream)
+        statepath: parseStatepathContent(tokenStream, file)
     }
 }
 
-function parseStatepathContent(tokenStream) {
+function parseStatepathContent(tokenStream, file) {
     let states = [];
     while(tokenStream.peek().name != "HASHTAG" &&
         tokenStream.peek().name != "EOF") {
-        states.push(parseState(tokenStream));
+        states.push(parseState(tokenStream, file));
     }
     
     if(states.length == 0) {
@@ -102,20 +102,20 @@ function parseStatepathContent(tokenStream) {
     
     return {
         type: "Statepath",
-        location: {start: states[0].location.start, end: states[states.length - 1].location.end},
+        location: { start: states[0].location.start, end: states[states.length - 1].location.end, file: file },
         states: states
     }
 }
 
-function parseState(tokenStream) {    
+function parseState(tokenStream, file) {
     let statements = [];
     
     while(tokenStream.peek().name != "SEMICOLON" && 
         tokenStream.peek().name != "HASHTAG" &&
         tokenStream.peek().name != "EOF") {
-            statements.push(parseStatement(tokenStream));
+            statements.push(parseStatement(tokenStream, file));
             
-        if(tokenStream.peek().name == "COMMA") tokenStream.pop();
+            if(tokenStream.peek().name == "COMMA") tokenStream.pop();
     }
     
     if(statements.length == 0) {
@@ -128,7 +128,7 @@ function parseState(tokenStream) {
     
     return {
         type: "State",
-        location: { start: statements[0].location.start, end: statements[statements.length - 1].location.end },
+        location: { start: statements[0].location.start, end: statements[statements.length - 1].location.end, file: file },
         statement: statements
     }
 }

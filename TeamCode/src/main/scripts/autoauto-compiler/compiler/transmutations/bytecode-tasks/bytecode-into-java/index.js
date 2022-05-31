@@ -1,13 +1,17 @@
-const cpool = require("./constant-pool");
+const cpool = require("../constant-pool");
 const makeJava = require("./make-java");
 const makeHelperClass = require("./make-helper-class");
 
 var path = require("path");
 
+/**
+ * 
+ * @param {import("../../../transmutations").TransmutateContext} context 
+ */
 module.exports = function run(context) {
     var package = context.inputs["get-result-package"];
 
-    var constantPool = cpool();
+    var constantPool = cpool(context);
 
     var bytecode = context.inputs["bytecode-flatten"];
     var codes = [];

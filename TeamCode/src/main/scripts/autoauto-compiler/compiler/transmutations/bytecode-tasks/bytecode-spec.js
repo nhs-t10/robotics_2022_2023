@@ -7,6 +7,8 @@ module.exports = {
     yieldto_l: { code: 0x005 },
     ret: { code: 0x006 },
     yieldto_i: { code: 0x007 },
+    crret: { code: 0x008 },
+    call_coroutine: { code: 0x009 },
     pop: { code: 0x100 },
     dup: { code: 0x101 },
     swap: { code: 0x102 },

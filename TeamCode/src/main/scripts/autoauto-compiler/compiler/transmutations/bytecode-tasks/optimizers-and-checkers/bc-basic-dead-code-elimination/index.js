@@ -73,5 +73,5 @@ function isReachable(blockLabel, invertedCgraph, memoReachability, previouslySca
 }
 
 function isDynamicallyReferenced(blockLabel) {
-    return blockLabel == "ENTRY" || blockLabel.includes("func_enter");
+    return blockLabel == "ENTRY" || blockLabel.includes("func-enter") || blockLabel.includes("static-link-entry");
 }

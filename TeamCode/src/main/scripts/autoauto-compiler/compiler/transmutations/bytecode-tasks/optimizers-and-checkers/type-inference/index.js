@@ -16,6 +16,7 @@ module.exports = function run(context) {
 
 function processBytecodeBlock(block, blocks, typeSystem) {
     if (block.__hasTypes) return;
+    if(!block.code) {console.log(block); throw "aaaa";}
     addAllLocalVariablesToTypeSystem(block.code, blocks, typeSystem);
     addAllLocalVariablesToTypeSystem(block.jumps, blocks, typeSystem);
     block.__hasTypes = true;
@@ -36,19 +37,21 @@ function gatherReturnTypeFrom(entryBlock, blocks, typeSystem) {
     var possibleTypes = processBlockChildrenForReturnTypes(entryBlock, blocks, typeSystem);
     var uniqTypes = Array.from(new Set(possibleTypes));
 
-    if (uniqTypes.length == 1) return uniqTypes[0];
-    else return { type: "union", types: uniqTypes };
+    return { type: "union", types: uniqTypes };
 
 }
 function findReturnTypeInSingleBlock(block) {
     for (var i = 0; i < block.code.length; i++) {
-        if (block.code[i].code == bytecodeSpec.ret.code) {
+        if (block.code[i].code == bytecodeSpec.ret.code || block.code[i].code == bytecodeSpec.crret.code) {
             return block.code[i].args[0].__typekey;
         }
     }
     return "undefined";
 }
 function processBlockChildrenForReturnTypes(block, blocks, typeSystem) {
+    if(block.__hasReturnProcessed) return [];
+    block.__hasReturnProcessed = true;
+    
     processBytecodeBlock(block, blocks, typeSystem);
 
     var returnTypes = [findReturnTypeInSingleBlock(block)];
@@ -99,6 +102,7 @@ function calcType(instruction, currentTypeKey, typeSystem, blocks) {
         case bytecodeSpec.spec_setvar.code:
         case bytecodeSpec.ret.code:
         case bytecodeSpec.pass.code:
+        case bytecodeSpec.crret.code:
             return "undefined";
         case bytecodeSpec.setvar.code:
             return setVariableType(instruction, currentTypeKey, typeSystem);
@@ -135,12 +139,26 @@ function calcType(instruction, currentTypeKey, typeSystem, blocks) {
 
         case bytecodeSpec.makefunction_l.code:
             return recordFunctionType(instruction, currentTypeKey, typeSystem, blocks);
+            
+        case bytecodeSpec.call_coroutine.code:
+            return getCoroutineType(instruction, currentTypeKey, typeSystem, blocks);
+            return getFunctionReturnType(instruction, currentTypeKey, typeSystem);
 
         default:
             console.error(instruction);
             var f = bc[instruction.code];
-            console.error("untyped bytecode! " + (f ? f.mnemom : instruction.code));
+            throw new Error("untyped bytecode! " + (f ? f.mnemom : instruction.code));
     }
+}
+
+function getCoroutineType(instruction, currentTypeKey, typeSystem, blocks) {
+    const coroutineEntryBlockLabel = instruction.args[0].__value;
+    const coroutineEntryBlock = blocks[coroutineEntryBlockLabel];
+    const coroutineType = gatherReturnTypeFrom(coroutineEntryBlock, blocks, typeSystem);
+    
+    typeSystem.upsertType(currentTypeKey, coroutineType, instruction.location);
+    
+    return currentTypeKey;
 }
 
 function recordFunctionType(instruction, currentTypeKey, typeSystem, blocks) {

@@ -1,9 +1,4 @@
 module.exports = {
-    "var module_args@0": {
-        type: "object",
-        some: "*",
-        properties: {}  
-    },
     "var Math@0": {
         type: "object",
         some: "undefined",
@@ -88,6 +83,7 @@ module.exports = {
     "Math@0/trunc": { "type": "function", "args": ["number"], "return": "number|undefined" },
     "Math@0/sign": { "type": "function", "args": ["number"], "return": "number|undefined" },
     "Math@0/cbrt": { "type": "function", "args": ["number"], "return": "number|undefined" },
+    
     "number|undefined": { type: "union", types: ["undefined", "number"] },
     
     "number": { type: "primitive", primitive: "number" },

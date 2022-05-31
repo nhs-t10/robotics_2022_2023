@@ -64,6 +64,7 @@ function makeContextAndCompileFile(filename, compilerWorkers, autoautoFileContex
         if(cacheEntry) {
             androidStudioLogging.sendMessages(cacheEntry.log);
             writeAndCallback(cacheEntry.data, autoautoFileContexts, resolve);
+            compilerWorkers.addFinishedJobFromCache(fileContext);
         } else {
             compilerWorkers.giveJob(fileContext, function(run) {
                 saveCacheEntry(run);

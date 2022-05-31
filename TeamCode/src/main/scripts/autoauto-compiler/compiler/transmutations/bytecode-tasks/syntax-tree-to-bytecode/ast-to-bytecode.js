@@ -1,4 +1,7 @@
+const { createHash } = require("crypto");
+const path = require("path");
 const systemVariableNames = require("../../../data/system-variable-names");
+const { requestDependencyToParent } = require("../../../worker");
 var bytecodeSpec = require("../bytecode-spec");
 
 var STATE_INIT_PREFIX = "{+STATE_INIT ";
@@ -6,7 +9,7 @@ var STATE_INIT_PREFIX = "{+STATE_INIT ";
 module.exports = treeBlockToBytecode;
 
 //this gets a "tree block", which is equivalent to a state.
-function treeBlockToBytecode(block, constantPool, frontmatter) {
+async function treeBlockToBytecode(block, constantPool, frontmatter) {
     
     var statementLabels = block.treeStatements.map((x, i) => block.label + "/stmt/" + i);
     
@@ -30,7 +33,7 @@ function treeBlockToBytecode(block, constantPool, frontmatter) {
         var thisLabel = statementLabels[i];
         var nextLabel = statementLabels[i + 1] || stateEndBlock.label;
         
-        var stmtBlocks = statementToBytecodeBlocks(block.treeStatements[i], thisLabel, constantPool, nextLabel, block.stateCountInPath);
+        var stmtBlocks = await statementToBytecodeBlocks(block.treeStatements[i], thisLabel, constantPool, nextLabel, block.stateCountInPath);
         
         blocks = blocks.concat(stmtBlocks);
     }
@@ -50,8 +53,12 @@ function treeBlockToBytecode(block, constantPool, frontmatter) {
  * @param {Block[]} allStatementBlocks
  */
 function findAndRewriteStateInitBlocks(startBlock, allStatementBlocks, constantPool) {
+    try {
     var stateInitBlocks = allStatementBlocks.filter(x=>x.label.startsWith(STATE_INIT_PREFIX));
-    
+    } catch(e) {
+        console.log(allStatementBlocks);
+        throw e;
+    }
     if(stateInitBlocks.length == 0) return;
     
     //make the last state init block go to wherever the start block was going
@@ -91,9 +98,9 @@ function makeInitBlockToStopMotors(constantPool) {
  * @param {string} label
  * @param {ConstantPool} constantPool 
  * @param {string} afterThisJumpToLabel 
- * @returns {Block[]}
+ * @returns {Promise<Block[]>}
  */
-function statementToBytecodeBlocks(ast, label, constantPool, afterThisJumpToLabel, stateCountInPath) {
+async function statementToBytecodeBlocks(ast, label, constantPool, afterThisJumpToLabel, stateCountInPath) {
     
     switch (ast.type) {
         case "SkipStatement":
@@ -101,29 +108,29 @@ function statementToBytecodeBlocks(ast, label, constantPool, afterThisJumpToLabe
         case "NextStatement":
             return nextStatementToBytecode(ast, label, constantPool, stateCountInPath);
         case "LetPropertyStatement":
-            return letPropertyToBytecode(ast, label, constantPool, afterThisJumpToLabel);
+            return await letPropertyToBytecode(ast, label, constantPool, afterThisJumpToLabel);
         case "FunctionDefStatement":
-            return functionDefToBytecode(ast, label, constantPool, afterThisJumpToLabel);    
+            return await functionDefToBytecode(ast, label, constantPool, afterThisJumpToLabel);
         case "Block":
             return compoundStatementToBytecode(ast, label, constantPool, afterThisJumpToLabel, stateCountInPath);
         case "PassStatement":
             return passStatementToBytecode(ast, label, constantPool, afterThisJumpToLabel);
         case "IfStatement":
-            return ifStatementToBytecode(ast, label, constantPool, afterThisJumpToLabel, stateCountInPath);
+            return await ifStatementToBytecode(ast, label, constantPool, afterThisJumpToLabel, stateCountInPath);
         case "LetStatement":
-            return letStatementToBytecode(ast, label, constantPool, afterThisJumpToLabel);
+            return await letStatementToBytecode(ast, label, constantPool, afterThisJumpToLabel);
         case "GotoStatement":
-            return gotoStatementToBytecode(ast, label, constantPool);
+            return await gotoStatementToBytecode(ast, label, constantPool);
         case "ReturnStatement":
-            return returnStatementToBytecode(ast, label, constantPool);
+            return await returnStatementToBytecode(ast, label, constantPool);
         case "NextStatement":
             return nextStatementToBytecode(ast, label, constantPool, stateCountInPath);
         case "AfterStatement":
-            return afterStatementToBytecode(ast, label, constantPool, afterThisJumpToLabel, stateCountInPath);
+            return await afterStatementToBytecode(ast, label, constantPool, afterThisJumpToLabel, stateCountInPath);
         case "ValueStatement":
-            return valueStatementToBytecode(ast, label, constantPool, afterThisJumpToLabel);
+            return await valueStatementToBytecode(ast, label, constantPool, afterThisJumpToLabel);
         case "ProvideStatement":
-            return provideStatementToBytecode(ast, label, constantPool, afterThisJumpToLabel);
+            return await provideStatementToBytecode(ast, label, constantPool, afterThisJumpToLabel);
         default:
             console.error(ast);
             throw new Error("Can't convert " + ast.type + " to bytecode!");
@@ -141,9 +148,9 @@ function statementToBytecodeBlocks(ast, label, constantPool, afterThisJumpToLabe
  * 
  * @param {*} valueAst 
  * @param {*} constantPool 
- * @returns {valueComputationBytecode}
+ * @returns {Promise<valueComputationBytecode>}
  */
-function valueToBytecodeBlocks(valueAst, constantPool) {
+async function valueToBytecodeBlocks(valueAst, constantPool) {
     var simpleBytecode = primitiveValueToSimpleBytecode(valueAst, constantPool);
     
     //if it was able to make that into a simple bytecode array, great!
@@ -157,55 +164,121 @@ function valueToBytecodeBlocks(valueAst, constantPool) {
     //otherwise, try the more-complex ones.
     switch(valueAst.type) {
         case "FunctionLiteral": 
-            return functionLiteralToBytecode(valueAst, constantPool)
+            return await functionLiteralToBytecode(valueAst, constantPool)
         case "OperatorExpression":
         case "ComparisonOperator":
-            return operationToBytecode(valueAst, constantPool);
+            return await operationToBytecode(valueAst, constantPool);
         case "TitledArgument":
-            return titledArgToBytecode(valueAst, constantPool);
+            return await titledArgToBytecode(valueAst, constantPool);
         case "ArgumentList":
             throw "Must call argumentListToBytecode directly, as it returns an array of bytecodes!";
         case "DynamicValue":
-            return valueToBytecodeBlocks(valueAst.value, constantPool);
+            return await valueToBytecodeBlocks(valueAst.value, constantPool);
         case "ArrayLiteral":
-            return tableLiteralToBytecode(valueAst, constantPool);
+            return await tableLiteralToBytecode(valueAst, constantPool);
         case "FunctionCall":
-            return functionCallToBytecode(valueAst, constantPool);
+            return await functionCallToBytecode(valueAst, constantPool);
         case "TailedValue":
-            return tailedValueToBytecode(valueAst, constantPool);
+            return await tailedValueToBytecode(valueAst, constantPool);
         case "DelegatorExpression":
-            return delegatorExpressionToBytecode(valueAst, constantPool);
+            return await delegatorExpressionToBytecode(valueAst, constantPool);
     }
     throw new Error("Unknown value type " + valueAst.type);
 }
 
-function delegatorExpressionToBytecode(ast, constantPool) {
-    var simulatedCall = {
-        type: "FunctionCall",
+/**
+ *
+ * @param {*} valueAst
+ * @param {*} constantPool
+ * @returns {Promise<valueComputationBytecode>}
+ */
+async function delegatorExpressionToBytecode(ast, constantPool) {
+    const currentFile = constantPool.currentFile;
+    const currentFolder = path.dirname(currentFile);
+    
+    if(ast.delegateTo.str === undefined) throw {
+        text: "Sanity check failed -- a malformed delegate() expression exists!",
+        hints: ["Make sure that the first argument to delegate() is a string literal"],
         location: ast.location,
-        func: {
-            type: "VariableReference",
-            location: ast.location,
-            variable: {
-                type: "Identifier",
-                location: ast.location,
-                value: "delegate"
-            }
-        },
-        args: {
-            type: "ArgumentList",
-            location: ast.location,
-            len: ast.args.len + 1,
-            args: [ast.delegateTo].concat(ast.args.args)
-        }
+        kind: "ERROR"
+    }
+    const relativeFile = path.join(currentFolder, ast.delegateTo.str);
+    
+    const dependency = await requestDependencyToParent(currentFile, relativeFile);
+    
+    const dependencyPrefix = sha(dependency.sourceFullFileName);
+    const depBytecode = dependency.inputs["syntax-tree-to-bytecode"].blocks;
+    
+    
+    //rename the ENTRY block to a non-overlapping label
+    const realEntryLabel = "sl/" + dependencyPrefix + "/real-entry";
+    depBytecode.ENTRY.label = realEntryLabel;
+    
+    const dependencyBlocks = Object.values(depBytecode);
+    
+    //make a continuation block that has the information required to do a jump
+    const continuationEntry = constructDelegatorContinuationBranch(dependencyBlocks, constantPool, ast, realEntryLabel);
+    const continuationEntryLabel = continuationEntry.label;
+    dependencyBlocks.push(continuationEntry);
+    
+    //construct the module_args variable
+    const modArgsBytecode = await argumentListToBytecodeAsProperties(ast.args, constantPool);
+    const modArgs = emitBytecodeWithLocation(bytecodeSpec.spec_setvar, [
+        emitConstantWithLocation(systemVariableNames.MODULE_ARGS, constantPool, ast),
+        emitBytecodeWithLocation(bytecodeSpec.construct_table, modArgsBytecode.boundedCalculations, ast)
+    ]);
+    const entryLabel = constantPool.subblockLabel("static-link-entry");
+    const modArgsSetter = {
+        label: entryLabel,
+        code: [modArgs],
+        jumps: [jumpToLabel(continuationEntryLabel, constantPool)]
+    }
+    dependencyBlocks.push(modArgsSetter);
+    
+    
+    //and now, make a jump to it!
+    return {
+        dependentBlocks: dependencyBlocks.concat(modArgsBytecode.dependentBlocks),
+        computation: emitBytecodeWithLocation(bytecodeSpec.call_coroutine, [
+            emitConstantWithLocation(entryLabel, constantPool, ast)
+        ], ast)
     };
 
-    return functionCallToBytecode(simulatedCall, constantPool);
 }
 
-function functionCallToBytecode(ast, constantPool) {
-    var toBeCalled = valueToBytecodeBlocks(ast.func, constantPool);
-    var arguments = argumentListToBytecodeAsPositionalThenNamed(ast.args, constantPool);
+function constructDelegatorContinuationBranch(dependencyBlocks, constantPool, ast, entryBlock) {
+    const branchBlock = {
+        label: constantPool.subblockLabel("static-link-continuation"),
+        code: [],
+        jumps: []
+    };
+    for(const block of dependencyBlocks) {
+        if(block.continuationIndex > 0) {
+            branchBlock.jumps.push(emitBytecodeWithLocation(bytecodeSpec.jmp_l_cond, [
+                emitBytecodeWithLocation(bytecodeSpec.cmp_eq, [
+                    emitBytecodeWithLocation(bytecodeSpec.getvar, [
+                        emitConstantWithLocation(systemVariableNames.COROUTINE_CONTINUATION_PREFIX, constantPool, ast)
+                    ], ast),
+                    emitConstantWithLocation(block.continuationIndex, constantPool, ast)
+                ], ast),
+                emitConstantWithLocation(block.label, constantPool, ast)
+            ], ast));
+        }
+    }
+    branchBlock.jumps.push(emitBytecodeWithLocation(bytecodeSpec.jmp_l, [
+        emitConstantWithLocation(entryBlock, constantPool, ast)
+    ], ast));
+    
+    return branchBlock;
+}
+
+function sha(t) {
+    return createHash("sha1").update(t).digest("hex");
+}
+
+async function functionCallToBytecode(ast, constantPool) {
+    var toBeCalled = await valueToBytecodeBlocks(ast.func, constantPool);
+    var arguments = await argumentListToBytecodeAsPositionalThenNamed(ast.args, constantPool);
     
     return {
         computation: emitBytecodeWithLocation(bytecodeSpec.callfunction, 
@@ -216,8 +289,8 @@ function functionCallToBytecode(ast, constantPool) {
     
 }
 
-function tableLiteralToBytecode(ast, constantPool) {
-    var elems = argumentListToBytecodeAsProperties(ast.elems, constantPool);
+async function tableLiteralToBytecode(ast, constantPool) {
+    var elems = await argumentListToBytecodeAsProperties(ast.elems, constantPool);
     
     return {
         computation: emitBytecodeWithLocation(bytecodeSpec.construct_table, elems.boundedCalculations, ast),
@@ -225,9 +298,9 @@ function tableLiteralToBytecode(ast, constantPool) {
     };
 }
 
-function tailedValueToBytecode(ast, constantPool) {
-    var head = valueToBytecodeBlocks(ast.head, constantPool);
-    var tail = valueToBytecodeBlocks(ast.tail, constantPool);
+async function tailedValueToBytecode(ast, constantPool) {
+    var head = await valueToBytecodeBlocks(ast.head, constantPool);
+    var tail = await valueToBytecodeBlocks(ast.tail, constantPool);
     
     return {
         computation: emitBytecodeWithLocation(bytecodeSpec.getprop, [
@@ -238,13 +311,13 @@ function tailedValueToBytecode(ast, constantPool) {
     };
 }
 
-function argumentListToBytecodeAsPositionalThenNamed(ast, constantPool) {
+async function argumentListToBytecodeAsPositionalThenNamed(ast, constantPool) {
     var blocks = [];
     var calculationsPositional = [], calculationsNamed = [];
     
     for (var i = 0; i < ast.args.length; i++) {
         var arg = ast.args[i];
-        var argBc = valueToBytecodeBlocks(arg, constantPool);
+        var argBc = await valueToBytecodeBlocks(arg, constantPool);
 
         if (arg.type == "TitledArgument") {
             //argBc should be a construct_relation bytecode. Use its args!
@@ -270,13 +343,13 @@ function argumentListToBytecodeAsPositionalThenNamed(ast, constantPool) {
     }
 }
 
-function argumentListToBytecodeAsFuncParamNames(ast, constantPool) {
+async function argumentListToBytecodeAsFuncParamNames(ast, constantPool) {
     var blocks = [];
     var calculations = [];
 
     for (var i = 0; i < ast.args.length; i++) {
         var arg = ast.args[i];
-        var argBc = valueToBytecodeBlocks(arg, constantPool);
+        var argBc = await valueToBytecodeBlocks(arg, constantPool);
 
         if (arg.type == "TitledArgument") {
             //argBc should be a construct_relation bytecode. Use its args!
@@ -297,13 +370,13 @@ function argumentListToBytecodeAsFuncParamNames(ast, constantPool) {
     }
 }
 
-function argumentListToBytecodeAsProperties(ast, constantPool) {
+async function argumentListToBytecodeAsProperties(ast, constantPool) {
     var blocks = [];
     var calculations = [];
 
     for (var i = 0; i < ast.args.length; i++) {
         var arg = ast.args[i];
-        var argBc = valueToBytecodeBlocks(arg, constantPool);
+        var argBc = await valueToBytecodeBlocks(arg, constantPool);
         
         if (arg.type == "TitledArgument") {
             //argBc should be a construct_relation bytecode. Use its args!
@@ -334,9 +407,7 @@ function primitiveValueToSimpleBytecode(valueAst, constantPool) {
         case "Identifier":
             return emitConstantWithLocation(valueAst.value, constantPool, valueAst);
         case "VariableReference":
-            return emitBytecodeWithLocation(bytecodeSpec.getvar, [
-                primitiveValueToSimpleBytecode(valueAst.variable, constantPool)
-            ], valueAst);
+            return variableReferenceToSimpleBytecode(valueAst, constantPool);
         case "StringLiteral":
             return emitConstantWithLocation(valueAst.str, constantPool, valueAst);
         case "NumericValue":
@@ -347,6 +418,16 @@ function primitiveValueToSimpleBytecode(valueAst, constantPool) {
             return emitConstantWithLocation(unitwrap(valueAst), constantPool, valueAst);
     };
     return undefined
+}
+
+function variableReferenceToSimpleBytecode(ast, constantPool) {
+    let varname = ast.variable.value;
+    
+    if(constantPool.isGlobalName(varname) == false) varname = constantPool.universalPrefix + "-" + varname;
+    
+    return emitBytecodeWithLocation(bytecodeSpec.getvar, [
+        emitConstantWithLocation(varname, constantPool, ast)
+    ], ast);
 }
 
 function unitwrap(ast) {
@@ -392,16 +473,31 @@ function getOperationBytecodeInstruction(comp) {
     throw "Unrecognized comparison " + comp;
 }
 
-function provideStatementToBytecode(ast, label, constantPool, nextLabel) {
-    var val = valueToBytecodeBlocks(ast.value, constantPool);
-
+async function provideStatementToBytecode(ast, label, constantPool, nextLabel) {
+    var val = await valueToBytecodeBlocks(ast.value, constantPool);
+    
+    const continuationVariable = systemVariableNames.COROUTINE_CONTINUATION_PREFIX + constantPool.universalPrefix;
+    const continuationIndex = constantPool.getCoroutineContinuation();
+    
+    const jumpBlockLabel = constantPool.subblockLabel("provide-continuation");
+    
     return [{
         label: label,
-        code: [emitBytecodeWithLocation(bytecodeSpec.spec_setvar, [
-                emitConstantWithLocation(systemVariableNames.EXPORTS, constantPool, ast),
+        code: [
+            emitBytecodeWithLocation(bytecodeSpec.spec_setvar, [
+                emitConstantWithLocation(continuationVariable, constantPool, ast),
+                emitConstantWithLocation(continuationIndex, constantPool, ast)
+            ], ast),
+            emitBytecodeWithLocation(bytecodeSpec.crret, [
                 val.computation
             ], ast)
         ],
+        jumps: [jumpToLabel(jumpBlockLabel, constantPool)]
+    },
+    {
+        label: jumpBlockLabel,
+        continuationIndex: continuationIndex,
+        code: [],
         jumps: [jumpToLabel(nextLabel, constantPool)]
     }].concat(val.dependentBlocks);
 }
@@ -410,11 +506,11 @@ function provideStatementToBytecode(ast, label, constantPool, nextLabel) {
  * 
  * @param {*} ast 
  * @param {*} constantPool 
- * @returns {valueComputationBytecode}
+ * @returns {Promise<valueComputationBytecode>}
  */
-function titledArgToBytecode(ast, constantPool) {
-    var title = valueToBytecodeBlocks(ast.name, constantPool);
-    var value = valueToBytecodeBlocks(ast.value, constantPool);
+async function titledArgToBytecode(ast, constantPool) {
+    var title = await valueToBytecodeBlocks(ast.name, constantPool);
+    var value = await valueToBytecodeBlocks(ast.value, constantPool);
     
     return {
         dependentBlocks: [].concat(title.dependentBlocks, value.dependentBlocks),
@@ -433,8 +529,8 @@ function passStatementToBytecode(ast, label, constantPool, nextLabel) {
     }];
 }
 
-function valueStatementToBytecode(ast, label, constantPool, nextLabel) {
-    var val = valueToBytecodeBlocks(ast.call, constantPool);
+async function valueStatementToBytecode(ast, label, constantPool, nextLabel) {
+    var val = await valueToBytecodeBlocks(ast.call, constantPool);
 
     return [{
         label: label,
@@ -444,8 +540,8 @@ function valueStatementToBytecode(ast, label, constantPool, nextLabel) {
     }].concat(val.dependentBlocks);
 }
 
-function gotoStatementToBytecode(ast, label, constantPool) {
-    var pathName = valueToBytecodeBlocks(ast.path, constantPool);
+async function gotoStatementToBytecode(ast, label, constantPool) {
+    var pathName = await valueToBytecodeBlocks(ast.path, constantPool);
 
     return [{
         label: label,
@@ -454,7 +550,7 @@ function gotoStatementToBytecode(ast, label, constantPool) {
             [emitBytecodeWithLocation(bytecodeSpec.jmp_l, 
                 [emitBytecodeWithLocation(bytecodeSpec.add, [
                     emitBytecodeWithLocation(bytecodeSpec.add, [
-                            emitConstantWithLocation("s/", constantPool, ast),
+                            emitConstantWithLocation("s/" + constantPool.universalPrefix + "/", constantPool, ast),
                             pathName.computation], ast),
                     emitConstantWithLocation("/0", constantPool, ast)
                     ], ast)
@@ -462,8 +558,8 @@ function gotoStatementToBytecode(ast, label, constantPool) {
     }].concat(pathName.dependentBlocks)
 }
 
-function returnStatementToBytecode(ast, label, constantPool) {
-    var val = valueToBytecodeBlocks(ast.value, constantPool);
+async function returnStatementToBytecode(ast, label, constantPool) {
+    var val = await valueToBytecodeBlocks(ast.value, constantPool);
     
     return [
         {
@@ -508,9 +604,14 @@ function nextStatementToBytecode(ast, label, constantPool, stateCountInPath) {
 
 function calculateSkipToLabel(currentLabel, offsetNum, stateCountInPath, locationForError) {
     var stateBlockParams = currentLabel.split("/");
-    var thisStateIndex = +stateBlockParams[2];
+    var thisStateIndex = +stateBlockParams[3];
+    
+    if(isNaN(thisStateIndex)) throw {
+        kind: "ERROR",
+        text: "Sanity check failed; skip-to basis is non-numeric"
+    };
 
-    var prefix = "s/" + stateBlockParams[1] + "/";
+    var prefix = "s/" + stateBlockParams[1] + "/" + stateBlockParams[2] + "/";
     
     var skipToIndex = thisStateIndex + offsetNum;
 
@@ -527,32 +628,40 @@ function calculateSkipToLabel(currentLabel, offsetNum, stateCountInPath, locatio
     return prefix + skipToIndexNorm; 
 }
 
-function letStatementToBytecode(ast, label, constantPool, nextLabel) {
-    var variableName = valueToBytecodeBlocks(ast.variable, constantPool);
-    var value = valueToBytecodeBlocks(ast.value, constantPool);
+async function letStatementToBytecode(ast, label, constantPool, nextLabel) {
+    const variableName = ast.variable && ast.variable.value;
+    if(typeof variableName !== "string") throw {
+        kind: "ERROR",
+        text: "Attempt to set a non-string variable",
+        hints: ["Make sure that it doesn't start with a number!"],
+        location: ast.location
+    }
+    const prefixedVariableName = constantPool.universalPrefix + "-" + variableName;
+    
+    const value = await valueToBytecodeBlocks(ast.value, constantPool);
 
     return [{
         label: label,
         code: [
             emitBytecodeWithLocation(bytecodeSpec.setvar, [
-                variableName.computation,
+                emitConstantWithLocation(prefixedVariableName, constantPool, ast),
                 value.computation
             ],ast)
         ],
         jumps: [jumpToLabel(nextLabel, constantPool)]
-    }].concat(variableName.dependentBlocks, value.dependentBlocks);
+    }].concat(value.dependentBlocks);
 }
 
 /**
  * 
  * @returns {Block[]}
  */
-function letPropertyToBytecode(ast, label, constantPool, nextLabel) {
+async function letPropertyToBytecode(ast, label, constantPool, nextLabel) {
     if(ast.variable.type != "TailedValue") throw "Attempt to inappropriately `let` an unsettable value";
 
-    var headBytecode = valueToBytecodeBlocks(ast.variable.head, constantPool);
-    var tailBytecode = valueToBytecodeBlocks(ast.variable.tail, constantPool);
-    var setValueBytecode = valueToBytecodeBlocks(ast.value, constantPool);
+    var headBytecode = await valueToBytecodeBlocks(ast.variable.head, constantPool);
+    var tailBytecode = await valueToBytecodeBlocks(ast.variable.tail, constantPool);
+    var setValueBytecode = await valueToBytecodeBlocks(ast.value, constantPool);
 
     return [{
         label: label,
@@ -571,27 +680,27 @@ function letPropertyToBytecode(ast, label, constantPool, nextLabel) {
  * 
  * @param {*} ast 
  * @param {*} constantPool 
- * @returns {valueComputationBytecode}
+ * @returns {Promise<valueComputationBytecode>}
  */
-function functionLiteralToBytecode(ast, constantPool) {
-    var endBlockLabel = constantPool.subblockLabel("func_end");
+async function functionLiteralToBytecode(ast, constantPool) {
+    var endBlockLabel = constantPool.subblockLabel("func-end");
     var endBlock = {
         label: endBlockLabel,
         code: [emitBytecodeWithLocation(bytecodeSpec.ret, [emitConstantWithLocation(undefined, constantPool, ast)], ast)],
         jumps: []
     };
 
-    var functionBodyLabel = constantPool.subblockLabel("func_body");
-    var functionBody = statementToBytecodeBlocks(ast.body, functionBodyLabel, constantPool, endBlockLabel, NaN, NaN);
+    var functionBodyLabel = constantPool.subblockLabel("func-body");
+    var functionBody = await statementToBytecodeBlocks(ast.body, functionBodyLabel, constantPool, endBlockLabel, NaN, NaN);
     
-    var entryBlockLabel = constantPool.subblockLabel("func_enter");
+    var entryBlockLabel = constantPool.subblockLabel("func-enter");
     var entryBlock = {
         label: entryBlockLabel,
         code: [],
         jumps: [jumpToLabel(functionBodyLabel, constantPool)]
     };
 
-    var argsCode = argumentListToBytecodeAsFuncParamNames(ast.args, constantPool);
+    var argsCode = await argumentListToBytecodeAsFuncParamNames(ast.args, constantPool);
 
     var functionConstructionCode = emitBytecodeWithLocation(bytecodeSpec.makefunction_l, 
         [emitConstantWithLocation(entryBlockLabel, constantPool, ast)].concat(argsCode.boundedCalculations)
@@ -603,8 +712,8 @@ function functionLiteralToBytecode(ast, constantPool) {
     };
 }
 
-function functionDefToBytecode(ast, label, constantPool, nextLabel) {
-    var functionLiteral = functionLiteralToBytecode(ast, constantPool);
+async function functionDefToBytecode(ast, label, constantPool, nextLabel) {
+    var functionLiteral = await functionLiteralToBytecode(ast, constantPool);
     
     return [{
         label: label,
@@ -616,7 +725,7 @@ function functionDefToBytecode(ast, label, constantPool, nextLabel) {
     }].concat(functionLiteral.dependentBlocks);
 }
 
-function compoundStatementToBytecode(ast, label, constantPool, nextLabel, stateCountInPath) {
+async function compoundStatementToBytecode(ast, label, constantPool, nextLabel, stateCountInPath) {
     
     var bcBlocks = [];
 
@@ -626,8 +735,9 @@ function compoundStatementToBytecode(ast, label, constantPool, nextLabel, stateC
     for(var i = 0; i < statements.length; i++) {
         var lbl = statementLabels[i];
         var nextStmtLbl = statementLabels[i + 1] || nextLabel;
-
-        bcBlocks = bcBlocks.concat(statementToBytecodeBlocks(statements[i], lbl, constantPool, nextStmtLbl, stateCountInPath));
+        var nextStmt = await statementToBytecodeBlocks(statements[i], lbl, constantPool, nextStmtLbl, stateCountInPath);
+        
+        bcBlocks = bcBlocks.concat(nextStmt);
     }
     
     bcBlocks.push({
@@ -643,13 +753,13 @@ function compoundStatementToBytecode(ast, label, constantPool, nextLabel, stateC
  * 
  * @param {*} ast 
  * @param {*} constantPool 
- * @returns {valueComputationBytecode}
+ * @returns {Promise<valueComputationBytecode>}
  */
-function operationToBytecode(ast, constantPool) {
+async function operationToBytecode(ast, constantPool) {
     var op = getOperationBytecodeInstruction(ast.operator);
 
-    var left = valueToBytecodeBlocks(ast.left, constantPool);
-    var right = valueToBytecodeBlocks(ast.right, constantPool);
+    var left = await valueToBytecodeBlocks(ast.left, constantPool);
+    var right = await valueToBytecodeBlocks(ast.right, constantPool);
     
     return {
         computation: emitBytecodeWithLocation(op, [
@@ -661,7 +771,7 @@ function operationToBytecode(ast, constantPool) {
     };
 }
 
-function ifStatementToBytecode(ast, label, constantPool, nextLabel, stateCountInPath) {
+async function ifStatementToBytecode(ast, label, constantPool, nextLabel, stateCountInPath) {
     /**
      * IfStatements look like this in bytecode:
      * 
@@ -679,13 +789,13 @@ function ifStatementToBytecode(ast, label, constantPool, nextLabel, stateCountIn
      */
     
     var labels = {
-        ifStatementIfTrue: constantPool.subblockLabel(label, "if_true"),
-        ifStatementIfFalse: constantPool.subblockLabel(label, "if_false"),
-        ifStatmentEnd: constantPool.subblockLabel(label, "if_end")
+        ifStatementIfTrue: constantPool.subblockLabel(label, "if-true"),
+        ifStatementIfFalse: constantPool.subblockLabel(label, "if-false"),
+        ifStatmentEnd: constantPool.subblockLabel(label, "if-end")
     };
     
-    var ifTrueCode = statementToBytecodeBlocks(ast.statement, labels.ifStatementIfTrue, constantPool, labels.ifStatmentEnd, stateCountInPath);
-    var ifFalseCode = statementToBytecodeBlocks(ast.elseClause, labels.ifStatementIfFalse, constantPool, labels.ifStatmentEnd, stateCountInPath);
+    var ifTrueCode = await statementToBytecodeBlocks(ast.statement, labels.ifStatementIfTrue, constantPool, labels.ifStatmentEnd, stateCountInPath);
+    var ifFalseCode = await statementToBytecodeBlocks(ast.elseClause, labels.ifStatementIfFalse, constantPool, labels.ifStatmentEnd, stateCountInPath);
     
     var ifStmtEndingBlock = {
         label: labels.ifStatmentEnd,
@@ -693,7 +803,7 @@ function ifStatementToBytecode(ast, label, constantPool, nextLabel, stateCountIn
         jumps: [jumpToLabel(nextLabel, constantPool)]
     };
 
-    var conditional = valueToBytecodeBlocks(ast.conditional, constantPool);
+    var conditional = await valueToBytecodeBlocks(ast.conditional, constantPool);
 
     var ifStmtStartingBlock = {
         label: label,
@@ -710,7 +820,7 @@ function ifStatementToBytecode(ast, label, constantPool, nextLabel, stateCountIn
     return [ifStmtEndingBlock, ifStmtStartingBlock].concat(ifTrueCode, ifFalseCode, conditional.dependentBlocks);
 }
 
-function afterStatementToBytecode(ast, label, constantPool, nextLabel, stateCountInPath) {
+async function afterStatementToBytecode(ast, label, constantPool, nextLabel, stateCountInPath) {
 
     /*
         AfterStatements look like this in bytecode:
@@ -739,13 +849,13 @@ function afterStatementToBytecode(ast, label, constantPool, nextLabel, stateCoun
     var const_false = emitConstantWithLocation(false, constantPool, ast);
     var const_true = emitConstantWithLocation(true, constantPool, ast);
 
-    var unitvalue = valueToBytecodeBlocks(ast.unitValue, constantPool);
+    var unitvalue = await valueToBytecodeBlocks(ast.unitValue, constantPool);
     
     var labels = {
-        afterStatementInit: constantPool.subblockLabel(label, "after_init"),
-        afterStatementCheckingBody: constantPool.subblockLabel(label, "after_checking"),
-        afterStatementIfFinished: constantPool.subblockLabel(label, "after_if_finished_body"),
-        afterStatementDone: constantPool.subblockLabel(label, "after_done")
+        afterStatementInit: constantPool.subblockLabel(label, "after-init"),
+        afterStatementCheckingBody: constantPool.subblockLabel(label, "after-checking"),
+        afterStatementIfFinished: constantPool.subblockLabel(label, "after-if-finished-body"),
+        afterStatementDone: constantPool.subblockLabel(label, "after-done")
     };
 
     for(labelname in labels) {
@@ -807,7 +917,7 @@ function afterStatementToBytecode(ast, label, constantPool, nextLabel, stateCoun
         ]
     };
     
-    var afterstmtIfFinishedBody = statementToBytecodeBlocks(ast.statement, labels.afterStatementIfFinished.__value, constantPool, labels.afterStatementDone.__value, stateCountInPath);
+    var afterstmtIfFinishedBody = await statementToBytecodeBlocks(ast.statement, labels.afterStatementIfFinished.__value, constantPool, labels.afterStatementDone.__value, stateCountInPath);
 
     var afterstmtDone = {
         label: labels.afterStatementDone.__value,

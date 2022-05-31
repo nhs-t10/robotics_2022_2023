@@ -17,7 +17,6 @@ module.exports = function run(context) {
     context.status = "pass";
 }
 
-
 function removeTypeCruft(bytecode) {
     Object.values(bytecode).forEach(x => rmTypeCruftBlock(x));
 }
@@ -40,6 +39,7 @@ function rmTypeCruftBc(bc) {
 
 function replaceCruft(cruftedVarname) {
     if (cruftedVarname.__phi) cruftedVarname = cruftedVarname.__phi[0];
+    
     return cruftedVarname
         .replace(/@\d+$/, "")
         .replace(/.+:([^:]+)/, "$1");
