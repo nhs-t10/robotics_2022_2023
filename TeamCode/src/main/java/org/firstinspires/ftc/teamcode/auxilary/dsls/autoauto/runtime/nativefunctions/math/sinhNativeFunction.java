@@ -15,7 +15,7 @@ public class sinhNativeFunction extends NativeFunction {
     @Override
     public AutoautoPrimitive call(AutoautoPrimitive thisArg, AutoautoPrimitive[] args) throws ManagerSetupException {
         if(args.length > 0 && args[0] instanceof AutoautoNumericValue) {
-            float v = ((AutoautoNumericValue)args[0]).getFloat();
+            double v = ((AutoautoNumericValue)args[0]).getDouble();
             double e = Math.exp(v);
 
             return new AutoautoNumericValue((e - 1 / e) / 2.0);

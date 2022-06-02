@@ -27,7 +27,12 @@ public class BytecodeEvaluationProgram implements AutoautoProgram {
         this.program = program;
         this.bytecodeRecords = bcs;
         this.lastThisContext = new AutoautoUndefined();
-        scope = new AutoautoRuntimeVariableScope();
+
+        this.scope = new AutoautoRuntimeVariableScope();
+
+        scope.initStandaloneBuiltins();
+        scope.initSugarVariables();
+
         stack = new Stack<>();
         callStack = new Stack<>();
     }

@@ -1,7 +1,11 @@
-
+//Only compile the bytecode-- don't run the checkers on it.
+//This optimisation keeps the compiler fast, since the bytecode will be checked by other files that delegate() it anyway.
+//$
+//compilerMode: "get-syntax-tree tree-check* syntax-tree-to-bytecode"
+//$
     let target = module_args[0],
         let error = target - getThirdAngleOrientation(), log(error),
         let kP = 0.1,
         let t = -1*error*kP,
-        driveOmni(0, t.clip(-0.5, 0.5), 0),
+        driveOmni(0, Math.clip(t, -0.5, 0.5), 0),
         provide(Math.abs(error))

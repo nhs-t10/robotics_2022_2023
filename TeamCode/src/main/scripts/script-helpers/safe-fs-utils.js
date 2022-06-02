@@ -32,20 +32,19 @@ function safeReadFile(filename) {
 
 function safeWriteFileEventually(fileName, content) {
     var dir = path.dirname(fileName);
-    var stack = (new Error()).stack;
 
-    if(!fs.existsSync(dir)) {
+    if(fs.existsSync(dir)) {
+        dirMadeWrite();
+    } else {
         fs.mkdir(dir, {recursive: true}, function(err) {
-            if (err) reportNodeJSFileError(err, fileName, stack);
+            if (err) reportNodeJSFileError(err, fileName, (new Error()).stack);
             else dirMadeWrite();
         })
-    } else {
-        dirMadeWrite();
     }
 
     function dirMadeWrite() {
         fs.writeFile(fileName, content, function(err) {
-            if (err) reportNodeJSFileError(err, fileName, stack);
+            if (err) reportNodeJSFileError(err, fileName, (new Error()).stack);
         })
     }
 }

@@ -17,7 +17,7 @@ public class atanhNativeFunction extends NativeFunction {
         if(args.length < 1) return new AutoautoUndefined();
 
         if(args[0] instanceof AutoautoNumericValue) {
-            float x = ((AutoautoNumericValue)args[0]).getFloat();
+            double x = ((AutoautoNumericValue)args[0]).getDouble();
             if(x >= 1) return new AutoautoUndefined();
 
             return new AutoautoNumericValue(Math.log((1+x)/(1-x)) / 2);

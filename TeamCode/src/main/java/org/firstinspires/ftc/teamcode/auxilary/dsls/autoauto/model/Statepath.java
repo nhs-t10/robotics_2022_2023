@@ -68,7 +68,7 @@ public class Statepath implements AutoautoProgramElement {
     }
 
     public void loop() {
-        int currentState = (int)((AutoautoNumericValue)(scope.get(AutoautoSystemVariableNames.STATE_NUMBER))).getFloat();
+        int currentState = ((AutoautoNumericValue)(scope.get(AutoautoSystemVariableNames.STATE_NUMBER))).getInt();
 
         //if steps have changed, init the new one
         if(currentState != this.oldCurrentState) {

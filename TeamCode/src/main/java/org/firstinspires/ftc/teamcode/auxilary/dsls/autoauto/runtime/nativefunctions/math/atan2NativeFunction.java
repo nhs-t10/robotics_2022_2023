@@ -18,8 +18,8 @@ public class atan2NativeFunction extends NativeFunction {
 
         if(args[0] instanceof AutoautoNumericValue && args[1] instanceof AutoautoNumericValue) {
             return new AutoautoNumericValue(Math.atan2(
-                    ((AutoautoNumericValue)args[0]).getFloat(),
-                    ((AutoautoNumericValue)args[1]).getFloat()
+                    ((AutoautoNumericValue)args[0]).getDouble(),
+                    ((AutoautoNumericValue)args[1]).getDouble()
                     ));
         }
         return new AutoautoUndefined();

@@ -181,7 +181,11 @@ function generateCognomen(hash) {
 
 function readJsonFile(file) {
     if(!fs.existsSync(file)) return {};
-    return JSON.parse(fs.readFileSync(file).toString());
+    try {
+        return JSON.parse(fs.readFileSync(file).toString());
+    } catch(e) {
+        return {};
+    }
 }
 
 function random(seed) {

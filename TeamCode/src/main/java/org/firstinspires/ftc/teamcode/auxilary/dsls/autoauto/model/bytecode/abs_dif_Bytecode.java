@@ -11,8 +11,8 @@ public class abs_dif_Bytecode extends AutoautoBytecode {
 
     @Override
     public void invoke(BytecodeEvaluationProgram bytecodeEvaluationProgram, AutoautoRuntimeVariableScope scope, Stack<AutoautoPrimitive> stack, Stack<Integer> callStack) {
-        float a = stack.pop().castToNumber().getFloat();
-        float b = stack.pop().castToNumber().getFloat();
+        double a = stack.pop().castToNumber().getDouble();
+        double b = stack.pop().castToNumber().getDouble();
 
         stack.push(new AutoautoNumericValue(Math.abs(a - b)));
     }

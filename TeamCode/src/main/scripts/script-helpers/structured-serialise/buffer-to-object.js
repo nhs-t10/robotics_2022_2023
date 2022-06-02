@@ -84,9 +84,9 @@ function getHydratedValue(entry, pool) {
     if (entry.hydrated) return entry.value;
 
     switch (entry.typeId) {
-        case types.array: return getHydratedArray(entry, pool);
-        case types.object: return getHydratedObject(entry, pool);
-        case types.wellKnownObject: return getHydratedWellKnownObject(entry, pool);
+        case types.t_array: return getHydratedArray(entry, pool);
+        case types.t_object: return getHydratedObject(entry, pool);
+        case types.t_wellKnownObject: return getHydratedWellKnownObject(entry, pool);
         default: throw new Error("Attempt to hydrate unknown or unsuited type " + entry.typeId);
     }
 }
@@ -138,17 +138,17 @@ function readPoolEntry(index, reader, pool) {
     const entry = readPoolHeader(index, reader, pool);
 
     switch (entry.typeId) {
-        case types.undefined: readUndefined(entry); break;
-        case types.null: readNull(entry); break;
+        case types.t_undefined: readUndefined(entry); break;
+        case types.t_null: readNull(entry); break;
 
-        case types.boolean: readBoolean(entry, reader); break;
-        case types.number: readNumber(entry, reader); break;
-        case types.string: readString(entry, reader); break;
+        case types.t_boolean: readBoolean(entry, reader); break;
+        case types.t_number: readNumber(entry, reader); break;
+        case types.t_string: readString(entry, reader); break;
 
-        case types.array: readArray(entry, reader); break;
-        case types.object: readObject(entry, reader); break;
+        case types.t_array: readArray(entry, reader); break;
+        case types.t_object: readObject(entry, reader); break;
 
-        case types.wellKnownObject: readWellKnownObject(entry, reader); break;
+        case types.t_wellKnownObject: readWellKnownObject(entry, reader); break;
 
         default: throw new Error("Unknown structured-serialize'd type '" + entry.typeId + "'");
     }

@@ -16,7 +16,7 @@ public class absNativeFunction extends NativeFunction {
     public AutoautoPrimitive call(AutoautoPrimitive thisArg, AutoautoPrimitive[] args) throws ManagerSetupException {
         if(args.length < 1) return new AutoautoNumericValue(0);
         if(args[0] instanceof AutoautoNumericValue) {
-            return new AutoautoNumericValue(Math.abs(((AutoautoNumericValue)args[0]).getFloat()));
+            return new AutoautoNumericValue(Math.abs(((AutoautoNumericValue)args[0]).getDouble()));
         }
         return new AutoautoUndefined();
     }

@@ -21,7 +21,7 @@ public class AutoautoRuntime {
     }
 
     public int getCurrentState() {
-        return (int)((AutoautoNumericValue)rootModule.globalScope.get(AutoautoSystemVariableNames.STATE_NUMBER)).getFloat();
+        return ((AutoautoNumericValue)rootModule.globalScope.get(AutoautoSystemVariableNames.STATE_NUMBER)).getInt();
     }
 
     public String getCurrentStatepath() {

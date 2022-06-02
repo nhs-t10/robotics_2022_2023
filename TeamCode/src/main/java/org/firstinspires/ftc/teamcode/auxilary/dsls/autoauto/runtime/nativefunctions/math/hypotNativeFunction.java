@@ -16,7 +16,7 @@ public class hypotNativeFunction extends NativeFunction {
         float sum = 0;
         for(AutoautoPrimitive p : args) {
             if(p instanceof AutoautoNumericValue) {
-                sum += Math.pow(((AutoautoNumericValue)p).getFloat(), 2);
+                sum += Math.pow(((AutoautoNumericValue)p).getDouble(), 2);
             }
         }
         return new AutoautoNumericValue(Math.sqrt(sum));

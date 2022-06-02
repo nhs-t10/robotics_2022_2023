@@ -15,12 +15,12 @@ module.exports = function tokenStream(text) {
         else return lookahead = lexGenerator.next().value;
     }
     function pop() {
-        if (lookahead) {
+        if (lookahead != undefined) {
             let swap = lookahead;
             lookahead = undefined;
             return swap;
         } else {
-            return lexGenerator.next().value;
+            return nextToken;
         }
     }
     

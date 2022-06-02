@@ -40,7 +40,9 @@ module.exports = function* lexer(fileText) {
         }
     }
     
-    yield assembleResultToken({ name: "EOF" }, [""], line, column, fileText.length, line, column, fileText.length);
+    while(true) {
+        yield assembleResultToken({ name: "EOF" }, [""], line, column, fileText.length, line, column, fileText.length);
+    }
 }
 
 function lineColumnCount(text, startCol, startLine) {

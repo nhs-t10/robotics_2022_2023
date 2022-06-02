@@ -27,7 +27,7 @@ public class AutoautoBooleanValue extends AutoautoPrimitive {
     private static boolean isFalsy(AutoautoPrimitive v) {
         if(v instanceof AutoautoBooleanValue) return !((AutoautoBooleanValue) v).value;
         else if (v instanceof AutoautoString) return ((AutoautoString) v).value.length() == 0;
-        else if(v instanceof AutoautoNumericValue) return ((AutoautoNumericValue) v).value == 0;
+        else if(v instanceof AutoautoNumericValue) return ((AutoautoNumericValue) v).getDouble() == 0.0;
         else if(v instanceof AutoautoTable) return !((AutoautoTable) v).isEmpty();
         else if(v instanceof AutoautoUndefined) return true;
         else return true;

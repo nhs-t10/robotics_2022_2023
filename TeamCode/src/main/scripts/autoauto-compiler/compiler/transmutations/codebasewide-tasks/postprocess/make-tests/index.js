@@ -11,7 +11,7 @@ module.exports = function(context, contexts) {
     var testDir = path.join(contexts[0].resultRoot, "org/firstinspires/ftc/teamcode/unitTests");
     
     var testRecords = contexts
-    .filter(x=>x.status == "pass")
+    .filter(x=>x.status == "pass" && ("get-result-package" in x.inputs))
     .map(x=>({
         frontmatter: x.fileFrontmatter,
         className: x.resultBaseFileName.split(".")[0],

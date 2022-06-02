@@ -119,7 +119,6 @@ public class template extends AutoautoOpmode {
             for(int i = 0; i < /*ERROR_STACK_TRACE_HEIGHT*/ && i < e.length;i++) {
                 FeatureManager.logger.log(e[i].toString());
             }
-            FeatureManager.logger.log(runtime.getCurrentStatepath() + ":" + runtime.getCurrentState());
             shouldActuallyDoThings = false;
         }
     }

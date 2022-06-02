@@ -15,7 +15,7 @@ public class log1pNativeFunction extends NativeFunction {
     @Override
     public AutoautoPrimitive call(AutoautoPrimitive thisArg, AutoautoPrimitive[] args) throws ManagerSetupException {
         if(args.length > 0 && args[0] instanceof AutoautoNumericValue) {
-            return new AutoautoNumericValue(Math.log1p(((AutoautoNumericValue)args[0]).getFloat()));
+            return new AutoautoNumericValue(Math.log1p(((AutoautoNumericValue)args[0]).getDouble()));
         }
         return new AutoautoUndefined();
     }

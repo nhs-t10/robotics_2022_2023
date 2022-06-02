@@ -8,7 +8,9 @@ module.exports = {
 
 function expect(tokenStream, name, message, hints) {
     const p = tokenStream.pop();
-    if (p.name != name) throw {
+    
+    
+    if (!p || p.name != name) throw {
         location: p.location,
         message: message + " " + p.name + " '" + p.content + "'",
         hints: hints

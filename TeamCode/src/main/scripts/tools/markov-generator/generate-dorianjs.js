@@ -38,12 +38,13 @@ function findIndexesOf(str) {
 }
 
 fs.writeFileSync(__dirname + "/dorian.js", `
-var dorian = ${JSON.stringify(dissasociatedBody)};
+const dorian = ${JSON.stringify(dissasociatedBody)};
+
+const keys = Object.keys(dorian);
+const sentenceStarts = keys.filter(x => startsWithCapital(x));
+
 module.exports = {
-    randomStart: function(num) {
-        var keys = Object.keys(dorian);
-        var sentenceStarts = keys.filter(x=>startsWithCapital(x));
-        
+    randomStart: function(num) {        
         var sentence = [randomFrom(sentenceStarts)];
         
         for(var i = 0; i < num; i++) {
@@ -57,7 +58,7 @@ module.exports = {
 }
 
 function nextWordFrom(leadin) {
-    if(!dorian[leadin]) throw "no? " + leadin
+    if (!dorian[leadin]) return randomFrom(sentenceStarts);
     return dorian[leadin];
 }
 

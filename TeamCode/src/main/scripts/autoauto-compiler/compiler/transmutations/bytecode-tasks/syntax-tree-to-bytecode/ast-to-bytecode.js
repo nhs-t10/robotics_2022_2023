@@ -6,7 +6,7 @@ var STATE_INIT_PREFIX = "{+STATE_INIT ";
 module.exports = treeBlockToBytecode;
 
 //this gets a "tree block", which is equivalent to a state.
-function treeBlockToBytecode(block, constantPool) {
+function treeBlockToBytecode(block, constantPool, frontmatter) {
     
     var statementLabels = block.treeStatements.map((x, i) => block.label + "/stmt/" + i);
     
@@ -35,7 +35,9 @@ function treeBlockToBytecode(block, constantPool) {
         blocks = blocks.concat(stmtBlocks);
     }
     
-    blocks.push(makeInitBlockToStopMotors(constantPool));
+    if(frontmatter.noStopBetweenStates == false) {
+        blocks.push(makeInitBlockToStopMotors(constantPool));
+    }
     
     findAndRewriteStateInitBlocks(stateStartBlock, blocks, constantPool);
     

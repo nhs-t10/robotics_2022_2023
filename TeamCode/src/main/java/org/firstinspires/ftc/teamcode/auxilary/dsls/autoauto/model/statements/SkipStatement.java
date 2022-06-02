@@ -28,7 +28,7 @@ public class SkipStatement extends Statement {
         int delta = 0;
         if(delRes instanceof AutoautoNumericValue) delta = (int) ((AutoautoNumericValue) delRes).value;
 
-        int currentState = (int)((AutoautoNumericValue)scope.get(AutoautoSystemVariableNames.STATE_NUMBER)).getFloat();
+        int currentState = ((AutoautoNumericValue)scope.get(AutoautoSystemVariableNames.STATE_NUMBER)).getInt();
 
         int nextState = (currentState + delta) % stateCount;
         if(nextState < 0) nextState = stateCount + nextState;
@@ -38,7 +38,7 @@ public class SkipStatement extends Statement {
 
     @Override
     public void init() {
-        this.stateCount = (int)((AutoautoNumericValue)scope.get(AutoautoSystemVariableNames.STATE_COUNT_OF_PREFIX + location.statepath)).getFloat();
+        this.stateCount = ((AutoautoNumericValue)scope.get(AutoautoSystemVariableNames.STATE_COUNT_OF_PREFIX + location.statepath)).getInt();
     }
 
     @Override

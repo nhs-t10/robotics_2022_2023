@@ -15,7 +15,7 @@ public class clz32NativeFunction extends NativeFunction {
     @Override
     public AutoautoPrimitive call(AutoautoPrimitive thisArg, AutoautoPrimitive[] args) throws ManagerSetupException {
         if(args.length > 0 && args[0] instanceof AutoautoNumericValue) {
-            int i = (int)((AutoautoNumericValue)args[0]).getFloat();
+            int i = (int)((AutoautoNumericValue)args[0]).getDouble();
             if(i < 0) return new AutoautoNumericValue(0);
 
             int bit = 1 << 30;

@@ -26,7 +26,7 @@ public class AutoautoNumericValue extends AutoautoPrimitive implements
         HasAutoautoLequalsOperator, HasAutoautoLessThanOperator, HasAutoautoMinusOperator,
         HasAutoautoModuloOperator, HasAutoautoNequalsOperator, HasAutoautoOperatorInterface,
         HasAutoautoPlusOperator, HasAutoautoTimesOperator {
-    public float value;
+    public final double value;
 
     private Location location;
     private AutoautoRuntimeVariableScope scope;
@@ -38,17 +38,13 @@ public class AutoautoNumericValue extends AutoautoPrimitive implements
         return new AutoautoNumericValue(value);
     }
 
-    public AutoautoNumericValue(float value) {
+    public AutoautoNumericValue(double value) {
         setPrototype(NumericPrototype.getMap());
         this.value = value;
     }
-    public AutoautoNumericValue(double value) {
-        this((float)value);
-    }
-
-    public float getFloat() {
-        return value;
-    }
+    /*public float getFloat() {
+        return (float)value;
+    }*/
 
     public String toString() {
         return getString();
@@ -78,7 +74,7 @@ public class AutoautoNumericValue extends AutoautoPrimitive implements
     @Override
     public String getString() {
         if((int)value == value) return (int)value + "";
-        else if(Float.isNaN(value)) return (new AutoautoUndefined()).getString();
+        else if(Double.isNaN(value)) return (new AutoautoUndefined()).getString();
         else return value + "";
     }
 
@@ -117,7 +113,7 @@ public class AutoautoNumericValue extends AutoautoPrimitive implements
 
     @Override
     public AutoautoPrimitive opEquals(AutoautoPrimitive other, boolean otherIsLeft) {
-        if(Float.isNaN(value) && Float.isNaN(other.castToNumber().value)) return new AutoautoBooleanValue(true);
+        if(Double.isNaN(value) && Double.isNaN(other.castToNumber().value)) return new AutoautoBooleanValue(true);
         else return new AutoautoBooleanValue(other.castToNumber().value == this.value);
     }
 
@@ -180,5 +176,13 @@ public class AutoautoNumericValue extends AutoautoPrimitive implements
 
     public int getInt() {
         return (int)value;
+    }
+
+    public double getDouble() {
+        return value;
+    }
+
+    public float getFloat() {
+        return (float)value;
     }
 }
