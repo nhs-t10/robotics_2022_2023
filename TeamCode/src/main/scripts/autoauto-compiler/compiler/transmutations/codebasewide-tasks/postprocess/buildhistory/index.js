@@ -14,7 +14,7 @@ module.exports = async function(context, contexts) {
     const genDirectory = context.resultRoot;
     
     if (commandLineInterface["build-history"]) {
-        var buildHistoryFile = await processHistory(srcDirectory, assetsDir, genDirectory)
+        var buildHistoryFile = await processHistory(srcDirectory, assetsDir, genDirectory);
         context.writtenFiles[buildHistoryFile] = true;
     }
 }

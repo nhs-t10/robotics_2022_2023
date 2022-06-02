@@ -26,10 +26,10 @@ public class FeatureManager {
     }
 
 
-    public static final RobotConfiguration hotWheelsConfiguration = new RobotConfiguration(
+    public static final RobotConfiguration hotWheelsConfiguration = new RobotConfiguration("HotWheels",
             W(1,-1,1,1), W(1,-1,1,1),
             new OmniCalcComponents(
-                vertical      (-1f,1f,-1f,1f),
+                vertical      (-1f,1f,1f,-1f),
                 rotational    (1f, 1f, -1f, -1f),
                 horizontal    (1f,1f,1f,1f)
             ),
@@ -47,16 +47,6 @@ public class FeatureManager {
         FeatureManager.logger.log("I am auto");
         getRobotConfiguration().motorCoefficients = getRobotConfiguration().autoMotorCoefficients;
     }
-    public static final RobotConfiguration littleBoyConfiguration = new RobotConfiguration(
-            W(1, -1, 1, -1), W(1,-1,1,-1),
-            new OmniCalcComponents(
-                vertical      (-1f,-1f,-1f,-1f),
-                horizontal    (-1f,1f,1f,-1f),
-                rotational    (-1f, 1f, -1f, 1f)
-            ),
-            0.03f, 1680, 1, 4, 0.7, 3f,
-            PIDMAP()
-        );
 
     public static final RobotConfiguration defaultConfiguration = hotWheelsConfiguration;
 
@@ -64,27 +54,12 @@ public class FeatureManager {
     private static RobotConfiguration cachedConfiguration;
 
     public static String getRobotName() {
-        ArrayList<String> lines = (new FileSaver(RobotConfiguration.fileName)).readLines();
+        RobotConfiguration config = getRobotConfiguration();
 
         //if the file doesn't exist, return the default. This doesn't adjust the cache, so if there's a later edit, it'll be loaded.
-        if(lines.size() == 0) return "nonexistentBoy";
+        if(config == null) return "nonexistent";
 
-        String fileContent = lines.get(0);
-
-        switch (fileContent) {
-            case RobotConfiguration.bigBoyFileContent:
-                return "bigBoy";
-            case RobotConfiguration.littleBoyFileContent:
-                return "smallBoy";
-            case RobotConfiguration.giraffeBoyFileContent:
-                return "giraffeBoy";
-            case RobotConfiguration.tankBoyFileContent:
-                return "tankBoy";
-            case RobotConfiguration.SpeedyBoyFileContent:
-                return "Speedy";
-            default:
-                return "mysteryBoy";
-        }
+        return config.name;
     }
 
     public static RobotConfiguration getRobotConfiguration() {
@@ -94,18 +69,17 @@ public class FeatureManager {
         ArrayList<String> lines = (new FileSaver(RobotConfiguration.fileName)).readLines();
 
         //if the file doesn't exist, return the default. This doesn't adjust the cache, so if there's a later edit, it'll be loaded.
-        if(lines.size() == 0) return cachedConfiguration = defaultConfiguration;
+        if(lines.size() == 0) return defaultConfiguration;
 
         String fileContent = lines.get(0);
 
-        switch (fileContent) {
-            case RobotConfiguration.bigBoyFileContent:
-                return cachedConfiguration = hotWheelsConfiguration;
-            case RobotConfiguration.littleBoyFileContent:
-                return cachedConfiguration = littleBoyConfiguration;
-            default:
-                return cachedConfiguration = defaultConfiguration;
+        for(RobotConfiguration rc : RobotConfiguration.configurations) {
+            if(rc.name.equals(fileContent)) {
+                cachedConfiguration = rc;
+                return cachedConfiguration;
+            }
         }
+        return defaultConfiguration;
     }
 
     /**
