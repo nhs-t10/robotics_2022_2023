@@ -18,6 +18,7 @@ const BUILD_ROOT_DIRS = (require("./get-build-root"))();
 const SRC_DIRECTORY = BUILD_ROOT_DIRS.src
 const COMPILED_RESULT_DIRECTORY = BUILD_ROOT_DIRS.gen;
 const ASSETS_DIRECTORY = BUILD_ROOT_DIRS.asset;
+const TEST_DIRECTORY = BUILD_ROOT_DIRS.test
 
 module.exports = (async function main() {
     await transmutations.loadTaskList();
@@ -122,7 +123,8 @@ function makeCodebaseContext(codebaseTransmutationWrites) {
         writtenFiles: codebaseTransmutationWrites,
         resultRoot: COMPILED_RESULT_DIRECTORY,
         assetsRoot: ASSETS_DIRECTORY,
-        sourceRoot: SRC_DIRECTORY
+        sourceRoot: SRC_DIRECTORY,
+        testRoot: TEST_DIRECTORY
     }
 }
 
@@ -144,6 +146,7 @@ function makeFileContext(file, preprocessInputs, environmentHash) {
         resultFullFileName: resultFile,
         resultRoot: COMPILED_RESULT_DIRECTORY,
         assetsRoot: ASSETS_DIRECTORY,
+        testRoot: TEST_DIRECTORY,
         fileFrontmatter: frontmatter,
         fileContentText: fileContent,
         lastInput: fileContent,

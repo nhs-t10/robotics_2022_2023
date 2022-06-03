@@ -4,7 +4,7 @@ const androidStudioLogging = require("../../script-helpers/android-studio-loggin
 const safeFsUtils = require("../../script-helpers/safe-fs-utils")
 
 /**
- * @returns {({src:string,gen:string})}
+ * 
  */
 module.exports = function() {
     var gradleRoot = safeFsUtils.getGradleRootDirectory();
@@ -15,7 +15,8 @@ module.exports = function() {
         return {
             src: cwd,
             gen: cwd,
-            asset: cwd
+            asset: cwd,
+            test: cwd
         };
     }
     
@@ -29,9 +30,12 @@ module.exports = function() {
     
     const genDir = path.join(gradleRoot, "gen");
     
+    const testDir = path.join(gradleRoot, "src", "test", "java");
+    
     return {
         src: srcDir,
         gen: genDir,
-        asset: assetDir
+        asset: assetDir,
+        test: testDir
     };
 }
