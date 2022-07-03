@@ -1,6 +1,30 @@
 const { createHash } = require("crypto");
 const typeSystemCreator = require("./optimizers-and-checkers/type-inference/type-system-creator");
 
+/**
+ * @typedef {object} constantpool
+ * @property {(v:*)=>number} getCodeFor
+ * @property {string} currentFile
+ * @property {string} universalPrefix
+ * @property {()=>number} getCoroutineContinuation
+ * @property {(name:string)=>boolean} isGlobalName
+ * @property {()=>denseCodeMap} denseCodeMap
+ * @property {(label:string, subcategory:string?)=>string} subblockLabel
+ * @property {()=>string} tempVar
+ */
+
+/**
+ * @typedef {object} denseCodeMap
+ * @property {Object.<number, number>} map a map of indexes into the valueArray, keyed by their code.
+ * @property {*[]} valueArray an array of all values in the pool
+ * 
+ */
+
+/**
+ * 
+ * @param {import("..").TransmutateContext} fileContext 
+ * @returns {constantpool} 
+ */
 module.exports = function (fileContext) {
     const fileAddress = fileContext.sourceFullFileName;
     const typeForGlobals = typeSystemCreator(fileContext.inputs["java-function-loader"]).__t;
@@ -42,16 +66,16 @@ module.exports = function (fileContext) {
             return ("var " + n + "@0") in typeForGlobals;
         },
         denseCodeMap: function() {
-            var f = {};
+            var map = {};
             var entries = Array.from(pool.entries());
             entries.forEach((x,i)=> {
-                f[x[1]] = i;
+                map[x[1]] = i;
             });
             
             var v = entries.map(x => x[0]);
             
             return {
-                map: f,
+                map: map,
                 valueArray: v
             };
         },

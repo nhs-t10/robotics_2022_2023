@@ -200,13 +200,30 @@ function massageResIntoMessage(res, file, defaultKind) {
     }
     if(res.location && !res.sources[0].location) {
         res.sources[0].location = {
-            startLine: res.location.start.line,
-            startColumn: res.location.start.column,
-            startOffset: res.location.start.offset,
-            endLine: res.location.end.line,
-            endColumn: res.location.end.line,
-            endOffset: res.location.end.offset
+            startLine: -1,
+            startColumn: -1,
+            startOffset: -1,
+            endLine: -1,
+            endColumn: -1,
+            endOffset: -1,
         };
+        
+        
+        if(typeof res.location.start === "object") {
+            Object.assign(res.sources[0].location, {
+                startLine: res.location.start.line,
+                startColumn: res.location.start.column,
+                startOffset: res.location.start.offset
+            });
+        }
+        if(typeof res.location.end === "object") {
+            Object.assign(res.sources[0].location, {
+                endLine: res.location.end.line,
+                endColumn: res.location.end.column,
+                endOffset: res.location.end.offset
+            });
+        }
+        
         res.original = formatPointerToCode(file, res.location, res.kind, res.text, res.hints || []) + "\n" + res.original;
         delete res.location;
     }
@@ -214,7 +231,7 @@ function massageResIntoMessage(res, file, defaultKind) {
 }
 
 function formatPointerToCode(file, location, kind, label, hints) {
-    if(!file) return "";
+    if(!file || !location.start || !location.end) return "";
     
     var fContent = cFs.readFileSync(file).toString();
     

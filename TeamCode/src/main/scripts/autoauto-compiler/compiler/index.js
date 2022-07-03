@@ -22,18 +22,18 @@ const ASSETS_DIRECTORY = BUILD_ROOT_DIRS.asset;
 module.exports = (async function main() {
     await transmutations.loadTaskList();
     await compileAllFromSourceDirectory();
-    
+
     androidStudioLogging.printTypeCounts();
 });
 
 async function compileAllFromSourceDirectory() {
     const compilerWorkers = makeWorkersPool();
     const autoautoFileContexts = [];
-    
+
     const preprocessInputs = {};
     const codebaseTransmutationWrites = {};
     await evaluateCodebaseTasks(autoautoFileContexts, transmutations.getPreProcessTransmutations(), preprocessInputs, codebaseTransmutationWrites);
-    
+
     const environmentHash = makeEnvironmentHash(CACHE_VERSION, preprocessInputs, process.argv);
 
     //the folderScanner will give once for each file.
@@ -41,18 +41,18 @@ async function compileAllFromSourceDirectory() {
     //it starts after the first one!
     const aaFiles = folderScanner(SRC_DIRECTORY, ".autoauto");
     const jobPromises = [];
-    
-    for await(const file of aaFiles) {
+
+    for await (const file of aaFiles) {
         jobPromises.push(
             makeContextAndCompileFile(file, compilerWorkers, autoautoFileContexts, preprocessInputs, environmentHash)
         );
     }
-    
+
     await Promise.all(jobPromises);
 
     await evaluateCodebaseTasks(autoautoFileContexts, transmutations.getPostProcessTransmutations(), {}, codebaseTransmutationWrites);
-    writeWrittenFiles({ writtenFiles: codebaseTransmutationWrites});
-    
+    writeWrittenFiles({ writtenFiles: codebaseTransmutationWrites });
+
     compilerWorkers.close();
 }
 
@@ -60,23 +60,56 @@ function makeContextAndCompileFile(filename, compilerWorkers, autoautoFileContex
     const fileContext = makeFileContext(filename, preprocessInputs, environmentHash);
     const cacheEntry = getCacheEntry(fileContext);
 
-    return new Promise(function(resolve, reject) {
-        if(cacheEntry) {
+    return new Promise(function (resolve, reject) {
+        if (cacheEntry) {
             androidStudioLogging.sendMessages(cacheEntry.log);
             writeAndCallback(cacheEntry.data, autoautoFileContexts, resolve);
             compilerWorkers.addFinishedJobFromCache(fileContext);
         } else {
-            compilerWorkers.giveJob(fileContext, function(run) {
-                saveCacheEntry(run);
-                androidStudioLogging.sendMessages(run.log);
-                writeAndCallback(run.fileContext, autoautoFileContexts, resolve);
+            compilerWorkers.giveJob(fileContext, function (/** @type {import("./worker").MaybeCompilation} */run) {
+                
+                if(run.success === "SUCCESS") {
+                    saveCacheEntry(run);
+                    androidStudioLogging.sendMessages(run.log);
+                    writeAndCallback(run.fileContext, autoautoFileContexts, resolve);
+                } else {
+                    noteFatalError(run);
+                }
             });
         }
     });
 }
 
+/**
+ * 
+ * @param {import("./worker").MaybeCompilationFailed} failedRun
+ */
+function noteFatalError(failedRun) {
+    
+    if(failedRun.error instanceof Error) {
+        androidStudioLogging.sendTreeLocationMessage({
+            kind: "ERROR",
+            text: "Internal Compiler Error",
+            original: `There was an internal error. This file will be skipped, but others will still be compiled.\n` +
+                `Please contact these people in this order: \n` +
+                `1) Connor\n` +
+                `2) Chloe\n` +
+                `\n` +
+                `The stack of the error is below:\n` +
+                failedRun.error.message + "\n" + failedRun.error.stack
+        });
+    } else {
+        console.log(failedRun);
+        androidStudioLogging.sendTreeLocationMessage(failedRun.error, failedRun.fileAddress, "ERROR");
+    }
+}
+
+/**
+ * 
+ * @param {import("./worker").MaybeCompilationSucceeded} finishedRun 
+ */
 function saveCacheEntry(finishedRun) {
-    if(finishedRun.success && commandLineInterface["no-cache-save"] == false) {
+    if (commandLineInterface["no-cache-save"] == false) {
         cache.save(mFileCacheKey(finishedRun.fileContext), {
             subkey: finishedRun.fileContext.cacheKey,
             data: finishedRun.fileContext,
@@ -85,15 +118,32 @@ function saveCacheEntry(finishedRun) {
     }
 }
 
+/**
+ * @typedef {object} CacheEntry
+ * @property {string} subkey
+ * @property {import("./transmutations").TransmutateContext} data
+ * @property {androidStudioLoggingMessage[]} log
+ */
+
+/**
+ * 
+ * @param {import("./transmutations").TransmutateContext} fileContext
+ * @returns {CacheEntry?}
+ */
 function getCacheEntry(fileContext) {
-    if(commandLineInterface["no-cache"]) return false;
+    if (commandLineInterface["no-cache"]) return null;
 
-    const cacheEntry = cache.get(mFileCacheKey(fileContext), false);
+    const cacheEntry = cache.get(mFileCacheKey(fileContext), null);
 
-    if(cacheEntry.subkey == fileContext.cacheKey) return cacheEntry;
-    else return false;
+    if (cacheEntry != null && cacheEntry.subkey == fileContext.cacheKey) return cacheEntry;
+    else return null;
 }
 
+/**
+ * 
+ * @param {import("./transmutations").TransmutateContext} fileContext
+ * @returns {string}
+ */
 function mFileCacheKey(fileContext) {
     return "autoauto compiler file cache " + fileContext.sourceFullFileName;
 }
@@ -105,7 +155,7 @@ function writeAndCallback(finishedFileContext, autoautoFileContexts, cb) {
 }
 
 async function evaluateCodebaseTasks(allFileContexts, codebaseTasks, codebaseInputs, codebaseTransmutationWrites) {
-    for(const transmut of codebaseTasks) {
+    for (const transmut of codebaseTasks) {
         const o = makeCodebaseContext(codebaseTransmutationWrites);
         const mutFunc = require(transmut.sourceFile);
         await mutFunc(o, allFileContexts);
@@ -128,13 +178,13 @@ function makeCodebaseContext(codebaseTransmutationWrites) {
 }
 
 function makeFileContext(file, preprocessInputs, environmentHash) {
-        
+
     const resultFile = getResultFor(file);
     const fileContent = fs.readFileSync(file).toString();
     const frontmatter = loadFrontmatter(fileContent);
 
     const tPath = transmutations.expandTasks(frontmatter.compilerMode || "default", file);
-    
+
     const ctx = {
         sourceBaseFileName: path.basename(file),
         sourceDir: path.dirname(file),
@@ -153,9 +203,9 @@ function makeFileContext(file, preprocessInputs, environmentHash) {
         writtenFiles: {},
 
         transmutations: tPath,
-        readsAllFiles: tPath.map(x=>x.readsFiles || []).flat()
+        readsAllFiles: tPath.map(x => x.readsFiles || []).flat()
     };
-    
+
     Object.assign(ctx.inputs, preprocessInputs);
     ctx.cacheKey = makeCacheKey(ctx, environmentHash);
 
@@ -163,9 +213,9 @@ function makeFileContext(file, preprocessInputs, environmentHash) {
 }
 
 function writeWrittenFiles(fileContext) {
-    for(const filename in fileContext.writtenFiles) {
+    for (const filename in fileContext.writtenFiles) {
         const content = fileContext.writtenFiles[filename];
-        if(typeof content !== "boolean") {
+        if (typeof content !== "boolean") {
             safeFsUtils.safeWriteFileEventually(filename, content);
         }
     }
@@ -177,7 +227,7 @@ function makeEnvironmentHash(cacheVersion, preprocessInputs, argv) {
 
 function keyJsonHash(object) {
     let t = [];
-    for(const key in object) {
+    for (const key in object) {
         t.push(sha(JSON.stringify(object[key])));
     }
     return t.join("");
@@ -188,8 +238,8 @@ function keyJsonHash(object) {
  * @param {import("./transmutations").TransmutateContext} fileContext 
  */
 function makeCacheKey(fileContext, environmentHash) {
-    const readFileShas = fileContext.readsAllFiles.map(x=>sha(safeFsUtils.cachedSafeReadFile(x))).join("\t");
-    const transmutationIdList = fileContext.transmutations.map(x=>x.id).join("\t");
+    const readFileShas = fileContext.readsAllFiles.map(x => sha(safeFsUtils.cachedSafeReadFile(x))).join("\t");
+    const transmutationIdList = fileContext.transmutations.map(x => x.id).join("\t");
 
     const keyDataToSha = [environmentHash, readFileShas,
         fileContext.sourceFullFileName, fileContext.fileContentText, transmutationIdList];
@@ -199,19 +249,19 @@ function makeCacheKey(fileContext, environmentHash) {
 
 function getResultFor(filename) {
     const folder = path.dirname(filename);
-    
+
     const packageFolder = folder
         .replace(SRC_DIRECTORY, "").toLowerCase();
-    
+
     const javaFileName = jClassIfy(filename) + ".java";
-        
+
     return path.join(COMPILED_RESULT_DIRECTORY, packageFolder, javaFileName);
 }
 
 function jClassIfy(str) {
     const p = str.split(/\/|\\/);
     const s = p[p.length - 1].split(".")[0];
-    return s.split("-").map(x=>capitalize(x)).join("");
+    return s.split("-").map(x => capitalize(x)).join("");
 }
 function capitalize(str) {
     return str[0].toUpperCase() + str.substring(1);

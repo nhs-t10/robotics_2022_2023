@@ -18,7 +18,14 @@ module.exports = function(cacheMetaFile) {
 
 function getCacheMeta(cacheMetaFile) {
     if (!fs.existsSync(cacheMetaFile)) return {};
-    else return require(cacheMetaFile);
+    else return loadJSONFile(cacheMetaFile);
+}
+
+function loadJSONFile(file) {
+    try {
+        return JSON.parse(fs.readFileSync(file))
+    } catch(e) {}
+    return {};
 }
 
 function registerExitHook(cacheMetaFile, cacheMetaObj) {

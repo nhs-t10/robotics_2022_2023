@@ -37,6 +37,19 @@ module.exports = async function (ast, frontmatter, context) {
     };
 }
 
+/**
+ * @typedef {object} TreeBlock
+ * @property {string} label
+ * @property {AutoautoASTElement[]} treeStatements
+ * @property {number} stateCountInPath
+ */
+
+/**
+ * 
+ * @param {AutoautoASTElement} program
+ * @param {string} universalPrefix 
+ * @returns {TreeBlock[]}
+ */
 function programToTreeBlocks(program, universalPrefix) {
     var blocks = program.statepaths.map(x=>
         x.statepath.states.map((y,i,a)=>({

@@ -8,7 +8,13 @@ var STATE_INIT_PREFIX = "{+STATE_INIT ";
 
 module.exports = treeBlockToBytecode;
 
-//this gets a "tree block", which is equivalent to a state.
+/**
+ * 
+ * @param {import("./flatten-process-tree").TreeBlock} block 
+ * @param {import("../constant-pool").constantpool} constantPool
+ * @param {Object.<string, *} frontmatter 
+ * @returns {Block[]}
+ */
 async function treeBlockToBytecode(block, constantPool, frontmatter) {
     
     var statementLabels = block.treeStatements.map((x, i) => block.label + "/stmt/" + i);
@@ -24,7 +30,7 @@ async function treeBlockToBytecode(block, constantPool, frontmatter) {
         code: [],
         jumps: [emitBytecodeWithLocation(bytecodeSpec.yieldto_l, [
             emitConstantWithLocation(statementLabels[0], constantPool, {})
-        ], {})]
+        ], {}, constantPool.currentFile)]
     }
     
     var blocks = [];
@@ -96,7 +102,7 @@ function makeInitBlockToStopMotors(constantPool) {
  * 
  * @param {*} ast 
  * @param {string} label
- * @param {ConstantPool} constantPool 
+ * @param {import("../constant-pool").constantpool} constantPool 
  * @param {string} afterThisJumpToLabel 
  * @returns {Promise<Block[]>}
  */
@@ -209,6 +215,7 @@ async function delegatorExpressionToBytecode(ast, constantPool) {
     const dependencyPrefix = sha(dependency.sourceFullFileName);
     const depBytecode = dependency.inputs["syntax-tree-to-bytecode"].blocks;
     
+    addFileToLocations(depBytecode, ast.location.file);
     
     //rename the ENTRY block to a non-overlapping label
     const realEntryLabel = "sl/" + dependencyPrefix + "/real-entry";
@@ -226,7 +233,7 @@ async function delegatorExpressionToBytecode(ast, constantPool) {
     const modArgs = emitBytecodeWithLocation(bytecodeSpec.spec_setvar, [
         emitConstantWithLocation(systemVariableNames.MODULE_ARGS, constantPool, ast),
         emitBytecodeWithLocation(bytecodeSpec.construct_table, modArgsBytecode.boundedCalculations, ast)
-    ]);
+    ], {}, dependency.sourceFullFileName);
     const entryLabel = constantPool.subblockLabel("static-link-entry");
     const modArgsSetter = {
         label: entryLabel,
@@ -243,7 +250,25 @@ async function delegatorExpressionToBytecode(ast, constantPool) {
             emitConstantWithLocation(entryLabel, constantPool, ast)
         ], ast)
     };
+}
 
+function addFileToLocations(bytecode, file) {
+    if(typeof file !== "string") throw new Error("Location without file information");
+    
+    for(const labelKey in bytecode) {
+        recursorAddFileLocation(bytecode[labelKey].code, file);
+        recursorAddFileLocation(bytecode[labelKey].jumps, file);
+    }
+}
+
+function recursorAddFileLocation(bytecodeArray, file) {
+    for(const bytecode of bytecodeArray) {
+        const loc = bytecode.location;
+        if(loc.fileStack === undefined) loc.fileStack = [loc.file];
+        loc.fileStack.push(file);
+        
+        recursorAddFileLocation(bytecode.args);
+    }
 }
 
 function constructDelegatorContinuationBranch(dependencyBlocks, constantPool, ast, entryBlock) {
@@ -438,14 +463,14 @@ function unitwrap(ast) {
 
 /**
  * 
- * @param {*} lbl 
- * @param {*} pool 
+ * @param {string} lbl 
+ * @param {import("../constant-pool").constantpool} pool 
  * @returns {Bytecode}
  */
 function jumpToLabel(lbl, pool) {
     return emitBytecodeWithLocation(bytecodeSpec.jmp_l, [
         emitConstantWithLocation(lbl, pool, {})
-    ], {});
+    ], {}, pool.currentFile);
 }
 
 /**
@@ -951,12 +976,12 @@ function makeStateinitBlock(bytecode, pool) {
 /**
  * 
  * @param {*} cons 
- * @param {*} pool 
- * @param {*} ast 
- * @returns {object}
+ * @param {import("../constant-pool").constantpool} pool 
+ * @param {import("../../text-to-syntax-tree/parser").AutoautoASTElement?} ast 
+ * @returns {Bytecode}
  */
 function emitConstantWithLocation(cons, pool, ast) {
-    return emitBytecodeWithLocation({ code: pool.getCodeFor(cons), __value: cons}, [], ast);
+    return emitBytecodeWithLocation({ code: pool.getCodeFor(cons), __value: cons}, [], ast, pool.currentFile);
 }
 
 /**
@@ -972,9 +997,10 @@ function emitConstantWithLocation(cons, pool, ast) {
  * @param {number|{code:number}} code 
  * @param {Bytecode[]} bcArgs
  * @param {object} ast 
+ * @param {string?} fileAddress
  * @returns {Bytecode}
  */
-function emitBytecodeWithLocation(code, bcArgs, ast) {
+function emitBytecodeWithLocation(code, bcArgs, ast, fileAddress) {
     
     var r = {};
     if (typeof code === "number") r.code = code;
@@ -982,13 +1008,22 @@ function emitBytecodeWithLocation(code, bcArgs, ast) {
     
     r.args = arrShallowCp(bcArgs);
     if(ast && ast.location) r.location = ast.location;
-    else r.location = makeSyntheticLocation();
+    else r.location = makeSyntheticLocation(fileAddress);
     
     return r;
 }
 
-function makeSyntheticLocation() {
+/**
+ * 
+ * @param {string} file 
+ * @returns {SourceCodeLocation}
+ */
+function makeSyntheticLocation(file) {
+    
+    if(typeof file !== "string") throw new Error("Attempt to construct a synthetic location without an associated file");
+    
     return {
+        file: file,
         synthetic: true
     };
 }

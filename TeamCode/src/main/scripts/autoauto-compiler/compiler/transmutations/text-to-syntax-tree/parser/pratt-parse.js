@@ -10,8 +10,11 @@ module.exports = function(tokenStream, file) {
     return parseFile(tokenStream, file);
 }
 
+
 /**
  * @param {import("./token-stream").TokenStream} tokenStream
+ * @param {string} file
+ * @returns {import(".").AutoautoASTElement}
  */
 function parseFile(tokenStream, file) {
     
