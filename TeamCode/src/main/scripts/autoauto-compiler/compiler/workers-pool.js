@@ -87,7 +87,11 @@ module.exports = function () {
         addFinishedJobFromCache: function (fileContext) {
             const id = fileContext.sourceFullFileName;
             allJobs[id] = fileContext;
-            callFinishListeners(finishListeners, id, fileContext);
+            callFinishListeners(finishListeners, id, {
+                success: "SUCCESS",
+                fileContext: fileContext,
+                log: []
+            });
         },
         finishGivingJobs: function () {
             clearNonExistantFinishListeners(allJobs, finishListeners);
@@ -228,7 +232,6 @@ function createWorkerWrap(worker, queue, finishListeners, allJobs, jobDependency
  * @param {import("./worker.js").MaybeCompilation} maybeCompilation 
  */
 function sendDependencyComplete(worker, jobId, depId, maybeCompilation) {
-
     worker.postMessage({
         type: "dependencyComplete",
         id: jobId,

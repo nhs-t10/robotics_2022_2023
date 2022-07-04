@@ -56,6 +56,20 @@ async function runTransmutation(transmutation, fileContext) {
     fileContext.status = c.status;
     Object.assign(fileContext.writtenFiles, c.writtenFiles);
 
+    deepFreeze(c.output);
     fileContext.inputs[transmutation.id] = c.output;
     if (c.output !== undefined && !transmutation.isDependency) fileContext.lastInput = c.output;
+}
+
+function deepFreeze(value) {
+    
+    if (value && typeof value === "object") { 
+        for (const key of Object.getOwnPropertyNames(value)) {
+            deepFreeze(value[key]);
+        }
+    
+        return Object.freeze(value);
+    } else {
+        return value;
+    }
 }

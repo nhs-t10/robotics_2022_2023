@@ -66,8 +66,7 @@ function makeContextAndCompileFile(filename, compilerWorkers, autoautoFileContex
             writeAndCallback(cacheEntry.data, autoautoFileContexts, resolve);
             compilerWorkers.addFinishedJobFromCache(fileContext);
         } else {
-            compilerWorkers.giveJob(fileContext, function (/** @type {import("./worker").MaybeCompilation} */run) {
-                
+            compilerWorkers.giveJob(fileContext, function (/** @type {import("./worker").MaybeCompilation} */run) {                
                 if(run.success === "SUCCESS") {
                     saveCacheEntry(run);
                     androidStudioLogging.sendMessages(run.log);
@@ -85,7 +84,6 @@ function makeContextAndCompileFile(filename, compilerWorkers, autoautoFileContex
  * @param {import("./worker").MaybeCompilationFailed} failedRun
  */
 function noteFatalError(failedRun) {
-    
     if(failedRun.error instanceof Error) {
         androidStudioLogging.sendTreeLocationMessage({
             kind: "ERROR",
@@ -97,10 +95,9 @@ function noteFatalError(failedRun) {
                 `\n` +
                 `The stack of the error is below:\n` +
                 failedRun.error.message + "\n" + failedRun.error.stack
-        });
+        }, undefined, "ERROR", true);
     } else {
-        console.log(failedRun);
-        androidStudioLogging.sendTreeLocationMessage(failedRun.error, failedRun.fileAddress, "ERROR");
+        androidStudioLogging.sendTreeLocationMessage(failedRun.error, undefined, "ERROR", true);
     }
 }
 

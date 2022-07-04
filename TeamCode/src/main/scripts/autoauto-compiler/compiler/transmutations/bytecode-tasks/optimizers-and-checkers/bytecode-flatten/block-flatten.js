@@ -1,3 +1,8 @@
+/**
+ * Flattens a block into an array of bytecodes
+ * @param {import("../../syntax-tree-to-bytecode/ast-to-bytecode").Block} block 
+ * @returns {import("../../syntax-tree-to-bytecode/ast-to-bytecode").Bytecode[]}
+ */
 module.exports = function(block) {
     return [].concat(
         flattenArrayOfBc(block.code),
@@ -11,6 +16,5 @@ function flattenArrayOfBc(bcs) {
 
 function flattenBc(bc) {
     var a = flattenArrayOfBc(bc.args);
-    bc.args = [];
     return a.concat([bc]);
 }

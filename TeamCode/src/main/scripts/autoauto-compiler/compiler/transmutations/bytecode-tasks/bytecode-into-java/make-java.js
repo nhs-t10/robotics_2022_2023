@@ -6,15 +6,18 @@ var PROGRAM_TYPE_PACKAGE = `org.firstinspires.ftc.teamcode.auxilary.dsls.autoaut
 module.exports = function(denseCodes, constantPool, bytecode) {
     var denseConstantMap = constantPool.denseCodeMap();
     
-    var instrs = bytecode.map(x=>x.denseCode).join(",");
+    var bytecodesVarname = "bcs_" + Math.random().toString(16).substring(2);
+
+    var instrs = bytecode.map(x=>`${bytecodesVarname}[${x.denseCode}]`).join(",");
     var bcMapArray = makeBytecodeMapArray(denseCodes, denseConstantMap.map);
     var values = denseConstantMap.valueArray.map(x=>wrapInPrimConstr(x));
     
     return {
+        bytecodesVarname: bytecodesVarname,
         constants: `AutoautoPrimitive[] constants = new AutoautoPrimitive[] { ${values} };`,
         fullExtendsName: `${PROGRAM_TYPE_PACKAGE}.BytecodeEvaluationProgram`,
-        instructions: `new int[] {${instrs}}`,
-        bytecodes: `new ${BYTECODE_PACKAGE}.AutoautoBytecode[] {${bcMapArray}}`
+        instructions: `new ${BYTECODE_PACKAGE}.AutoautoBytecode[] {${instrs}}`,
+        bytecodes: `${BYTECODE_PACKAGE}.AutoautoBytecode[] ${bytecodesVarname} = new ${BYTECODE_PACKAGE}.AutoautoBytecode[] {${bcMapArray}};`
     }
 }
 

@@ -77,6 +77,7 @@ async function safeHandleParentMessage(m) {
     try {
         await handleParentMessage(m);
     } catch (e) {
+        console.log(e);
         sendMessageToParent({
             type: "jobError",
             id: m.id,
@@ -168,10 +169,11 @@ function requestDependencyToParent(sourceFile, dependencyFile) {
             } else if (resolvedDep.success === "DOES_NOT_EXIST") {
                 reject("Dependency " + dependencyFile + " doesn't exist");
             } else if (resolvedDep.success == "SUCCESS") {
-                if (!("fileContext" in resolvedDep)) {
-                    throw "bad structure of filecontext!";
+                if ("fileContext" in resolvedDep) {
+                    resolve(resolvedDep.fileContext);
+                } else {
+                    reject("bad structure of filecontext!");
                 }
-                resolve(resolvedDep.fileContext);
             } else {
                 console.debug(resolvedDep.success);
                 console.debug(Object.keys(resolvedDep));

@@ -8,10 +8,12 @@ function template(package, className, javaParts) {
     return `package ${package};
     import ${PRIMITIVES_PACKAGE}.*;
     public class ${className} extends ${javaParts.fullExtendsName} {
-        private static ${javaParts.constants}
+        private final static ${javaParts.constants}
+
+        private final static ${javaParts.bytecodes}
 
         public ${className}() {
-            super(${javaParts.instructions}, ${javaParts.bytecodes});
+            super(${javaParts.instructions});
         }
         
         public static void main(String[] args) {

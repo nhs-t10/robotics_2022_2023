@@ -59,12 +59,8 @@ async function treeBlockToBytecode(block, constantPool, frontmatter) {
  * @param {Block[]} allStatementBlocks
  */
 function findAndRewriteStateInitBlocks(startBlock, allStatementBlocks, constantPool) {
-    try {
     var stateInitBlocks = allStatementBlocks.filter(x=>x.label.startsWith(STATE_INIT_PREFIX));
-    } catch(e) {
-        console.log(allStatementBlocks);
-        throw e;
-    }
+
     if(stateInitBlocks.length == 0) return;
     
     //make the last state init block go to wherever the start block was going
@@ -267,7 +263,7 @@ function recursorAddFileLocation(bytecodeArray, file) {
         if(loc.fileStack === undefined) loc.fileStack = [loc.file];
         loc.fileStack.push(file);
         
-        recursorAddFileLocation(bytecode.args);
+        recursorAddFileLocation(bytecode.args, file);
     }
 }
 

@@ -68,17 +68,17 @@ function sendError(msgStr) {
     });
 }
 
-function sendMessages(msgs) {
-    msgs.forEach(x=>sendPlainMessage(x));
+function sendMessages(msgs, forceSend) {
+    msgs.forEach(x=>sendPlainMessage(x, forceSend));
 }
 
-function sendPlainMessage (msg) {
+function sendPlainMessage (msg, forceSend) {
     var l = ["INFO", "BARELY_WARNING", "WARNING","ERROR"].indexOf(msg.kind);
     
     incrementTypeCount(msg.kind);
     
     if (logLevel <= l || l === -1) {
-        if(capturingOutput) {
+        if(capturingOutput == true && forceSend == false) {
             captured.push(msg);
         } else {            
             if(commandLineArguments["agpbi"]) formatAndSendJsonFormat(msg);
@@ -161,8 +161,8 @@ function indent(indentBy, t) {
     return t.split("\n").map(x=>indentBy + x).join("\n");
 }
 
-function sendTreeLocationMessage(res, file, defaultKind) {
-    massageResIntoArrayOfMessages(res, file, defaultKind).forEach(x=>sendPlainMessage(x));
+function sendTreeLocationMessage(res, file, defaultKind, forceSend) {
+    sendMessages(massageResIntoArrayOfMessages(res, file, defaultKind), forceSend);
 }
 
 

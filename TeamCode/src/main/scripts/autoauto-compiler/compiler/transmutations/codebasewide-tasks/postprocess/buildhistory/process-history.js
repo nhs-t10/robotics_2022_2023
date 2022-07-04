@@ -86,11 +86,7 @@ function getFamilyLineFile(genealogyDir, computerHash) {
 }
 
 function getComputerHash() {
-    var mac = "";
-
-    try {
-        mac = Object.values(os.networkInterfaces()).flat().map(x => x.mac).filter(x => x != '00:00:00:00:00:00')[0];
-    } catch (e) { }
+    var mac = Object.values(os.networkInterfaces()).flat().map(x => x.mac).filter(x => x != '00:00:00:00:00:00')[0] + "";
 
     var computerUniqueIdentifier = ([mac, os.cpus()[0].model, os.hostname(), os.platform()]).join(",");
 
