@@ -1,3 +1,5 @@
+"use strict";
+
 module.exports = function run(context) {
     var dced = context.inputs["bc-basic-dead-code-elimination"];
 

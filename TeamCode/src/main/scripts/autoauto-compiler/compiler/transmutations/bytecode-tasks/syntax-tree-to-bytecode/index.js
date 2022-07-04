@@ -1,3 +1,5 @@
+"use strict";
+
 var flattenAndProcessTree = require("./flatten-process-tree");
 
 module.exports = async function(context) {

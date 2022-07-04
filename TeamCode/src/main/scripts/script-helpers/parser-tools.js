@@ -1,3 +1,5 @@
+"use strict";
+
 /**
  * A collection of functions to help with parsing scripts & markup
  * @module coleh/parser-tools

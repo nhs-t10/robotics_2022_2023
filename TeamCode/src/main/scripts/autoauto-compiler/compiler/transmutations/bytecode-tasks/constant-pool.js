@@ -1,3 +1,5 @@
+"use strict";
+
 const { createHash } = require("crypto");
 const typeSystemCreator = require("./optimizers-and-checkers/type-inference/type-system-creator");
 

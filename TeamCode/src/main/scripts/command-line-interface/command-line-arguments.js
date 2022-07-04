@@ -1,3 +1,5 @@
+"use strict";
+
 module.exports = function(schema) {
     const out = {};
     const aliasMap = mapShortToLong(schema);

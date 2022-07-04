@@ -1,3 +1,5 @@
+"use strict";
+
 module.exports = function(callMethodSource, definingClass, classname, argNames) {
     if(!argNames) argNames = "[]";
     else argNames = JSON.stringify(argNames);

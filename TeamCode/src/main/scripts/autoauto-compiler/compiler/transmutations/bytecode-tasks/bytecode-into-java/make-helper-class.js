@@ -1,3 +1,5 @@
+"use strict";
+
 var PRIMITIVES_PACKAGE = `org.firstinspires.ftc.teamcode.auxilary.dsls.autoauto.model.values.primitives`;
 
 module.exports = function(package, className, javaParts) {

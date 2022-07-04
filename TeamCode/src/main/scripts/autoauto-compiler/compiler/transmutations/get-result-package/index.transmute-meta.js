@@ -1,3 +1,5 @@
+"use strict";
+
 module.exports = {
     requires: [],
     id: "get-result-package",

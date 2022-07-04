@@ -1,3 +1,5 @@
+"use strict";
+
 module.exports = function(loadFunctionsSrc, margs) {
     return `package org.firstinspires.ftc.teamcode.auxilary.dsls.autoauto.runtime;
 

@@ -1,3 +1,5 @@
+"use strict";
+
 var fs = require("fs");
 const folderScanner = require("../../../../../folder-scanner");
 

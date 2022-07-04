@@ -1,3 +1,5 @@
+"use strict";
+
 var fs = require("fs");
 var template = fs.readFileSync(require("./template-filename")).toString();
 

@@ -1,3 +1,5 @@
+"use strict";
+
 var cache = require("../../../../../../../cache");
 
 var pngFromHash = require("./create-png-from-hash.js");

@@ -1,3 +1,5 @@
+"use strict";
+
 module.exports = {
     pass: { code: 0x000 },
     jmp_i: { code: 0x001 },

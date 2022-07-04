@@ -1,3 +1,5 @@
+"use strict";
+
 module.exports = [
     { name: "HASHTAG", regex: /#/ },
     { name: "SEMICOLON", regex: /;/ },

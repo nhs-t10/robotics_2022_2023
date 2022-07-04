@@ -1,3 +1,5 @@
+"use strict";
+
 const { expect, unexpectedError, improperContextError } = require("./common-utils");
 
 

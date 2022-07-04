@@ -1,3 +1,5 @@
+"use strict";
+
 module.exports = {
     STATEPATH_NAME: "--statepathName",
     STATE_NUMBER: "--stateNumber",

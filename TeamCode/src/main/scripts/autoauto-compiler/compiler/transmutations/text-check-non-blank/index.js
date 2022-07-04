@@ -1,3 +1,5 @@
+"use strict";
+
 module.exports = function(context) {
     var fileContent = context.lastInput;
             

@@ -1,3 +1,5 @@
+"use strict";
+
 var fs = require("fs");
 var PngFile = require("./png-file.js");
 

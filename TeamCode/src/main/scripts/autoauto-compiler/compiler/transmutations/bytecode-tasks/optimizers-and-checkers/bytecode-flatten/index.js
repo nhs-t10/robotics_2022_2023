@@ -1,3 +1,5 @@
+"use strict";
+
 var calculateBlockLength = require("./block-length");
 var replaceLabelWithIndex = require("./label-to-index");
 var flattenBlock = require("./block-flatten");

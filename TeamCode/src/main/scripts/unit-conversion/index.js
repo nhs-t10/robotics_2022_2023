@@ -1,3 +1,5 @@
+"use strict";
+
 var UCONV_VERSION = 1;
 
 var updateData = require("./update");

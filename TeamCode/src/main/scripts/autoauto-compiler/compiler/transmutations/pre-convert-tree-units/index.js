@@ -1,3 +1,5 @@
+"use strict";
+
 var query = require("./query");
 var unitConversion = require("../../../../unit-conversion");
 const androidStudioLogging = require("../../../../script-helpers/android-studio-logging");

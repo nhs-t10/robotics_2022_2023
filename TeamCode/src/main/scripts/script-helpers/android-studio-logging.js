@@ -1,3 +1,5 @@
+"use strict";
+
 //https://github.com/zawn/android-gradle-plugin-src/blob/master/sdk-common/src/main/java/com/android/ide/common/blame/MessageJsonSerializer.java
 
 var cFs = require("./cached-fs");

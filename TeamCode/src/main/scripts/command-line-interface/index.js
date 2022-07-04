@@ -1,3 +1,5 @@
+"use strict";
+
 var loadArgv = require("./command-line-arguments");
 const printHelpInfo = require("./help");
 var schema = require("./schema");

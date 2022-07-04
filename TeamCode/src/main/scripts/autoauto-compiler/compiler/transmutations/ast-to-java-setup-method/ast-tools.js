@@ -1,3 +1,5 @@
+"use strict";
+
 const { requestDependencyToParent } = require("../../worker");
 
 var generalNumberToIncrementWhenSomethingNeedsToBeChanged = 0;

@@ -1,3 +1,5 @@
+"use strict";
+
 module.exports = function (context) {
     var bytecode = context.inputs["bc-condense-constants"];
     var cgraph = context.inputs["build-cgraph"];

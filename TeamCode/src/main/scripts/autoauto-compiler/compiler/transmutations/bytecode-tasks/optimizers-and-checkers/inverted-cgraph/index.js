@@ -1,3 +1,5 @@
+"use strict";
+
 module.exports = function run(context) {
     context.output = invertControlGraph(context.inputs["build-cgraph"]);
     context.status = "pass";

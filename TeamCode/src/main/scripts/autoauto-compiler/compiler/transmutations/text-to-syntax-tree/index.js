@@ -1,3 +1,5 @@
+"use strict";
+
 var parser = require("./parser");
 var makeHints = require("./hints");
 

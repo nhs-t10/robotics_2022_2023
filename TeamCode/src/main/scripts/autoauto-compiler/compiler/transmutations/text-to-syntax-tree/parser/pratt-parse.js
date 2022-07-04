@@ -1,3 +1,5 @@
+"use strict";
+
 const { collectComments, unexpectedError, improperContextError } = require("./common-utils");
 const parseStatement = require("./statement-parsing");
 

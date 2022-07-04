@@ -1,3 +1,5 @@
+"use strict";
+
 var bytecodeSpec = require("../../bytecode-spec");
 
 /**

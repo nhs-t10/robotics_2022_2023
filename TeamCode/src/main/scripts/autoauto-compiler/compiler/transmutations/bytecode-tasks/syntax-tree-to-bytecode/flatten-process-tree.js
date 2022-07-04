@@ -1,3 +1,5 @@
+"use strict";
+
 var cPool = require("../constant-pool");
 
 var treeBlockToBytecodeBlock = require("./ast-to-bytecode");

@@ -1,3 +1,5 @@
+"use strict";
+
 const bc = require("../../bc");
 const bytecodeSpec = require("../../bytecode-spec");
 const typeSystemCreator = require("./type-system-creator");

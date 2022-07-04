@@ -1,3 +1,5 @@
+"use strict";
+
 const cpool = require("../constant-pool");
 const makeJava = require("./make-java");
 const makeHelperClass = require("./make-helper-class");

@@ -1,3 +1,5 @@
+"use strict";
+
 var bitwiseyHelpers = require("./bitwisey-helpers.js");
 
 module.exports = function encodeForJs(str) {

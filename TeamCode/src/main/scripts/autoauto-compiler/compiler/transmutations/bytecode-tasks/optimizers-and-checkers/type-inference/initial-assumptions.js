@@ -1,3 +1,5 @@
+"use strict";
+
 module.exports = {
     "var Math@0": {
         type: "object",

@@ -1,3 +1,5 @@
+"use strict";
+
 var PATHFINDING_GRID_SIZE = 100;
 
 module.exports = function(startPointToEndPoints) {

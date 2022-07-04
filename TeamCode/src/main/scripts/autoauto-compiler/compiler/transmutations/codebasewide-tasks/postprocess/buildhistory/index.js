@@ -1,3 +1,5 @@
+"use strict";
+
 const commandLineInterface = require("../../../../../../command-line-interface/index.js");
 const processHistory = require("./process-history.js");
 const path = require("path");

@@ -1,3 +1,5 @@
+"use strict";
+
 var functionLoader = require("./loader");
 
 module.exports = async function run(context, contexts) {

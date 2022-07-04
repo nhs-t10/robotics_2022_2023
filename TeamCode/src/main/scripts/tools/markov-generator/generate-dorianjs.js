@@ -1,3 +1,5 @@
+"use strict";
+
 var characterNames = ["Dorian", "Gray", "Basil", "Hallward", "Lord", "Henry", "Harry", "Wotton", 
                 "Sibyl", "Vane", "James", "Vane", 
                 "Alan", "Campbell", "Lord", "Fermor", "Adrian", "Singleton"];

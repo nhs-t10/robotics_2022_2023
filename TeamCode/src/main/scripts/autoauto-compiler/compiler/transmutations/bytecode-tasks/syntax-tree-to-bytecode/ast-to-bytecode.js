@@ -1,3 +1,5 @@
+"use strict";
+
 const { createHash } = require("crypto");
 const path = require("path");
 const systemVariableNames = require("../../../data/system-variable-names");

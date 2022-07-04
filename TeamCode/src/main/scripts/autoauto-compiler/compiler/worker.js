@@ -1,3 +1,5 @@
+"use strict";
+
 const { inspect } = require("util");
 const workerThreads = require("worker_threads");
 const compileFile = require("./compile-file");

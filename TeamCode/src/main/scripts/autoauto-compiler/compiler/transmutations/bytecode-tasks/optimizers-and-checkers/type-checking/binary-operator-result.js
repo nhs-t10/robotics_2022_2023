@@ -1,3 +1,5 @@
+"use strict";
+
 const androidStudioLogging = require("../../../../../../script-helpers/android-studio-logging");
 
 module.exports = function getBinaryOperatorResult(left, right, op, filename, location) {

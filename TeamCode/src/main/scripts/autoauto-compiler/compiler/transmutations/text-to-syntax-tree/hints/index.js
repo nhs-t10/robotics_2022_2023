@@ -1,3 +1,5 @@
+"use strict";
+
 var hintFunctions = [gitMerge];
 
 module.exports = function(fileContent, syntaxError) {

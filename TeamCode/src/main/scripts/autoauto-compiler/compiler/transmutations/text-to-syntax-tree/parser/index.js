@@ -1,3 +1,5 @@
+"use strict";
+
 const prattParse = require("./pratt-parse");
 const tokenstream = require("./token-stream");
 

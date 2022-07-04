@@ -1,3 +1,5 @@
+"use strict";
+
 var qCache = new Map();
 var parentCache = new Map();
 var vScopeCache = new Map();

@@ -1,3 +1,5 @@
+"use strict";
+
 module.exports = function run(context) {
     var bcBlocks = context.inputs["syntax-tree-to-bytecode"].blocks;
 

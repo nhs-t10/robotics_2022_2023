@@ -1,3 +1,5 @@
+"use strict";
+
 const bytecodeSpec = require("../../bytecode-spec");
 
 module.exports = function run(context) {

@@ -1,3 +1,5 @@
+"use strict";
+
 const baseTokenTypes = require("./base-token-types");
 
 module.exports = function* lexer(fileText, file) {

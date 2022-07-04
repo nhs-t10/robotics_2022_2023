@@ -1,3 +1,5 @@
+"use strict";
+
 var nicelyIndent = require("./good-indenting");
 
 module.exports = function(ast, functionLookup) {

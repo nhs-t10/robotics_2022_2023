@@ -1,3 +1,5 @@
+"use strict";
+
 var path = require("path");
 var safeFsUtils = require("../../../../../../script-helpers/safe-fs-utils");
 

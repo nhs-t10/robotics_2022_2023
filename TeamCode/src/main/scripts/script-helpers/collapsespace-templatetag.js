@@ -1,3 +1,5 @@
+"use strict";
+
 module.exports = function(strs) {
     var assembled = "";
     for(var i = 0; i < strs.length - 1; i++) {

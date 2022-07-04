@@ -1,3 +1,5 @@
+"use strict";
+
 /**
  * @typedef {object} CommandLineArguments
  * @property {boolean} ascii

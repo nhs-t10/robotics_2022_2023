@@ -1,3 +1,5 @@
+"use strict";
+
 module.exports = {
     0x000: {
         "pop": 0,

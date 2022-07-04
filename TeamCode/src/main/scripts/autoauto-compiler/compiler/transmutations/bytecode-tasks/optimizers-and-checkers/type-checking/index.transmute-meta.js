@@ -1,3 +1,5 @@
+"use strict";
+
 module.exports = {
     id: "type-checking",
     requires: ["type-inference"],

@@ -1,3 +1,5 @@
+"use strict";
+
 /**
  * Calculates the total amount of bytecodes in a block.
  * @param {import("../../syntax-tree-to-bytecode/ast-to-bytecode").Block} block 

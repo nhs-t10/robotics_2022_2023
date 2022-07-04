@@ -1,3 +1,5 @@
+"use strict";
+
 
 var initial = require("./initial-assumptions");
 var javaFuncs = require("./java-functions");

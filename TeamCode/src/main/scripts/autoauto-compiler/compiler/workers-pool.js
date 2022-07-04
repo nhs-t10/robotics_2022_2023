@@ -1,3 +1,5 @@
+"use strict";
+
 var workerThreads = require("worker_threads");
 var commandLineInterface = require("../../command-line-interface");
 const androidStudioLogging = require("../../script-helpers/android-studio-logging");

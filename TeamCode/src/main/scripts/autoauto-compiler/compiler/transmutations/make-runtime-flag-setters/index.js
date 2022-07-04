@@ -1,3 +1,5 @@
+"use strict";
+
 module.exports = function(context) {
     context.output = getCompatModeSetter(context.fileFrontmatter);
     context.status = "pass";

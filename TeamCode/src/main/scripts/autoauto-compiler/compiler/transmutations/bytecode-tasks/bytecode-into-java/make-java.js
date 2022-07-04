@@ -1,3 +1,5 @@
+"use strict";
+
 var bc = require("../bc");
 
 var BYTECODE_PACKAGE = `org.firstinspires.ftc.teamcode.auxilary.dsls.autoauto.model.bytecode`;

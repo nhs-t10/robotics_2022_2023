@@ -1,3 +1,5 @@
+"use strict";
+
 const bytecodeSpec = require("../../bytecode-spec");
 const verifyTypeSystem = require("./verify-type-system");
 

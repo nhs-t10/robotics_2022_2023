@@ -1,3 +1,5 @@
+"use strict";
+
 const lexer = require("./lexer")
 
 module.exports = function tokenStream(text, file) {

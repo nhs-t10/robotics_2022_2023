@@ -1,3 +1,5 @@
+"use strict";
+
 /**
  * Flattens a block into an array of bytecodes
  * @param {import("../../syntax-tree-to-bytecode/ast-to-bytecode").Block} block 

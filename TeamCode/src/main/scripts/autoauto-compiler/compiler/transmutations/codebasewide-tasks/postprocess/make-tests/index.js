@@ -1,3 +1,5 @@
+"use strict";
+
 var path = require("path");
 
 var maketest = require("./make-test");
