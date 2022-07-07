@@ -28,8 +28,13 @@ module.exports = async function (ast, frontmatter, context) {
             code: [],
             jumps: [{
                 code: bytecodeSpec.jmp_l.code,
-                location: undefined,
-                args: [{ code: constantPool.getCodeFor(treeBlocks[0].label), __value: treeBlocks[0].label, args: [] }]
+                location: ast.location,
+                args: [{ 
+                    code: constantPool.getCodeFor(treeBlocks[0].label), 
+                    __value: treeBlocks[0].label,
+                    args: [],
+                    location: ast.location
+                }]
             }]
         };
     }

@@ -18,7 +18,7 @@ module.exports = function(context, contexts) {
         frontmatter: x.fileFrontmatter,
         className: x.resultBaseFileName.split(".")[0],
         package: x.inputs["get-result-package"]
-    }));
+    })).filter(x=>x.package);
     
     var fileWrittenIn = maketest(testRecords, testDir);
     

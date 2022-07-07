@@ -2,9 +2,10 @@
 
 //https://github.com/zawn/android-gradle-plugin-src/blob/master/sdk-common/src/main/java/com/android/ide/common/blame/MessageJsonSerializer.java
 
-var cFs = require("./cached-fs");
+const cFs = require("./cached-fs");
 const commandLineArguments = require("../command-line-interface");
 const errorResolutionSuggestions = require("./error-resolution-suggestions");
+const { colourString } = require("./format-helpers/ansi-terminal-color");
 
 module.exports = {
     sendPlainMessage: sendPlainMessage,
@@ -15,10 +16,16 @@ module.exports = {
 
     beginOutputCapture: beginOutputCapture,
     getCapturedOutput: getCapturedOutput,
+    isCapturingOutput: isCapturingOutput,
 
     sendMessages: sendMessages,
     
-    printTypeCounts: printTypeCounts
+    printTypeCounts: printTypeCounts,
+
+    sendInternalError: sendInternalError,
+
+    getGlobalState: getGlobalState,
+    setGlobalState: setGlobalState
 };
 
 
@@ -44,14 +51,35 @@ var counts = {
 };
 const logLevel = commandLineArguments.quiet ? 3 : 0;
 
+function getGlobalState() {
+    var _cO = capturingOutput;
+    var _cd = captured;
+    return function() {
+        return {
+            cO: _cO,
+            cd: _cd
+        };
+    }
+}
+
+function setGlobalState(s) {
+    var r = s();
+    capturingOutput = r.cO;
+    captured = r.cd;
+}
+
 function beginOutputCapture() {
     capturingOutput = true;
     captured = [];
 }
 
+function isCapturingOutput() {
+    return capturingOutput;
+}
+
 function getCapturedOutput() {
     capturingOutput = false;
-    var t = captured;
+    const t = captured;
     captured = [];
     return t;
 }
@@ -70,17 +98,17 @@ function sendError(msgStr) {
     });
 }
 
-function sendMessages(msgs, forceSend) {
-    msgs.forEach(x=>sendPlainMessage(x, forceSend));
+function sendMessages(msgs) {
+    msgs.forEach(x=>sendPlainMessage(x));
 }
 
-function sendPlainMessage (msg, forceSend) {
-    var l = ["INFO", "BARELY_WARNING", "WARNING","ERROR"].indexOf(msg.kind);
+function sendPlainMessage (msg) {
+    const l = ["INFO", "BARELY_WARNING", "WARNING","ERROR"].indexOf(msg.kind);
     
     incrementTypeCount(msg.kind);
     
     if (logLevel <= l || l === -1) {
-        if(capturingOutput == true && forceSend == false) {
+        if(capturingOutput == true) {
             captured.push(msg);
         } else {            
             if(commandLineArguments["agpbi"]) formatAndSendJsonFormat(msg);
@@ -117,7 +145,7 @@ function maybePlural(num, word) {
 }
 
 function formatAndSendJsonFormat(msg) {
-    var f = Object.assign({}, msg);
+    const f = Object.assign({}, msg);
 
     if(f.kind == "BARELY_WARNING") f.kind = "WARNING";
     f.original = humanReadableFormat(msg);
@@ -163,8 +191,28 @@ function indent(indentBy, t) {
     return t.split("\n").map(x=>indentBy + x).join("\n");
 }
 
-function sendTreeLocationMessage(res, file, defaultKind, forceSend) {
-    sendMessages(massageResIntoArrayOfMessages(res, file, defaultKind), forceSend);
+function sendTreeLocationMessage(res, file, defaultKind) {
+    sendMessages(massageResIntoArrayOfMessages(res, file, defaultKind));
+}
+
+function sendInternalError(err, file) {
+    if(err === undefined || err === null) return sendInternalError(new Error("undefined internal error"));
+
+    if(err instanceof Error) {
+        sendTreeLocationMessage({
+            kind: "ERROR",
+            text: "Internal Compiler Error",
+            original: `There was an internal error. This file will be skipped, but others will still be compiled.\n` +
+                `Please contact these people in this order: \n` +
+                `1) Connor\n` +
+                `2) Chloe\n` +
+                `\n` +
+                `The stack of the error is below:\n` +
+                err.message + "\n" + err.stack
+        }, file, "ERROR");
+    } else {
+        sendTreeLocationMessage(err, file, "ERROR");
+    }
 }
 
 
@@ -175,6 +223,8 @@ function massageResIntoArrayOfMessages(res, file, defaultKind) {
 
 function massageResIntoMessage(res, file, defaultKind) {
     if(typeof res === "string") res = { text: res };
+    
+    if(defaultKind === undefined) defaultKind = "INFO";
     
     if(!res.kind) res.kind = defaultKind;
     
@@ -193,7 +243,7 @@ function massageResIntoMessage(res, file, defaultKind) {
         }
     }
 
-    if(res.fail) res.text += " | Skipping File";
+    if(res.fail) res.original += " | Skipping File";
 
     if(res.sources === undefined) {
             res.sources = [{
@@ -234,6 +284,8 @@ function massageResIntoMessage(res, file, defaultKind) {
 
 function formatPointerToCode(file, location, kind, label, hints) {
     if(!file || !location.start || !location.end) return "";
+
+    var fileStack = formatFileStack(location.fileStack);
     
     var fContent = cFs.readFileSync(file).toString();
     
@@ -271,7 +323,21 @@ function formatPointerToCode(file, location, kind, label, hints) {
     
     var hintText = hints.map(x => `\n${margin}  ${colourString(COLOURS.HINT, x)}`).join("");
     
-    return selectedWithRowNumbers + "\n" + pointer +  hintText;
+    return fileStack + selectedWithRowNumbers + "\n" + pointer +  hintText;
+}
+
+function formatFileStack(stack) {
+    if(stack === undefined) return "";
+
+    const arrow = commandLineArguments.ascii ? "<--" : "\u250c\u2500\u2500";
+
+    var result = "";
+    var pad = " ";
+    for(const file of stack) {
+        result = pad + arrow + file + "\n" + result;
+        pad += " ";
+    }
+    return result;
 }
 
 function getKindColour(kind) {
@@ -307,44 +373,25 @@ function extractColorFromRows(string) {
     var colourCodeStack = [];
     var rows = [];
     var row = "";
+    var tag = "";
     
     for(var i = 0; i < string.length; i++) {
-        if(string.startsWith("\033[", i)) {
+        if(string.startsWith("\u001b[", i)) {
             var end = string.indexOf("m", i);
             tag = string.substring(i, end) + "m";
             i = end;
-            if(tag == "\033[0m") colourCodeStack.pop();
+            if(tag == "\u001b[0m") colourCodeStack.pop();
             else colourCodeStack.push(tag);
             row += tag;
         } else if(string[i] == "\n") {
-            var r = colourCodeStack.join("") + row + "\033[0m";
+            var r = colourCodeStack.join("") + row + "\u001b[0m";
             row = "";
             rows.push(r);
         } else {
             if(string[i] != "\r") row += string[i];
         }
     }
-    rows.push(colourCodeStack.join("") + row + "\033[0m");
+    rows.push(colourCodeStack.join("") + row + "\u001b[0m");
     
     return rows;
-}
-
-function colourString(colour, string) {
-    var ctrl = "\033[";
-    var cCode = `${ctrl}38;5;${ rgb216(colour) }m`;
-    var rCode = `${ctrl}0m`;
-    
-    return `${cCode}${string}${rCode}`;
-}
-
-function rgb216(r, g, b) {
-    if (typeof r === "string") {
-        r = r.replace("#", "");
-
-        b = (parseInt(r.substring(4, 6), 16) / 0xff) || 0;
-        g = (parseInt(r.substring(2, 4), 16) / 0xff) || 0;
-        r = (parseInt(r.substring(0, 2), 16) / 0xff) || 0;
-    }
-    var rf = Math.round(r * 5), gf = Math.round(g * 5), bf = Math.round(b * 5);
-    return (rf * 36) + (gf * 6) + (bf) + 16
 }

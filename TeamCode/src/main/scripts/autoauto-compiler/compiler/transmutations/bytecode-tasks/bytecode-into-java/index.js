@@ -11,7 +11,7 @@ var path = require("path");
  * @param {import("../../../transmutations").TransmutateContext} context 
  */
 module.exports = function run(context) {
-    var package = context.inputs["get-result-package"];
+    var packge = context.inputs["get-result-package"];
 
     var constantPool = cpool(context);
 
@@ -33,7 +33,7 @@ module.exports = function run(context) {
     var helperClassName = context.resultBaseFileName.replace(".java", "") + "____AutoautoProgram";
     var helperFile = path.join(context.resultDir, helperClassName + ".java");
 
-    var helperClassContent = makeHelperClass(package, helperClassName, makeJava(denseCodes, constantPool, bytecode));
+    var helperClassContent = makeHelperClass(packge, helperClassName, makeJava(denseCodes, constantPool, bytecode));
 
     context.writtenFiles[helperFile] = helperClassContent;
 

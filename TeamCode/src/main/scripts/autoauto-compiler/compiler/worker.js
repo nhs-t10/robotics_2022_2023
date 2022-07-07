@@ -2,6 +2,7 @@
 
 const { inspect } = require("util");
 const workerThreads = require("worker_threads");
+const androidStudioLogging = require("../../script-helpers/android-studio-logging");
 const compileFile = require("./compile-file");
 
 var listenersForMainThread = { message: () => undefined };
@@ -14,7 +15,7 @@ var dependencyListeners = {};
 if (workerThreads.isMainThread) {
     module.exports = {
         //exposed for the benefit of the "parent" side
-        postMessage: safeHandleParentMessage,
+        postMessage: handleParentMessage,
         unref: () => undefined,
         on: (eType, eListener) => listenersForMainThread.message = eListener,
 
@@ -24,7 +25,7 @@ if (workerThreads.isMainThread) {
     }
 } else {
     process.argv = process.argv.concat(workerThreads.workerData);
-    workerThreads.parentPort.on("message", safeHandleParentMessage);
+    workerThreads.parentPort.on("message", handleParentMessage);
 
     module.exports = {
         requestDependencyToParent: requestDependencyToParent
@@ -71,22 +72,6 @@ if (workerThreads.isMainThread) {
  * @typedef {NewJobMessage|dependencyCompleteMessage|JobDoneMessage|jobWaitingOnDependencyMessage|jobErrorMessage} InterThreadMessage
  */
 
-/**
- *
- * @param {InterThreadMessage} m
- */
-async function safeHandleParentMessage(m) {
-    try {
-        await handleParentMessage(m);
-    } catch (e) {
-        console.log(e);
-        sendMessageToParent({
-            type: "jobError",
-            id: m.id,
-            error: e
-        })
-    }
-}
 
 /**
  * 
@@ -164,10 +149,15 @@ function addDependencyListener(depId, l) {
  * @returns {Promise<import("../compiler/transmutations/index").TransmutateContext>}
  */
 function requestDependencyToParent(sourceFile, dependencyFile) {
+
+    const loggingGlobalState = androidStudioLogging.getGlobalState();
+
     return new Promise(function (resolve, reject) {
         addDependencyListener(dependencyFile, function (resolvedDep) {
+            androidStudioLogging.setGlobalState(loggingGlobalState);
+            
             if (resolvedDep.success === "COMPILATION_FAILED") {
-                reject("Dependency " + dependencyFile + " didn't successfully compile");
+                reject("Dependency " + dependencyFile + " didn't successfully compile. As such, this file couldn't compile.");
             } else if (resolvedDep.success === "DOES_NOT_EXIST") {
                 reject("Dependency " + dependencyFile + " doesn't exist");
             } else if (resolvedDep.success == "SUCCESS") {

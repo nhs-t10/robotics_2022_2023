@@ -74,33 +74,12 @@ function makeContextAndCompileFile(filename, compilerWorkers, autoautoFileContex
                     androidStudioLogging.sendMessages(run.log);
                     writeAndCallback(run.fileContext, autoautoFileContexts, resolve);
                 } else {
-                    noteFatalError(run);
+                    if(run.log !== undefined) androidStudioLogging.sendMessages(run.log);
+                    if(run.error) androidStudioLogging.sendInternalError(run.error);
                 }
             });
         }
     });
-}
-
-/**
- * 
- * @param {import("./worker").MaybeCompilationFailed} failedRun
- */
-function noteFatalError(failedRun) {
-    if(failedRun.error instanceof Error) {
-        androidStudioLogging.sendTreeLocationMessage({
-            kind: "ERROR",
-            text: "Internal Compiler Error",
-            original: `There was an internal error. This file will be skipped, but others will still be compiled.\n` +
-                `Please contact these people in this order: \n` +
-                `1) Connor\n` +
-                `2) Chloe\n` +
-                `\n` +
-                `The stack of the error is below:\n` +
-                failedRun.error.message + "\n" + failedRun.error.stack
-        }, undefined, "ERROR", true);
-    } else {
-        androidStudioLogging.sendTreeLocationMessage(failedRun.error, undefined, "ERROR", true);
-    }
 }
 
 /**

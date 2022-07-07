@@ -212,14 +212,16 @@ async function delegatorExpressionToBytecode(ast, constantPool) {
     
     const dependencyPrefix = sha(dependency.sourceFullFileName);
     const depBytecode = dependency.inputs["syntax-tree-to-bytecode"].blocks;
+
+    const dependencyBlocks = Object.values(depBytecode);
     
-    addFileToLocations(depBytecode, ast.location.file);
+    addFileToLocations(dependencyBlocks, ast.location.file);
     
     //rename the ENTRY block to a non-overlapping label
     const realEntryLabel = "sl/" + dependencyPrefix + "/real-entry";
     depBytecode.ENTRY.label = realEntryLabel;
     
-    const dependencyBlocks = Object.values(depBytecode);
+    
     
     //make a continuation block that has the information required to do a jump
     const continuationEntry = constructDelegatorContinuationBranch(dependencyBlocks, constantPool, ast, realEntryLabel);
@@ -253,19 +255,20 @@ async function delegatorExpressionToBytecode(ast, constantPool) {
 function addFileToLocations(bytecode, file) {
     if(typeof file !== "string") throw new Error("Location without file information");
     
-    for(const labelKey in bytecode) {
-        recursorAddFileLocation(bytecode[labelKey].code, file);
-        recursorAddFileLocation(bytecode[labelKey].jumps, file);
+    for(const block of bytecode) {
+        recursorAddFileLocation(block.code, file, block);
+        recursorAddFileLocation(block.jumps, file, block);
     }
 }
 
-function recursorAddFileLocation(bytecodeArray, file) {
+function recursorAddFileLocation(bytecodeArray, file, __DEBIG) {
     for(const bytecode of bytecodeArray) {
         const loc = bytecode.location;
+        if(!loc) console.log(__DEBIG);
         if(loc.fileStack === undefined) loc.fileStack = [loc.file];
         loc.fileStack.push(file);
         
-        recursorAddFileLocation(bytecode.args, file);
+        recursorAddFileLocation(bytecode.args, file, __DEBIG);
     }
 }
 
@@ -301,13 +304,13 @@ function sha(t) {
 
 async function functionCallToBytecode(ast, constantPool) {
     var toBeCalled = await valueToBytecodeBlocks(ast.func, constantPool);
-    var arguments = await argumentListToBytecodeAsPositionalThenNamed(ast.args, constantPool);
+    var args = await argumentListToBytecodeAsPositionalThenNamed(ast.args, constantPool);
     
     return {
         computation: emitBytecodeWithLocation(bytecodeSpec.callfunction, 
-            [toBeCalled.computation].concat(arguments.boundedCalculations)
+            [toBeCalled.computation].concat(args.boundedCalculations)
         , ast),
-        dependentBlocks: [].concat(toBeCalled.dependentBlocks, arguments.dependentBlocks)
+        dependentBlocks: [].concat(toBeCalled.dependentBlocks, args.dependentBlocks)
     }
     
 }
@@ -468,7 +471,7 @@ function unitwrap(ast) {
 function jumpToLabel(lbl, pool) {
     return emitBytecodeWithLocation(bytecodeSpec.jmp_l, [
         emitConstantWithLocation(lbl, pool, {})
-    ], {}, pool.currentFile);
+    ], undefined, pool.currentFile);
 }
 
 /**
@@ -881,7 +884,7 @@ async function afterStatementToBytecode(ast, label, constantPool, nextLabel, sta
         afterStatementDone: constantPool.subblockLabel(label, "after-done")
     };
 
-    for(labelname in labels) {
+    for(const labelname in labels) {
         labels[labelname] = emitConstantWithLocation(labels[labelname], constantPool, ast);
     }
 

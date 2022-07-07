@@ -2,12 +2,12 @@
 
 var PRIMITIVES_PACKAGE = `org.firstinspires.ftc.teamcode.auxilary.dsls.autoauto.model.values.primitives`;
 
-module.exports = function(package, className, javaParts) {
-    return template(package, className, javaParts);
+module.exports = function(packge, className, javaParts) {
+    return template(packge, className, javaParts);
 }
 
-function template(package, className, javaParts) {
-    return `package ${package};
+function template(packge, className, javaParts) {
+    return `package ${packge};
     import ${PRIMITIVES_PACKAGE}.*;
     public class ${className} extends ${javaParts.fullExtendsName} {
         private final static ${javaParts.constants}

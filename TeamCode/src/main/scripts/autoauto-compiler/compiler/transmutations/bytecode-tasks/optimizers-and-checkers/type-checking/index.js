@@ -1,5 +1,6 @@
 "use strict";
 
+const androidStudioLogging = require("../../../../../../script-helpers/android-studio-logging");
 const bytecodeSpec = require("../../bytecode-spec");
 const verifyTypeSystem = require("./verify-type-system");
 
@@ -7,11 +8,11 @@ const verifyTypeSystem = require("./verify-type-system");
  * 
  * @param {import("../../../index").TransmutateContext} context 
  */
-module.exports = function run(context) {
+module.exports = async function run(context) {
     var typeSystem = context.inputs["type-inference"];
     var bytecode = context.inputs["single-static"];
 
-    verifyTypeSystem(typeSystem, context.sourceFullFileName);
+    await verifyTypeSystem(typeSystem, context.sourceFullFileName);
 
     removeTypeCruft(bytecode);
 

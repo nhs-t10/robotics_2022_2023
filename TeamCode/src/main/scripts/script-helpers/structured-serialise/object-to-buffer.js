@@ -6,11 +6,15 @@ const magic = require("./magic");
 const { t_array, t_boolean, t_null, t_number, t_object, t_string, t_undefined, t_wellKnownObject } = require("./types");
 const wellKnownConstructors = require("./well-known-constructors");
 
+const v8 = require("v8");
+
 const VALUE_ENTRY_HEADER_SIZE = 5;
 
 module.exports = objectToBuffer;
 
 function objectToBuffer(obj) {
+    if("serialize" in v8) return addHeaderToBuffer(v8.serialize(obj), version.V8_SERIAL);
+
     const valuePool = {
         pool: [],
         invertedPoolMap: new Map()
@@ -22,7 +26,7 @@ function objectToBuffer(obj) {
 }
 
 function poolToBuffer(pool) {
-    return addHeaderToBuffer(Buffer.concat(pool));
+    return addHeaderToBuffer(Buffer.concat(pool), version.CUSTOM_SERIAL);
 }
 
 //WARNING: USES UNSAFE MEMORY THINGS.
@@ -38,12 +42,12 @@ function poolToBuffer(pool) {
  * @param {Buffer} originBlob 
  * @returns Buffer
  */
-function addHeaderToBuffer(originBlob) {
+function addHeaderToBuffer(originBlob, versionNumber) {
     const magicLen = magic.length;
     const b = Buffer.allocUnsafe(magicLen + 1 + originBlob.length);
 
     for(let i = 0; i < magicLen; i++) b[i] = magic[i];
-    b[magicLen] = version;
+    b[magicLen] = versionNumber;
     originBlob.copy(b, magicLen + 1, 0, originBlob.length);
     
     return b;

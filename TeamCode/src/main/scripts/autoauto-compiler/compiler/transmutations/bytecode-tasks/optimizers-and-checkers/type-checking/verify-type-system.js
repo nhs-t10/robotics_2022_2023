@@ -4,11 +4,14 @@ const androidStudioLogging = require("../../../../../../script-helpers/android-s
 
 const getBinaryOperatorResult = require("./binary-operator-result");
 
-module.exports = function(typeSystem, filename) {    
+module.exports = verifyTypeSystem;
+
+async function verifyTypeSystem(typeSystem, filename) {    
     let typeUnfounded = false;
     for(const typeName in typeSystem) {
         const type = typeSystem[typeName];
-        if(verifyType(typeSystem, typeName, type, filename)) typeUnfounded = true;
+        const typeIsUnfounded = await verifyType(typeSystem, typeName, type, filename);
+        if(typeIsUnfounded) typeUnfounded = true;
     }
 
     if(typeUnfounded) androidStudioLogging.sendTreeLocationMessage({
@@ -18,11 +21,11 @@ module.exports = function(typeSystem, filename) {
     }, filename)
 }
 
-function verifyType(typeSystem, typeName, type, filename) {
-    return resolveType(typeSystem, typeName, type, {}, filename);
+async function verifyType(typeSystem, typeName, type, filename) {
+    return await resolveType(typeSystem, typeName, type, {}, filename);
 }
 
-function resolveType(typeSystem, typeName, type, visitedTypes, filename) {
+async function resolveType(typeSystem, typeName, type, visitedTypes, filename) {
 
     if(typeName in visitedTypes) {
         return true;
@@ -54,13 +57,14 @@ function resolveType(typeSystem, typeName, type, visitedTypes, filename) {
 
         default: console.error(type); throw "no type type " + type.type;
     }
-    if(r) return r;
+    if(r) return await r;
     else delete visitedTypes[typeName];
     
 }
 
-function resolveFunctionApplication(typeSystem, typeName, type, visitedTypes, filename) {
-    if(resolveType(typeSystem, type.operand, typeSystem[type.operand], visitedTypes, filename)) return true;
+async function resolveFunctionApplication(typeSystem, typeName, type, visitedTypes, filename) {
+    const functionIsUnresolved = await resolveType(typeSystem, type.operand, typeSystem[type.operand], visitedTypes, filename);
+    if(functionIsUnresolved) return true;
 
     var funcType = typeSystem[type.operand];
 
@@ -74,15 +78,18 @@ function resolveFunctionApplication(typeSystem, typeName, type, visitedTypes, fi
         return true;
     }
 
-    if(resolveType(typeSystem, funcType.return, typeSystem[funcType.return], visitedTypes, filename)) return true;
+    const returnTypeIsUnresolved = await resolveType(typeSystem, funcType.return, typeSystem[funcType.return], visitedTypes, filename);
+    if(returnTypeIsUnresolved) return true;
 
     typeSystem[typeName] = typeSystem[funcType.return];
     
 }
 
-function resolveBinaryOp(typeSystem, typeName, type, visitedTypes, filename) {
-    if(resolveType(typeSystem, type.left, typeSystem[type.left], visitedTypes, filename)) return true;
-    if(resolveType(typeSystem, type.right, typeSystem[type.right], visitedTypes, filename)) return true;
+async function resolveBinaryOp(typeSystem, typeName, type, visitedTypes, filename) {
+    const leftIsUnresolved = await resolveType(typeSystem, type.left, typeSystem[type.left], visitedTypes, filename);
+    if(leftIsUnresolved) return true;
+    const rightIsUnresolved = await resolveType(typeSystem, type.right, typeSystem[type.right], visitedTypes, filename)
+    if(rightIsUnresolved) return true;
 
     if(!type.op) {
         androidStudioLogging.sendTreeLocationMessage({
@@ -96,18 +103,19 @@ function resolveBinaryOp(typeSystem, typeName, type, visitedTypes, filename) {
     typeSystem[typeName] = getBinaryOperatorResult(typeSystem[type.left], typeSystem[type.right], type.op, filename, type.location);
 }
 
-function resolvePrimitive(typeSystem, typeName, type) {
+async function resolvePrimitive(typeSystem, typeName, type) {
     typeSystem[typeName] = type.primitive;
 }
 
-function resolveObjectApply(typeSystem, typeName, type, visitedTypes, filename) {
-    if(resolveType(typeSystem, type.object, typeSystem[type.object], visitedTypes, filename)) return true;
+async function resolveObjectApply(typeSystem, typeName, type, visitedTypes, filename) {
+    const objectIsUnresolved = await resolveType(typeSystem, type.object, typeSystem[type.object], visitedTypes, filename);
+    if(objectIsUnresolved) return true;
 
     var objType = typeSystem[type.object];
     if(objType.type != "object") {
         androidStudioLogging.sendTreeLocationMessage({
             text: "Attempt to get property of non-table",
-            original: "The type checker can't promise that this is a table. As such, getting a property *may* produce errors!",
+            original: "The type checker can't promise that this is a table. As such, getting a property *may* produce errors!\n",
             location: type.location,
             kind: "WARNING"
         }, filename);
@@ -115,7 +123,8 @@ function resolveObjectApply(typeSystem, typeName, type, visitedTypes, filename) 
     } if(typeof type.key == "string") {
         var propertyTypeName = objType.properties[type.key] || objType.some || "undefined";
         
-        if(resolveType(typeSystem, propertyTypeName, typeSystem[propertyTypeName], visitedTypes, filename)) return true;
+        const propertyIsUnresolved = await resolveType(typeSystem, propertyTypeName, typeSystem[propertyTypeName], visitedTypes, filename);
+        if(propertyIsUnresolved) return true;
 
         typeSystem[typeName] = typeSystem[propertyTypeName];
 
@@ -124,18 +133,21 @@ function resolveObjectApply(typeSystem, typeName, type, visitedTypes, filename) 
     }
 }
 
-function resolveUnion(typeSystem, typeName, type, visitedTypes, filename) {
+async function resolveUnion(typeSystem, typeName, type, visitedTypes, filename) {
 
+    //optimize: if there's only 1 type, directly go to the first type & resolve it
     if(type.types.length == 1) {
         const t = type.types[0];
-        if(resolveType(typeSystem, t, typeSystem[t], visitedTypes, filename)) return true;
+        const thisTypeUnresolved = await resolveType(typeSystem, t, typeSystem[t], visitedTypes, filename);
+        if(thisTypeUnresolved) return true;
         typeSystem[typeName] = typeSystem[t];
         return false;
     }
 
     var u = [];
     for(const t of type.types) {
-        if(resolveType(typeSystem, t, typeSystem[t], visitedTypes, filename)) return true;
+        const thisTypeUnresolved = await resolveType(typeSystem, t, typeSystem[t], visitedTypes, filename);
+        if(thisTypeUnresolved) return true;
 
         var newT = typeSystem[t];
         if(typeof newT === "string") u.push(newT);

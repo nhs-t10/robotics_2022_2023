@@ -10,7 +10,7 @@ const androidStudioLogging = require("../../script-helpers/android-studio-loggin
  */
 module.exports = async function (fileContext) {
     androidStudioLogging.beginOutputCapture();
-    const sucStatus = await compileFile(fileContext);
+    var sucStatus = await compileFile(fileContext);
     var log = androidStudioLogging.getCapturedOutput();
 
     return {
@@ -36,13 +36,30 @@ async function compileFile(fileContext) {
     return "SUCCESS";
 }
 
+/**
+ * 
+ * @param {*} transmutation 
+ * @param {import("./transmutations").TransmutateContext} fileContext 
+ * @returns 
+ */
 async function tryRunTransmutation(transmutation, fileContext) {
     delete fileContext.status;
 
-    await runTransmutation(transmutation, fileContext);
+    try {
+        await runTransmutation(transmutation, fileContext);
+    } catch(e) {
+        androidStudioLogging.sendInternalError(e, fileContext.sourceFullFileName);
+    }
 
-    if (fileContext.status === "pass") return true;
-    else throw { kind: "ERROR", text: `Task ${transmutation.id} didn't report a successful completion` };
+
+    if (fileContext.status === "pass") {
+        return true;
+    } else {
+        androidStudioLogging.sendTreeLocationMessage({
+            kind: "WARNING", text: `Task ${transmutation.id} didn't report a successful completion`
+        }, fileContext.sourceFullFileName, "WARNING");
+        return false;
+    }
 }
 
 async function runTransmutation(transmutation, fileContext) {
@@ -58,20 +75,6 @@ async function runTransmutation(transmutation, fileContext) {
     fileContext.status = c.status;
     Object.assign(fileContext.writtenFiles, c.writtenFiles);
 
-    deepFreeze(c.output);
     fileContext.inputs[transmutation.id] = c.output;
     if (c.output !== undefined && !transmutation.isDependency) fileContext.lastInput = c.output;
-}
-
-function deepFreeze(value) {
-    
-    if (value && typeof value === "object") { 
-        for (const key of Object.getOwnPropertyNames(value)) {
-            deepFreeze(value[key]);
-        }
-    
-        return Object.freeze(value);
-    } else {
-        return value;
-    }
 }

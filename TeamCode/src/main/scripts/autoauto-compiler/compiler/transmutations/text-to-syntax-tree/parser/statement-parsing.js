@@ -95,7 +95,7 @@ const infixParsers = {
     OPEN_SQUARE_BRACKET: parseArrayGetter,
 }
 
-module.exports = parseStatement
+module.exports = parseStatement;
 
 function parseStatement(tokenStream, file) {
 
@@ -185,18 +185,18 @@ function parseIfStatement(tokenStream, file) {
 
     return {
         type: "IfStatement",
-        location: { start: locStart, end: elseClause.location.end, file },
+        location: { start: locStart, end: elseClause.location.end, file: file },
         conditional: conditional,
         statement: statement,
         elseClause, elseClause
     }
 }
 
-function parseElseClause(tokenStream) {
+function parseElseClause(tokenStream, file) {
     //we don't need the 'else'
     tokenStream.pop();
 
-    return parseStatement(tokenStream);
+    return parseStatement(tokenStream, file);
 }
 
 function parsePassStatement(tokenStream) {
@@ -448,10 +448,10 @@ function parseNotOperator(tokenStream) {
     throw improperContextError("Sorry, the unary NOT operator ('!') is not supported right now.", tokenStream.pop().location);
 }
 
-function parseTableLiteral(tokenStream) {
+function parseTableLiteral(tokenStream, file) {
     const locStart = tokenStream.pop().location.start;
 
-    const elements = parseArgumentList(tokenStream);
+    const elements = parseArgumentList(tokenStream, file);
 
     const closingSquare = tokenStream.pop();
     if (closingSquare.name != "CLOSE_SQUARE_BRACKET") {
@@ -463,29 +463,29 @@ function parseTableLiteral(tokenStream) {
     return {
         type: "ArrayLiteral",
         elems: elements,
-        location: { start: locStart, end: closingSquare.location.end }
+        location: { start: locStart, end: closingSquare.location.end, file: file }
     }
 }
 
-function parseFunctionLiteral(tokenStream) {
+function parseFunctionLiteral(tokenStream, file) {
     const loc = tokenStream.pop().location;
 
     expect(tokenStream, "OPEN_PAREN", "Expected a open-paren ('(') to start the arguments of this function; got a", [
         "You can't give a name to anonymous function literals. If you want to name your function, use the 'function' statement."
     ]);
 
-    const parameterList = parseParameterList(tokenStream);
+    const parameterList = parseParameterList(tokenStream, file);
 
     expect(tokenStream, "CLOSE_PAREN", "Expected a close-paren (')') to finish the arguments of this function; got a");
 
-    const body = parseStatement(tokenStream);
+    const body = parseStatement(tokenStream, file);
 
     return {
         type: "FunctionLiteral",
         name: wrapIdentifierString("anonymous", loc),
         args: parameterList,
         body: body,
-        location: { start: loc.start, end: body.location.end }
+        location: { start: loc.start, end: body.location.end, file: file }
     };
 }
 
@@ -517,7 +517,7 @@ function parseArgumentList(tokenStream, file) {
         args: args
     }
 }
-function parseParameterList(tokenStream) {
+function parseParameterList(tokenStream, file) {
     const args = [];
 
     let location;
@@ -529,7 +529,7 @@ function parseParameterList(tokenStream) {
             if (tokenStream.peek().name == "COMMA") tokenStream.pop();
             else break;
         }
-        location = { start: args[0].location.start, end: args[args.length - 1].location.end };
+        location = { start: args[0].location.start, end: args[args.length - 1].location.end, file: file };
     } else {
         location = peek.location;
     }
@@ -571,18 +571,18 @@ function parseParenGroup(tokenStream) {
     return expr;
 }
 
-function parseFunctionCall(tokenStream, left) {
+function parseFunctionCall(tokenStream, left, file) {
     const locStart = tokenStream.pop().location.start;
 
-    const args = parseArgumentList(tokenStream);
+    const args = parseArgumentList(tokenStream, file);
 
-    expect(tokenStream, "CLOSE_PAREN", "Missing end-parentheses; instead, got", [
+    const locEnd = expect(tokenStream, "CLOSE_PAREN", "Missing end-parentheses; instead, got", [
         `It appears that there might be a missing ending paren (')') after this method call. Its corresponding open-paren is on line ${locStart.line}, column ${locStart.column}`
-    ]);
+    ]).location.end;
 
     return {
         type: "FunctionCall",
-        location: { start: locStart, end: args.location.end },
+        location: { start: locStart, end: locEnd, file: file },
         args: args,
         func: left
     }
@@ -672,15 +672,15 @@ function parseArrayGetter(tokenStream, left, file) {
 
     const tail = parseExpression(tokenStream, file, 0);
 
-    expect(tokenStream, "CLOSE_SQUARE_BRACKET", "Missing end-square-bracket; instead, got", [
+    const locEnd = expect(tokenStream, "CLOSE_SQUARE_BRACKET", "Missing end-square-bracket; instead, got", [
         `It appears that there might be a missing ending squre-bracket (']') after this array-style property get. Its corresponding open-square is on line ${locStart.line}, column ${locStart.column}`
-    ]);
+    ]).location.end;
 
     return {
         type: "TailedValue",
         head: left,
         tail: tail,
-        location: { start: locStart, end: tail.location.end, file: file }
+        location: { start: locStart, end: locEnd, file: file }
     };
 }
 

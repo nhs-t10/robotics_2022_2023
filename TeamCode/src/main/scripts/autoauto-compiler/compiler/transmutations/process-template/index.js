@@ -22,11 +22,11 @@ module.exports = function(context) {
     context.status = "pass";
 }
 
-function processTemplate(className, frontmatter, javaCreationCode, sourceFileName, jsonSettingCode, package, classNameNoConflict, flagSet) {
+function processTemplate(className, frontmatter, javaCreationCode, sourceFileName, jsonSettingCode, packge, classNameNoConflict, flagSet) {
     return template
         .replace("public class template", "public class " + className)
         .replace("/*JAVA_CREATION_CODE*/", javaCreationCode)
-        .replace("/*PACKAGE_DECLARATION*/", "package " + package + ";")
+        .replace("/*PACKAGE_DECLARATION*/", "package " + packge + ";")
         .replace("/*JSON_SETTING_CODE*/", jsonSettingCode)
         .replace("/*NO_CONFLICT_NAME*/", classNameNoConflict)
         .replace("/*SOURCE_FILE_NAME*/", JSON.stringify(sourceFileName).slice(1, -1))

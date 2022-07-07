@@ -40,6 +40,7 @@ module.exports = {
             "trunc": "Math@0/trunc",
             "sign": "Math@0/sign",
             "cbrt": "Math@0/cbrt",
+            "clip": "Math@0/clip",
             "E": "number",
             "LOG2E": "number",
             "LOG10E": "number",
@@ -50,6 +51,7 @@ module.exports = {
             "SQRT1_2": "number"
         }
     },
+    "Math@0/clip": { "type": "function", "args": ["number", "number", "number"], "return": "number" },
     "Math@0/abs": { "type": "function", "args": ["number"], "return": "number|undefined" },
     "Math@0/acos": { "type": "function", "args": ["number"], "return": "number|undefined" },
     "Math@0/asin": { "type": "function", "args": ["number"], "return": "number|undefined" },

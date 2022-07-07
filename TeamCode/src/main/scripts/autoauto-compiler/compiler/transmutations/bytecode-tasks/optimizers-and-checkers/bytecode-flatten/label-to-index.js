@@ -8,27 +8,28 @@ var bytecodeSpec = require("../../bytecode-spec");
  * @param {Object.<string, number>} offsets 
  */
 module.exports = function(bytecode, offsets) {
+    const result = [];
     for(var i = 0; i < bytecode.length; i++) {
-        bcLabelToIndex(bytecode[i], i, offsets);
+        result.push(bcLabelToIndex(bytecode[i], i, offsets));
     }
+    return result;
 }
 
 function bcLabelToIndex(bc, currentIndex, offsets) {
     if (bc.code == bytecodeSpec.jmp_l.code) {
-        bc.code = bytecodeSpec.jmp_i.code;
         mutOffset(bc.args[0], currentIndex, offsets);
+        return Object.assign({}, bc, {code: bytecodeSpec.jmp_i.code});
     } else if (bc.code == bytecodeSpec.jmp_l_cond.code) {
-        bc.code = bytecodeSpec.jmp_i_cond.code;
         mutOffset(bc.args[1], currentIndex, offsets);
-        
+        return Object.assign({}, bc, {code: bytecodeSpec.jmp_i_cond.code});
     } else if(bc.code == bytecodeSpec.makefunction_l.code) {
-        bc.code = bytecodeSpec.makefunction_i.code;
         mutOffset(bc.args[0], currentIndex, offsets);
-        
+        return Object.assign({}, bc, {code: bytecodeSpec.makefunction_i.code});
     } else if(bc.code == bytecodeSpec.yieldto_l.code) {
-        bc.code = bytecodeSpec.yieldto_i.code;
-        mutOffset(bc.args[0], currentIndex, offsets)
+        mutOffset(bc.args[0], currentIndex, offsets);
+        return Object.assign({}, bc, {code: bytecodeSpec.yieldto_i.code});
     }
+    return bc;
 }
 
 function mutOffset(instr, currentIndex, offsets) {

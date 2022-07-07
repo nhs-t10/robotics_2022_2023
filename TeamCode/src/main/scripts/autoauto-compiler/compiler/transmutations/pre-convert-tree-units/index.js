@@ -3,7 +3,7 @@
 var query = require("./query");
 var unitConversion = require("../../../../unit-conversion");
 const androidStudioLogging = require("../../../../script-helpers/android-studio-logging");
-var collapseSpace = require("../../../../script-helpers/collapsespace-templatetag");
+var collapseSpace = require("../../../../script-helpers/format-helpers/collapsespace-templatetag");
 
 module.exports = function (context) {
     context.output = convert(context.inputs["text-to-syntax-tree"], context.sourceFullFileName, context.fileFrontmatter);

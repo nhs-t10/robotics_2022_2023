@@ -4,6 +4,7 @@ var calculateBlockLength = require("./block-length");
 var replaceLabelWithIndex = require("./label-to-index");
 var flattenBlock = require("./block-flatten");
 var makeOrderedBlocks = require("./ordered-block-array");
+const { structuredClone } = require("../../../../../../script-helpers/structured-serialise");
 
 /**
  * 
@@ -16,7 +17,7 @@ var makeOrderedBlocks = require("./ordered-block-array");
  * @param {import("../../../../transmutations").TransmutateContext} context
  */
 module.exports = function run(context) {
-    var bytecode = context.lastInput;
+    var bytecode = structuredClone(context.lastInput);
     /** @type {Block[]} */
     var blocks = makeOrderedBlocks(bytecode);
 
@@ -40,9 +41,6 @@ module.exports = function run(context) {
     }
 
     //replace labeled jumps with relative bytecode-number jumps
-    replaceLabelWithIndex(flatBc, offsets);
-    
-
-    context.output = flatBc;
+    context.output = replaceLabelWithIndex(flatBc, offsets);
     context.status = "pass";
 }
