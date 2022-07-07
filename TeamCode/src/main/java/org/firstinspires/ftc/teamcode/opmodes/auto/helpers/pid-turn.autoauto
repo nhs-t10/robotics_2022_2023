@@ -1,3 +1,6 @@
+$
+  compilerMode: "lib"
+$
 
     let target = module_args[0],
         let error = target - getThirdAngleOrientation(), log(error),

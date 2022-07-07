@@ -13,7 +13,6 @@ import java.util.Stack;
 
 public class BytecodeEvaluationProgram implements AutoautoProgram {
     private final AutoautoBytecode[] bytecodeRecords;
-    private final int[] program;
     public AutoautoPrimitive lastThisContext;
     private AutoautoRuntimeVariableScope scope;
     private final Stack<AutoautoPrimitive> stack;
@@ -22,9 +21,8 @@ public class BytecodeEvaluationProgram implements AutoautoProgram {
     public int pc;
     public boolean yield;
 
-    public BytecodeEvaluationProgram(int[] program, AutoautoBytecode[] bcs) {
+    public BytecodeEvaluationProgram(AutoautoBytecode[] bcs) {
         this.pc = 0;
-        this.program = program;
         this.bytecodeRecords = bcs;
         this.lastThisContext = new AutoautoUndefined();
 
@@ -40,7 +38,7 @@ public class BytecodeEvaluationProgram implements AutoautoProgram {
     public void runUntilYield() {
         while(!yield) {
             //FeatureManager.logger.log("calling: " + pc + " " + (bytecodeRecords[program[pc]].toString()));
-            bytecodeRecords[program[pc]].invoke(this, scope, stack, callStack);
+            bytecodeRecords[pc].invoke(this, scope, stack, callStack);
             //FeatureManager.logger.log(stack.toString());
             pc++;
         }

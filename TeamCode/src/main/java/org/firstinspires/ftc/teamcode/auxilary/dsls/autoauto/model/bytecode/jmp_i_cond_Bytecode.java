@@ -12,7 +12,7 @@ public class jmp_i_cond_Bytecode extends AutoautoBytecode {
     public void invoke(BytecodeEvaluationProgram bytecodeEvaluationProgram, AutoautoRuntimeVariableScope scope, Stack<AutoautoPrimitive> stack, Stack<Integer> callStack) {
         int i = stack.pop().castToNumber().getInt();
         if(stack.pop().castToBoolean().value) {
-            bytecodeEvaluationProgram.pc = i - 1;
+            bytecodeEvaluationProgram.pc += i;
         }
     }
 }

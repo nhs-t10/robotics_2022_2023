@@ -11,7 +11,7 @@ public class yieldto_i_Bytecode extends AutoautoBytecode {
     @Override
     public void invoke(BytecodeEvaluationProgram bytecodeEvaluationProgram, AutoautoRuntimeVariableScope scope, Stack<AutoautoPrimitive> stack, Stack<Integer> callStack) {
         int i = stack.pop().castToNumber().getInt();
-        bytecodeEvaluationProgram.pc = i - 1;
+        bytecodeEvaluationProgram.pc += i;
         bytecodeEvaluationProgram.yield = true;
     }
 }

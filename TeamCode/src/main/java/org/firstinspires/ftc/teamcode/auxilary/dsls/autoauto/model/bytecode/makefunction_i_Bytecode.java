@@ -27,7 +27,8 @@ public class makefunction_i_Bytecode extends AutoautoBytecode {
             argNames[i] = stack.pop().getString();
         }
 
-        int pcTo = stack.pop().castToNumber().getInt();
+        //The offset is relative, so we need to add the current program-counter, plus one, to get the actual start of the function
+        int pcTo = bytecodeEvaluationProgram.pc + stack.pop().castToNumber().getInt() + 1;
 
         stack.push(new BytecodeFunction(pcTo, argNames, bytecodeEvaluationProgram, scope, stack, callStack, defaults));
     }

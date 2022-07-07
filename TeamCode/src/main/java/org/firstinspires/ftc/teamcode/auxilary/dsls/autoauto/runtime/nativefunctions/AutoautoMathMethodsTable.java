@@ -14,6 +14,7 @@ import org.firstinspires.ftc.teamcode.auxilary.dsls.autoauto.runtime.nativefunct
 import org.firstinspires.ftc.teamcode.auxilary.dsls.autoauto.runtime.nativefunctions.math.atanhNativeFunction;
 import org.firstinspires.ftc.teamcode.auxilary.dsls.autoauto.runtime.nativefunctions.math.cbrtNativeFunction;
 import org.firstinspires.ftc.teamcode.auxilary.dsls.autoauto.runtime.nativefunctions.math.ceilNativeFunction;
+import org.firstinspires.ftc.teamcode.auxilary.dsls.autoauto.runtime.nativefunctions.math.clipNativeFunction;
 import org.firstinspires.ftc.teamcode.auxilary.dsls.autoauto.runtime.nativefunctions.math.clz32NativeFunction;
 import org.firstinspires.ftc.teamcode.auxilary.dsls.autoauto.runtime.nativefunctions.math.cosNativeFunction;
 import org.firstinspires.ftc.teamcode.auxilary.dsls.autoauto.runtime.nativefunctions.math.coshNativeFunction;
@@ -94,6 +95,7 @@ public class AutoautoMathMethodsTable extends AutoautoTable {
         methods.put("tan", new PrototypePropertyDescriptor(new tanNativeFunction()));
         methods.put("tanh", new PrototypePropertyDescriptor(new tanhNativeFunction()));
         methods.put("trunc", new PrototypePropertyDescriptor(new truncNativeFunction()));
+        methods.put("clip", new PrototypePropertyDescriptor(new clipNativeFunction()));
 
         return methods;
     }
