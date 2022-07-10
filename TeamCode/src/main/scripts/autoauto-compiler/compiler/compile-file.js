@@ -75,6 +75,8 @@ async function runTransmutation(transmutation, fileContext) {
     fileContext.status = c.status;
     Object.assign(fileContext.writtenFiles, c.writtenFiles);
 
-    fileContext.inputs[transmutation.id] = c.output;
+    
+    fileContext.inputs[transmutation.id] = c.output === undefined ? null : c.output;
+
     if (c.output !== undefined && !transmutation.isDependency) fileContext.lastInput = c.output;
 }
