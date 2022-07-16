@@ -8,7 +8,6 @@ const errorResolutionSuggestions = require("./error-resolution-suggestions");
 const { colourString } = require("./format-helpers/ansi-terminal-color");
 
 module.exports = {
-    sendPlainMessage: sendPlainMessage,
     sendTreeLocationMessage: sendTreeLocationMessage,
     
     warning: sendWarn,
@@ -21,6 +20,7 @@ module.exports = {
     sendMessages: sendMessages,
     
     printTypeCounts: printTypeCounts,
+    resetTypeCounts: resetTypeCounts,
 
     sendInternalError: sendInternalError,
 
@@ -43,12 +43,15 @@ const COLOURS = {
 var capturingOutput = false;
 var captured = [];
 
-var counts = {
+const DEFAULT_ZERO_COUNTS = {
     ERROR: 0,
     WARNING: 0,
     INFO: 0,
     BARELY_WARNING: 0
 };
+
+var counts = Object.assign({}, DEFAULT_ZERO_COUNTS);
+
 const logLevel = commandLineArguments.quiet ? 3 : 0;
 
 function getGlobalState() {
@@ -85,14 +88,14 @@ function getCapturedOutput() {
 }
 
 function sendWarn(msgStr) {
-    sendPlainMessage({
+    sendTreeLocationMessage({
         kind: "WARNING",
         text: msgStr
     });
 }
 
 function sendError(msgStr) {
-    sendPlainMessage({
+    sendTreeLocationMessage({
         kind: "ERROR",
         text: msgStr
     });
@@ -105,9 +108,9 @@ function sendMessages(msgs) {
 function sendPlainMessage (msg) {
     const l = ["INFO", "BARELY_WARNING", "WARNING","ERROR"].indexOf(msg.kind);
     
-    incrementTypeCount(msg.kind);
-    
-    if (logLevel <= l || l === -1) {
+    if(!capturingOutput) incrementTypeCount(msg.kind);
+
+    if (logLevel <= l || l === -1) {        
         if(capturingOutput == true) {
             captured.push(msg);
         } else {            
@@ -139,6 +142,10 @@ function printTypeCounts() {
     );
 }
 
+function resetTypeCounts() {
+    Object.assign(counts, DEFAULT_ZERO_COUNTS);
+}
+
 function maybePlural(num, word) {
     if(num == 1) return word;
     else return word + "s";
@@ -166,11 +173,12 @@ function humanReadableFormat(msg) {
 
     if(msg.sources) {
         if (msg.sources[0]) {
-            mForm += msg.sources[0].file + ":";
+            if(msg.sources[0].file) mForm += msg.sources[0].file + ":";
+
             if (msg.sources[0].location) {
                 mForm += msg.sources[0].location.startLine + ":";
             }
-            mForm += " ";
+            if(mForm != "") mForm += " ";
         }
     }
 

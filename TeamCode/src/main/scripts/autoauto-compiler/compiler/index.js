@@ -30,11 +30,10 @@ module.exports = (async function main() {
 
 async function compileAllFromSourceDirectory() {
     const compilerWorkers = makeWorkersPool();
-    const autoautoFileContexts = [];
 
     const preprocessInputs = {};
     const codebaseTransmutationWrites = {};
-    await evaluateCodebaseTasks(autoautoFileContexts, transmutations.getPreProcessTransmutations(), preprocessInputs, codebaseTransmutationWrites);
+    await evaluateCodebaseTasks([], transmutations.getPreProcessTransmutations(), preprocessInputs, codebaseTransmutationWrites);
 
     const environmentHash = makeEnvironmentHash(CACHE_VERSION, preprocessInputs, process.argv);
 
@@ -46,36 +45,50 @@ async function compileAllFromSourceDirectory() {
 
     for await (const file of aaFiles) {
         jobPromises.push(
-            makeContextAndCompileFile(file, compilerWorkers, autoautoFileContexts, preprocessInputs, environmentHash)
+            makeContextAndCompileFile(file, compilerWorkers, preprocessInputs, environmentHash)
         );
     }
+    compilerWorkers.finishGivingJobs();
 
-    await Promise.all(jobPromises);
+    const compilationResults = await Promise.all(jobPromises);
 
-    await evaluateCodebaseTasks(autoautoFileContexts, transmutations.getPostProcessTransmutations(), {}, codebaseTransmutationWrites);
+    await evaluateCodebaseTasks(compilationResults, transmutations.getPostProcessTransmutations(), {}, codebaseTransmutationWrites);
     writeWrittenFiles({ writtenFiles: codebaseTransmutationWrites });
 
     compilerWorkers.close();
 }
 
-function makeContextAndCompileFile(filename, compilerWorkers, autoautoFileContexts, preprocessInputs, environmentHash) {
+/**
+ * 
+ * @param {string} filename 
+ * @param {import("./workers-pool").workerPool} compilerWorkers
+ * @param {Object.<string, *>} preprocessInputs
+ * @param {string} environmentHash 
+ * @returns {Promise<import("./worker").MaybeCompilation>}
+ */
+function makeContextAndCompileFile(filename, compilerWorkers, preprocessInputs, environmentHash) {
     const fileContext = makeFileContext(filename, preprocessInputs, environmentHash);
     const cacheEntry = getCacheEntry(fileContext);
 
     return new Promise(function (resolve, reject) {
         if (cacheEntry) {
+            const cacheContext = cacheEntry.fileContext;
+
             androidStudioLogging.sendMessages(cacheEntry.log);
-            writeAndCallback(cacheEntry.data, autoautoFileContexts, resolve);
-            compilerWorkers.addFinishedJobFromCache(fileContext);
+            compilerWorkers.addFinishedJobFromCache(cacheContext);
+            writeWrittenFiles(cacheContext);
+            resolve(cacheEntry);
         } else {
-            compilerWorkers.giveJob(fileContext, function (/** @type {import("./worker").MaybeCompilation} */run) {                
+            compilerWorkers.giveJob(fileContext, function (run) {              
                 if(run.success === "SUCCESS") {
                     saveCacheEntry(run);
                     androidStudioLogging.sendMessages(run.log);
-                    writeAndCallback(run.fileContext, autoautoFileContexts, resolve);
+                    writeWrittenFiles(run.fileContext);
+                    resolve(run);
                 } else {
                     if(run.log !== undefined) androidStudioLogging.sendMessages(run.log);
                     if(run.error) androidStudioLogging.sendInternalError(run.error);
+                    resolve(run);
                 }
             });
         }
@@ -90,17 +103,14 @@ function saveCacheEntry(finishedRun) {
     if (commandLineInterface["no-cache-save"] == false) {
         cache.save(mFileCacheKey(finishedRun.fileContext), {
             subkey: finishedRun.fileContext.cacheKey,
-            data: finishedRun.fileContext,
+            fileContext: finishedRun.fileContext,
             log: finishedRun.log
         });
     }
 }
 
 /**
- * @typedef {object} CacheEntry
- * @property {string} subkey
- * @property {import("./transmutations").TransmutateContext} data
- * @property {androidStudioLoggingMessage[]} log
+ * @typedef {import("./worker").MaybeCompilationSucceeded & ({subkey: string})} CacheEntry
  */
 
 /**
@@ -111,6 +121,7 @@ function saveCacheEntry(finishedRun) {
 function getCacheEntry(fileContext) {
     if (commandLineInterface["no-cache"]) return null;
 
+    /** @type {CacheEntry} */
     const cacheEntry = cache.get(mFileCacheKey(fileContext), null);
 
     if (cacheEntry != null && cacheEntry.subkey == fileContext.cacheKey) return cacheEntry;
@@ -126,12 +137,13 @@ function mFileCacheKey(fileContext) {
     return "autoauto compiler file cache " + fileContext.sourceFullFileName;
 }
 
-function writeAndCallback(finishedFileContext, autoautoFileContexts, cb) {
-    autoautoFileContexts.push(finishedFileContext);
-    writeWrittenFiles(finishedFileContext);
-    cb(finishedFileContext);
-}
-
+/**
+ * 
+ * @param {import("./worker").MaybeCompilation[]} allFileContexts 
+ * @param {import("./transmutations").SerializableTransmutationInstance[]} codebaseTasks 
+ * @param {Object.<string, *>} codebaseInputs 
+ * @param {Object.<string, string | Buffer>} codebaseTransmutationWrites 
+ */
 async function evaluateCodebaseTasks(allFileContexts, codebaseTasks, codebaseInputs, codebaseTransmutationWrites) {
     for (const transmut of codebaseTasks) {
         const o = makeCodebaseContext(codebaseTransmutationWrites);
@@ -145,6 +157,11 @@ function sha(s) {
     return crypto.createHash("sha256").update(s).digest("hex");
 }
 
+/**
+ * 
+ * @param {Object.<string, *>} codebaseTransmutationWrites 
+ * @returns {import("./transmutations").CodebaseContext}
+ */
 function makeCodebaseContext(codebaseTransmutationWrites) {
     return {
         output: undefined,
@@ -190,6 +207,10 @@ function makeFileContext(file, preprocessInputs, environmentHash) {
     return ctx;
 }
 
+/**
+ * 
+ * @param {import("./transmutations").TransmutateContext} fileContext 
+ */
 function writeWrittenFiles(fileContext) {
     for (const filename in fileContext.writtenFiles) {
         const content = fileContext.writtenFiles[filename];

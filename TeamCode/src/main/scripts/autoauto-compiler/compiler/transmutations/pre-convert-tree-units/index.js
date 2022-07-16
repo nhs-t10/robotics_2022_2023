@@ -4,6 +4,7 @@ var query = require("./query");
 var unitConversion = require("../../../../unit-conversion");
 const androidStudioLogging = require("../../../../script-helpers/android-studio-logging");
 var collapseSpace = require("../../../../script-helpers/format-helpers/collapsespace-templatetag");
+const help = require("../../../../unit-conversion/help");
 
 module.exports = function (context) {
     context.output = convert(context.inputs["text-to-syntax-tree"], context.sourceFullFileName, context.fileFrontmatter);
@@ -28,6 +29,8 @@ var DEFAULT_DIMENSION_CONVERSIONS = {
 
 function convert(tree, loggingFile, frontmatter) {
     var dimensionConversions = loadDimensionConversionsFromFrontmatter(DEFAULT_DIMENSION_CONVERSIONS, frontmatter);
+
+    detectIfUnitHelpRequired(frontmatter);
     
     var unitvalues = query(tree, "UnitValue");
     unitvalues.forEach(x => rewriteUnitvalue(x, loggingFile, frontmatter, dimensionConversions));
@@ -95,10 +98,13 @@ function rewriteUnitvalue(unitValue, loggingFile, frontmatter, dimensionConversi
 function errorUnknownUnit(unitAmount, unitAbbreviation, loggingLocation) {
     throw {
         kind: "ERROR", 
-        location: unitValue.location,
-        text: `Unknown unit ${uType}`,
+        location: loggingLocation,
+        text: `Unknown unit "${unitAbbreviation}"`,
         original: collapseSpace`This program uses the unit ${unitAmount}${unitAbbreviation}. '${unitAbbreviation}' is not a known abbreviation,
-        so Autoauto can't convert it to a base unit. Please make sure that you didn't make a typo.\n\nThat's all we know.`
+        so Autoauto can't convert it to a base unit. Please make sure that you didn't make a typo.
+For a list of units, use the command-line flag \`--help-detail=units\`, use the frontmatter value \`$ help_detail: "units" $\`, or visit <https://autoauto.dev/help/units>.
+
+That's all we know.`
     };
 }
 
@@ -179,4 +185,14 @@ function makeSureUserIsntAFilthyAmerican(loggingLocation, loggingFile, frontmatt
             b) Use 'metres' or 'min' instead of 'm'.`,
         location: loggingLocation
     }, loggingFile);
+}
+
+function detectIfUnitHelpRequired(frontmatter) {
+    if(frontmatter.help_detail === "units") {
+        androidStudioLogging.sendTreeLocationMessage({
+            kind: "INFO",
+            text: "[Help] Units",
+            original: help.getUnitsString()
+        })
+    }
 }

@@ -1,5 +1,6 @@
 "use strict";
 
+const { send } = require("process");
 var workerThreads = require("worker_threads");
 var commandLineInterface = require("../../command-line-interface");
 const androidStudioLogging = require("../../script-helpers/android-studio-logging");
@@ -21,7 +22,8 @@ const androidStudioLogging = require("../../script-helpers/android-studio-loggin
  */
 
 /**
- * @typedef {Object.<string, import("./worker.js").MaybeCompilation>} t_allJobs
+ * @typedef {Object.<string, import("./worker.js").MaybeCompilation | null>} t_allJobs 
+ * A map of jobs, keyed by source file. Null when they're currently compiling.
  */
 
 /**
@@ -51,9 +53,22 @@ const androidStudioLogging = require("../../script-helpers/android-studio-loggin
  * @property {boolean} busy
  * @property {(fileContext:TransmutateContext, job:jobCallback)=>void} assignJob
  * @property {()=>void} close
+ * @property {boolean} mayExpectMoreJobs Whether the worker may expect more jobs going into the pool. Used in resolving dependencies
  * 
  */
 
+/**
+ * @typedef {object} workerPool
+ * @property {(fileContext: TransmutateContext, cb: jobCallback) => undefined} giveJob;
+ * @property {(fileContext: TransmutateContext) => undefined} addFinishedJobFromCache;
+ * @property {() => void} finishGivingJobs
+ * @property {() => undefined} close
+ */
+
+/**
+ * 
+ * @returns {workerPool}
+ */
 module.exports = function () {
     var pool = [], queue = [], finishListeners = {}, allJobs = {}, jobDependencyGraph = {};
 
@@ -96,6 +111,7 @@ module.exports = function () {
             });
         },
         finishGivingJobs: function () {
+            stopExpectingMoreJobs(pool);
             clearNonExistantFinishListeners(allJobs, finishListeners);
         },
         close: function () {
@@ -105,7 +121,11 @@ module.exports = function () {
 
 }
 
-
+function stopExpectingMoreJobs(pool) {
+    for (const worker of pool) {
+        worker.mayExpectMoreJobs = false;
+    }
+}
 
 /**
  * 
@@ -131,7 +151,8 @@ function fakeWorker(queue, finishListeners, allJobs, jobDependencyGraph) {
  */
 function initWorker(queue, finishListeners, allJobs, jobDependencyGraph) {
     var worker = new workerThreads.Worker(__dirname + "/worker.js", {
-        workerData: process.argv.slice(2)
+        workerData: process.argv.slice(2),
+        argv: process.argv.slice(2)
     });
 
     return createWorkerWrap(worker, queue, finishListeners, allJobs, jobDependencyGraph);
@@ -151,6 +172,7 @@ function createWorkerWrap(worker, queue, finishListeners, allJobs, jobDependency
     var callbacks = {};
 
     var wrap = {
+        mayExpectMoreJobs: true,
         busy: false,
         assignJob: assignJob,
         close: close
@@ -167,7 +189,9 @@ function createWorkerWrap(worker, queue, finishListeners, allJobs, jobDependency
     function assignJob(job, cb) {
         wrap.busy = true;
         const id = job.sourceFullFileName;
-        
+
+        allJobs[id] = null;
+
         callbacks[id] = cb;
         worker.postMessage({
             type: "newJob",
@@ -188,7 +212,7 @@ function createWorkerWrap(worker, queue, finishListeners, allJobs, jobDependency
             if (callbacks[m.id]) callbacks[m.id](m.body);
 
             allJobs[m.id] = m.body;
-            
+
             callFinishListeners(finishListeners, m.id, m.body);
 
             wrap.busy = false;
@@ -197,7 +221,9 @@ function createWorkerWrap(worker, queue, finishListeners, allJobs, jobDependency
             const depId = m.dependencyId;
             const jobId = m.id;
 
-            if (depId in allJobs) {
+            if(wrap.mayExpectMoreJobs === false && allJobs[depId] === undefined) {
+                sendNonexistDependency(worker, jobId, depId);
+            } else if (depId in allJobs && allJobs[depId] !== null) {
                 sendDependencyComplete(worker, jobId, depId, allJobs[depId]);
             } else {
                 wrap.busy = false;
@@ -211,14 +237,14 @@ function createWorkerWrap(worker, queue, finishListeners, allJobs, jobDependency
             if (noteJobDependency(jobDependencyGraph, finishListeners, depId, jobId) == true) {
                 assignFromQueue();
             }
-        } else if(m.type == "jobError") {
+        } else if (m.type == "jobError") {
             const id = m.id;
-            if(id in callbacks) {
+            if (id in callbacks) {
                 callbacks[id]({
                     success: "COMPILATION_FAILED",
                     error: m.error,
                     fileAddress: id
-                })
+                });
             }
         }
     });
@@ -234,6 +260,10 @@ function createWorkerWrap(worker, queue, finishListeners, allJobs, jobDependency
  * @param {import("./worker.js").MaybeCompilation} maybeCompilation 
  */
 function sendDependencyComplete(worker, jobId, depId, maybeCompilation) {
+    if(maybeCompilation == null) {
+        console.log("BAD BAD BADB DABD");
+        throw new Error("ABDD BAHDBD ");
+    }
     worker.postMessage({
         type: "dependencyComplete",
         id: jobId,
@@ -255,6 +285,23 @@ function clearNonExistantFinishListeners(allJobs, finishListeners) {
             });
         }
     }
+}
+
+/**
+ * 
+ * @param {Worker} worker 
+ * @param {string} jobId
+ * @param {string} depId 
+ */
+function sendNonexistDependency(worker, jobId, depId) {
+    worker.postMessage({
+        type: "dependencyComplete",
+        id: jobId,
+        dependencyId: depId,
+        body: {
+            success: "DOES_NOT_EXIST"
+        }
+    });
 }
 
 /**

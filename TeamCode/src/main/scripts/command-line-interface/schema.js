@@ -12,6 +12,8 @@
  * @property {boolean} agpbi
  * @property {boolean} build-history
  * @property {boolean} help
+ * @property {boolean} debug
+ * @property {"units" | ""} help-detail
  */
 
 
@@ -65,5 +67,15 @@ module.exports = {
         value: false,
         short: ["h"],
         description: "Print help message and exit"
+    },
+    debug: {
+        value: false,
+        short: [],
+        description: "Print detailed debug information"
+    },
+    "help-detail": {
+        value: "",
+        short: [],
+        description: "Print detailed help information and exit. Use 'units' to specify the part that you want help for."
     }
 }

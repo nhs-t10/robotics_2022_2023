@@ -18,8 +18,22 @@ module.exports = {
     cachedSafeReadFile: cachedSafeReadFile,
     safeWriteFileEventually: safeWriteFileEventually,
     deleteIfExists: deleteIfExists,
+    readJSONFile: readJSONFile,
     getGitRootDirectory: ()=>cachedGitDirectory,
     getGradleRootDirectory: ()=>cachedGradleRootDirectory
+}
+
+/**
+ * @template T
+ * @param {string} file 
+ * @param {T} defaultValue 
+ * @returns {T | *}
+ */
+function readJSONFile(file, defaultValue) {
+    try {
+        return JSON.parse(fs.readFileSync(file))
+    } catch(e) {}
+    return defaultValue;
 }
 
 function cachedSafeReadFile(filename) {

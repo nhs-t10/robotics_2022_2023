@@ -1,6 +1,7 @@
 "use strict";
 
 var fs = require("fs");
+const { readJSONFile } = require("../script-helpers/safe-fs-utils");
 
 module.exports = function(cacheMetaFile) {
     var cacheMetaObj = getCacheMeta(cacheMetaFile);
@@ -20,14 +21,7 @@ module.exports = function(cacheMetaFile) {
 
 function getCacheMeta(cacheMetaFile) {
     if (!fs.existsSync(cacheMetaFile)) return {};
-    else return loadJSONFile(cacheMetaFile);
-}
-
-function loadJSONFile(file) {
-    try {
-        return JSON.parse(fs.readFileSync(file))
-    } catch(e) {}
-    return {};
+    else return readJSONFile(cacheMetaFile, {});
 }
 
 function registerExitHook(cacheMetaFile, cacheMetaObj) {

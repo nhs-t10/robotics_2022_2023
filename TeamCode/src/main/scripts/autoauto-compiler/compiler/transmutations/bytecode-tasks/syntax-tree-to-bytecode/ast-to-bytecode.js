@@ -193,7 +193,7 @@ async function valueToBytecodeBlocks(valueAst, constantPool) {
 /**
  *
  * @param {*} valueAst
- * @param {*} constantPool
+ * @param {import("../constant-pool").constantpool} constantPool
  * @returns {Promise<valueComputationBytecode>}
  */
 async function delegatorExpressionToBytecode(ast, constantPool) {
@@ -206,9 +206,70 @@ async function delegatorExpressionToBytecode(ast, constantPool) {
         location: ast.location,
         kind: "ERROR"
     }
-    const relativeFile = path.join(currentFolder, ast.delegateTo.str);
+    let dependnecyString = ast.delegateTo.str;
+    if(!dependnecyString.endsWith(".autoauto")) dependnecyString += ".autoauto";
+
+    const dependencyFile = path.join(currentFolder, dependnecyString);
     
-    const dependency = await requestDependencyToParent(currentFile, relativeFile);
+
+    if(dependencyFile in constantPool.dependencyLabels) {
+        console.log(constantPool.dependencyLabels)
+        return emitExpressionOfPreviousDependency(constantPool, dependencyFile, ast);
+    } else {
+        const dependencyCode = await createDependencyBlocks(currentFile, dependencyFile, constantPool, ast);
+        constantPool.dependencyLabels[dependencyFile] = dependencyCode.entryLabel;
+        return emitExpressionOfDependencyFile(dependencyCode, constantPool, ast);
+    }
+}
+
+/**
+ * 
+ * @param {DependencyCodeRecord} dependencyCode 
+ * @param {import("../constant-pool").constantpool} constantPool 
+ * @param {import("../../text-to-syntax-tree/parser").AutoautoASTElement} ast 
+ * @returns {valueComputationBytecode}
+ */
+function emitExpressionOfDependencyFile(dependencyCode, constantPool, ast) {
+    return {
+        dependentBlocks: dependencyCode.blocks,
+        computation: emitBytecodeWithLocation(bytecodeSpec.call_coroutine, [
+            emitConstantWithLocation(dependencyCode.entryLabel, constantPool, ast)
+        ], ast)
+    };
+}
+
+/**
+ * 
+ * @param {import("../constant-pool").constantpool} constantPool 
+ * @param {string} dependencyFile 
+ * @param {import("../../text-to-syntax-tree/parser").AutoautoASTElement} ast
+ * @returns {valueComputationBytecode}
+ */
+function emitExpressionOfPreviousDependency(constantPool, dependencyFile, ast) {
+    return {
+        dependentBlocks: [],
+        computation: emitBytecodeWithLocation(bytecodeSpec.call_coroutine, [
+            emitConstantWithLocation(constantPool.dependencyLabels[dependencyFile], constantPool, ast)
+        ], ast)
+    };
+}
+
+/**
+ * @typedef {object} DependencyCodeRecord
+ * @property {Block[]} blocks
+ * @property {string} entryLabel
+ */
+
+/**
+ * @param {string} currentFile
+ * @param {string} dependencyFile 
+ * @param {import("../constant-pool").constantpool} constantPool
+ * @param {import("../../text-to-syntax-tree/parser").AutoautoASTElement} ast
+ * 
+ * @returns {Promise<DependencyCodeRecord>}
+ */
+async function createDependencyBlocks(currentFile, dependencyFile, constantPool, ast) {
+    const dependency = await requestDependencyToParent(currentFile, dependencyFile);
     
     const dependencyPrefix = sha(dependency.sourceFullFileName);
     const depBytecode = dependency.inputs["syntax-tree-to-bytecode"].blocks;
@@ -241,34 +302,31 @@ async function delegatorExpressionToBytecode(ast, constantPool) {
         jumps: [jumpToLabel(continuationEntryLabel, constantPool)]
     }
     dependencyBlocks.push(modArgsSetter);
-    
-    
-    //and now, make a jump to it!
+
     return {
-        dependentBlocks: dependencyBlocks.concat(modArgsBytecode.dependentBlocks),
-        computation: emitBytecodeWithLocation(bytecodeSpec.call_coroutine, [
-            emitConstantWithLocation(entryLabel, constantPool, ast)
-        ], ast)
-    };
+        blocks: dependencyBlocks.concat(modArgsBytecode.dependentBlocks),
+        entryLabel: entryLabel
+    }
 }
 
 function addFileToLocations(bytecode, file) {
     if(typeof file !== "string") throw new Error("Location without file information");
     
     for(const block of bytecode) {
-        recursorAddFileLocation(block.code, file, block);
-        recursorAddFileLocation(block.jumps, file, block);
+        recursorAddFileLocation(block.code, file);
+        recursorAddFileLocation(block.jumps, file);
     }
 }
 
-function recursorAddFileLocation(bytecodeArray, file, __DEBIG) {
+function recursorAddFileLocation(bytecodeArray, file) {
     for(const bytecode of bytecodeArray) {
         const loc = bytecode.location;
-        if(!loc) console.log(__DEBIG);
         if(loc.fileStack === undefined) loc.fileStack = [loc.file];
-        loc.fileStack.push(file);
+
+        const lastItem = loc.fileStack[loc.fileStack.length - 1];
+        if(lastItem !== file) loc.fileStack.push(file);
         
-        recursorAddFileLocation(bytecode.args, file, __DEBIG);
+        recursorAddFileLocation(bytecode.args, file);
     }
 }
 

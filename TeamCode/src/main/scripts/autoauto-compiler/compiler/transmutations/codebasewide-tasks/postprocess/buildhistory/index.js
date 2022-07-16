@@ -5,9 +5,7 @@ const processHistory = require("./process-history.js");
 const path = require("path");
 
 /**
- * 
- * @param {import("../../../../transmutations").TransmutateContext} context
- * @param {*} contexts 
+ * @type {import("../../..").CodebaseTransmutateFunction}
  */
 module.exports = async function(context, contexts) {
     

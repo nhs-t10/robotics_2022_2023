@@ -1,5 +1,8 @@
 "use strict";
 
+const { workerData } = require("worker_threads");
+const unitConversionHelp = require("../unit-conversion/help");
+
 var loadArgv = require("./command-line-arguments");
 const printHelpInfo = require("./help");
 var schema = require("./schema");
@@ -13,13 +16,27 @@ var schema = require("./schema");
 /**
  * @type CommandLineArguments
  */
-var cla = {};
+const commandLineInterface = {};
+module.exports = commandLineInterface;
 
-module.exports = cla;
-Object.assign(cla, loadArgv(schema));
+loadCommandLineInterface();
 
+testHelpFlags();
 
-if(cla.help) {
-    printHelpInfo(schema);
-    process.exit();
+function loadCommandLineInterface() {
+    if(typeof workerData === "object" && Array.isArray(workerData)) {
+        process.argv = process.argv.concat(workerData);
+    }
+    Object.assign(commandLineInterface, loadArgv(schema));
+}
+
+function testHelpFlags() {
+    if(commandLineInterface.help) {
+        printHelpInfo(schema);
+        process.exit();
+    }
+    
+    if(commandLineInterface["help-detail"] === "units") {
+        unitConversionHelp.printUnitsAndExit();
+    }
 }

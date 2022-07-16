@@ -3,6 +3,7 @@
 const { inspect } = require("util");
 const workerThreads = require("worker_threads");
 const androidStudioLogging = require("../../script-helpers/android-studio-logging");
+const { structuredClone } = require("../../script-helpers/structured-serialise");
 const compileFile = require("./compile-file");
 
 var listenersForMainThread = { message: () => undefined };
@@ -24,7 +25,6 @@ if (workerThreads.isMainThread) {
 
     }
 } else {
-    process.argv = process.argv.concat(workerThreads.workerData);
     workerThreads.parentPort.on("message", handleParentMessage);
 
     module.exports = {
@@ -154,24 +154,26 @@ function requestDependencyToParent(sourceFile, dependencyFile) {
 
     return new Promise(function (resolve, reject) {
         addDependencyListener(dependencyFile, function (resolvedDep) {
-            androidStudioLogging.setGlobalState(loggingGlobalState);
             
+            androidStudioLogging.setGlobalState(loggingGlobalState);
+
             if (resolvedDep.success === "COMPILATION_FAILED") {
                 reject("Dependency " + dependencyFile + " didn't successfully compile. As such, this file couldn't compile.");
             } else if (resolvedDep.success === "DOES_NOT_EXIST") {
                 reject("Dependency " + dependencyFile + " doesn't exist");
             } else if (resolvedDep.success == "SUCCESS") {
                 if ("fileContext" in resolvedDep) {
-                    resolve(resolvedDep.fileContext);
+                    const clonedFileContext = structuredClone(resolvedDep.fileContext);
+                    resolve(clonedFileContext);
                 } else {
                     reject("bad structure of filecontext!");
                 }
             } else {
-                console.debug(resolvedDep.success);
+                console.log(resolvedDep.success);
                 console.debug(Object.keys(resolvedDep));
                 reject("Malformed dependency result!");
             }
-        })
+        });
         sendMessageToParent({
             type: "jobWaitingOnDependency",
             id: sourceFile,

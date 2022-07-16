@@ -1,5 +1,6 @@
 "use strict";
 
+const commandLineInterface = require("../../command-line-interface");
 const androidStudioLogging = require("../../script-helpers/android-studio-logging");
 
 
@@ -51,13 +52,15 @@ async function tryRunTransmutation(transmutation, fileContext) {
         androidStudioLogging.sendInternalError(e, fileContext.sourceFullFileName);
     }
 
-
     if (fileContext.status === "pass") {
         return true;
     } else {
-        androidStudioLogging.sendTreeLocationMessage({
-            kind: "WARNING", text: `Task ${transmutation.id} didn't report a successful completion`
-        }, fileContext.sourceFullFileName, "WARNING");
+        if(commandLineInterface.debug) {
+            androidStudioLogging.sendTreeLocationMessage({
+                kind: "WARNING", text: `Task ${transmutation.id} didn't report a successful completion`
+            }, fileContext.sourceFullFileName, "WARNING");
+        }
+
         return false;
     }
 }

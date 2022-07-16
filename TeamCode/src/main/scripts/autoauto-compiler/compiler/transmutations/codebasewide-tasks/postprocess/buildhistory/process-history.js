@@ -9,6 +9,7 @@ const what3Words = require("./what-3-words-hash.js");
 const buildPng = require("./build-png");
 const safeFsUtils = require("../../../../../../script-helpers/safe-fs-utils.js");
 const androidStudioLogging = require("../../../../../../script-helpers/android-studio-logging.js");
+const { readJSONFile } = require("../../../../../../script-helpers/safe-fs-utils.js");
 
 const HASH_SECRET = "autoauto family";
 const BUILD_HASH_IGNORED = ["gen", "genealogy", ".cache", "buildimgs", "scripts"];
@@ -18,7 +19,7 @@ module.exports = async function (srcDirectory, assetsDirectory, genDirectory) {
     const computerHash = getComputerHash();
     const familyTreeRecordsDirectory = getFamilyTreeRecordsDirectory(assetsDirectory);
     const familyLineFile = getFamilyLineFile(familyTreeRecordsDirectory, computerHash);
-    const familyLine = readJsonFile(familyLineFile);
+    const familyLine = readJSONFile(familyLineFile, {});
     
     if (!familyLine.browser) {
         familyLine.browser = "Removed_for_privacy_reasons_" + Math.round(Math.random() * 0xFF_FF_FF).toString(16);
@@ -37,7 +38,7 @@ module.exports = async function (srcDirectory, assetsDirectory, genDirectory) {
     var phrase = what3Words.complexPhrase(buildHash);
     var pngFile = await buildPng(familyLine.buildCount, srcDirectory, BUILD_HASH_IGNORED, assetsDirectory);
     
-    androidStudioLogging.sendPlainMessage({
+    androidStudioLogging.sendTreeLocationMessage({
         kind: "INFO",
         text: "Build Name: " + name
     });
@@ -175,11 +176,6 @@ function generateCognomen(hash) {
 
     return name.charAt(0).toUpperCase() + name.substring(1).toLowerCase();
 
-}
-
-function readJsonFile(file) {
-    if(!fs.existsSync(file)) return {};
-    return JSON.parse(fs.readFileSync(file).toString());
 }
 
 function random(seed) {

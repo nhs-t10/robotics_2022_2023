@@ -13,6 +13,7 @@ const typeSystemCreator = require("./optimizers-and-checkers/type-inference/type
  * @property {()=>denseCodeMap} denseCodeMap
  * @property {(label:string, subcategory:string?)=>string} subblockLabel
  * @property {()=>string} tempVar
+ * @property {Object.<string, string>} dependencyLabels a map of labels for each dependency, indexed by their absolute filename.
  */
 
 /**
@@ -33,11 +34,12 @@ module.exports = function (fileContext) {
     
     var pool = new Map();
     var invPool = {};
-    var subId = 0, tempvars = 0, coroutineContinuations = 0;
+    var subId = 0, tempvars = 0, coroutineContinuations = 0, dependencyLabels = {};
     
     var fileAddressSha = sha(fileAddress);
     
     return {
+        dependencyLabels: dependencyLabels,
         currentFile: fileAddress,
         universalPrefix: fileAddressSha,
         getCodeFor: function (cons) {

@@ -16,17 +16,17 @@ module.exports = {
      * @param {string} s 
      * @returns {SerializableTransmutationInstance[]}
      */
-    expandTasks: function(taskSpec, file) {
+    expandTasks: function (taskSpec, file) {
         var tasks = memoizedParseSpecExpandAliases(taskSpec, file);
         insertDeps(tasks, undefined, file);
-        
+
         return idsToTras(tasks);
     },
-    loadTaskList: async function() {
+    loadTaskList: async function () {
         //TODO: implement `loadTransmutations()` asynchronously. See the file-scanner for example.
         await loadTransmutations(__dirname);
     },
-    getPostProcessTransmutations: function() {
+    getPostProcessTransmutations: function () {
         return postprocessTransmutations;
     },
     getPreProcessTransmutations: function () {
@@ -35,7 +35,7 @@ module.exports = {
 };
 
 function idsToTras(ids) {
-    return ids.map(x=>{
+    return ids.map(x => {
         var f = {};
         Object.assign(f, transmutations[x.id]);
         f.isDependency = x.dep;
@@ -44,12 +44,12 @@ function idsToTras(ids) {
 }
 
 function memoizedParseSpecExpandAliases(sp, file) {
-    
+
     var t = JSON.stringify(sp);
-    
+
     var cVal = memoizeParsedAliases[t];
-    
-    if(!cVal) {
+
+    if (!cVal) {
         cVal = parseSpecExpandAliases(sp, file);
         memoizeParsedAliases[t] = cVal;
     }
@@ -61,33 +61,33 @@ function memoizedParseSpecExpandAliases(sp, file) {
      * @returns {TransmutationTask[]}
      */
 function parseSpecExpandAliases(sp, file) {
-    if(typeof sp === "string") sp = sp.split(/ +/);
+    if (typeof sp === "string") sp = sp.split(/ +/);
 
     var r = [];
     sp.forEach(x => {
         x = x.trim();
 
         var expanded = expandAlias(x, file);
-        
+
         r = r.concat(expanded);
     });
-    
+
     return r;
 }
 
 function insertDeps(insertInto, findDepsIn, file) {
-    if(findDepsIn === undefined) findDepsIn = insertInto;
-    
-    for(var i = 0; i < findDepsIn.length; i++) {
+    if (findDepsIn === undefined) findDepsIn = insertInto;
+
+    for (var i = 0; i < findDepsIn.length; i++) {
         var req = transmutations[findDepsIn[i].id].requires;
         var reqExpanded = memoizedParseSpecExpandAliases(req, file);
-        
-        var intoIndex = insertInto.findIndex(x=>x.id == findDepsIn[i].id);
-        
-        for(var j = 0; j < reqExpanded.length; j++) {
+
+        var intoIndex = insertInto.findIndex(x => x.id == findDepsIn[i].id);
+
+        for (var j = 0; j < reqExpanded.length; j++) {
             var x = reqExpanded[j].id;
-            if(!insertInto.find(z=>z.id == x)) {
-                insertInto.splice(intoIndex,0,{id:x,dep:true});
+            if (!insertInto.find(z => z.id == x)) {
+                insertInto.splice(intoIndex, 0, { id: x, dep: true });
                 intoIndex++;
             }
         }
@@ -97,39 +97,39 @@ function insertDeps(insertInto, findDepsIn, file) {
 
 function expandAlias(spk, file) {
     spk = spk.trim();
-    
+
     var category = spk.startsWith(":");
-    spk = spk.replace(":","");
+    spk = spk.replace(":", "");
 
     var keys = Object.keys(transmutations);
     var rgxp;
     try {
         rgxp = new RegExp("^" + spk.replace(/\*/g, ".*") + "$");
-    } catch(e) {
+    } catch (e) {
         throw `Bad task specifier ${JSON.stringify(spk)} in ${file}`;
     }
-    
+
     var globspanded = keys.filter(x => {
-        if(category) return rgxp.test(transmutations[x].type);
+        if (category) return rgxp.test(transmutations[x].type);
         else return rgxp.test(x);
     });
-    
+
 
     return globspanded.map(x => {
         var e = transmutations[x];
         if (!e) throw "No such transmutation `" + x + "`";
-        
+
         if (e.type == "alias") return e.aliasesTo.split(" ").map(x => expandAlias(x, file));
-        else return {id: e.id};
+        else return { id: e.id };
     }).flat(2);
 }
 
 async function loadTransmutations(dirname) {
     var files = folderScanner(dirname, ".transmute-meta.js");
-    
-    while(true) {
+
+    while (true) {
         var f = await files.next();
-        if(f.done) break;
+        if (f.done) break;
         else loadTransmutation(f.value.replace(".transmute-meta.js", ".js"), f.value);
     }
 }
@@ -137,10 +137,10 @@ async function loadTransmutations(dirname) {
 function loadTransmutation(sourceFile, metaFile) {
     var meta = require(metaFile);
     meta.sourceFile = sourceFile;
-    
-    if(meta.type == "codebase_postprocess") {
+
+    if (meta.type == "codebase_postprocess") {
         postprocessTransmutations.push(meta);
-    } else if(meta.type == "codebase_preprocess") {
+    } else if (meta.type == "codebase_preprocess") {
         preprocessTransmutations.push(meta);
     } else {
         if (transmutations[meta.id]) throw "The transmutation `" + meta.id + "` is already registered!";
@@ -173,10 +173,23 @@ function loadTransmutation(sourceFile, metaFile) {
  */
 
 /**
- * @callback TransmutationFunction
- * @param {TransmutateContext} context
- * @param {TransmutateContext[]?} contexts
- * @returns {TransmutateContext?}
+ * @typedef {SingleTransmutateFunction | CodebaseTransmutateFunction} TransmutationFunction
+ */
+
+/**
+ * @typedef {(context: TransmutateContext) => undefined} SingleTransmutateFunction
+ */
+
+/**
+ * @typedef { (context: CodebaseContext, contexts: import("../worker").MaybeCompilation[]) => undefined } CodebaseTransmutateFunction
+ */
+
+/**
+ * @typedef {object} CodebaseContext 
+ * @property {Object.<string, string>} writtenFiles
+ * @property {string} resultRoot
+ * @property {string} assetsRoot
+ * @property {string} sourceRoot
  */
 
 /**

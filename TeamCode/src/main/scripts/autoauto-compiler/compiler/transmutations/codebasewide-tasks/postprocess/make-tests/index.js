@@ -5,16 +5,16 @@ var path = require("path");
 var maketest = require("./make-test");
 
 /**
- * 
- * @param {*} context 
- * @param {(import("../../../index").TransmutateContext)[]} contexts
+ * @type {import("../../..").CodebaseTransmutateFunction}
  */
 module.exports = function(context, contexts) {
-    var testDir = path.join(contexts[0].resultRoot, "org/firstinspires/ftc/teamcode/unitTests");
+    var testDir = path.join(context.resultRoot, "org/firstinspires/ftc/teamcode/unitTests");
     
 
     var testRecords = contexts
-    .filter(x=>x.status == "pass" && "write-to-output-file" in x.inputs)
+    .filter(x=>x.success == "SUCCESS")
+    .map(x=>x.fileContext)
+    .filter(x=> "write-to-output-file" in x.inputs)
     .map(x=>({
         frontmatter: x.fileFrontmatter,
         className: x.resultBaseFileName.split(".")[0],
