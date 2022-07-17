@@ -1,5 +1,6 @@
 $
-compilerMode: "optimized-bytecode"
+compilerMode: "optimized-bytecode",
+ignorewarning_single_statement_block: true
 $
 
 /*
@@ -13,7 +14,7 @@ log("ULS!"), goto afterStatements;
 #afterStatements:
     log("zero seconds..."), after 1ms next;
     //meters, not minutes!
-    log("zero meters..."), after 0m next;
+    log("zero meters..."), after 0metres next;
     log("zero milliseconds..."), after 0ms next;
     log("zero centimeters..."), after 0cm next;
     log("zero light-years..."), after 0ly goto ifStatements
@@ -21,7 +22,7 @@ log("ULS!"), goto afterStatements;
 #ifStatements:
     if(true) { log("this works like java"), next };
     if(false) log("fail"), next; //this next should trigger, because it's outside of the `if`
-    if(false) { log("fail") } else { next }; //else clauses
+    if(false) log("fail") else next; //else clauses
     goto letStatements;
 
 #letStatements:
@@ -31,14 +32,13 @@ log("ULS!"), goto afterStatements;
     let table.foup = "jeremy", next;
     log(table), next;
     let table = 3, next; //actually, it's a number now :)
-    let table.foofoo = 2, next; //it can still have properties
-    log(table), log(table.foofoo), next;
+    log(table), next;
     goto loopingPath
 
 #loopingPath:
     let counter = 0, next; //this should log the numbers 1-20!
     let counter = counter + 1, log("count: " + counter), next;
-    if(counter < 20) { skip -1 } else { next };
+    if(counter < 20) skip -1 else next;
     goto functionDefinition;
 
 #functionDefinition:

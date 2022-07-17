@@ -17,14 +17,14 @@
     goto duckspin;
 
 #duckspin:
-    let tError = delegate("helpers/pid-turn.autoauto", -90), if (tError < 5) next;
+    //let tError = delegate("helpers/pid-turn.autoauto", -90), if (tError < 5) next;
     driveOmni(0.7,0,0), after 5.1in next;
     driveOmni(0.3,0,0), after 1.5in next, after 2000ms next;
     setMotorPower("Carousel", 0.5), after 3000ms next;
     setMotorPower("Carousel", 0), next;
     neckTall(), when (neckMovementFinished()) { log("movement done"), next };
     driveOmni(0,0,0.7), after 10in next;
-    let tError = delegate("helpers/pid-turn.autoauto", -90), if (tError < 5) next;
+    //let tError = delegate("helpers/pid-turn.autoauto", -90), if (tError < 5) next;
     goto split;
 
 #split:
