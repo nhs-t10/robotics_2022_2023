@@ -22,10 +22,16 @@ const COMPILED_RESULT_DIRECTORY = BUILD_ROOT_DIRS.gen;
 const ASSETS_DIRECTORY = BUILD_ROOT_DIRS.asset;
 
 module.exports = (async function main() {
+    const startTimeMs = Date.now(); 
+    
     await transmutations.loadTaskList();
-    await compileAllFromSourceDirectory();
+    const fileCount = await compileAllFromSourceDirectory();
 
+    androidStudioLogging.printAppendixes();
+    
     androidStudioLogging.printTypeCounts();
+    
+    androidStudioLogging.printTimingInformation(fileCount, Date.now() - startTimeMs);
 });
 
 async function compileAllFromSourceDirectory() {
@@ -56,6 +62,8 @@ async function compileAllFromSourceDirectory() {
     writeWrittenFiles({ writtenFiles: codebaseTransmutationWrites });
 
     compilerWorkers.close();
+    
+    return jobPromises.length;
 }
 
 /**
@@ -82,6 +90,7 @@ function makeContextAndCompileFile(filename, compilerWorkers, preprocessInputs, 
             compilerWorkers.giveJob(fileContext, function (run) {              
                 if(run.success === "SUCCESS") {
                     saveCacheEntry(run);
+                    
                     androidStudioLogging.sendMessages(run.log);
                     writeWrittenFiles(run.fileContext);
                     resolve(run);

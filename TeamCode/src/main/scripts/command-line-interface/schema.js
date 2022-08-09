@@ -14,6 +14,7 @@
  * @property {boolean} help
  * @property {boolean} debug
  * @property {"units" | ""} help-detail
+ * @property {boolean} no-appendix
  */
 
 
@@ -77,5 +78,10 @@ module.exports = {
         value: "",
         short: [],
         description: "Print detailed help information and exit. Use 'units' to specify the part that you want help for."
+    },
+    "no-appendix": {
+        value: false,
+        short: [],
+        description: "Hide detailed type outlines."
     }
 }

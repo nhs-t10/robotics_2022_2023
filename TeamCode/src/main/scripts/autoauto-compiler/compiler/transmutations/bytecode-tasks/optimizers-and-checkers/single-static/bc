@@ -1,0 +1,69 @@
+'s/fde68873f0607eb15b5f5aded6f6a4b257ae4660/<init>/0/stmt/0/fde68873f0607eb15b5f5aded6f6a4b257ae4660/after-if-finished-body/3':
+
+ ("s/fde68873f0607eb15b5f5aded6f6a4b257ae4660/<init>/1/stmt/0") jmp_l
+
+
+'s/fde68873f0607eb15b5f5aded6f6a4b257ae4660/<init>/0/stmt/0':
+
+ ({"__phi":["@fde68873f0607eb15b5f5aded6f6a4b257ae4660-temp0@1","@fde68873f0607eb15b5f5aded6f6a4b257ae4660-temp0@2"]}) getvar  ("s/fde68873f0607eb15b5f5aded6f6a4b257ae4660/<init>/0/stmt/0/fde68873f0607eb15b5f5aded6f6a4b257ae4660/after-init/1") jmp_l_cond  ("s/fde68873f0607eb15b5f5aded6f6a4b257ae4660/<init>/0/stmt/0/fde68873f0607eb15b5f5aded6f6a4b257ae4660/after-checking/2") jmp_l
+
+
+'s/fde68873f0607eb15b5f5aded6f6a4b257ae4660/<init>/0/stmt/0/fde68873f0607eb15b5f5aded6f6a4b257ae4660/after-init/1':
+ ("@fde68873f0607eb15b5f5aded6f6a4b257ae4660-temp0@2")  (false) setvar  ("@fde68873f0607eb15b5f5aded6f6a4b257ae4660-temp1@1")  ([3000,"ms"]) unit_currentv setvar
+ ("s/fde68873f0607eb15b5f5aded6f6a4b257ae4660/<init>/0/stmt/0/fde68873f0607eb15b5f5aded6f6a4b257ae4660/after-checking/2") jmp_l
+
+
+'s/fde68873f0607eb15b5f5aded6f6a4b257ae4660/<init>/0/stmt/0/fde68873f0607eb15b5f5aded6f6a4b257ae4660/after-checking/2':
+
+ ([3000,"ms"]) unit_currentv  ("@fde68873f0607eb15b5f5aded6f6a4b257ae4660-temp1@1") getvar abs_dif  ([3000,"ms"]) cmp_gte  ("s/fde68873f0607eb15b5f5aded6f6a4b257ae4660/<init>/0/stmt/0/fde68873f0607eb15b5f5aded6f6a4b257ae4660/after-if-finished-body/3") jmp_l_cond  ("s/fde68873f0607eb15b5f5aded6f6a4b257ae4660/<init>/0/stmt/0/fde68873f0607eb15b5f5aded6f6a4b257ae4660/after-done/4") jmp_l
+
+
+'s/fde68873f0607eb15b5f5aded6f6a4b257ae4660/<init>/0/stmt/0/fde68873f0607eb15b5f5aded6f6a4b257ae4660/after-done/4':
+
+ ("s/fde68873f0607eb15b5f5aded6f6a4b257ae4660/<init>/0/stmt/0") yieldto_l
+
+
+'s/fde68873f0607eb15b5f5aded6f6a4b257ae4660/<init>/1/stmt/0':
+
+ ("subcat/fde68873f0607eb15b5f5aded6f6a4b257ae4660/func-enter/9")  (0) makefunction_l  (0)  (0) callfunction  (5) cmp_lt  ("s/fde68873f0607eb15b5f5aded6f6a4b257ae4660/<init>/1/stmt/0/fde68873f0607eb15b5f5aded6f6a4b257ae4660/if-true/5") jmp_l_cond  ("s/fde68873f0607eb15b5f5aded6f6a4b257ae4660/<init>/1/stmt/0/fde68873f0607eb15b5f5aded6f6a4b257ae4660/if-false/6") jmp_l
+
+
+'s/fde68873f0607eb15b5f5aded6f6a4b257ae4660/<init>/1/stmt/0/fde68873f0607eb15b5f5aded6f6a4b257ae4660/if-true/5':
+
+ ("s/fde68873f0607eb15b5f5aded6f6a4b257ae4660/<init>/2/stmt/0") jmp_l
+
+
+'s/fde68873f0607eb15b5f5aded6f6a4b257ae4660/<init>/1/stmt/0/fde68873f0607eb15b5f5aded6f6a4b257ae4660/if-false/6':
+ pass
+ ("s/fde68873f0607eb15b5f5aded6f6a4b257ae4660/<init>/1/stmt/0") yieldto_l
+
+
+'s/df397ed00aeeebf620cb539c40197bbaee5b7cc1/<init>/0/stmt/0':
+ ("df397ed00aeeebf620cb539c40197bbaee5b7cc1-target@1")  ("df397ed00aeeebf620cb539c40197bbaee5b7cc1-module_args@1") getvar  (0) getprop setvar  ("df397ed00aeeebf620cb539c40197bbaee5b7cc1-error@1")  ("df397ed00aeeebf620cb539c40197bbaee5b7cc1-target@1") getvar  ("getThirdAngleOrientation@0") getvar  (0)  (0) callfunction subtr setvar  ("log@0") getvar  ("df397ed00aeeebf620cb539c40197bbaee5b7cc1-error@1") getvar  (1)  (0) callfunction pop  ("df397ed00aeeebf620cb539c40197bbaee5b7cc1-kP@1")  (0.1) setvar  ("df397ed00aeeebf620cb539c40197bbaee5b7cc1-t@1")  (-1)  ("df397ed00aeeebf620cb539c40197bbaee5b7cc1-error@1") getvar mul  ("df397ed00aeeebf620cb539c40197bbaee5b7cc1-kP@1") getvar mul setvar  ("driveOmni@0") getvar  (0)  ("Math@0") getvar  ("cli") getprop  ("df397ed00aeeebf620cb539c40197bbaee5b7cc1-t@1") getvar  (-0.5)  (0.5)  (3)  (0) callfunction  (0)  (3)  (0) callfunction pop  ("df397ed00aeeebf620cb539c40197bbaee5b7cc1-\tcontinuation@@0")  (1) spec_setvar  ("Math@0") getvar  ("abs") getprop  ("df397ed00aeeebf620cb539c40197bbaee5b7cc1-error@1") getvar  (1)  (0) callfunction ret
+
+
+
+'subcat/df397ed00aeeebf620cb539c40197bbaee5b7cc1/provide-continuation/1':
+
+ ("s/df397ed00aeeebf620cb539c40197bbaee5b7cc1/<init>/0/stmt/0") yieldto_l
+
+
+'sl/df397ed00aeeebf620cb539c40197bbaee5b7cc1/real-entry':
+
+ ("s/df397ed00aeeebf620cb539c40197bbaee5b7cc1/<init>/0/stmt/0") jmp_l
+
+
+'subcat/fde68873f0607eb15b5f5aded6f6a4b257ae4660/func-enter/9':
+ ("df397ed00aeeebf620cb539c40197bbaee5b7cc1-module_args@1")  (0) construct_table setvar
+ ("df397ed00aeeebf620cb539c40197bbaee5b7cc1-\tcontinuation@@0") getvar  (1) cmp_eq  ("subcat/df397ed00aeeebf620cb539c40197bbaee5b7cc1/provide-continuation/1") jmp_l_cond  ("sl/df397ed00aeeebf620cb539c40197bbaee5b7cc1/real-entry") jmp_l
+
+
+'s/fde68873f0607eb15b5f5aded6f6a4b257ae4660/<init>/2/stmt/0':
+ ("log@0") getvar  ("haha!")  (1)  (0) callfunction pop
+ ("s/fde68873f0607eb15b5f5aded6f6a4b257ae4660/<init>/2/stmt/0") yieldto_l
+
+
+'ENTRY':
+ ("@fde68873f0607eb15b5f5aded6f6a4b257ae4660-temp0@1")  (true) setvar
+ ("s/fde68873f0607eb15b5f5aded6f6a4b257ae4660/<init>/0/stmt/0") jmp_l
+

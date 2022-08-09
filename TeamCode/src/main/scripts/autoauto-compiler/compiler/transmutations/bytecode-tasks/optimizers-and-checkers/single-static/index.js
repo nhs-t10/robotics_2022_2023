@@ -1,6 +1,8 @@
 "use strict";
 
+const { writeFileSync } = require("fs");
 const bytecodeSpec = require("../../bytecode-spec");
+const { formatBc } = require("../../bytecode-tools");
 
 module.exports = function run(context) {
     var bb = context.inputs["bc-basic-dead-code-elimination"];
@@ -21,6 +23,8 @@ module.exports = function run(context) {
 
     context.output = bytecode;
     context.status = "pass";
+    
+    if(context.sourceBaseFileName == "s.autoauto") writeFileSync(__dirname + "/bc", formatBc(bytecode));
 }
 
 function getArgPrefix(rootBlock) {
@@ -50,8 +54,6 @@ function insertPhiNodes(block, invertedCgraph, globalVarnameCounters) {
 function ssaBlock(block, bytecode, cgraph, invertedCgraph, globalVarnameCounters, rootBlockPrefix) {
     initVariableCounter(block, globalVarnameCounters);
 
-    block.__apfx = rootBlockPrefix;
-
     if (hasBeenSsadAlready(block, globalVarnameCounters)) return;
     markAsSsad(block, globalVarnameCounters);
 
@@ -73,10 +75,12 @@ function ssaBytecodeInstruction(instr, blockLabel, cgraph, invertedCgraph, globa
 
     if (isVariableAddressingInstr(instr)) {
         var varInstr = findVarnameInstructionFromInstr(instr);
+        
+        const variableName = varInstr.__value;
 
-        if (isVariableSettingInstr(instr)) incrementSingleStaticVariable(blockLabel, varInstr.__value, globalVarnameCounters);
+        if (isVariableSettingInstr(instr)) incrementSingleStaticVariable(blockLabel, variableName, globalVarnameCounters);
 
-        varInstr.__value = getSingleStaticVariableName(blockLabel, varInstr.__value, varInstr, globalVarnameCounters, rootBlockPrefix);
+        varInstr.__value = getSingleStaticVariableName(blockLabel, variableName, varInstr, globalVarnameCounters, rootBlockPrefix);
     } else if (isFuncDefInstr(instr)) {
         assignFunctionArgumentNames(instr, globalVarnameCounters);
     }
@@ -102,13 +106,13 @@ function assignFunctionArgumentNames(makefunctionInstr, globalVarnameCounters) {
     }
 }
 
-function getSingleStaticVariableName(blockLabel, plainVariableName, instruction, globalVarnameCounters, rootBlockPrefix) {
+function getSingleStaticVariableName(blockLabel, plainVariableName, instruction, globalVarnameCounters) {
     var variableRecord = getVariableSSARecord(blockLabel, plainVariableName, globalVarnameCounters);
 
     if (variableRecord.blockScopeCounter == 0) {
         setFirstReadInstructionForLaterPhi(blockLabel, plainVariableName, instruction, globalVarnameCounters);
     }
-    return rootBlockPrefix + variableRecord.varname;
+    return variableRecord.varname;
 }
 
 function copyLastSetToChildrenRecursiveNetwork(blockLabel, cgraph, globalVarnameCounters) {

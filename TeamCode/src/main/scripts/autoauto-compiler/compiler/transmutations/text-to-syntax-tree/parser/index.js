@@ -6,13 +6,13 @@ const tokenstream = require("./token-stream");
 
 /**
  * @typedef {object} AutoautoASTElement
- * @property {SourceCodeLocation} location
+ * @property {Location} location
  * @property {string} type
  * @implements {Object.<string, *>}
  */
 
 /**
- * @typedef {RealSourceCodeLocation|SyntheticSourceCodeLocation} SourceCodeLocation
+ * @typedef {RealSourceCodeLocation|SyntheticSourceCodeLocation} Location
  */
 
 /**

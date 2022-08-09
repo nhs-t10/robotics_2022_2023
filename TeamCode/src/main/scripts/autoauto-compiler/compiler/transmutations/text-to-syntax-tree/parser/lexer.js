@@ -89,18 +89,5 @@ function assembleResultToken(lexRule, regexResult, startLine, startColumn, start
  * @typedef {object} token
  * @property {string} name
  * @property {string} content
- * @property {locationRange} location
- */
-
-/**
- * @typedef {object} locationRange
- * @property {locationPoint} start 
- * @property {locationPoint} end
- */
-
-/**
- * @typedef {object} locationPoint
- * @property {number} line
- * @property {number} column
- * @property {number} offset
+ * @property {import(".").Location} location
  */
