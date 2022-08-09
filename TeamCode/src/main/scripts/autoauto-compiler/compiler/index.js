@@ -111,6 +111,7 @@ function makeContextAndCompileFile(filename, compilerWorkers, preprocessInputs, 
 function saveCacheEntry(finishedRun) {
     if (commandLineInterface["no-cache-save"] == false) {
         cache.save(mFileCacheKey(finishedRun.fileContext), {
+            success: "SUCCESS",
             subkey: finishedRun.fileContext.cacheKey,
             fileContext: finishedRun.fileContext,
             log: finishedRun.log

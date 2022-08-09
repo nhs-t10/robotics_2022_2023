@@ -67,7 +67,7 @@ module.exports = async function(writtenFiles) {
     
     addAllRobotfunctionFilesToWrittenFiles(writtenFiles, methods);
 
-    cache.save("autoauto-managers", cacheManagers);
+    cache.save(functionLoaderConfig.CACHE_KEY, cacheManagers);
     return cacheManagers.managers;
 };
 

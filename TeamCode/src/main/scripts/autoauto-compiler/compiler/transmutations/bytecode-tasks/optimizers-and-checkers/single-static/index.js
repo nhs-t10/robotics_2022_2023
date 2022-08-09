@@ -1,8 +1,6 @@
 "use strict";
 
-const { writeFileSync } = require("fs");
 const bytecodeSpec = require("../../bytecode-spec");
-const { formatBc } = require("../../bytecode-tools");
 
 module.exports = function run(context) {
     var bb = context.inputs["bc-basic-dead-code-elimination"];
@@ -23,8 +21,6 @@ module.exports = function run(context) {
 
     context.output = bytecode;
     context.status = "pass";
-    
-    if(context.sourceBaseFileName == "s.autoauto") writeFileSync(__dirname + "/bc", formatBc(bytecode));
 }
 
 function getArgPrefix(rootBlock) {
