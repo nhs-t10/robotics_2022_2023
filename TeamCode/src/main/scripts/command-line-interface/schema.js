@@ -83,5 +83,10 @@ module.exports = {
         value: false,
         short: [],
         description: "Hide detailed type outlines."
+    },
+    "make-tests": {
+        value: false,
+        short: [],
+        description: "Generate tests in the __testedautoauto directory"
     }
 }
