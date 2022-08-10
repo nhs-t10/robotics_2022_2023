@@ -1,5 +1,8 @@
 "use strict";
 
+/**
+ * @type {{ name: string, regex: RegExp }[]}
+ */
 module.exports = [
     { name: "HASHTAG", regex: /#/ },
     { name: "SEMICOLON", regex: /;/ },
