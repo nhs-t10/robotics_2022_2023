@@ -125,14 +125,15 @@ async function verifyType(typeSystem, typeName, resolutionCache, filename) {
  * 
  * @param {TypeSystem} typeSystem 
  * @param {typeId} typeName 
- * @param {Set<TypeRecord>} visitedTypes 
+ * @param {TypeRecord[]} visitedTypes 
  * @param {Map<TypeRecord, TypeRecord[] | undefined>} resolutionCache
  * @param {string} filename
  * @returns {Promise<TypeRecord[] | undefined>}
  */
 async function resolveType(typeSystem, typeName, visitedTypes, resolutionCache, filename) {
-
     const type = typeSystem[typeName];
+
+    if (resolutionCache.has(type)) return resolutionCache.get(type);
 
     if (visitedTypes.includes(type)) {
         androidStudioLogging.sendTreeLocationMessage({
@@ -147,15 +148,13 @@ async function resolveType(typeSystem, typeName, visitedTypes, resolutionCache, 
             location: type.location
         }, filename);
         return undefined;
-    } else {
-        visitedTypes.push(type);
     }
 
-    if (resolutionCache.has(type)) return resolutionCache.get(type);
+    visitedTypes.push();
 
     const res = simpleResolveTypeWithSpecific(typeSystem, typeName, type, visitedTypes, resolutionCache, filename);
     
-    visitedTypes.pop(type);
+    visitedTypes.pop();
     
     resolutionCache.set(type, res);
     return res;
@@ -166,7 +165,7 @@ async function resolveType(typeSystem, typeName, visitedTypes, resolutionCache, 
  * @param {TypeSystem} typeSystem 
  * @param {typeId} typeName 
  * @param {FunctionApplyType} type 
- * @param {Set<TypeRecord>} visitedTypes 
+ * @param {TypeRecord[]} visitedTypes 
  * @param {Map<TypeRecord, TypeRecord[] | undefined>} resolutionCache
  * @param {string} filename
  * @returns {Promse<TypeRecord[] | undefined>}
@@ -183,7 +182,7 @@ async function simpleResolveTypeWithSpecific(typeSystem, typeName, type, visited
         case "function": return [type];
 
         
-        case "?": console.log("encountered ? "); return undefined;
+        case "?": return undefined;
 
         default: console.error(type); throw "no type type " + type.type;
     }
@@ -194,7 +193,7 @@ async function simpleResolveTypeWithSpecific(typeSystem, typeName, type, visited
  * @param {TypeSystem} typeSystem 
  * @param {typeId} typeName 
  * @param {FunctionApplyType} type 
- * @param {Set<TypeRecord>} visitedTypes 
+ * @param {TypeRecord[]} visitedTypes 
  * @param {Map<TypeRecord, TypeRecord[] | undefined>} resolutionCache
  * @param {string} filename
  * @returns {Promise<TypeRecord[] | undefined>}
@@ -255,7 +254,7 @@ function allAreOfDefiniteType(types, neededTypeType) {
  * @param {TypeSystem} typeSystem 
  * @param {typeId} typeName 
  * @param {FunctionApplyType} type 
- * @param {Set<TypeRecord>} visitedTypes 
+ * @param {TypeRecord[]} visitedTypes 
  * @param {Map<TypeRecord, TypeRecord[] | undefined>} resolutionCache
  * @param {string} filename
  * @returns {Promise<TypeRecord[] | undefined>}
@@ -277,9 +276,7 @@ async function resolveBinaryOp(typeSystem, typeName, type, visitedTypes, resolut
 
     const resultType = getBinaryOperatorResult(type, typeSystem);
 
-    return [
-        typeSystem[typeName] = resultType
-    ]
+    return [resultType]
 }
 
 /**
@@ -287,7 +284,7 @@ async function resolveBinaryOp(typeSystem, typeName, type, visitedTypes, resolut
  * @param {TypeSystem} typeSystem 
  * @param {typeId} typeName
  * @param {TypeRecord} type
- * @param {Set<TypeRecord>} visitedTypes
+ * @param {TypeRecord[]} visitedTypes
  * @param {Map<TypeRecord, TypeRecord[] | undefined>} resolutionCache
  * @param {string} filename
  * @returns {Promise<TypeRecord[] | undefined>}
@@ -363,7 +360,7 @@ function unionizeProperties(types, propertyName, typeSystem, location) {
  * @param {TypeSystem} typeSystem 
  * @param {string} typeName 
  * @param {UnionType} type 
- * @param {Set<TypeRecord>} visitedTypes
+ * @param {TypeRecord[]} visitedTypes
  * @param {Map<TypeRecord, TypeRecord[] | undefined>} resolutionCache
  * @param {string} filename
  * @returns {Promise<TypeRecord[] | undefined>}
@@ -372,12 +369,10 @@ async function resolveUnion(typeSystem, typeName, type, visitedTypes, resolution
 
     //optimize: if there's 0 types, add 'undefined'
     if (type.types.length == 0) {
-        return [
-            typeSystem[typeName] = typeSystem["undefined"]
-        ];
+        return [typeSystem["undefined"]];
     }
 
-    /** @type {Set<TypeRecord>} */
+    /** @type {TypeRecord[]} */
     var u = new Set();
     for (const typeId of type.types) {
         const unionElement = await resolveType(typeSystem, typeId, visitedTypes, resolutionCache, filename);
