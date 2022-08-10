@@ -31,9 +31,12 @@ module.exports = function() {
     
     const genDir = path.join(gradleRoot, "gen");
     
+    const testDir = path.join(gradleRoot, "src", "test", "java");
+    
     return {
         src: srcDir,
         gen: genDir,
-        asset: assetDir
+        asset: assetDir,
+        test: testDir
     };
 }

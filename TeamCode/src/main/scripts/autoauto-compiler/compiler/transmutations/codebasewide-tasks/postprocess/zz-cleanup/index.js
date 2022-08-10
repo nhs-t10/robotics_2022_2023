@@ -11,9 +11,10 @@ module.exports = function (context, contexts) {
     
     for(const ctx of contexts) {
         if(ctx.success === "SUCCESS") {
-            newFiles = newFiles.concat(Object.keys(ctx.fileContext.writtenFiles));
+            newFiles.push(...Object.keys(ctx.fileContext.writtenFiles));
         }
     }
+    
 
     safeFsUtils.cleanDirectory(context.resultRoot, newFiles);
     

@@ -169,7 +169,7 @@ function recordFunctionType(instruction, currentTypeKey, typeSystem, blocks) {
         args: [],
         argnames: [],
         varargs: "undefined",
-        return: "*"
+        return: "undefined"
     };
 
     var lbl = instruction.args[0].__value;

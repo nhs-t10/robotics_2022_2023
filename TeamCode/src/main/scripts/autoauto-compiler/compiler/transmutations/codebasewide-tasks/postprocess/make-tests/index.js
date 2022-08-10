@@ -1,6 +1,7 @@
 "use strict";
 
 var path = require("path");
+const commandLineInterface = require("../../../../../../command-line-interface");
 
 var maketest = require("./make-test");
 
@@ -8,7 +9,11 @@ var maketest = require("./make-test");
  * @type {import("../../..").CodebaseTransmutateFunction}
  */
 module.exports = function(context, contexts) {
-    var testDir = path.join(context.resultRoot, "org/firstinspires/ftc/teamcode/unitTests");
+    
+    if(commandLineInterface["make-tests"] == false) return;
+    
+    
+    var testDir = path.join(context.testRoot, "org/firstinspires/ftc/teamcode/unitTests/__testedautoautos");
     
 
     var testRecords = contexts

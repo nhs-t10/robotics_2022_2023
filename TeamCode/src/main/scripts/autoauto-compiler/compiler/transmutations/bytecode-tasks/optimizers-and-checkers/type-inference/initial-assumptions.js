@@ -68,7 +68,7 @@ module.exports = {
     "Math@0/max": { "type": "function", "args": ["number", "number"], varargs: "number", "return": "number|undefined" },
     "Math@0/min": { "type": "function", "args": ["number", "number"], varargs: "number", "return": "number|undefined" },
     "Math@0/pow": { "type": "function", "args": ["number", "number"], "return": "number|undefined" },
-    "Math@0/random": { "type": "function", "args": ["number"], "return": "number|undefined" },
+    "Math@0/random": { "type": "function", "args": [], "return": "number" },
     "Math@0/round": { "type": "function", "args": ["number"], "return": "number|undefined" },
     "Math@0/sin": { "type": "function", "args": ["number"], "return": "number|undefined" },
     "Math@0/sqrt": { "type": "function", "args": ["number"], "return": "number|undefined" },

@@ -230,10 +230,26 @@ async function delegatorExpressionToBytecode(ast, constantPool) {
  * @returns {valueComputationBytecode}
  */
 function emitExpressionOfDependencyFile(dependencyCode, constantPool, ast) {
+    return emitFunctionCallToLabel(dependencyCode.entryLabel, constantPool, ast, dependencyCode.blocks);
+}
+
+/**
+ * 
+ * @param {string} label
+ * @param {import("../constant-pool").constantpool} constantPool 
+ * @param {import("../../text-to-syntax-tree/parser").AutoautoASTElement} ast 
+ * @param {Block[]?} dependentBlocks 
+ */
+function emitFunctionCallToLabel(label, constantPool, ast, dependentBlocks) {
     return {
-        dependentBlocks: dependencyCode.blocks,
-        computation: emitBytecodeWithLocation(bytecodeSpec.call_coroutine, [
-            emitConstantWithLocation(dependencyCode.entryLabel, constantPool, ast)
+        dependentBlocks: dependentBlocks || [],
+        computation: emitBytecodeWithLocation(bytecodeSpec.callfunction, [
+            emitBytecodeWithLocation(bytecodeSpec.makefunction_l, [
+                emitConstantWithLocation(label, constantPool, ast),
+                emitConstantWithLocation(0, constantPool, ast)
+            ], ast),
+            emitConstantWithLocation(0, constantPool, ast),
+            emitConstantWithLocation(0, constantPool, ast)
         ], ast)
     };
 }
@@ -246,12 +262,8 @@ function emitExpressionOfDependencyFile(dependencyCode, constantPool, ast) {
  * @returns {valueComputationBytecode}
  */
 function emitExpressionOfPreviousDependency(constantPool, dependencyFile, ast) {
-    return {
-        dependentBlocks: [],
-        computation: emitBytecodeWithLocation(bytecodeSpec.call_coroutine, [
-            emitConstantWithLocation(constantPool.dependencyLabels[dependencyFile], constantPool, ast)
-        ], ast)
-    };
+    const label = constantPool.dependencyLabels[dependencyFile];
+    return emitFunctionCallToLabel(label, constantPool, ast, []);
 }
 
 /**
@@ -285,17 +297,18 @@ async function createDependencyBlocks(currentFile, dependencyFile, constantPool,
     
     
     //make a continuation block that has the information required to do a jump
-    const continuationEntry = constructDelegatorContinuationBranch(dependencyBlocks, constantPool, ast, realEntryLabel);
+    const continuationEntry = constructDelegatorContinuationBranch(dependencyBlocks, constantPool, ast, realEntryLabel, dependencyPrefix);
     const continuationEntryLabel = continuationEntry.label;
     dependencyBlocks.push(continuationEntry);
     
     //construct the module_args variable
+    const modArgsName = dependencyPrefix + "-" + systemVariableNames.MODULE_ARGS;
     const modArgsBytecode = await argumentListToBytecodeAsProperties(ast.args, constantPool);
-    const modArgs = emitBytecodeWithLocation(bytecodeSpec.spec_setvar, [
-        emitConstantWithLocation(systemVariableNames.MODULE_ARGS, constantPool, ast),
+    const modArgs = emitBytecodeWithLocation(bytecodeSpec.setvar, [
+        emitConstantWithLocation(modArgsName, constantPool, ast),
         emitBytecodeWithLocation(bytecodeSpec.construct_table, modArgsBytecode.boundedCalculations, ast)
     ], {}, dependency.sourceFullFileName);
-    const entryLabel = constantPool.subblockLabel("static-link-entry");
+    const entryLabel = constantPool.subblockLabel("func-enter");
     const modArgsSetter = {
         label: entryLabel,
         code: [modArgs],
@@ -330,18 +343,20 @@ function recursorAddFileLocation(bytecodeArray, file) {
     }
 }
 
-function constructDelegatorContinuationBranch(dependencyBlocks, constantPool, ast, entryBlock) {
+function constructDelegatorContinuationBranch(dependencyBlocks, constantPool, ast, entryBlock, dependencyShaPrefix) {
     const branchBlock = {
         label: constantPool.subblockLabel("static-link-continuation"),
         code: [],
         jumps: []
     };
+    const continuationVariable = dependencyShaPrefix + "-" + systemVariableNames.COROUTINE_CONTINUATION_PREFIX;
+    
     for(const block of dependencyBlocks) {
         if(block.continuationIndex > 0) {
             branchBlock.jumps.push(emitBytecodeWithLocation(bytecodeSpec.jmp_l_cond, [
                 emitBytecodeWithLocation(bytecodeSpec.cmp_eq, [
                     emitBytecodeWithLocation(bytecodeSpec.getvar, [
-                        emitConstantWithLocation(systemVariableNames.COROUTINE_CONTINUATION_PREFIX, constantPool, ast)
+                        emitConstantWithLocation(continuationVariable, constantPool, ast)
                     ], ast),
                     emitConstantWithLocation(block.continuationIndex, constantPool, ast)
                 ], ast),
@@ -560,7 +575,7 @@ function getOperationBytecodeInstruction(comp) {
 async function provideStatementToBytecode(ast, label, constantPool, nextLabel) {
     var val = await valueToBytecodeBlocks(ast.value, constantPool);
     
-    const continuationVariable = systemVariableNames.COROUTINE_CONTINUATION_PREFIX + constantPool.universalPrefix;
+    const continuationVariable = constantPool.universalPrefix + "-" + systemVariableNames.COROUTINE_CONTINUATION_PREFIX + "@0";
     const continuationIndex = constantPool.getCoroutineContinuation();
     
     const jumpBlockLabel = constantPool.subblockLabel("provide-continuation");
@@ -572,11 +587,11 @@ async function provideStatementToBytecode(ast, label, constantPool, nextLabel) {
                 emitConstantWithLocation(continuationVariable, constantPool, ast),
                 emitConstantWithLocation(continuationIndex, constantPool, ast)
             ], ast),
-            emitBytecodeWithLocation(bytecodeSpec.crret, [
+            emitBytecodeWithLocation(bytecodeSpec.ret, [
                 val.computation
             ], ast)
         ],
-        jumps: [jumpToLabel(jumpBlockLabel, constantPool)]
+        jumps: []
     },
     {
         label: jumpBlockLabel,
@@ -1075,7 +1090,7 @@ function emitBytecodeWithLocation(code, bcArgs, ast, fileAddress) {
 /**
  * 
  * @param {string} file 
- * @returns {SourceCodeLocation}
+ * @returns {Location}
  */
 function makeSyntheticLocation(file) {
     

@@ -20,12 +20,19 @@ const BUILD_ROOT_DIRS = (require("./get-build-root"))();
 const SRC_DIRECTORY = BUILD_ROOT_DIRS.src
 const COMPILED_RESULT_DIRECTORY = BUILD_ROOT_DIRS.gen;
 const ASSETS_DIRECTORY = BUILD_ROOT_DIRS.asset;
+const TEST_FILES_DIRECTORY = BUILD_ROOT_DIRS.test;
 
 module.exports = (async function main() {
+    const startTimeMs = Date.now(); 
+    
     await transmutations.loadTaskList();
-    await compileAllFromSourceDirectory();
+    const fileCount = await compileAllFromSourceDirectory();
 
+    androidStudioLogging.printAppendixes();
+    
     androidStudioLogging.printTypeCounts();
+    
+    androidStudioLogging.printTimingInformation(fileCount, Date.now() - startTimeMs);
 });
 
 async function compileAllFromSourceDirectory() {
@@ -56,6 +63,8 @@ async function compileAllFromSourceDirectory() {
     writeWrittenFiles({ writtenFiles: codebaseTransmutationWrites });
 
     compilerWorkers.close();
+    
+    return jobPromises.length;
 }
 
 /**
@@ -82,6 +91,7 @@ function makeContextAndCompileFile(filename, compilerWorkers, preprocessInputs, 
             compilerWorkers.giveJob(fileContext, function (run) {              
                 if(run.success === "SUCCESS") {
                     saveCacheEntry(run);
+                    
                     androidStudioLogging.sendMessages(run.log);
                     writeWrittenFiles(run.fileContext);
                     resolve(run);
@@ -102,6 +112,7 @@ function makeContextAndCompileFile(filename, compilerWorkers, preprocessInputs, 
 function saveCacheEntry(finishedRun) {
     if (commandLineInterface["no-cache-save"] == false) {
         cache.save(mFileCacheKey(finishedRun.fileContext), {
+            success: "SUCCESS",
             subkey: finishedRun.fileContext.cacheKey,
             fileContext: finishedRun.fileContext,
             log: finishedRun.log
@@ -168,7 +179,8 @@ function makeCodebaseContext(codebaseTransmutationWrites) {
         writtenFiles: codebaseTransmutationWrites,
         resultRoot: COMPILED_RESULT_DIRECTORY,
         assetsRoot: ASSETS_DIRECTORY,
-        sourceRoot: SRC_DIRECTORY
+        sourceRoot: SRC_DIRECTORY,
+        testRoot: TEST_FILES_DIRECTORY
     }
 }
 
@@ -190,6 +202,7 @@ function makeFileContext(file, preprocessInputs, environmentHash) {
         resultFullFileName: resultFile,
         resultRoot: COMPILED_RESULT_DIRECTORY,
         assetsRoot: ASSETS_DIRECTORY,
+        testRoot: TEST_FILES_DIRECTORY,
         fileFrontmatter: frontmatter,
         fileContentText: fileContent,
         lastInput: fileContent,

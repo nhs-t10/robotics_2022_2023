@@ -12,6 +12,12 @@ function reset() {
     return RESET;
 }
 
+/**
+ * 
+ * @param {string} colour 
+ * @param {*} string 
+ * @returns {string}
+ */
 function colourString(colour, string) {    
     return `${getColourTag(colour)}${string}${RESET}`;
 }

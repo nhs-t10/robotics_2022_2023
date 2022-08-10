@@ -616,7 +616,11 @@ function binaryLeftAssociativeOperator(precedence) {
 
         return {
             type: "OperatorExpression",
-            location: loc,
+            location: {
+                start: leftSide.location.start,
+                end: rightSide.location.end,
+                file: file
+            },
             left: leftSide,
             right: rightSide,
             operator: op
