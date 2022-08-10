@@ -31,6 +31,7 @@ function formatType(type, typeSystem, indentation, allowMultiline) {
         case "object": return formatTableRecord(type, typeSystem, indentation, allowMultiline);
         case "union": return formatUnion(type, typeSystem, indentation, allowMultiline);
     }
+    return "<unformatted type " + type.type + ">"
 }
 
 /**
@@ -46,6 +47,9 @@ function formatUnion(type, typeSystem, indentation, allowMultiline) {
     const joinText = "\n" + indentText + "| ";
     
     const types = type.types.map(x => typeSystem[x]);
+    
+    if(types.length == 0) return "<empty type; nothing>";
+    if(types.length == 1) return formatType(types[0], typeSystem, indentation, allowMultiline);
     
     if(allPrimitive(types)) return type.types.join(" | ");
     

@@ -15,7 +15,7 @@ module.exports = getBinaryOperatorResult;
 /**
  * @param {TypeRecord} type
  * @param {TypeSystem} typeSystem
- * @returns {TypeRecord | undefined}
+ * @returns {TypeRecord}
  */
 function getBinaryOperatorResult(type, typeSystem) {
     
@@ -39,7 +39,7 @@ function getBinaryOperatorResult(type, typeSystem) {
         case "!=":
         case "<=":
         case "<":
-            return typeSystem["boolean"];
+            return typeSystem["boolean"] || console.log("no boolean!");
 
         default: throw new Error("unknown operator " + op);
     }
@@ -132,7 +132,7 @@ function plusOp(left, right, location, typeSystem) {
     if (definitelyString(left, location) || definitelyString(right, location)) return typeSystem["string"];
     
     else if(maybeString(left) || maybeString(right)) return { type: "union", types: ["string", "undefined", "number"] };
-    else return typeSystem["undefined|number"];
+    else return typeSystem["number|undefined"];
 }
 
 /**

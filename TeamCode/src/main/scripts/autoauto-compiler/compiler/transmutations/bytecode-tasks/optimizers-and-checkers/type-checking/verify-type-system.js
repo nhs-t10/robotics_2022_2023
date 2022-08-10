@@ -96,8 +96,9 @@ async function verifyTypeSystem(typeSystem, filename) {
 
     let typeUnfounded = false;
     for (const typeName in typeSystem) {
-        const type = typeSystem[typeName];
-        const typeIsUnfounded = await verifyType(typeSystem, typeName, resolutionCache);
+        if(typeName == "*") continue;
+        
+        const typeIsUnfounded = await verifyType(typeSystem, typeName, resolutionCache, filename);
         if (typeIsUnfounded) typeUnfounded = true;
     }
 
@@ -113,10 +114,11 @@ async function verifyTypeSystem(typeSystem, filename) {
  * @param {TypeSystem} typeSystem 
  * @param {typeId} typeName 
  * @param {Map<TypeRecord, TypeRecord[] | undefined>} resolutionCache
+ * @param {string} filename
  * @returns {Promise<boolean>} true if the type is unfounded or unresolvable
  */
-async function verifyType(typeSystem, typeName, resolutionCache) {
-    return await resolveType(typeSystem, typeName, new Set(), resolutionCache) === undefined;
+async function verifyType(typeSystem, typeName, resolutionCache, filename) {
+    return await resolveType(typeSystem, typeName, [], resolutionCache, filename) === undefined;
 }
 
 /**
@@ -125,21 +127,35 @@ async function verifyType(typeSystem, typeName, resolutionCache) {
  * @param {typeId} typeName 
  * @param {Set<TypeRecord>} visitedTypes 
  * @param {Map<TypeRecord, TypeRecord[] | undefined>} resolutionCache
+ * @param {string} filename
  * @returns {Promise<TypeRecord[] | undefined>}
  */
-async function resolveType(typeSystem, typeName, visitedTypes, resolutionCache) {
+async function resolveType(typeSystem, typeName, visitedTypes, resolutionCache, filename) {
 
     const type = typeSystem[typeName];
 
-    if (visitedTypes.has(type)) {
+    if (visitedTypes.includes(type)) {
+        androidStudioLogging.sendTreeLocationMessage({
+            text: "Recursive data",
+            original: "This is a recursive type (a type that contains itself). This could be because of a variety of causes:"
+                + "\n - A variable that depends on itself"
+                + "\n - A table that holds values the same shape as itself"
+                + "\n - Odd program structuring (files which depend on themselves)"
+                + "\n\nThis isn't a bad thing; recursive data types are helpful. They're just harder to check automatically. Be sure that it's sound, and you'll be okay!" 
+                + "\n\n[DEBUG] Recursive set:\n    " + Array.from(visitedTypes).concat([type]).map(x=>formatType(x, typeSystem)).join("\n    "),
+            kind: "WARNING",
+            location: type.location
+        }, filename);
         return undefined;
     } else {
-        visitedTypes.add(type);
+        visitedTypes.push(type);
     }
 
     if (resolutionCache.has(type)) return resolutionCache.get(type);
 
-    const res = simpleResolveTypeWithSpecific(typeSystem, typeName, type, visitedTypes, resolutionCache);
+    const res = simpleResolveTypeWithSpecific(typeSystem, typeName, type, visitedTypes, resolutionCache, filename);
+    
+    visitedTypes.pop(type);
     
     resolutionCache.set(type, res);
     return res;
@@ -152,20 +168,22 @@ async function resolveType(typeSystem, typeName, visitedTypes, resolutionCache) 
  * @param {FunctionApplyType} type 
  * @param {Set<TypeRecord>} visitedTypes 
  * @param {Map<TypeRecord, TypeRecord[] | undefined>} resolutionCache
+ * @param {string} filename
  * @returns {Promse<TypeRecord[] | undefined>}
  */
-async function simpleResolveTypeWithSpecific(typeSystem, typeName, type, visitedTypes, resolutionCache) {
+async function simpleResolveTypeWithSpecific(typeSystem, typeName, type, visitedTypes, resolutionCache, filename) {
     switch (type.type) {
-        case "union": return await resolveUnion(typeSystem, typeName, type, visitedTypes, resolutionCache);
-        case "object_apply": return await resolveObjectApply(typeSystem, typeName, type, visitedTypes, resolutionCache);
-        case "binary_operator": return await resolveBinaryOp(typeSystem, typeName, type, visitedTypes, resolutionCache);
-        case "apply": return await resolveFunctionApplication(typeSystem, typeName, type, visitedTypes, resolutionCache);
+        case "union": return await resolveUnion(typeSystem, typeName, type, visitedTypes, resolutionCache, filename);
+        case "object_apply": return await resolveObjectApply(typeSystem, typeName, type, visitedTypes, resolutionCache, filename);
+        case "binary_operator": return await resolveBinaryOp(typeSystem, typeName, type, visitedTypes, resolutionCache, filename);
+        case "apply": return await resolveFunctionApplication(typeSystem, typeName, type, visitedTypes, resolutionCache, filename);
 
         case "primitive": return [type];
         case "object": return [type];
         case "function": return [type];
 
-        case "?": return undefined;
+        
+        case "?": console.log("encountered ? "); return undefined;
 
         default: console.error(type); throw "no type type " + type.type;
     }
@@ -178,11 +196,12 @@ async function simpleResolveTypeWithSpecific(typeSystem, typeName, type, visited
  * @param {FunctionApplyType} type 
  * @param {Set<TypeRecord>} visitedTypes 
  * @param {Map<TypeRecord, TypeRecord[] | undefined>} resolutionCache
+ * @param {string} filename
  * @returns {Promise<TypeRecord[] | undefined>}
  */
-async function resolveFunctionApplication(typeSystem, typeName, type, visitedTypes, resolutionCache) {
-    const appliedFunction = await resolveType(typeSystem, type.operand, visitedTypes, resolutionCache);
-    if (appliedFunction === undefined) return undefined;
+async function resolveFunctionApplication(typeSystem, typeName, type, visitedTypes, resolutionCache, filename) {
+    const appliedFunction = await resolveType(typeSystem, type.operand, visitedTypes, resolutionCache, filename);
+    if (appliedFunction === undefined) return appliedFunction;
 
     if (allAreOfDefiniteType(appliedFunction, "function") == false) {
         androidStudioLogging.sendTreeLocationMessage({
@@ -196,7 +215,7 @@ async function resolveFunctionApplication(typeSystem, typeName, type, visitedTyp
 
     const returnTypeUnionName = unionizeReturnType(appliedFunction, typeSystem, type.location);
 
-    return await resolveType(typeSystem, returnTypeUnionName, visitedTypes, resolutionCache);
+    return await resolveType(typeSystem, returnTypeUnionName, visitedTypes, resolutionCache, filename);
 }
 
 /**
@@ -238,13 +257,14 @@ function allAreOfDefiniteType(types, neededTypeType) {
  * @param {FunctionApplyType} type 
  * @param {Set<TypeRecord>} visitedTypes 
  * @param {Map<TypeRecord, TypeRecord[] | undefined>} resolutionCache
+ * @param {string} filename
  * @returns {Promise<TypeRecord[] | undefined>}
  */
-async function resolveBinaryOp(typeSystem, typeName, type, visitedTypes, resolutionCache) {
-    const leftIsUnresolved = await resolveType(typeSystem, type.left, visitedTypes, resolutionCache);
-    if (leftIsUnresolved === undefined) return undefined;
-    const rightIsUnresolved = await resolveType(typeSystem, type.right, visitedTypes, resolutionCache)
-    if (rightIsUnresolved === undefined) return undefined;
+async function resolveBinaryOp(typeSystem, typeName, type, visitedTypes, resolutionCache, filename) {
+    const leftIsUnresolved = await resolveType(typeSystem, type.left, visitedTypes, resolutionCache, filename);
+    if (leftIsUnresolved === undefined) return leftIsUnresolved;
+    const rightIsUnresolved = await resolveType(typeSystem, type.right, visitedTypes, resolutionCache, filename)
+    if (rightIsUnresolved === undefined) return rightIsUnresolved;
 
     if (!type.op) {
         androidStudioLogging.sendTreeLocationMessage({
@@ -256,8 +276,6 @@ async function resolveBinaryOp(typeSystem, typeName, type, visitedTypes, resolut
     }
 
     const resultType = getBinaryOperatorResult(type, typeSystem);
-
-    if (resultType === undefined) return fail(typeSystem, typeName);
 
     return [
         typeSystem[typeName] = resultType
@@ -271,12 +289,13 @@ async function resolveBinaryOp(typeSystem, typeName, type, visitedTypes, resolut
  * @param {TypeRecord} type
  * @param {Set<TypeRecord>} visitedTypes
  * @param {Map<TypeRecord, TypeRecord[] | undefined>} resolutionCache
+ * @param {string} filename
  * @returns {Promise<TypeRecord[] | undefined>}
  */
-async function resolveObjectApply(typeSystem, typeName, type, visitedTypes, resolutionCache) {
+async function resolveObjectApply(typeSystem, typeName, type, visitedTypes, resolutionCache, filename) {
 
-    var objTypes = await resolveType(typeSystem, type.object, visitedTypes, resolutionCache);
-    if (objTypes === undefined) return undefined;
+    var objTypes = await resolveType(typeSystem, type.object, visitedTypes, resolutionCache, filename);
+    if (objTypes === undefined) return objTypes;
 
 
 
@@ -307,7 +326,7 @@ async function resolveObjectApply(typeSystem, typeName, type, visitedTypes, reso
         return undefined;
     }
 
-    return await resolveType(typeSystem, resultType, visitedTypes, resolutionCache);
+    return await resolveType(typeSystem, resultType, visitedTypes, resolutionCache, filename);
 }
 
 /**
@@ -346,9 +365,10 @@ function unionizeProperties(types, propertyName, typeSystem, location) {
  * @param {UnionType} type 
  * @param {Set<TypeRecord>} visitedTypes
  * @param {Map<TypeRecord, TypeRecord[] | undefined>} resolutionCache
+ * @param {string} filename
  * @returns {Promise<TypeRecord[] | undefined>}
  */
-async function resolveUnion(typeSystem, typeName, type, visitedTypes, resolutionCache) {
+async function resolveUnion(typeSystem, typeName, type, visitedTypes, resolutionCache, filename) {
 
     //optimize: if there's 0 types, add 'undefined'
     if (type.types.length == 0) {
@@ -360,8 +380,8 @@ async function resolveUnion(typeSystem, typeName, type, visitedTypes, resolution
     /** @type {Set<TypeRecord>} */
     var u = new Set();
     for (const typeId of type.types) {
-        const unionElement = await resolveType(typeSystem, typeId, visitedTypes, resolutionCache);
-        if (unionElement === undefined) return fail(typeSystem, typeName);
+        const unionElement = await resolveType(typeSystem, typeId, visitedTypes, resolutionCache, filename);
+        if (unionElement === undefined) return unionElement;
 
 
         u.add(...unionElement);
@@ -372,15 +392,4 @@ async function resolveUnion(typeSystem, typeName, type, visitedTypes, resolution
     if (types.length == 1) typeSystem[typeName] = types[0];
 
     return types;
-}
-
-/**
- * 
- * @param {TypeSystem} typeSystem 
- * @param {typeId} name 
- * @returns {undefined}
- */
-function fail(typeSystem, name) {
-    typeSystem[name] = typeSystem["*"];
-    return undefined;
 }
