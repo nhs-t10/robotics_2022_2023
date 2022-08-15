@@ -150,7 +150,7 @@ async function resolveType(typeSystem, typeName, visitedTypes, resolutionCache, 
         return undefined;
     }
 
-    visitedTypes.push();
+    visitedTypes.push(type);
 
     const res = simpleResolveTypeWithSpecific(typeSystem, typeName, type, visitedTypes, resolutionCache, filename);
     
