@@ -106,6 +106,7 @@ function calcType(instruction, currentTypeKey, typeSystem, blocks) {
         case bytecodeSpec.pass.code:
         case bytecodeSpec.crret.code:
             return "undefined";
+        case bytecodeSpec.spec_setvar.code:
         case bytecodeSpec.setvar.code:
             return setVariableType(instruction, currentTypeKey, typeSystem);
 
@@ -273,13 +274,21 @@ function getFunctionReturnType(callfunctionInstr, key, typeSystem) {
 
 function getVariableType(getvarInstruction, key, typeSystem) {
     var vname = getvarInstruction.args[0].__value;
-    if (!vname.__phi) return "var " + vname;
+    if (vname.__phi) {
+        typeSystem.upsertType(key, {
+            type: "union",
+            types: vname.__phi.map(x => "var " + x)
+        }, getvarInstruction.location);
+        return key;
+    } else {
+        const varKey = "var " + vname;
+        typeSystem.upsertType(varKey, {
+            type: "?"
+        }, getvarInstruction.location);
+        return varKey;
+    }
 
-    typeSystem.upsertType(key, {
-        type: "union",
-        types: vname.__phi.map(x => "var " + x)
-    }, getvarInstruction.location);
-    return key;
+    
 
 }
 function setVariableType(setvarInstruction, key, typeSystem) {

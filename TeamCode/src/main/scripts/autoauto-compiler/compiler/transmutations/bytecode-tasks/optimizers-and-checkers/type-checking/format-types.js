@@ -1,8 +1,10 @@
+const path = require("path");
 const androidStudioLogging = require("../../../../../../script-helpers/android-studio-logging");
 
 module.exports = {
     formatType: formatType,
-    formatLocation: formatLocation
+    formatLocation: formatLocation,
+    shortRelativeFormatLocation: shortRelativeFormatLocation
 }
 
 /**
@@ -134,7 +136,24 @@ function formatTableRecord(type, typeSystem, indentation, allowMultiline) {
 
 }
 
+/**
+ * 
+ * @param {import("../../../text-to-syntax-tree/parser").Location} location 
+ */
 function formatLocation(location) {
-    if (location === undefined) return "<built-in>"
-    return location.file + ", line " + location.start.line + ", column " + location.start.column;
+    if (location === undefined) return "<built-in>";
+    else if(location.synthetic) return location.file;
+    else return location.file + ", line " + location.start.line + ", column " + location.start.column;
+}
+
+/**
+ * 
+ * @param {import("../../../text-to-syntax-tree/parser").Location} location 
+ */
+function shortRelativeFormatLocation(location) {
+    if (location === undefined) return "<built-in>";
+    var fileBasename = path.basename(location.file);
+    
+    if(location.synthetic) return fileBasename;
+    else return fileBasename + ":" + location.start.column;
 }

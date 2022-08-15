@@ -9,7 +9,7 @@
  */
 
 /**
- * @typedef {UnionType | PrimitiveType | FunctionType | FunctionApplyType | BinaryOperatorType | ObjectApplyingType | UnresolvedType | TableType} TypeRecord
+ * @typedef {UnionType | PrimitiveType | FunctionType | FunctionApplyType | BinaryOperatorType | ObjectApplyingType | UnknownType | TableType} TypeRecord
  */
 
 /**
@@ -64,9 +64,9 @@
  */
 
 /**
- * @typedef {object} UnresolvedType
+ * @typedef {object} UnknownType
  * @property {"?"} type
- * @property {undefined} location
+ * @property {import("../../../text-to-syntax-tree/parser").Location | undefined} location
  */
 
 /**
@@ -80,7 +80,7 @@
 const androidStudioLogging = require("../../../../../../script-helpers/android-studio-logging");
 
 const getBinaryOperatorResult = require("./binary-operator-result");
-const { formatType, formatLocation } = require("./format-types");
+const { formatType, formatLocation, shortRelativeFormatLocation } = require("./format-types");
 
 module.exports = verifyTypeSystem;
 
@@ -142,7 +142,7 @@ async function resolveType(typeSystem, typeName, visitedTypes, resolutionCache, 
                 + "\n - A table that holds values the same shape as itself"
                 + "\n - Odd program structuring (files which depend on themselves)"
                 + "\n\nThis isn't a bad thing; recursive data types are helpful. They're just harder to check automatically. Be sure that it's sound, and you'll be okay!" 
-                + "\n\n[DEBUG] Recursive set:\n    " + Array.from(visitedTypes).concat([type]).map(x=>formatType(x, typeSystem)).join("\n    "),
+                + "\n\n[DEBUG] Recursive set:\n    " + Array.from(visitedTypes).concat([type]).map(x=>formatType(x, typeSystem) + "\t" + shortRelativeFormatLocation(x.location)).join("\n    "),
             kind: "WARNING",
             location: type.location
         }, filename);
@@ -165,7 +165,7 @@ async function resolveType(typeSystem, typeName, visitedTypes, resolutionCache, 
  * 
  * @param {TypeSystem} typeSystem 
  * @param {typeId} typeName 
- * @param {FunctionApplyType} type 
+ * @param {TypeRecord} type 
  * @param {Set<TypeRecord>} visitedTypes 
  * @param {Map<TypeRecord, TypeRecord[] | undefined>} resolutionCache
  * @param {string} filename
@@ -183,10 +183,35 @@ async function simpleResolveTypeWithSpecific(typeSystem, typeName, type, visited
         case "function": return [type];
 
         
-        case "?": console.log("encountered ? "); return undefined;
+        case "?": return logUnknownType(typeName, type);
 
         default: console.error(type); throw "no type type " + type.type;
     }
+}
+
+/**
+ * 
+ * @param {string} typeName 
+ * @param {UnknownType} type 
+ */
+function logUnknownType(typeName, type) {
+    if(type.location !== undefined) {
+        
+        const typeIsFromVariable = typeName.startsWith("var ");
+        
+        const text = typeIsFromVariable ? "Unknown Variable" : "Unknown Typing";
+        const explanation = typeIsFromVariable ? "The variable '' couldn't be resolved" :
+            "There was an unresolved type. Unfortunately, that's all we know.\n\nDEBUG: `typeName`: " + typeName;
+        
+        androidStudioLogging.sendTreeLocationMessage({
+            text: text,
+            original: explanation,
+            location: type.location,
+            kind: "WARNING"
+        })
+    }
+    
+    return undefined;
 }
 
 /**
@@ -214,6 +239,8 @@ async function resolveFunctionApplication(typeSystem, typeName, type, visitedTyp
     }
 
     const returnTypeUnionName = unionizeReturnType(appliedFunction, typeSystem, type.location);
+    
+    typeSystem[typeName] = typeSystem[returnTypeUnionName];
 
     return await resolveType(typeSystem, returnTypeUnionName, visitedTypes, resolutionCache, filename);
 }
@@ -254,17 +281,17 @@ function allAreOfDefiniteType(types, neededTypeType) {
  * 
  * @param {TypeSystem} typeSystem 
  * @param {typeId} typeName 
- * @param {FunctionApplyType} type 
+ * @param {BinaryOperatorType} type 
  * @param {Set<TypeRecord>} visitedTypes 
  * @param {Map<TypeRecord, TypeRecord[] | undefined>} resolutionCache
  * @param {string} filename
  * @returns {Promise<TypeRecord[] | undefined>}
  */
 async function resolveBinaryOp(typeSystem, typeName, type, visitedTypes, resolutionCache, filename) {
-    const leftIsUnresolved = await resolveType(typeSystem, type.left, visitedTypes, resolutionCache, filename);
-    if (leftIsUnresolved === undefined) return leftIsUnresolved;
-    const rightIsUnresolved = await resolveType(typeSystem, type.right, visitedTypes, resolutionCache, filename)
-    if (rightIsUnresolved === undefined) return rightIsUnresolved;
+    const leftType = await resolveType(typeSystem, type.left, visitedTypes, resolutionCache, filename);
+    if (leftType === undefined) return leftType;
+    const rightType = await resolveType(typeSystem, type.right, visitedTypes, resolutionCache, filename)
+    if (rightType === undefined) return rightType;
 
     if (!type.op) {
         androidStudioLogging.sendTreeLocationMessage({
@@ -325,6 +352,8 @@ async function resolveObjectApply(typeSystem, typeName, type, visitedTypes, reso
 
         return undefined;
     }
+    
+    typeSystem[typeName] = typeSystem[resultType];
 
     return await resolveType(typeSystem, resultType, visitedTypes, resolutionCache, filename);
 }

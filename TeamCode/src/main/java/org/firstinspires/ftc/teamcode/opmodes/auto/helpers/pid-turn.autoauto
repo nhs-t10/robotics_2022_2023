@@ -6,5 +6,5 @@ $
         let error = target - getThirdAngleOrientation(), log(error),
         let kP = 0.1,
         let t = -1*error*kP,
-        driveOmni(0, Math.cli(t, -0.5, 0.5), 0),
+        driveOmni(0, Math.clip(t, -0.5, 0.5), 0),
         provide(Math.abs(error))

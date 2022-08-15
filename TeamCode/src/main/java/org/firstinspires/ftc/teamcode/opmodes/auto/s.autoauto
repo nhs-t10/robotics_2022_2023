@@ -1,7 +1,3 @@
-$
-noStopBetweenStates: true
-$
-
 after 3s next;
-if(delegate("./helpers/pid-turn.autoauto") < 5) next;
+if(delegate("./helpers/pid-turn.autoauto", 90) < 5) next;
 log("haha!");

@@ -39,7 +39,7 @@ function restoreFromMappings(cannonical, historical, a) {
 function upsertInterpretMapping(cannonical, mappingTitle, uninterpertedMapping, a, loc) {
     mappingTitle += "";
 
-    var original = cannonical[getType(cannonical, mappingTitle, a)];
+    var original = cannonical[getType(cannonical, mappingTitle, a, loc)];
 
     if(uninterpertedMapping == undefined) throw new Error("Undefined type mapping");
     
@@ -47,7 +47,7 @@ function upsertInterpretMapping(cannonical, mappingTitle, uninterpertedMapping, 
     if(original.type == "?") {
         Object.assign(original, interperted);
         original.location = loc;
-    } else {
+    } else if(interperted.type != "?") {
         mergeTypes(original, interperted, cannonical, a);
     }
     
@@ -108,7 +108,7 @@ function getType(cannonical, typeName, a, loc) {
     }
     
     if(!cannonical[typeName]) {
-        cannonical[typeName] = { type: "?" };
+        cannonical[typeName] = { type: "?", location: loc || new Error().stack };
         a.inverseMap.set(cannonical[typeName], typeName);
     }
     return typeName;
@@ -117,6 +117,7 @@ function getType(cannonical, typeName, a, loc) {
 function interpertMapping(cannonical, mapping, a) {
     
     switch(mapping.type) {
+        case "?":
         case "primitive": return Object.assign({}, mapping);
         
         case "object_apply": return resolveObjectApply(cannonical, mapping, a);
