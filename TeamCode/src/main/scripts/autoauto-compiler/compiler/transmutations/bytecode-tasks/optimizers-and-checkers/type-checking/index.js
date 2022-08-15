@@ -1,5 +1,6 @@
 "use strict";
 
+const { writeFileSync } = require("fs");
 const androidStudioLogging = require("../../../../../../script-helpers/android-studio-logging");
 const bytecodeSpec = require("../../bytecode-spec");
 const verifyTypeSystem = require("./verify-type-system");
