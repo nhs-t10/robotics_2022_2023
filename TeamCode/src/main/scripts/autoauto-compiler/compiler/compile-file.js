@@ -30,7 +30,7 @@ module.exports = async function (fileContext) {
 async function compileFile(fileContext) {
     for (const mut of fileContext.transmutations) {
         const mutRan = await tryRunTransmutation(mut, fileContext);
-
+        
         if (!mutRan) return "COMPILATION_FAILED";
     }
 
@@ -39,7 +39,7 @@ async function compileFile(fileContext) {
 
 /**
  * 
- * @param {*} transmutation 
+ * @param {import("./transmutations").SerializableTransmutationInstance} transmutation 
  * @param {import("./transmutations").TransmutateContext} fileContext 
  * @returns 
  */

@@ -14,7 +14,7 @@ const androidStudioLogging = require("../../script-helpers/android-studio-loggin
 
 /**
  * @callback jobCallback
- * @param {import("./worker.js").MaybeCompilation}
+ * @param {import("./worker.js").MaybeCompilation} finishedContext
  */
 
 /**
@@ -22,8 +22,8 @@ const androidStudioLogging = require("../../script-helpers/android-studio-loggin
  */
 
 /**
- * @typedef {Object.<string, import("./worker.js").MaybeCompilation | null>} t_allJobs 
- * A map of jobs, keyed by source file. Null when they're currently compiling.
+ * @typedef {Object.<string, import("./worker.js").MaybeCompilation>} t_allJobs 
+ * A map of jobs, keyed by source file.
  */
 
 /**
@@ -45,7 +45,7 @@ const androidStudioLogging = require("../../script-helpers/android-studio-loggin
 
 
 /**
- * @typedef {(import("./transmutations").TransmutateContext} TransmutateContext
+ * @typedef {import("./transmutations").TransmutateContext} TransmutateContext
  */
 
 /**
@@ -95,9 +95,9 @@ module.exports = function () {
          */
         giveJob: function (fileContext, cb) {
             var w = findOpenWorker();
-            
+
             addInProgressJob(allJobs, fileContext);
-            
+
             if (w) {
                 w.assignJob(fileContext, cb);
             } else {
@@ -106,12 +106,11 @@ module.exports = function () {
         },
         addFinishedJobFromCache: function (fileContext, log) {
             const id = fileContext.sourceFullFileName;
-            allJobs[id] = {
+            finishJob(finishListeners, allJobs, id, {
                 success: "SUCCESS",
                 fileContext: fileContext,
                 log: log || []
-            }
-            callFinishListeners(finishListeners, id, allJobs[id]);
+            });
         },
         finishGivingJobs: async function () {
             await stopExpectingMoreJobs(pool);
@@ -125,7 +124,7 @@ module.exports = function () {
 }
 
 function stopExpectingMoreJobs(pool) {
-    return new Promise(function (resolve, reject) {        
+    return new Promise(function (resolve, reject) {
         for (const worker of pool) {
             worker.mayExpectMoreJobs = false;
         }
@@ -174,9 +173,6 @@ function initWorker(queue, finishListeners, allJobs, jobDependencyGraph) {
  * @returns {workerWrap}
  */
 function createWorkerWrap(worker, queue, finishListeners, allJobs, jobDependencyGraph) {
-    /** @type {Object.<string, jobCallback>} */
-    var callbacks = {};
-
     var wrap = {
         mayExpectMoreJobs: true,
         busy: false,
@@ -196,7 +192,9 @@ function createWorkerWrap(worker, queue, finishListeners, allJobs, jobDependency
         wrap.busy = true;
         const id = job.sourceFullFileName;
 
-        callbacks[id] = cb;
+        addFinishListener(finishListeners, id, cb);
+        addFinishListener(finishListeners, id, assignFromQueue);
+
         worker.postMessage({
             type: "newJob",
             body: job,
@@ -206,54 +204,69 @@ function createWorkerWrap(worker, queue, finishListeners, allJobs, jobDependency
 
     function assignFromQueue() {
         if (queue.length > 0) {
-            var n = queue.shift();
+            const n = queue.shift();
             assignJob(n.fileContext, n.cb);
+        } else {
+            wrap.busy = false;
         }
     }
 
     worker.on("message", function (/** @type {import("./worker.js").InterThreadMessage} */m) {
         if (m.type == "jobDone") {
-            if (callbacks[m.id]) callbacks[m.id](m.body);
-
-            allJobs[m.id] = m.body;
-
-            callFinishListeners(finishListeners, m.id, m.body);
-
-            wrap.busy = false;
-            assignFromQueue();
+            finishJob(finishListeners, allJobs, m.id, m.body);
         } else if (m.type == "jobWaitingOnDependency") {
             const depId = m.dependencyId;
             const jobId = m.id;
 
-            if (wrap.mayExpectMoreJobs === false && !(depId in allJobs)) {
-                sendNonexistDependency(worker, jobId, depId);
-            } else if (depId in allJobs && allJobs[depId].success !== "IN_PROGRESS") {
+            if (alreadyFinishedJob(depId, allJobs)) {
                 sendDependencyComplete(worker, jobId, depId, allJobs[depId]);
-            } else {
-                wrap.busy = false;
+            } else if (jobExists(depId, allJobs) || wrap.mayExpectMoreJobs) {
+                assignFromQueue();
                 addFinishListener(finishListeners, depId, function (finishedContext) {
                     wrap.busy = true;
                     sendDependencyComplete(worker, jobId, depId, finishedContext);
                 });
+            } else {
+                sendNonexistDependency(worker, jobId, depId);
             }
 
-            //noteJobDependency is true if it was successful (i.e. there were no circular dependencies)
-            if (noteJobDependency(jobDependencyGraph, finishListeners, depId, jobId) == true) {
-                assignFromQueue();
-            }
+            //noDependencyCycles is true if it was successful (i.e. there were no circular dependencies)
+            //if it failed, it will cancel all the jobs in the circle, which are waiting on dependencies.
+            noDependencyCycles(jobDependencyGraph, finishListeners, depId, jobId);
         } else if (m.type == "jobError") {
             const id = m.id;
-            if (id in callbacks) {
-                callbacks[id]({
-                    success: "COMPILATION_FAILED",
-                    error: m.error,
-                    fileAddress: id
-                });
-            }
+
+            finishJob(finishListeners, allJobs, m.id, {
+                success: "COMPILATION_FAILED",
+                error: m.error,
+                fileAddress: id
+            });
+        } else {
+            console.error("UNKNOWN MESSAGE TYPE ", m.type);
         }
     });
 
     return wrap;
+}
+
+/**
+ * 
+ * @param {string} depId 
+ * @param {t_allJobs} allJobs
+ * @returns {boolean} 
+ */
+function alreadyFinishedJob(depId, allJobs) {
+    return (depId in allJobs) && allJobs[depId].success !== "IN_PROGRESS";
+}
+
+/**
+ * 
+ * @param {string} depId 
+ * @param {t_allJobs} allJobs 
+ * @returns {boolean}
+ */
+function jobExists(depId, allJobs) {
+    return depId in allJobs
 }
 
 /**
@@ -276,10 +289,6 @@ function addInProgressJob(allJobs, job) {
  * @param {import("./worker.js").MaybeCompilation} maybeCompilation 
  */
 function sendDependencyComplete(worker, jobId, depId, maybeCompilation) {
-    if (maybeCompilation == null) {
-        console.log("BAD BAD BADB DABD");
-        throw new Error("ABDD BAHDBD ");
-    }
     worker.postMessage({
         type: "dependencyComplete",
         id: jobId,
@@ -293,10 +302,10 @@ function sendDependencyComplete(worker, jobId, depId, maybeCompilation) {
  * @param {t_allJobs} allJobs 
  * @param {t_finishListeners} finishListeners 
  */
-function clearNonExistantFinishListeners(allJobs, finishListeners) {    
+function clearNonExistantFinishListeners(allJobs, finishListeners) {
     for (const jobId in finishListeners) {
         if (!(jobId in allJobs)) {
-            callFinishListeners(finishListeners, jobId, {
+            finishJob(finishListeners, allJobs, jobId, {
                 success: "DOES_NOT_EXIST"
             });
         }
@@ -342,7 +351,7 @@ function finishCircle(finishListeners, circle) {
  * @param {string} jobId 
  * @returns {boolean} false if there is a circular dependency; true otherwise
  */
-function noteJobDependency(jobDependencyGraph, finishListeners, depId, jobId) {
+function noDependencyCycles(jobDependencyGraph, finishListeners, depId, jobId) {
     if (!(jobId in jobDependencyGraph)) jobDependencyGraph[jobId] = {};
     if (!(depId in jobDependencyGraph)) jobDependencyGraph[depId] = {};
 
@@ -395,6 +404,19 @@ function callFinishListeners(finishListeners, jobId, finishedContext) {
             listeners.shift()(finishedContext)
         }
     }
+}
+
+/**
+ * 
+ * @param {t_finishListeners} finishListeners
+ * @param {t_allJobs} allJobs
+ * @param {string} jobId 
+ * @param {import("./worker").MaybeCompilation} finishedContext
+ */
+function finishJob(finishListeners, allJobs, jobId, finishedContext) {
+    allJobs[jobId] = finishedContext;
+
+    callFinishListeners(finishListeners, jobId, finishedContext);
 }
 
 /**

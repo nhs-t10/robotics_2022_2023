@@ -80,7 +80,6 @@ if (workerThreads.isMainThread) {
 async function handleParentMessage(m) {
     if (m.type == "newJob") {
         var evaledJob = await evaluateJob(m.body);
-
         sendMessageToParent({
             type: "jobDone",
             id: m.id,
@@ -166,7 +165,6 @@ function requestDependencyToParent(sourceFile, dependencyFile) {
             if (resolvedDep.success === "COMPILATION_FAILED") {
                 reject("Dependency " + dependencyFile + " didn't successfully compile. As such, this file couldn't compile.");
             } else if (resolvedDep.success === "DOES_NOT_EXIST") {
-                console.log(resolvedDep);
                 reject("Dependency " + dependencyFile + " doesn't exist");
             } else if (resolvedDep.success == "SUCCESS") {
                 if ("fileContext" in resolvedDep) {
@@ -176,7 +174,7 @@ function requestDependencyToParent(sourceFile, dependencyFile) {
                     reject("bad structure of filecontext!");
                 }
             } else {
-                console.log(resolvedDep.success);
+                console.debug(resolvedDep.success);
                 console.debug(Object.keys(resolvedDep));
                 reject("Malformed dependency result!");
             }
