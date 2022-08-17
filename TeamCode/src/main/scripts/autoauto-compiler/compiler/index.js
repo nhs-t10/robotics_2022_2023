@@ -56,6 +56,8 @@ async function compileAllFromSourceDirectory() {
         );
     }
     compilerWorkers.finishGivingJobs();
+    
+    console.log("cafsd fgj finished");
 
     const compilationResults = await Promise.all(jobPromises);
 
@@ -88,7 +90,7 @@ function makeContextAndCompileFile(filename, compilerWorkers, preprocessInputs, 
             writeWrittenFiles(cacheContext);
             resolve(cacheEntry);
         } else {
-            compilerWorkers.giveJob(fileContext, function (run) {              
+            compilerWorkers.giveJob(fileContext, function (run) {  
                 if(run.success === "SUCCESS") {
                     saveCacheEntry(run);
                     

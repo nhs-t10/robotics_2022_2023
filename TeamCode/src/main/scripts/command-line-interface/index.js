@@ -38,5 +38,6 @@ function testHelpFlags() {
     
     if(commandLineInterface["help-detail"] === "units") {
         unitConversionHelp.printUnitsAndExit();
+        process.exit();
     }
 }

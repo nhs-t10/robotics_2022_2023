@@ -4,13 +4,8 @@ const unitConversion = require("./index");
 const ALLOWED_DIMENSIONS = ["L", "A", "T"];
 
 module.exports = {
-    printUnitsAndExit: printUnitsAndExit,
+    printUnits: printUnits,
     getUnitsString: getUnitsString
-}
-
-function printUnitsAndExit() {
-    printUnits();
-    process.exit();
 }
 
 function printUnits() {
