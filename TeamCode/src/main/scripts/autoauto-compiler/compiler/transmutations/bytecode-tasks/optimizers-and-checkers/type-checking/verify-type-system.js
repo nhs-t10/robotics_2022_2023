@@ -199,8 +199,9 @@ function logUnknownType(typeName, type) {
         const typeIsFromVariable = typeName.startsWith("var ");
         
         const text = typeIsFromVariable ? "Unknown Variable" : "Unknown Typing";
-        const explanation = typeIsFromVariable ? "The variable '' couldn't be resolved" :
-            "There was an unresolved type. Unfortunately, that's all we know.\n\nDEBUG: `typeName`: " + typeName;
+        const explanation = typeIsFromVariable ? "The variable '" + 
+            typeName.substring(typeName.indexOf("-") + 1, typeName.indexOf("@")) + "' couldn't be resolved"
+            : "There was an unresolved type. Unfortunately, that's all we know.\n\nDEBUG: `typeName`: " + typeName;
         
         androidStudioLogging.sendTreeLocationMessage({
             text: text,
