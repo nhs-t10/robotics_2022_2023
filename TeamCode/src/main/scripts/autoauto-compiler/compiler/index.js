@@ -78,13 +78,13 @@ async function compileAllFromSourceDirectory() {
 function makeContextAndCompileFile(filename, compilerWorkers, preprocessInputs, environmentHash) {
     const fileContext = makeFileContext(filename, preprocessInputs, environmentHash);
     const cacheEntry = getCacheEntry(fileContext);
-
+    
     return new Promise(function (resolve, reject) {
         if (cacheEntry) {
             const cacheContext = cacheEntry.fileContext;
 
             androidStudioLogging.sendMessages(cacheEntry.log);
-            compilerWorkers.addFinishedJobFromCache(cacheContext);
+            compilerWorkers.addFinishedJobFromCache(cacheContext, cacheEntry.log);
             writeWrittenFiles(cacheContext);
             resolve(cacheEntry);
         } else {

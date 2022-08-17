@@ -60,8 +60,8 @@ const androidStudioLogging = require("../../script-helpers/android-studio-loggin
 /**
  * @typedef {object} workerPool
  * @property {(fileContext: TransmutateContext, cb: jobCallback) => undefined} giveJob;
- * @property {(fileContext: TransmutateContext) => undefined} addFinishedJobFromCache;
- * @property {() => void} finishGivingJobs
+ * @property {(fileContext: TransmutateContext, log: import("../../script-helpers/android-studio-logging").AndroidStudioMessage[] | undefined) => undefined} addFinishedJobFromCache;
+ * @property {() => Promise<void>} finishGivingJobs
  * @property {() => undefined} close
  */
 
@@ -95,23 +95,26 @@ module.exports = function () {
          */
         giveJob: function (fileContext, cb) {
             var w = findOpenWorker();
+            
+            addInProgressJob(allJobs, fileContext);
+            
             if (w) {
                 w.assignJob(fileContext, cb);
             } else {
                 queue.push({ fileContext: fileContext, cb: cb });
             }
         },
-        addFinishedJobFromCache: function (fileContext) {
+        addFinishedJobFromCache: function (fileContext, log) {
             const id = fileContext.sourceFullFileName;
-            allJobs[id] = fileContext;
-            callFinishListeners(finishListeners, id, {
+            allJobs[id] = {
                 success: "SUCCESS",
                 fileContext: fileContext,
-                log: []
-            });
+                log: log || []
+            }
+            callFinishListeners(finishListeners, id, allJobs[id]);
         },
-        finishGivingJobs: function () {
-            stopExpectingMoreJobs(pool);
+        finishGivingJobs: async function () {
+            await stopExpectingMoreJobs(pool);
             clearNonExistantFinishListeners(allJobs, finishListeners);
         },
         close: function () {
@@ -122,9 +125,12 @@ module.exports = function () {
 }
 
 function stopExpectingMoreJobs(pool) {
-    for (const worker of pool) {
-        worker.mayExpectMoreJobs = false;
-    }
+    return new Promise(function (resolve, reject) {        
+        for (const worker of pool) {
+            worker.mayExpectMoreJobs = false;
+        }
+        resolve();
+    });
 }
 
 /**
@@ -190,8 +196,6 @@ function createWorkerWrap(worker, queue, finishListeners, allJobs, jobDependency
         wrap.busy = true;
         const id = job.sourceFullFileName;
 
-        allJobs[id] = null;
-
         callbacks[id] = cb;
         worker.postMessage({
             type: "newJob",
@@ -221,9 +225,9 @@ function createWorkerWrap(worker, queue, finishListeners, allJobs, jobDependency
             const depId = m.dependencyId;
             const jobId = m.id;
 
-            if(wrap.mayExpectMoreJobs === false && allJobs[depId] === undefined) {
+            if (wrap.mayExpectMoreJobs === false && !(depId in allJobs)) {
                 sendNonexistDependency(worker, jobId, depId);
-            } else if (depId in allJobs && allJobs[depId] !== null) {
+            } else if (depId in allJobs && allJobs[depId].success !== "IN_PROGRESS") {
                 sendDependencyComplete(worker, jobId, depId, allJobs[depId]);
             } else {
                 wrap.busy = false;
@@ -254,13 +258,25 @@ function createWorkerWrap(worker, queue, finishListeners, allJobs, jobDependency
 
 /**
  * 
+ * @param {t_allJobs} allJobs
+ * @param {TransmutateContext} job 
+ */
+function addInProgressJob(allJobs, job) {
+    allJobs[job.sourceFullFileName] = {
+        success: "IN_PROGRESS",
+        fileContext: job
+    };
+}
+
+/**
+ * 
  * @param {Worker} worker 
  * @param {string} jobId
  * @param {string} depId 
  * @param {import("./worker.js").MaybeCompilation} maybeCompilation 
  */
 function sendDependencyComplete(worker, jobId, depId, maybeCompilation) {
-    if(maybeCompilation == null) {
+    if (maybeCompilation == null) {
         console.log("BAD BAD BADB DABD");
         throw new Error("ABDD BAHDBD ");
     }
@@ -277,7 +293,7 @@ function sendDependencyComplete(worker, jobId, depId, maybeCompilation) {
  * @param {t_allJobs} allJobs 
  * @param {t_finishListeners} finishListeners 
  */
-function clearNonExistantFinishListeners(allJobs, finishListeners) {
+function clearNonExistantFinishListeners(allJobs, finishListeners) {    
     for (const jobId in finishListeners) {
         if (!(jobId in allJobs)) {
             callFinishListeners(finishListeners, jobId, {

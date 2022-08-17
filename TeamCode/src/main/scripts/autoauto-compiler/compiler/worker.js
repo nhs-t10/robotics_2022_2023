@@ -116,23 +116,29 @@ function addDependencyListener(depId, l) {
 }
 
 /**
- * @typedef {MaybeCompilationSucceeded|MaybeCompilationFailed} MaybeCompilation
+ * @typedef {MaybeCompilationSucceeded|MaybeCompilationFailed|MaybeCompilationInProgress} MaybeCompilation
  */
 
 /**
  * @typedef {Object} MaybeCompilationSucceeded
  * @property {"SUCCESS"} success
  * @property {import("../compiler/transmutations/index").TransmutateContext} fileContext
- * @property {androidStudioLoggingMessage[]} log
+ * @property {AndroidStudioMessage} log
  */
 
 /**
  * @typedef {Object} MaybeCompilationFailed
  * @property {"COMPILATION_FAILED"|"DOES_NOT_EXIST"} success
  * @property {import("../compiler/transmutations/index").TransmutateContext?} fileContext
- * @property {androidStudioLoggingMessage[]?} log
+ * @property {AndroidStudioMessage[]?} log
  * @property {*?} error
  * @property {string?} fileAddress
+ */
+
+/**
+ * @typedef {object} MaybeCompilationInProgress
+ * @property {"IN_PROGRESS"} success
+ * @property {import("../compiler/transmutations/index").TransmutateContext} fileContext
  */
 
 /**
@@ -160,6 +166,7 @@ function requestDependencyToParent(sourceFile, dependencyFile) {
             if (resolvedDep.success === "COMPILATION_FAILED") {
                 reject("Dependency " + dependencyFile + " didn't successfully compile. As such, this file couldn't compile.");
             } else if (resolvedDep.success === "DOES_NOT_EXIST") {
+                console.log(resolvedDep);
                 reject("Dependency " + dependencyFile + " doesn't exist");
             } else if (resolvedDep.success == "SUCCESS") {
                 if ("fileContext" in resolvedDep) {
