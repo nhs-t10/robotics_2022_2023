@@ -30,7 +30,7 @@ function rmTypeCruftBlock(block) {
     rmTypeCruftBcarr(block.code);
 }
 function rmTypeCruftBcarr(bcArr) {
-    bcArr.forEach(x => rmTypeCruftBc(x))
+    for(const b of bcArr) rmTypeCruftBc(b);
 }
 function rmTypeCruftBc(bc) {
     rmTypeCruftBcarr(bc.args);
