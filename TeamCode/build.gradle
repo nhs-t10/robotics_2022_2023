@@ -29,7 +29,14 @@ dependencies {
 
 
 task autoautoCompiler(type: NodeTask) {
-    args = ["--build-history", "--agpbi", "--make-tests"]
+    args = ["--build-history", "--agpbi", "--make-tests", "--run-cleanup",
+            //The `--in` and `--out` arguments use GStrings, a fancy way of putting strings together.
+            //See <http://docs.groovy-lang.org/latest/html/documentation/index.html#all-strings> for more info.
+            "--in=${file("src/main/java")}", "--in=${file("src/test/java")}",
+            "--out=${file("gen")}",
+            "--test-dir=${file("src/test/java")}",
+            "--assets-dir=${file("src/main/assets")}"
+    ]
     script = file("src/main/scripts/autoauto-compiler/index.js")
 }
 
