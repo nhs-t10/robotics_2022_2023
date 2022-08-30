@@ -2,6 +2,7 @@
 
 const path = require("path");
 const fs = require("fs");
+const { sendTreeLocationMessage } = require("../../script-helpers/android-studio-logging");
 
 module.exports = folderScanner
 
@@ -71,9 +72,18 @@ async function getMatchingFolderContents(folder, extension, requiresSort) {
             withFileTypes: true
         }, function(err, names) {
             if(err) {
-                if (err.errno === -4058) return resolve([]);
-                else if (err.errno === -4052) return resolve([{ name: folder }]);
-                else return reject(err);
+                if (err.errno === -4058) {
+                    sendTreeLocationMessage({
+                        text: "Searched folder doesn't exist",
+                        original: "The compiler attempted to search the folder '" + folder + "', but it doesn't exist",
+                        kind: "WARNING"
+                    });
+                    return resolve([]);
+                } else if (err.errno === -4052) {
+                    return resolve([{ name: folder }]);
+                } else {
+                    return reject(err);
+                }
             }
             
             const filepaths = [];

@@ -17,7 +17,7 @@ var parserTools = require("../../../../../../script-helpers/parser-tools");
 const safeFsUtils = require("../../../../../../script-helpers/safe-fs-utils.js");
 const androidStudioLogging = require("../../../../../../script-helpers/android-studio-logging.js");
 
-module.exports = function(javaSource, preexistingNames) {
+module.exports = function (javaSource, preexistingNames, writtenFiles) {
     try {
         var sourceWithoutComments = parserTools.stripComments(javaSource);
         var ast = parser.parse(sourceWithoutComments);
@@ -40,7 +40,7 @@ module.exports = function(javaSource, preexistingNames) {
     var methods = findShimableMethods(primaryType);
     var overloads = groupMethodsIntoOverloads(methods);
 
-    var processedMethodClassLocs = overloads.map(x=>generateRobotFunction(x, fullClassName, preexistingNames));
+    var processedMethodClassLocs = overloads.map(x=>generateRobotFunction(x, fullClassName, preexistingNames, writtenFiles));
     return processedMethodClassLocs;
 }
 
@@ -49,7 +49,7 @@ function packageNameToString(packageName) {
     else return packageNameToString(packageName.qualifier) + "." + packageName.name.identifier;
 }
 
-function generateRobotFunction(overload, definedClass, preexistingNames) {
+function generateRobotFunction(overload, definedClass, preexistingNames, writtenFiles) {
     var name = overload.name;
     
     var noConflictName = name;
@@ -109,6 +109,7 @@ function generateRobotFunction(overload, definedClass, preexistingNames) {
     var ourPath = path.join(robotFunctionsDirectory, classname + ".java");
     
     safeFsUtils.safeWriteFile(ourPath, template);
+    writtenFiles[ourPath] = true;
 
     return {
         shimClassFunction: { nameToUseInAutoauto: noConflictName, javaImplementationClass: classname, javaImplementationFile: ourPath},

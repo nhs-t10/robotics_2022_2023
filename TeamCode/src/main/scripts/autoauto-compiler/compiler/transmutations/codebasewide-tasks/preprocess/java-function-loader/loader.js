@@ -39,7 +39,7 @@ module.exports = async function(writtenFiles) {
         } else {
             var preexistingNames = methods.map(x => x.shimClassFunction.nameToUseInAutoauto).flat();
 
-            var generated = generateAaMethods(fileContent, preexistingNames);
+            var generated = generateAaMethods(fileContent, preexistingNames, writtenFiles);
 
             cacheManagers.managers[manager] = {
                 methods: generated || [],

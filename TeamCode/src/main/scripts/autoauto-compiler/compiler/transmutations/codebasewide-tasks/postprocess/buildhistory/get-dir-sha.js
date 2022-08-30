@@ -24,7 +24,7 @@ async function getFileSha(fileAddress) {
     return new Promise(function(resolve, reject) {
         if (!fs.existsSync(fileAddress)) resolve("blob -1\u0000");
         
-        var fileContent = fs.readFile(fileAddress, function(err, data) {
+        fs.readFile(fileAddress, function(err, fileContent) {
             if(err) reject(err);
             
             var gitLikeFileContentBlob = Buffer.concat([Buffer.from(fileAddress + "\u0000"), fileContent]);
