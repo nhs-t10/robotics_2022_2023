@@ -3,7 +3,7 @@
 const { workerData } = require("worker_threads");
 const unitConversionHelp = require("../unit-conversion/help");
 
-var loadArgv = require("./command-line-arguments");
+var loadArgv = require("./parse-args");
 const printHelpInfo = require("./help");
 var schema = require("./schema");
 

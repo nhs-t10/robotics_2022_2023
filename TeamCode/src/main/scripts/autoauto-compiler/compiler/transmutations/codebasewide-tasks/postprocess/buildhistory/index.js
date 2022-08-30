@@ -9,12 +9,12 @@ const path = require("path");
  */
 module.exports = async function(context, contexts) {
     
-    const srcDirectory = context.sourceRoot;
+    const srcDirectories = context.sourceRoots;
     const assetsDir = context.assetsRoot;
     const genDirectory = context.resultRoot;
     
     if (commandLineInterface["build-history"]) {
-        var buildHistoryFile = await processHistory(srcDirectory, assetsDir, genDirectory)
+        var buildHistoryFile = await processHistory(srcDirectories, assetsDir, genDirectory)
         context.writtenFiles[buildHistoryFile] = true;
     }
 }

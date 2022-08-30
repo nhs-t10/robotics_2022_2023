@@ -2,6 +2,18 @@
 
 const lexer = require("./lexer")
 
+/**
+ * @typedef {object} TokenStream 
+ * @property {() => import("./lexer").AutoautoToken} peek
+ * @property {() => import("./lexer").AutoautoToken} pop
+ */
+
+/**
+ * 
+ * @param {string} text 
+ * @param {string} file 
+ * @returns {AutoautoTokenStream}
+ */
 module.exports = function tokenStream(text, file) {
     const lexGenerator = lexer(text, file);
     
@@ -37,20 +49,3 @@ module.exports = function tokenStream(text, file) {
         }
     }
 }
-
-/**
- * @typedef {object} TokenStream
- * @property {peekFunction} peek
- * @property {popFunction} pop
- */
-
-/**
- * @callback peekFunction
- * @returns {import("./lexer").token}
- */
-
-
-/**
- * @callback popFunction
- * @returns {import("./lexer").token}
- */

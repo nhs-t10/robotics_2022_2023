@@ -609,7 +609,6 @@ function parseRelation(tokenStream, left, file) {
 function binaryLeftAssociativeOperator(precedence) {
     return function parse(tokenStream, leftSide, file) {
         const tkn = tokenStream.pop();
-        const loc = tkn.location;
         const op = tkn.content;
 
         const rightSide = parseExpression(tokenStream, file, precedence);

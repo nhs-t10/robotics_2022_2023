@@ -2,6 +2,12 @@
 
 const baseTokenTypes = require("./base-token-types");
 
+/**
+ * 
+ * @param {string} fileText 
+ * @param {string} file 
+ * @returns {Generator<AutoautoToken, never, unknown>}
+ */
 module.exports = function* lexer(fileText, file) {
     let line = 1, column = 0;
     
@@ -48,6 +54,14 @@ module.exports = function* lexer(fileText, file) {
     }
 }
 
+/**
+ * Calculates the amount of lines and columns in a piece of text, and then
+ * returns a relative offset from the startCol and startLine, respectively.
+ * @param {string} text 
+ * @param {number} startCol 
+ * @param {number} startLine 
+ * @returns {{line: number, col: number}}
+ */
 function lineColumnCount(text, startCol, startLine) {
     let lines = occurances(text, "\n");
     if(lines == 0) {
@@ -64,6 +78,12 @@ function lineColumnCount(text, startCol, startLine) {
     }
 }
 
+/**
+ * 
+ * @param {string} char 
+ * @param {string} str 
+ * @returns {number}
+ */
 function occurances(char, str) {
     let count = 0;
     for(var i = 0; i < str.length; i++) {
@@ -72,6 +92,19 @@ function occurances(char, str) {
     return count;
 }
 
+/**
+ * 
+ * @param {import("./base-token-types").LexerRule} lexRule 
+ * @param {RegExpExecArray} regexResult 
+ * @param {number} startLine 
+ * @param {number} startColumn 
+ * @param {number} startOffset 
+ * @param {number} endLine 
+ * @param {number} endColumn 
+ * @param {number} endOffset 
+ * @param {string} file 
+ * @returns {AutoautoToken}
+ */
 function assembleResultToken(lexRule, regexResult, startLine, startColumn, startOffset, endLine, endColumn, endOffset, file) {
     return {
         name: lexRule.name,
@@ -86,8 +119,9 @@ function assembleResultToken(lexRule, regexResult, startLine, startColumn, start
 }
 
 /**
- * @typedef {object} token
- * @property {string} name
+ * @typedef {object} AutoautoToken
+ * @property {import("./base-token-types").tokenId} name
  * @property {string} content
- * @property {import(".").Location} location
+ * @property {RegExpExecArray} regex
+ * @property {import(".").RealSourceCodeLocation} location
  */

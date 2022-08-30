@@ -7,6 +7,7 @@ const parseStatement = require("./statement-parsing");
 
 /**
  * @param {import("./token-stream").TokenStream} tokenStream 
+ * @param {string} file
  */
 module.exports = function(tokenStream, file) {
     return parseFile(tokenStream, file);
@@ -24,6 +25,7 @@ function parseFile(tokenStream, file) {
     
     if (tokenStream.peek().name == "DOLLAR_SIGN") parseFrontmatter(tokenStream);
     
+    /** @type {AutoautoStatepathElement} */
     let statepaths = [];
     
     
@@ -40,6 +42,10 @@ function parseFile(tokenStream, file) {
     }
 }
 
+/**
+ * 
+ * @param {import("./token-stream").TokenStream} tokenStream 
+ */
 function parseFrontmatter(tokenStream) {
     //Frontmatter is parsed by the compiler before the text-to-syntax-tree transmutation even *sees* the file.
     //therefore, it's a waste of time to parse it here.
@@ -60,6 +66,20 @@ function parseFrontmatter(tokenStream) {
     tokenStream.pop();
 }
 
+/**
+ * @typedef {object} AutoautoStatepathElement
+ * @property {string} label
+ * @property {"LabeledStatepath"} type
+ * @property {import(".").Location} location
+ * @property {AutoautoStatepathContent} statepath
+ */
+
+/**
+ * 
+ * @param {import("./token-stream").TokenStream} tokenStream 
+ * @param {string} file 
+ * @returns {AutoautoStatepathElement}
+ */
 function parseUnlabeledStatepath(tokenStream, file) {
     const spContent = parseStatepathContent(tokenStream, file);
     return {
@@ -70,6 +90,12 @@ function parseUnlabeledStatepath(tokenStream, file) {
     }
 }
 
+/**
+ * 
+ * @param {import("./token-stream").TokenStream} tokenStream 
+ * @param {string} file 
+ * @returns {AutoautoStatepathElement}
+ */
 function parseLabeledStatepath(tokenStream, file) {
     const hashtag = tokenStream.pop();
     if(hashtag.name != "HASHTAG") {
@@ -92,6 +118,19 @@ function parseLabeledStatepath(tokenStream, file) {
     }
 }
 
+/**
+ * @typedef {object} AutoautoStatepathContent
+ * @property {"Statepath"} type
+ * @property {import(".").Location} location
+ * @property {AutoautoState[]} states
+ */
+
+/**
+ * 
+ * @param {import("./token-stream").TokenStream} tokenStream 
+ * @param {string} file 
+ * @returns {AutoautoStatepathContent}
+ */
 function parseStatepathContent(tokenStream, file) {
     let states = [];
     while(tokenStream.peek().name != "HASHTAG" &&
@@ -112,6 +151,19 @@ function parseStatepathContent(tokenStream, file) {
     }
 }
 
+/**
+ * @typedef {object} AutoautoState
+ * @property {"State"} type
+ * @property {import(".").Location} location
+ * @property {AutoautoStatement[]} statement
+ */
+
+/**
+ * 
+ * @param {import("./token-stream").TokenStream} tokenStream 
+ * @param {string} file 
+ * @returns {AutoautoState}
+ */
 function parseState(tokenStream, file) {
     let statements = [];
     

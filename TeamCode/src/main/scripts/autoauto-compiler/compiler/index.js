@@ -17,7 +17,7 @@ const loadFrontmatter = require("./frontmatter-parser");
 
 const BUILD_ROOT_DIRS = (require("./get-build-root"))();
 
-const SRC_DIRECTORY = BUILD_ROOT_DIRS.src
+const SRC_DIRECTORIES = BUILD_ROOT_DIRS.src;
 const COMPILED_RESULT_DIRECTORY = BUILD_ROOT_DIRS.gen;
 const ASSETS_DIRECTORY = BUILD_ROOT_DIRS.asset;
 const TEST_FILES_DIRECTORY = BUILD_ROOT_DIRS.test;
@@ -47,12 +47,12 @@ async function compileAllFromSourceDirectory() {
     //the folderScanner will give once for each file.
     //this way, we don't have to wait for ALL filenames in order to start compiling.
     //it starts after the first one!
-    const aaFiles = folderScanner(SRC_DIRECTORY, ".autoauto");
+    const aaFiles = folderScanner(SRC_DIRECTORIES, ".autoauto", null, true);
     const jobPromises = [];
 
     for await (const file of aaFiles) {
         jobPromises.push(
-            makeContextAndCompileFile(file, compilerWorkers, preprocessInputs, environmentHash)
+            makeContextAndCompileFile(file[1], compilerWorkers, preprocessInputs, environmentHash, file[0])
         );
     }
     await compilerWorkers.finishGivingJobs();
@@ -73,10 +73,11 @@ async function compileAllFromSourceDirectory() {
  * @param {import("./workers-pool").workerPool} compilerWorkers
  * @param {Object.<string, *>} preprocessInputs
  * @param {string} environmentHash 
+ * @param {string} rootDirectory
  * @returns {Promise<import("./worker").MaybeCompilation>}
  */
-function makeContextAndCompileFile(filename, compilerWorkers, preprocessInputs, environmentHash) {
-    const fileContext = makeFileContext(filename, preprocessInputs, environmentHash);
+function makeContextAndCompileFile(filename, compilerWorkers, preprocessInputs, environmentHash, rootDirectory) {
+    const fileContext = makeFileContext(filename, preprocessInputs, environmentHash, rootDirectory);
     const cacheEntry = getCacheEntry(fileContext);
     
     return new Promise(function (resolve, reject) {
@@ -179,14 +180,14 @@ function makeCodebaseContext(codebaseTransmutationWrites) {
         writtenFiles: codebaseTransmutationWrites,
         resultRoot: COMPILED_RESULT_DIRECTORY,
         assetsRoot: ASSETS_DIRECTORY,
-        sourceRoot: SRC_DIRECTORY,
+        sourceRoots: SRC_DIRECTORIES,
         testRoot: TEST_FILES_DIRECTORY
     }
 }
 
-function makeFileContext(file, preprocessInputs, environmentHash) {
+function makeFileContext(file, preprocessInputs, environmentHash, rootDirectory) {
 
-    const resultFile = getResultFor(file);
+    const resultFile = getResultFor(file, rootDirectory);
     const fileContent = fs.readFileSync(file).toString();
     const frontmatter = loadFrontmatter(fileContent);
 
@@ -196,7 +197,7 @@ function makeFileContext(file, preprocessInputs, environmentHash) {
         sourceBaseFileName: path.basename(file),
         sourceDir: path.dirname(file),
         sourceFullFileName: file,
-        sourceRoot: SRC_DIRECTORY,
+        sourceRoots: SRC_DIRECTORIES,
         resultBaseFileName: path.basename(resultFile),
         resultDir: path.dirname(resultFile),
         resultFullFileName: resultFile,
@@ -259,11 +260,11 @@ function makeCacheKey(fileContext, environmentHash) {
     return sha(keyDataToSha.join("\0"));
 }
 
-function getResultFor(filename) {
+function getResultFor(filename, root) {
     const folder = path.dirname(filename);
 
     const packageFolder = folder
-        .replace(SRC_DIRECTORY, "").toLowerCase();
+        .replace(root, "").toLowerCase();
 
     const javaFileName = jClassIfy(filename) + ".java";
 

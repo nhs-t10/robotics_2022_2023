@@ -1,5 +1,7 @@
 "use strict";
 
+const { normalize } = require("path");
+
 /**
  * @typedef {object} CommandLineArguments
  * @property {boolean} ascii
@@ -15,6 +17,10 @@
  * @property {boolean} debug
  * @property {"units" | ""} help-detail
  * @property {boolean} no-appendix
+ * @property {string[]} in
+ * @property {string} out
+ * @property {string} assets-dir
+ * @property {string} test-dir
  */
 
 
@@ -88,5 +94,26 @@ module.exports = {
         value: false,
         short: [],
         description: "Generate tests in the __testedautoauto directory"
+    },
+    "in": {
+        default: [process.cwd()],
+        value: [],
+        short: [],
+        description: "The directory(s) to find Autoauto files from"
+    },
+    "out": {
+        value: process.cwd(),
+        short: [],
+        description: "The directory to write generated files into"
+    },
+    "assets-dir": {
+        value: process.cwd(),
+        short: [],
+        description: "The directory to write assets into"
+    },
+    "test-dir": {
+        value: process.cwd(),
+        short: [],
+        description: "The directory to write tests into"
     }
 }

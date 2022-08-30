@@ -5,8 +5,8 @@ const folderScanner = require("../../../../../folder-scanner");
 
 var badPerceptualHash = require("./bad-percep-hash");
 
-module.exports = async function(directory, oldHashString, ignores) {
-    var hashBuffer = await getDirectoryPerceptualHash(directory, ignores);
+module.exports = async function(directories, oldHashString, ignores) {
+    var hashBuffer = await getDirectoryPerceptualHash(directories, ignores);
     var hashString = hashBuffer.toString("hex");
     
     return {
@@ -17,9 +17,6 @@ module.exports = async function(directory, oldHashString, ignores) {
 
 async function getDirectoryPerceptualHash(directory, ignores) {
     ignores = ignores || [];
-    
-    directory = directory + "";
-    if(!fs.existsSync(directory)) return null;
     
     const scanner = folderScanner(directory, x=>!ignores.includes(x));
     

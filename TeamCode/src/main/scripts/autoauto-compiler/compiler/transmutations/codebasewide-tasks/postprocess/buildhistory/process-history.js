@@ -14,7 +14,7 @@ const { readJSONFile } = require("../../../../../../script-helpers/safe-fs-utils
 const HASH_SECRET = "autoauto family";
 const BUILD_HASH_IGNORED = ["gen", "genealogy", ".cache", "buildimgs", "scripts"];
 
-module.exports = async function (srcDirectory, assetsDirectory, genDirectory) {
+module.exports = async function (srcDirectories, assetsDirectory, genDirectory) {
     
     const computerHash = getComputerHash();
     const familyTreeRecordsDirectory = getFamilyTreeRecordsDirectory(assetsDirectory);
@@ -33,10 +33,10 @@ module.exports = async function (srcDirectory, assetsDirectory, genDirectory) {
 
     var name = getName(familyLine.buildCount, familyLine.cognomen);
     var time = (new Date()).toISOString();
-    var buildHash = await getDirectorySha(srcDirectory, BUILD_HASH_IGNORED);
+    var buildHash = await getDirectorySha(srcDirectories, BUILD_HASH_IGNORED);
     var w3w = what3Words.simpleNouns(buildHash);
     var phrase = what3Words.complexPhrase(buildHash);
-    var pngFile = await buildPng(familyLine.buildCount, srcDirectory, BUILD_HASH_IGNORED, assetsDirectory);
+    var pngFile = await buildPng(familyLine.buildCount, srcDirectories, BUILD_HASH_IGNORED, assetsDirectory);
     
     androidStudioLogging.sendTreeLocationMessage({
         kind: "INFO",

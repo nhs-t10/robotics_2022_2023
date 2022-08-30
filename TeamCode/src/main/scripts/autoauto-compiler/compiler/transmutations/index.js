@@ -189,7 +189,7 @@ function loadTransmutation(sourceFile, metaFile) {
  * @property {Object.<string, string>} writtenFiles
  * @property {string} resultRoot
  * @property {string} assetsRoot
- * @property {string} sourceRoot
+ * @property {string[]} sourceRoots
  * @property {string} testRoot
  */
 
@@ -210,7 +210,7 @@ function loadTransmutation(sourceFile, metaFile) {
  * @property {string} resultBaseFileName
  *
  * @property {string} resultRoot
- * @property {string} sourceRoot
+ * @property {string[]} sourceRoots
  * @property {string} assetsRoot
  * @property {string} testRoot
  * 

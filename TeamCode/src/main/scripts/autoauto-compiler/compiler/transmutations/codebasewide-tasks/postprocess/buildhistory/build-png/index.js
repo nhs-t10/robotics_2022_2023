@@ -5,10 +5,10 @@ var cache = require("../../../../../../../cache");
 var pngFromHash = require("./create-png-from-hash.js");
 var deltaHashDirectory = require("./delta-hash-directory.js");
 
-module.exports = async function (buildNumber, srcDir, ignored, assetsDir) {
+module.exports = async function (buildNumber, srcDirs, ignored, assetsDir) {
     var oldHash = getPreviousBuildForDelting();
     
-    var hexHash = await deltaHashDirectory(srcDir, oldHash.c, ignored);
+    var hexHash = await deltaHashDirectory(srcDirs, oldHash.c, ignored);
     
     var nonzeroBuildAddress = pngFromHash(buildNumber, hexHash.diff, 0, assetsDir) || {address: oldHash.p, colors: ""};
     

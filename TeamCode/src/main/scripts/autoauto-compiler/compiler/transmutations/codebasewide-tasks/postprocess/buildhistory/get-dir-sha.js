@@ -9,25 +9,28 @@ module.exports = getDirectorySha;
 async function getDirectorySha(directory, ignores) {
     ignores = ignores || [];
     
-    directory = directory + "";
-    if(!fs.existsSync(directory)) return "";
-    
     const scanner = folderScanner(directory, x=>!ignores.includes(x), true);
     
     const hash = crypto.createHash("sha256");
     for await (const fileAddress of scanner) {
-        hash.update(getFileSha(fileAddress));
+        const fileHash = await getFileSha(fileAddress);
+        hash.update(fileHash);
     }
     
     return hash.digest("hex");
 }
 
-function getFileSha(fileAddress) {
-    if (!fs.existsSync(fileAddress)) return "blob -1\u0000";
-    
-    var fileContent = fs.readFileSync(fileAddress);
-    var gitLikeFileContentBlob = Buffer.concat([Buffer.from(fileAddress + "\u0000"), fileContent]);
-    var hash = crypto.createHash("sha256").update(gitLikeFileContentBlob).digest("hex");
-    
-    return hash;
+async function getFileSha(fileAddress) {
+    return new Promise(function(resolve, reject) {
+        if (!fs.existsSync(fileAddress)) resolve("blob -1\u0000");
+        
+        var fileContent = fs.readFile(fileAddress, function(err, data) {
+            if(err) reject(err);
+            
+            var gitLikeFileContentBlob = Buffer.concat([Buffer.from(fileAddress + "\u0000"), fileContent]);
+            var hash = crypto.createHash("sha256").update(gitLikeFileContentBlob).digest("hex");
+
+            resolve(hash);
+        });
+    })
 }
