@@ -9,12 +9,7 @@ var schema = require("./schema");
 
 
 /**
- * @typedef {import("./schema").CommandLineArguments} CommandLineArguments
- */
-
-
-/**
- * @type CommandLineArguments
+ * @type {import("./schema").CommandLineInterface}
  */
 const commandLineInterface = {};
 module.exports = commandLineInterface;

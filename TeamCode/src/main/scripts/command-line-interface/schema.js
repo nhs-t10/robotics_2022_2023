@@ -1,7 +1,5 @@
 "use strict";
 
-const { normalize } = require("path");
-
 /**
  * @typedef {object} CommandLineArguments
  * @property {boolean} ascii
@@ -21,6 +19,7 @@ const { normalize } = require("path");
  * @property {string} out
  * @property {string} assets-dir
  * @property {string} test-dir
+ * @property {boolean} run-cleanup
  */
 
 
@@ -115,5 +114,11 @@ module.exports = {
         value: process.cwd(),
         short: [],
         description: "The directory to write tests into"
+    },
+    "run-cleanup": {
+        value: false,
+        short: [],
+        description: "Whether to clean-up files in the 'out' directory which aren't generated files.\n" +
+            "WARNING: WITH THE DEFAULT SETTINGS, THIS WILL ERASE YOUR CODE. BE CAREFUL!"
     }
 }
