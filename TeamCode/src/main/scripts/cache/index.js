@@ -13,7 +13,7 @@ const androidStudioLogging = require("../script-helpers/android-studio-logging")
 
 const CACHE_DIR = findCacheDirectory();
 const CACHE_MAX_BYTES = 20_000_000; //20 MB
-const CACHE_META_FILE = path.join(__dirname, ".cache.meta.json");
+const CACHE_META_FILE = path.join(CACHE_DIR, ".cache.meta.json");
 
 
 var cacheMeta = cacheMetadata(CACHE_META_FILE);
