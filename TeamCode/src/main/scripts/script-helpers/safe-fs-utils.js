@@ -2,7 +2,6 @@
 
 var fs = require("fs");
 var path = require("path");
-const androidStudioLogging = require("./android-studio-logging");
 const cachedFs = require("./cached-fs");
 
 
@@ -67,7 +66,7 @@ function safeWriteFileEventually(fileName, content) {
 
 function reportNodeJSFileError(err, file, stack) {
     if(stack) err.stack = stack;
-    androidStudioLogging.sendTreeLocationMessage(err, file, "ERROR");
+    console.error("ERROR: " + file + "\n" + err + "\n" + err.stack);
 }
 
 function safeWriteFile(fileName, content) {
