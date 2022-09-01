@@ -97,6 +97,12 @@ const infixParsers = {
 
 module.exports = parseStatement;
 
+/**
+ * 
+ * @param {import("./token-stream").TokenStream} tokenStream 
+ * @param {string} file 
+ * @returns {AutoautoStatement}
+ */
 function parseStatement(tokenStream, file) {
 
     let statementSigil = tokenStream.peek().name;
@@ -108,6 +114,23 @@ function parseStatement(tokenStream, file) {
     }
 }
 
+/**
+ * @typedef {AutoautoValueStatement | AutoautoAfterStatement | AutoautoFunctionDefStatement | AutoautoGotoStatement | AutoautoIfStatement | AutoautoPassStatement | AutoautoReturnStatement | AutoautoProvideStatement | AutoautoNextStatement | AutoautoSkipStatement | AutoautoLetStatement | AutoautoLetPropertyStatement} AutoautoStatement
+ */
+
+/**
+ * @typedef {object} AutoautoValueStatement
+ * @property {"ValueStatement"} type
+ * @property {import(".").Location} location
+ * @property {AutoautoValue} call
+ */
+
+/**
+ * 
+ * @param {AutoautoValue} expr 
+ * @param {string} file 
+ * @returns {AutoautoValueStatement}
+ */
 function wrapValueStatement(expr, file) {
     return {
         type: "ValueStatement",
@@ -116,6 +139,19 @@ function wrapValueStatement(expr, file) {
     }
 }
 
+/**
+ * @typedef {object} AutoautoAfterStatement
+ * @property {"AfterStatement"} type
+ * @property {import(".").Location} location
+ * @property {AutoautoStatement} statement
+ */
+
+/**
+ * 
+ * @param {import("./token-stream").TokenStream} tokenStream 
+ * @param {string} file 
+ * @returns {AutoautoAfterStatement}
+ */
 function parseAfterStatement(tokenStream, file) {
     //pop and discard the 'after'. The only thing we need to save is the 
     //start location.
@@ -131,6 +167,21 @@ function parseAfterStatement(tokenStream, file) {
     };
 }
 
+/**
+ * @typedef {object} AutoautoFunctionDefStatement
+ * @property {"FunctionDefStatement"} type
+ * @property {AutoautoIdentifier} name
+ * @property {AutoautoStatement} body
+ * @property {AutoautoArgumentList} args
+ * @property {import(".").Location} location
+ */
+
+/**
+ * 
+ * @param {import("./token-stream").TokenStream} tokenStream 
+ * @param {string} file 
+ * @returns {AutoautoFunctionDefStatement}
+ */
 function parseFunctionDefinition(tokenStream, file) {
     const locStart = tokenStream.pop().location.start;
 
@@ -345,7 +396,13 @@ function parseLetStatement(tokenStream, file) {
 
 }
 
-
+/**
+ * 
+ * @param {import("./token-stream").TokenStream} tokenStream 
+ * @param {string} file 
+ * @param {number} [precedence]
+ * @returns {AutoautoValue}
+ */
 function parseExpression(tokenStream, file, precedence) {
     //make sure precedence is a number
     precedence |= 0;
@@ -370,6 +427,10 @@ function parseExpression(tokenStream, file, precedence) {
     return left;
 }
 
+/**
+ * @param {import("./token-stream").TokenStream} tokenStream
+ * @returns {number}
+ */
 function getNextPrecedence(tokenStream) {
     const nextName = tokenStream.peek().name;
     if (nextName in tokenPrecedence) {
@@ -379,6 +440,18 @@ function getNextPrecedence(tokenStream) {
     }
 }
 
+/**
+ * @typedef {object} AutoautoBooleanLiteral
+ * @property {"BooleanLiteral"} type
+ * @property {import(".").Location} location
+ * @property {boolean} value
+ */
+
+/**
+ * 
+ * @param {import("./token-stream").TokenStream} tokenStream 
+ * @returns {AutoautoBooleanLiteral}
+ */
 function parseTrueLiteral(tokenStream) {
     return {
         type: "BooleanLiteral",
@@ -386,6 +459,12 @@ function parseTrueLiteral(tokenStream) {
         value: true
     };
 }
+
+/**
+ * 
+ * @param {import("./token-stream").TokenStream} tokenStream 
+ * @returns {AutoautoBooleanLiteral}
+ */
 function parseFalseLiteral(tokenStream) {
     return {
         type: "BooleanLiteral",
@@ -397,6 +476,18 @@ function parseStringLiteral(tokenStream) {
     return wrapStringLiteralToken(tokenStream.pop());
 }
 
+/**
+ * @typedef {object} AutoautoStringLiteral
+ * @property {"StringLiteral"} type
+ * @property {import(".").Location} location
+ * @property {string} str
+ */
+
+/**
+ * 
+ * @param {import("./lexer").AutoautoToken} tkn 
+ * @returns {AutoautoStringLiteral}
+ */
 function wrapStringLiteralToken(tkn) {
     let stringContent = "";
     try {
@@ -414,6 +505,11 @@ function wrapStringLiteralToken(tkn) {
     }
 }
 
+/**
+ * 
+ * @param {import("./token-stream").TokenStream} tokenStream 
+ * @returns 
+ */
 function parseIdentifier(tokenStream) {
     const tkn = tokenStream.pop();
     return wrapVariableReferenceOnIdentifierToken(tkn);
@@ -489,9 +585,22 @@ function parseFunctionLiteral(tokenStream, file) {
     };
 }
 
-//ARGUMENT LIST is different from PARAMETER LIST.
-//Argument list: f(3, 5, 3)
-//Parameter list: function x(arg1, arg2) {...}
+/**
+ * @typedef {object} AutoautoArgumentList
+ * @property {"ArgumentList"} args
+ * @property {import(".").Location} location
+ * @property {number} len
+ * @property {AutoautoValue[]} args
+ */
+
+/**
+ * ARGUMENT LIST is different from PARAMETER LIST.
+ * Argument list: f(3, 5, 3)
+ * Parameter list: function x(arg1, arg2) {...}
+ * @param {import("./token-stream").TokenStream} tokenStream
+ * @param {string} file
+ * @returns {AutoautoArgumentList}
+ */
 function parseArgumentList(tokenStream, file) {
     const args = [];
 
@@ -606,6 +715,20 @@ function parseRelation(tokenStream, left, file) {
     }
 }
 
+/**
+ * @typedef {object} AutoautoOperatorExpression
+ * @property {"OperatorExpression"} type
+ * @property {import(".").Location} location
+ * @property {AutoautoValue} left
+ * @property {AutoautoValue} right
+ * @property {string} operator
+ */
+
+/**
+ * 
+ * @param {number} precedence 
+ * @returns {(tokenStream: import("./token-stream").TokenStream, leftSide: AutoautoValue, file: string) => AutoautoOperatorExpression}
+ */
 function binaryLeftAssociativeOperator(precedence) {
     return function parse(tokenStream, leftSide, file) {
         const tkn = tokenStream.pop();
@@ -646,6 +769,18 @@ function parseDotGetter(tokenStream, left, file) {
     };
 }
 
+/**
+ * @typedef {object} AutoautoIdentifier
+ * @property {"Identifier"} type
+ * @property {import(".").Location} location
+ * @property {string} value
+ */
+
+/**
+ * 
+ * @param {import("./lexer").AutoautoToken} identifier 
+ * @returns {AutoautoIdentifier}
+ */
 function wrapIdentifierToken(identifier) {
     return {
         type: "Identifier",
@@ -654,6 +789,12 @@ function wrapIdentifierToken(identifier) {
     };
 }
 
+/**
+ * 
+ * @param {string} name 
+ * @param {import(".").Location} location 
+ * @returns {AutoautoIdentifier}
+ */
 function wrapIdentifierString(name, location) {
     return {
         type: "Identifier",
@@ -662,6 +803,18 @@ function wrapIdentifierString(name, location) {
     }
 }
 
+/**
+ * @typedef {object} AutoautoVariableReference
+ * @property {"VariableReference"} type
+ * @property {import(".").Location} location
+ * @property {AutoautoIdentifier} variable
+ */
+
+/**
+ * 
+ * @param {import("./lexer").AutoautoToken} identifier 
+ * @returns {AutoautoVariableReference}
+ */
 function wrapVariableReferenceOnIdentifierToken(identifier) {
     return {
         type: "VariableReference",
@@ -670,6 +823,21 @@ function wrapVariableReferenceOnIdentifierToken(identifier) {
     };
 }
 
+/**
+ * @typedef {object} AutoautoTailedValue
+ * @property {"TailedValue"} type
+ * @property {AutoautoValue} head
+ * @property {AutoautoValue} tail
+ * @property {import(".").Location} location
+ */
+
+/**
+ * 
+ * @param {import("./token-stream").TokenStream} tokenStream 
+ * @param {AutoautoValue} left 
+ * @param {string} file 
+ * @returns {AutoautoTailedValue}
+ */
 function parseArrayGetter(tokenStream, left, file) {
     const locStart = tokenStream.pop().location.start;
 
@@ -687,6 +855,20 @@ function parseArrayGetter(tokenStream, left, file) {
     };
 }
 
+/**
+ * @typedef {object} AutoautoDelegatorExpression
+ * @property {"DelegatorExpression"} type
+ * @property {AutoautoStringLiteral} delegateTo
+ * @property {AutoautoArgumentList} args
+ * @property {import(".").Location} location
+ */
+
+/**
+ * 
+ * @param {import("./token-stream").TokenStream} tokenStream 
+ * @param {string} file 
+ * @returns {AutoautoDelegatorExpression}
+ */
 function parseDelegatorExpression(tokenStream, file) {
     const locStart = tokenStream.pop().location.start;
 
