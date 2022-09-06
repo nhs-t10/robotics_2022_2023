@@ -304,7 +304,7 @@ async function resolveBinaryOp(typeSystem, typeName, type, visitedTypes, resolut
         return undefined;
     }
 
-    const resultType = getBinaryOperatorResult(type, typeSystem);
+    const resultType = getBinaryOperatorResult(type, leftType, rightType, typeSystem);
 
     return [resultType]
 }

@@ -14,24 +14,27 @@ module.exports = getBinaryOperatorResult;
 
 /**
  * @param {TypeRecord} type
+ * @param {TypeRecord[]} leftType
+ * @param {TypeRecord[]} rightType
  * @param {TypeSystem} typeSystem
  * @returns {TypeRecord}
  */
-function getBinaryOperatorResult(type, typeSystem) {
-    
-    const left = type.left, right = type.right;
-    const leftRecord = typeSystem[left], rightRecord = typeSystem[right];
-    
+function getBinaryOperatorResult(type, leftType, rightType, typeSystem) {    
     const location = type.location;
+    
+    const leftLocation = typeSystem[type.left].location, rightLocation = typeSystem[type.right].location;
+    
+    leftType.location = leftLocation;
+    rightType.location = rightLocation;
 
     switch(type.op) {
-        case "-": return minusOp(leftRecord, rightRecord, location, typeSystem);
-        case "+": return plusOp(leftRecord, rightRecord, location, typeSystem);
-        case "*": return timesOp(leftRecord, rightRecord, location, typeSystem);
-        case "/": return divideOp(leftRecord, rightRecord, location, typeSystem);
-        case "%": return modOp(leftRecord, rightRecord, location, typeSystem);
+        case "-": return minusOp(leftType, rightType, location, typeSystem);
+        case "+": return plusOp(leftType, rightType, location, typeSystem);
+        case "*": return timesOp(leftType, rightType, location, typeSystem);
+        case "/": return divideOp(leftType, rightType, location, typeSystem);
+        case "%": return modOp(leftType, rightType, location, typeSystem);
         case "**":
-        case "^": return expOp(leftRecord, rightRecord, location, typeSystem);
+        case "^": return expOp(leftType, rightType, location, typeSystem);
 
         case ">":
         case ">=":
@@ -39,7 +42,7 @@ function getBinaryOperatorResult(type, typeSystem) {
         case "!=":
         case "<=":
         case "<":
-            return typeSystem["boolean"] || console.log("no boolean!");
+            return typeSystem["boolean"] || console.warn("no boolean!");
 
         default: throw new Error("unknown operator " + op);
     }
@@ -47,8 +50,8 @@ function getBinaryOperatorResult(type, typeSystem) {
 
 /**
  * 
- * @param {TypeRecord} left 
- * @param {TypeRecord} right 
+ * @param {TypeRecord[] & { location: Location }} left 
+ * @param {TypeRecord[] & { location: Location }} right 
  * @param {Location} location 
  * @param {TypeSystem} typeSystem 
  * @returns {TypeRecord}
@@ -62,8 +65,8 @@ function minusOp(left, right, location, typeSystem) {
 
 /**
  * 
- * @param {TypeRecord} left 
- * @param {TypeRecord} right 
+ * @param {TypeRecord & { location: Location }} left 
+ * @param {TypeRecord & { location: Location }} right 
  * @param {Location} location 
  * @param {TypeSystem} typeSystem 
  * @returns {TypeRecord}
@@ -77,8 +80,8 @@ function timesOp(left, right, location, typeSystem) {
 
 /**
  * 
- * @param {TypeRecord} left 
- * @param {TypeRecord} right 
+ * @param {TypeRecord & { location: Location }} left 
+ * @param {TypeRecord & { location: Location }} right 
  * @param {Location} location 
  * @param {TypeSystem} typeSystem 
  * @returns {TypeRecord}
@@ -92,8 +95,8 @@ function divideOp(left, right, location, typeSystem) {
 
 /**
  * 
- * @param {TypeRecord} left 
- * @param {TypeRecord} right 
+ * @param {TypeRecord & { location: Location }} left 
+ * @param {TypeRecord & { location: Location }} right 
  * @param {Location} location 
  * @param {TypeSystem} typeSystem 
  * @returns {TypeRecord}
@@ -107,8 +110,8 @@ function modOp(left, right, location, typeSystem) {
 
 /**
  * 
- * @param {TypeRecord} left 
- * @param {TypeRecord} right 
+ * @param {TypeRecord & { location: Location }} left 
+ * @param {TypeRecord & { location: Location }} right 
  * @param {Location} location 
  * @param {TypeSystem} typeSystem 
  * @returns {TypeRecord}
@@ -122,8 +125,8 @@ function expOp(left, right, location, typeSystem) {
 
 /**
  * 
- * @param {TypeRecord} left 
- * @param {TypeRecord} right 
+ * @param {TypeRecord & { location: Location }} left 
+ * @param {TypeRecord & { location: Location }} right 
  * @param {Location} location 
  * @param {TypeSystem} typeSystem 
  * @returns {TypeRecord}
@@ -137,18 +140,16 @@ function plusOp(left, right, location, typeSystem) {
 
 /**
  * 
- * @param {TypeRecord} type 
+ * @param {TypeRecord[] & { location: Location }} type 
  * @param {string} relativeOperatorSide 
  * @param {Location} parentLocation
  * @param {TypeSystem} typeSystem
  * @returns {boolean}
  */
 function constrainNumeric(type, relativeOperatorSide, parentLocation, typeSystem) {
+
     
-    
-    const hasNum = (type.type == "primitive" && type.primitive == "number") ||
-        (type.type == "union" && type.types.length == 1 && type.types[0] == "number") ||
-        (type.type == "union" && type.types.length == 2 && type.types.includes("number" && type.types.includes("undefined")));
+    const hasNum = (type.length == 1 && type[0].type == "primitive" && type[0].primitive == "number");
 
     if(!hasNum) androidStudioLogging.sendTreeLocationMessage({
         text: `Uncheckable type mismatch on binary operator`,
@@ -163,20 +164,24 @@ function constrainNumeric(type, relativeOperatorSide, parentLocation, typeSystem
 
 /**
  * 
- * @param {TypeRecord} t 
+ * @param {TypeRecord[]} t 
  * @returns {boolean}
  */
 function maybeString(t) {
-    return (t.type === "primitive" && t.primitive === "string") ||
-        (t.type === "union" && t.types.includes("string"));
+    
+    if(t.length == 1 && t[0].type == "primitive" && t[0].primitive === "string") return true;
+    
+    for(const type of t) {
+        if(t.type == "primitive" && t.primitive == "string") return true;
+    }
+    return false;
 }
 
 /**
  * 
- * @param {TypeRecord} t 
+ * @param {TypeRecord[]} t 
  * @returns {boolean}
  */
 function definitelyString(t) {
-    return ( t.type === "primitive" && t.primitive === "string") || 
-        (t.type === "union" && t.types.length === 1 && t.types[0] === "string");
+    return t.length == 1 && t[0].type == "primitive" && t[0].type === "string";
 }
