@@ -1,0 +1,17 @@
+/*
+
+Test: Frontmatter analysis.
+- Repeated keys should be overwritten by the last value
+- Warnings should be emitted for unknown values
+- Numbers should be interpreted as numerical, not as strings.
+- `compilerMode` should be verified
+*/
+
+$
+d: f,
+somethingWeDontKnow: HKJADSJSDAJK,
+somethingWeDontKnow: actual,
+thirty: 30,
+compilerMode: HOO
+$
+

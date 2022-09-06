@@ -3,6 +3,7 @@
 const { writeFileSync } = require("fs");
 const androidStudioLogging = require("../../../../../../script-helpers/android-studio-logging");
 const bytecodeSpec = require("../../bytecode-spec");
+const { formatBc } = require("../../bytecode-tools");
 const verifyTypeSystem = require("./verify-type-system");
 
 /**

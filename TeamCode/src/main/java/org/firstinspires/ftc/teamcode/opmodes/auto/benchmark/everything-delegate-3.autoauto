@@ -1,0 +1,7 @@
+$
+    compilerMode: "lib"
+$
+
+provide(func(x) {
+    return module_args[0] - x
+})

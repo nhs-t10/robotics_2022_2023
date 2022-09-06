@@ -4,6 +4,7 @@ var cPool = require("../constant-pool");
 
 var treeBlockToBytecodeBlock = require("./ast-to-bytecode");
 const bytecodeSpec = require("../bytecode-spec");
+const { PROGRAM_INIT_PREFIX } = require("./prefixes");
 
 module.exports = async function (ast, frontmatter, context) {
     var constantPool = cPool(context);
@@ -20,6 +21,8 @@ module.exports = async function (ast, frontmatter, context) {
     
     var blockRecords = Object.fromEntries(flattedBlocks.map(x=>[x.label, x]));
     
+    let firstLabel = treeBlocks[0].label;
+    
     if(blockRecords["ENTRY"]) {
         throw "entry block defined!"
     } else {
@@ -30,13 +33,17 @@ module.exports = async function (ast, frontmatter, context) {
                 code: bytecodeSpec.jmp_l.code,
                 location: ast.location,
                 args: [{ 
-                    code: constantPool.getCodeFor(treeBlocks[0].label), 
-                    __value: treeBlocks[0].label,
+                    code: constantPool.getCodeFor(firstLabel), 
+                    __value: firstLabel,
                     args: [],
                     location: ast.location
                 }]
             }]
         };
+    }
+    
+    if(context.isLibrary == false) {
+        findAndRewriteProgramInitBlocks(blockRecords["ENTRY"], blockRecords);
     }
     
     return {
@@ -66,4 +73,24 @@ function programToTreeBlocks(program, universalPrefix) {
         }))
     ).flat();
     return blocks;   
+}
+
+/**
+ * 
+ * @param {import("./ast-to-bytecode").Block} startBlock 
+ * @param {Object<string, import("./ast-to-bytecode").Block>} blockRecords
+ * @returns 
+ */
+function findAndRewriteProgramInitBlocks(startBlock, blockRecords) {
+    const allBlocks = Object.values(blockRecords);
+    const initBlocks = allBlocks.filter(x => x.label.startsWith(PROGRAM_INIT_PREFIX));
+
+    if (initBlocks.length == 0) return;
+    
+
+    for (var i = 0; i < initBlocks.length; i++) {        
+        startBlock.code = initBlocks[i].code.concat(startBlock.code);
+    }
+    
+    
 }

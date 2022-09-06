@@ -217,6 +217,7 @@ function loadTransmutation(sourceFile, metaFile) {
  * @property {Object.<string, string>} writtenFiles
  * @property {string[]} readsAllFiles
  *
+ * @property {boolean} isLibrary
  * @property {object} fileFrontmatter
  * @property {SerializableTransmutationInstance[]} transmutations
  * 

@@ -68,7 +68,9 @@ function mergeTypes(original, interperted, cannonical, a) {
             break;
             case "object": mergeObjects(original, interperted, cannonical, a);
             break;
-            default: throw "bad merge of " + original.type;
+            default: 
+                console.log(original, interperted)
+                //throw "bad merge of " + original.type + " and " + interperted.type;
         }
     }
 }

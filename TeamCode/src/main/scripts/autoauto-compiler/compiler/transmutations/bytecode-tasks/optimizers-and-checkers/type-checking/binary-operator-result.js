@@ -152,7 +152,7 @@ function constrainNumeric(type, relativeOperatorSide, parentLocation, typeSystem
 
     if(!hasNum) androidStudioLogging.sendTreeLocationMessage({
         text: `Uncheckable type mismatch on binary operator`,
-        original: `This operator uses a numeric type, but the type checker could only promise \`${formatType(type)}\` for the ${relativeOperatorSide} side.\n` +
+        original: `This operator uses a numeric type, but the type checker could only promise \`${formatType(type, typeSystem)}\` for the ${relativeOperatorSide} side.\n` +
         `The ${relativeOperatorSide} side's value is defined at ` + formatLocation(type.location),
         kind: "WARNING",
         location: parentLocation

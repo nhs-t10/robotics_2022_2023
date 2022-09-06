@@ -202,6 +202,8 @@ function logUnknownType(typeName, type) {
         const explanation = typeIsFromVariable ? "The variable '" + 
             typeName.substring(typeName.indexOf("-") + 1, typeName.indexOf("@")) + "' couldn't be resolved"
             : "There was an unresolved type. Unfortunately, that's all we know.\n\nDEBUG: `typeName`: " + typeName;
+            
+        console.log(typeName);
         
         androidStudioLogging.sendTreeLocationMessage({
             text: text,
@@ -413,8 +415,6 @@ async function resolveUnion(typeSystem, typeName, type, visitedTypes, resolution
     }
 
     const types = Array.from(u);
-
-    if (types.length == 1) typeSystem[typeName] = types[0];
 
     return types;
 }

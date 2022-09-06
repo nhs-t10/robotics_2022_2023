@@ -99,6 +99,12 @@ log("ULS!"), goto afterStatements;
     log(3 ** two == 9), next;
     log(3 ^ two == 9), next;
     log(3 % two == 1), next;
+    goto delegation;
+    
+#delegation:
+    log(delegate("./everything-delegate-1.autoauto")), next;
+    log(delegate("./everything-delegate-2.autoauto", 3)), next;
+    let f = delegate("./everything-delegate-3.autoauto", 5), log(f(2)), next;
     goto done;
 
 #done:

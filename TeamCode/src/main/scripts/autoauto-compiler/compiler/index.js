@@ -205,6 +205,7 @@ function makeFileContext(file, preprocessInputs, environmentHash, rootDirectory)
         assetsRoot: ASSETS_DIRECTORY,
         testRoot: TEST_FILES_DIRECTORY,
         fileFrontmatter: frontmatter,
+        isLibrary: frontmatter.compilerMode == "lib",
         fileContentText: fileContent,
         lastInput: fileContent,
         inputs: {},
