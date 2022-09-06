@@ -15,8 +15,8 @@ function printUnits() {
         const unit = unitData[key];
 
         if(ALLOWED_DIMENSIONS.includes(unit.dimension)) {
-            console.log("- " + unit.key);
-            console.log("  Abbreviations: " + unit.abbs.join(", "));
+            console.info("- " + unit.key);
+            console.info("  Abbreviations: " + unit.abbs.join(", "));
         }
     }
 }
