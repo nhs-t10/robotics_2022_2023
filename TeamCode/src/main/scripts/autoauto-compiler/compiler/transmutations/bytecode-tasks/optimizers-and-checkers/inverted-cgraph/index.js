@@ -9,16 +9,23 @@ function invertControlGraph(cgraph) {
     var igc = {};
 
     Object.entries(cgraph).forEach(x => {
-        var from = x[0];
-        var tos = x[1];
+        const fromId = x[0];
+        const destinations = x[1];
+        
+        //required, since that way every block will have an entry.
+        if(!igc[fromId]) igc[fromId] = [];
 
-        if (!igc[from]) igc[from] = [];
+        destinations.forEach(to => {
+            const toId = to.label;
+            if (!igc[toId]) igc[toId] = {};
 
-        tos.forEach(to => {
-            if (!igc[to]) igc[to] = [];
-
-            if (!igc[to].includes(from)) igc[to].push(from);
+            igc[toId][fromId] = Object.assign({}, to, {label: fromId});
         });
     });
+    
+    for(const key in igc) {
+        igc[key] = Object.values(igc[key]);
+    }
+    
     return igc;
 }

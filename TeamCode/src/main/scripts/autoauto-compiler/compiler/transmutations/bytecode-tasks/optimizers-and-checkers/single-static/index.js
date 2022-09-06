@@ -11,10 +11,9 @@ module.exports = function run(context) {
 
     var globalVarnameCounters = { blocks: {}, vars: {} };
 
-    var rootBlock = bytecode.ENTRY;
     var rootBlocks = getBlocksWithoutParents(bytecode, invertedCgraph);
 
-    rootBlocks.forEach(x => ssaBlock(x, bytecode, cgraph, invertedCgraph, globalVarnameCounters, getArgPrefix(x)));
+    rootBlocks.forEach(x => ssaBlock(x, bytecode, cgraph, globalVarnameCounters, getArgPrefix(x)));
     rootBlocks.forEach(x => copyLastSetToChildrenRecursiveNetwork(x.label, cgraph, globalVarnameCounters));
 
     Object.values(bytecode).forEach(x => insertPhiNodes(x, invertedCgraph, globalVarnameCounters));
@@ -47,27 +46,27 @@ function insertPhiNodes(block, invertedCgraph, globalVarnameCounters) {
 
 }
 
-function ssaBlock(block, bytecode, cgraph, invertedCgraph, globalVarnameCounters, rootBlockPrefix) {
+function ssaBlock(block, bytecode, cgraph, globalVarnameCounters, rootBlockPrefix) {
     initVariableCounter(block, globalVarnameCounters);
 
     if (hasBeenSsadAlready(block, globalVarnameCounters)) return;
     markAsSsad(block, globalVarnameCounters);
 
-    ssaBytecodeArray(block.code, block.label, cgraph, invertedCgraph, globalVarnameCounters, rootBlockPrefix);
-    ssaBytecodeArray(block.jumps, block.label, cgraph, invertedCgraph, globalVarnameCounters, rootBlockPrefix);
+    ssaBytecodeArray(block.code, block.label, globalVarnameCounters, rootBlockPrefix);
+    ssaBytecodeArray(block.jumps, block.label, globalVarnameCounters, rootBlockPrefix);
 
-    ensureChildrenAreSsad(block, bytecode, cgraph, invertedCgraph, globalVarnameCounters, rootBlockPrefix);
+    ensureChildrenAreSsad(block, bytecode, cgraph, globalVarnameCounters, rootBlockPrefix);
 }
 
 
-function ssaBytecodeArray(bcArr, blockLabel, cgraph, invertedCgraph, globalVarnameCounters, rootBlockPrefix) {
+function ssaBytecodeArray(bcArr, blockLabel, globalVarnameCounters, rootBlockPrefix) {
     bcArr.forEach(x => {
-        ssaBytecodeInstruction(x, blockLabel, cgraph, invertedCgraph, globalVarnameCounters, rootBlockPrefix);
+        ssaBytecodeInstruction(x, blockLabel, globalVarnameCounters, rootBlockPrefix);
     });
 }
 
-function ssaBytecodeInstruction(instr, blockLabel, cgraph, invertedCgraph, globalVarnameCounters, rootBlockPrefix) {
-    ssaBytecodeArray(instr.args, blockLabel, cgraph, invertedCgraph, globalVarnameCounters, rootBlockPrefix);
+function ssaBytecodeInstruction(instr, blockLabel, globalVarnameCounters, rootBlockPrefix) {
+    ssaBytecodeArray(instr.args, blockLabel, globalVarnameCounters, rootBlockPrefix);
 
     if (isVariableAddressingInstr(instr)) {
         var varInstr = findVarnameInstructionFromInstr(instr);
@@ -120,7 +119,7 @@ function copyLastSetToChildrenRecursiveNetwork(blockLabel, cgraph, globalVarname
 
     var children = cgraph[blockLabel];
     children.forEach(x => {
-        copyLastSetToChildrenRecursiveNetwork(x, cgraph, globalVarnameCounters);
+        copyLastSetToChildrenRecursiveNetwork(x.label, cgraph, globalVarnameCounters);
     });
 }
 
@@ -138,15 +137,15 @@ function copyLastSetInfoToChildren(blockLabel, cgraph, globalVarnameCounters) {
         var argnames = globalVarnameCounters.argumentNames[blockLabel];
 
         for (var i = 0; i < children.length; i++) {
-            globalVarnameCounters.argumentNames[children[i]] = argnames;
+            globalVarnameCounters.argumentNames[children[i].label] = argnames;
         }
     }
 
     for (var k in thisLastsets) {
         for (var i = 0; i < children.length; i++) {
-            if (!globalVarnameCounters.blocks[children[i]].lastsets) globalVarnameCounters.blocks[children[i]].lastsets = {};
+            if (!globalVarnameCounters.blocks[children[i].label].lastsets) globalVarnameCounters.blocks[children[i].label].lastsets = {};
 
-            var childLastsets = globalVarnameCounters.blocks[children[i]].lastsets;
+            var childLastsets = globalVarnameCounters.blocks[children[i].label].lastsets;
             if (!childLastsets[k]) childLastsets[k] = [];
             uniquelyPush(childLastsets[k], thisLastsets[k]);
         }
@@ -167,7 +166,7 @@ function getAllParentSetsOfVariable(variable, thisBlockLabel, parentLabels, glob
     }
 
     for (var i = 0; i < parentLabels.length; i++) {
-        uniquelyPush(sets, globalVarnameCounters.blocks[parentLabels[i]].lastsets[variable] || []);
+        uniquelyPush(sets, globalVarnameCounters.blocks[parentLabels[i].label].lastsets[variable] || []);
     }
     return sets;
 }
@@ -222,10 +221,10 @@ function markAsSsad(block, globalVarnameCounters) {
     globalVarnameCounters.blocks[block.label].ssa = true;
 }
 
-function ensureChildrenAreSsad(block, bytecode, cgraph, invertedCgraph, globalVarnameCounters, rootBlockPrefix) {
+function ensureChildrenAreSsad(block, bytecode, cgraph, globalVarnameCounters, rootBlockPrefix) {
     var children = cgraph[block.label] || [];
 
-    children.forEach(x => ssaBlock(bytecode[x], bytecode, cgraph, invertedCgraph, globalVarnameCounters, rootBlockPrefix));
+    children.forEach(x => ssaBlock(bytecode[x.label], bytecode, cgraph, globalVarnameCounters, rootBlockPrefix));
 }
 
 function findVarnameInstructionFromInstr(instr) {

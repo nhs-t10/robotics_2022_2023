@@ -214,7 +214,6 @@ async function delegatorExpressionToBytecode(ast, constantPool) {
 
 
     if (dependencyFile in constantPool.dependencyLabels) {
-        console.log(constantPool.dependencyLabels)
         return emitExpressionOfPreviousDependency(constantPool, dependencyFile, ast);
     } else {
         const dependencyCode = await createDependencyBlocks(currentFile, dependencyFile, constantPool, ast);

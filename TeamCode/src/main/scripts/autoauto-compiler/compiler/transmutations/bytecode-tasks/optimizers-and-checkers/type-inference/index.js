@@ -101,7 +101,6 @@ function calcType(instruction, currentTypeKey, typeSystem, blocks) {
         case bytecodeSpec.jmp_l_cond.code:
         case bytecodeSpec.yieldto_l.code:
         case bytecodeSpec.yieldto_i.code:
-        case bytecodeSpec.spec_setvar.code:
         case bytecodeSpec.ret.code:
         case bytecodeSpec.pass.code:
         case bytecodeSpec.crret.code:
