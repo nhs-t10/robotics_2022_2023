@@ -136,18 +136,7 @@ async function resolveType(typeSystem, typeName, visitedTypes, resolutionCache, 
     if (resolutionCache.has(type)) return resolutionCache.get(type);
 
     if (visitedTypes.includes(type)) {
-        androidStudioLogging.sendTreeLocationMessage({
-            text: "Recursive data",
-            original: "This is a recursive type (a type that contains itself). This could be because of a variety of causes:"
-                + "\n - A variable that depends on itself"
-                + "\n - A table that holds values the same shape as itself"
-                + "\n - Odd program structuring (files which depend on themselves)"
-                + "\n\nThis isn't a bad thing; recursive data types are helpful. They're just harder to check automatically. Be sure that it's sound, and you'll be okay!" 
-                + "\n\n[DEBUG] Recursive set:\n    " + Array.from(visitedTypes).concat([type]).map(x=>formatType(x, typeSystem) + "\t" + shortRelativeFormatLocation(x.location)).join("\n    "),
-            kind: "WARNING",
-            location: type.location
-        }, filename);
-        return undefined;
+        return await recoverFromRecursiveData(typeSystem, type, visitedTypes, filename);
     }
 
     visitedTypes.push(type);
@@ -158,6 +147,111 @@ async function resolveType(typeSystem, typeName, visitedTypes, resolutionCache, 
     
     resolutionCache.set(type, res);
     return res;
+}
+
+/**
+ * 
+ * @param {TypeSystem} typeSystem 
+ * @param {TypeRecord} type 
+ * @param {TypeRecord[]} visitedTypes 
+ * @param {string} filename
+ * @returns {Promise<TypeRecord[] | undefined>}
+ */
+async function recoverFromRecursiveData(typeSystem, type, visitedTypes, filename) {
+    
+    /** @type {Set<TypeRecord>} */
+    const bases = new Set();
+    for(const vType of visitedTypes) {
+        bases.add(...findUnionBottomTypes(typeSystem, vType));
+    }
+    
+    const loopingMathResult = findRecursionIsFromLoopingMath(bases, typeSystem);
+    if(loopingMathResult) return loopingMathResult;
+    
+    
+    return logRecursionWarning(typeSystem, type, visitedTypes, filename);
+}
+
+/**
+ * 
+ * @param {TypeSystem} typeSystem 
+ * @param {UnionType} unionType 
+ * @returns {Set<TypeSystem>}
+ */
+function findUnionBottomTypes(typeSystem, unionType) {
+    const scannedUnions = new Set();
+    const unionsToScan = [unionType];
+    
+    let results = new Set();
+    
+    for (let i = 0; i < unionsToScan.length; i++) {
+        const union = unionsToScan[i];
+        
+        if(scannedUnions.has(union)) continue;
+        else scannedUnions.add(union);
+        
+        const subtypeNames = union.types ? union.types : 
+            union.left ? [union.left, union.right] : 
+            []
+        
+        for (const typeName of subtypeNames) {
+            const subtype = typeSystem[typeName];
+            
+            if (subtype.type == "union" || subtype.type == "binary_operator") {
+                unionsToScan.push(subtype);
+            } else {
+                results.add(subtype);
+            }
+        }
+    }
+    
+    return results;
+}
+
+/**
+ * 
+ * @param {Set<TypeRecord>} bases 
+ * @param {TypeSystem} typeSystem
+ */
+function findRecursionIsFromLoopingMath(bases, typeSystem) {
+    const primitives = new Set();
+    
+    for (const type of bases) {
+        if (type.type == "primitive") primitives.add(type.primitive);
+        else return undefined;
+    }
+    
+    if (primitives.has("number")) {
+        if (primitives.size == 1) return [ typeSystem["number"] ];
+        
+        if(primitives.size == 2 && primitives.has("undefined")) {
+            return [typeSystem["number"], typeSystem["undefined"]];
+        }
+    }
+    
+} 
+
+/**
+ * 
+ * @param {TypeSystem} typeSystem 
+ * @param {TypeRecord} type 
+ * @param {TypeRecord[]} visitedTypes 
+ * @param {string} filename
+ * @returns {undefined}
+ */
+function logRecursionWarning(typeSystem, type, visitedTypes, filename) {
+    androidStudioLogging.sendTreeLocationMessage({
+        text: "Recursive data",
+        original: "This is a recursive type (a type that contains itself). This could be because of a variety of causes:"
+            + "\n - A variable that depends on itself"
+            + "\n - A table that holds values the same shape as itself"
+            + "\n - Odd program structuring (files which depend on themselves)"
+            + "\n\nThis isn't a bad thing; recursive data types are helpful. They're just harder to check automatically. Be sure that it's sound, and you'll be okay!"
+            + "\n\n[DEBUG] Recursive set:\n    " + Array.from(visitedTypes).concat([type]).map(x => formatType(x, typeSystem) + "\t" + shortRelativeFormatLocation(x.location)).join("\n    "),
+        kind: "WARNING",
+        location: type.location
+    }, filename);
+    return undefined;
 }
 
 /**
@@ -202,8 +296,6 @@ function logUnknownType(typeName, type) {
         const explanation = typeIsFromVariable ? "The variable '" + 
             typeName.substring(typeName.indexOf("-") + 1, typeName.indexOf("@")) + "' couldn't be resolved"
             : "There was an unresolved type. Unfortunately, that's all we know.\n\nDEBUG: `typeName`: " + typeName;
-            
-        console.log(typeName);
         
         androidStudioLogging.sendTreeLocationMessage({
             text: text,
