@@ -12,13 +12,9 @@ import org.firstinspires.ftc.teamcode.auxilary.buildhistory.BuildHistory;
 import org.firstinspires.ftc.teamcode.managers.feature.FeatureManager;
 import org.firstinspires.ftc.teamcode.managers.sensor.ColorSensor;
 import org.firstinspires.ftc.teamcode.managers.nate.GiraffeManager;
-import org.firstinspires.ftc.teamcode.auxilary.dsls.autoauto.model.*;
-import org.firstinspires.ftc.teamcode.auxilary.dsls.autoauto.model.statements.*;
-import org.firstinspires.ftc.teamcode.auxilary.dsls.autoauto.model.values.*;
-import org.firstinspires.ftc.teamcode.auxilary.dsls.autoauto.model.values.primitives.*;
-import org.firstinspires.ftc.teamcode.auxilary.dsls.autoauto.runtime.AutoautoRuntime;
-import org.firstinspires.ftc.teamcode.auxilary.dsls.autoauto.runtime.AutoautoOpmode;
-import org.firstinspires.ftc.teamcode.managers.*;
+import dev.autoauto.model.*;
+import dev.autoauto.runtime.AutoautoRuntime;
+import dev.autoauto.runtime.AutoautoOpmode;
 import org.firstinspires.ftc.teamcode.managers.CV.CVManager;
 import org.firstinspires.ftc.teamcode.managers.imu.ImuManager;
 import org.firstinspires.ftc.teamcode.managers.manipulation.ManipulationManager;
@@ -28,29 +24,6 @@ import org.firstinspires.ftc.teamcode.managers.telemetry.TelemetryManager;
 import org.firstinspires.ftc.teamcode.managers.nate.NateManager;
 import org.firstinspires.ftc.teamcode.managers.autocorrection.AutocorrectionManager;
 
-import static org.firstinspires.ftc.teamcode.auxilary.dsls.autoauto.model.Location.L;
-import static org.firstinspires.ftc.teamcode.auxilary.dsls.autoauto.runtime.AutoautoRuntime.R;
-import static org.firstinspires.ftc.teamcode.auxilary.dsls.autoauto.model.Statepath.S;
-import static org.firstinspires.ftc.teamcode.auxilary.dsls.autoauto.model.State.A;
-import static org.firstinspires.ftc.teamcode.auxilary.dsls.autoauto.model.statements.SkipStatement.N;
-import static org.firstinspires.ftc.teamcode.auxilary.dsls.autoauto.model.statements.ValueStatement.F;
-import static org.firstinspires.ftc.teamcode.auxilary.dsls.autoauto.model.statements.AfterStatement.W;
-import static org.firstinspires.ftc.teamcode.auxilary.dsls.autoauto.model.values.FunctionCall.M;
-import static org.firstinspires.ftc.teamcode.auxilary.dsls.autoauto.model.values.ArithmeticValue.O;
-import static org.firstinspires.ftc.teamcode.auxilary.dsls.autoauto.model.values.primitives.AutoautoNumericValue.C;
-import static org.firstinspires.ftc.teamcode.auxilary.dsls.autoauto.model.values.primitives.AutoautoString.U;
-import static org.firstinspires.ftc.teamcode.auxilary.dsls.autoauto.model.values.AutoautoTableLiteral.K;
-import static org.firstinspires.ftc.teamcode.auxilary.dsls.autoauto.model.values.primitives.AutoautoUnitValue.E;
-import static org.firstinspires.ftc.teamcode.auxilary.dsls.autoauto.model.statements.GotoStatement.G;
-import static org.firstinspires.ftc.teamcode.auxilary.dsls.autoauto.model.statements.LetStatement.D;
-import static org.firstinspires.ftc.teamcode.auxilary.dsls.autoauto.model.statements.IfStatement.I;
-import static org.firstinspires.ftc.teamcode.auxilary.dsls.autoauto.model.values.VariableReference.H;
-import static org.firstinspires.ftc.teamcode.auxilary.dsls.autoauto.model.values.primitives.AutoautoBooleanValue.B;
-import static org.firstinspires.ftc.teamcode.auxilary.dsls.autoauto.model.statements.FunctionDefStatement.J;
-import static org.firstinspires.ftc.teamcode.auxilary.dsls.autoauto.model.values.TitledArgument.V;
-import static org.firstinspires.ftc.teamcode.auxilary.dsls.autoauto.model.values.AutoautoFunctionLiteral.Q;
-import static org.firstinspires.ftc.teamcode.auxilary.dsls.autoauto.model.statements.PassStatement.Y;
-import static org.firstinspires.ftc.teamcode.auxilary.dsls.autoauto.model.values.AutoautoTailedValue.Z;
 import com.qualcomm.robotcore.hardware.TouchSensor;
 
 import java.util.HashMap;
@@ -94,14 +67,14 @@ public class template extends AutoautoOpmode {
 
         imu = new ImuManager(hardwareMap.get(com.qualcomm.hardware.bosch.BNO055IMU.class, "imu"));
 
-        runtime = R(program, getClass().getCanonicalName(), imu, driver, limbs, telemetryManager, clawPosition, cv, neck);
+        runtime = new AutoautoRuntime(program, getClass().getCanonicalName(), imu, driver, limbs, telemetryManager, clawPosition, cv, neck);
         
         /*COMPAT_MODE_SETTING*/
 
         limbs.setMotorMode("ClawMotor", DcMotor.RunMode.STOP_AND_RESET_ENCODER);
 
         telemetryManager.autoauto.setProgramOutlineJson(/*JSON_SETTING_CODE*/);
-        telemetryManager.autoauto.setGlobalScope(runtime.rootModule.globalScope);
+        telemetryManager.autoauto.setGlobalScope(runtime.globalScope);
     }
 
     boolean shouldActuallyDoThings = true;

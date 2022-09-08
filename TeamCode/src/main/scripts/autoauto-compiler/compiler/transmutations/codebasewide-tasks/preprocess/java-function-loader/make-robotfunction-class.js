@@ -5,18 +5,14 @@ module.exports = function(callMethodSource, definingClass, classname, argNames) 
     else argNames = JSON.stringify(argNames);
     argNames = argNames.substring(1, argNames.length - 1);
 
-    return `package org.firstinspires.ftc.teamcode.auxilary.dsls.autoauto.runtime.robotfunctions;
+    return `package dev.autoauto.runtime.robotfunctions;
 
-import org.firstinspires.ftc.teamcode.auxilary.dsls.autoauto.model.values.*;
-import org.firstinspires.ftc.teamcode.auxilary.dsls.autoauto.model.values.primitives.*;
-import org.firstinspires.ftc.teamcode.auxilary.dsls.autoauto.runtime.NativeRobotFunction;
-import org.firstinspires.ftc.teamcode.auxilary.dsls.autoauto.runtime.errors.ManagerSetupException;
-import org.firstinspires.ftc.teamcode.managers.feature.FeatureManager;
+import dev.autoauto.runtime.values.*;
 
-public class ${classname} extends NativeRobotFunction {
+public class ${classname} extends dev.autoauto.runtime.NativeRobotFunction {
     private ${definingClass} manager;
 
-    public ${classname}(FeatureManager manager) {
+    public ${classname}(Object manager) {
         this.manager = (${definingClass})manager;
     }
 
@@ -27,8 +23,8 @@ public class ${classname} extends NativeRobotFunction {
     }
 
     @Override
-    public AutoautoPrimitive call(AutoautoPrimitive thisValue, AutoautoPrimitive[] args) {
-        if(manager == null) throw new ManagerSetupException("No ${definingClass.substring(definingClass.lastIndexOf(".") + 1)}; please define one in template.notjava");
+    public AutoautoValue call(AutoautoValue thisValue, AutoautoValue[] args) {
+        if(manager == null) throw new RuntimeException("No ${definingClass.substring(definingClass.lastIndexOf(".") + 1)}; please define one in template.notjava");
         ${callMethodSource}
     }
 }`;

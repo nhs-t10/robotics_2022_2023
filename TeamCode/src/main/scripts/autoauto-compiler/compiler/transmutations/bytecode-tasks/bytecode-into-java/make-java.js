@@ -2,8 +2,8 @@
 
 var bc = require("../bc");
 
-var BYTECODE_PACKAGE = `org.firstinspires.ftc.teamcode.auxilary.dsls.autoauto.model.bytecode`;
-var PROGRAM_TYPE_PACKAGE = `org.firstinspires.ftc.teamcode.auxilary.dsls.autoauto.model.programtypes`;
+var BYTECODE_PACKAGE = `dev.autoauto.model.bytecode`;
+var PROGRAM_TYPE_PACKAGE = `dev.autoauto.model.programtypes`;
 
 module.exports = function(denseCodes, constantPool, bytecode) {
     var denseConstantMap = constantPool.denseCodeMap();
@@ -16,7 +16,7 @@ module.exports = function(denseCodes, constantPool, bytecode) {
     
     return {
         bytecodesVarname: bytecodesVarname,
-        constants: `AutoautoPrimitive[] constants = new AutoautoPrimitive[] { ${values} };`,
+        constants: `AutoautoValue[] constants = new AutoautoValue[] { ${values} };`,
         fullExtendsName: `${PROGRAM_TYPE_PACKAGE}.BytecodeEvaluationProgram`,
         instructions: `new ${BYTECODE_PACKAGE}.AutoautoBytecode[] {${instrs}}`,
         bytecodes: `${BYTECODE_PACKAGE}.AutoautoBytecode[] ${bytecodesVarname} = new ${BYTECODE_PACKAGE}.AutoautoBytecode[] {${bcMapArray}};`

@@ -1,10 +1,9 @@
 package org.firstinspires.ftc.teamcode.managers.telemetry;
 
 import org.firstinspires.ftc.teamcode.auxilary.PaulMath;
-import org.firstinspires.ftc.teamcode.auxilary.dsls.autoauto.model.values.primitives.AutoautoPrimitive;
-import org.firstinspires.ftc.teamcode.auxilary.dsls.autoauto.runtime.AutoautoRuntimeVariableScope;
-import org.firstinspires.ftc.teamcode.auxilary.dsls.autoauto.runtime.NativeFunction;
-import org.firstinspires.ftc.teamcode.auxilary.dsls.autoauto.runtime.NativeRobotFunction;
+import dev.autoauto.runtime.values.AutoautoValue;
+import dev.autoauto.runtime.AutoautoRuntimeVariableScope;
+import dev.autoauto.runtime.NativeFunction;
 
 public class AutoautoTelemetry {
     String programOutlineJson;
@@ -39,7 +38,7 @@ public class AutoautoTelemetry {
 
         StringBuilder r = new StringBuilder("{ ");
         for(String name : globalScope.getKeys()) {
-            AutoautoPrimitive val = globalScope.get(name);
+            AutoautoValue val = globalScope.get(name);
             //don't add native functions, bc if we do, it'll add all the built-in functions & bloat the json
             if(!(val instanceof NativeFunction)) {
                 r.append(PaulMath.JSONify(name));

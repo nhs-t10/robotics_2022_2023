@@ -1,11 +1,6 @@
 "use strict";
 
 var path = require("path");
-var fs = require("fs");
-
-var directory = __dirname.split(path.sep);
-var rootDirectory = directory.slice(0, directory.indexOf("TeamCode")).join(path.sep);
-var robotFunctionsDirectory = path.join(rootDirectory, "TeamCode/gen/org/firstinspires/ftc/teamcode/auxilary/dsls/autoauto/runtime/robotfunctions");
 
 var parser = require("../../../../../../script-helpers/javaparser/parser.js");
 
@@ -16,6 +11,9 @@ var processTemplate = require("./make-robotfunction-class.js");
 var parserTools = require("../../../../../../script-helpers/parser-tools");
 const safeFsUtils = require("../../../../../../script-helpers/safe-fs-utils.js");
 const androidStudioLogging = require("../../../../../../script-helpers/android-studio-logging.js");
+const commandLineInterface = require("../../../../../../command-line-interface/index.js");
+
+const robotFunctionsDirectory = path.join(commandLineInterface.out, "dev/autoauto/runtime/robotfunctions");
 
 module.exports = function (javaSource, preexistingNames, writtenFiles) {
     try {
@@ -97,7 +95,7 @@ function generateRobotFunction(overload, definedClass, preexistingNames, written
         callMethodSource += `}`;
     }
     callMethodSource += `
-    throw new org.firstinspires.ftc.teamcode.auxilary.dsls.autoauto.runtime.errors.AutoautoNoNativeMethodOverloadException("No ${noConflictName} with " + args.length + " args");
+    throw new RuntimeException("No ${noConflictName} with " + args.length + " args");
     `;
 
     noConflictName = replaceNumbers(noConflictName);

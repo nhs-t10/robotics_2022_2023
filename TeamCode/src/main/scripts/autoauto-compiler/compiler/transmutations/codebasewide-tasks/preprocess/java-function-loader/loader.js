@@ -6,7 +6,7 @@ var crypto = require("crypto");
 
 var directory = __dirname.split(path.sep);
 var rootDirectory = directory.slice(0, directory.indexOf("TeamCode")).join(path.sep);
-var managersDir = path.join(rootDirectory, "TeamCode/src/main/java/org/firstinspires/ftc/teamcode/managers");
+
 
 var cache = require("../../../../../../cache");
 
@@ -18,6 +18,9 @@ var generateAaMethods = require("./parse-and-generate-aa-methods.js");
 const safeFsUtils = require("../../../../../../script-helpers/safe-fs-utils");
 const folderScanner = require("../../../../folder-scanner");
 const commandLineInterface = require("../../../../../../command-line-interface");
+
+const managersDir = commandLineInterface["java-functions-dir"];
+const robotFunctionLoaderAddress = path.join(commandLineInterface.out, "dev/autoauto/runtime/RobotFunctionLoader.java");
 
 if (!fs.existsSync(managersDir)) throw "Managers directory `" + managersDir + "` doesn't exist";
 
@@ -48,8 +51,6 @@ module.exports = async function(writtenFiles) {
             methods = methods.concat(cacheManagers.managers[manager].methods);
         }
     }
-
-    var robotFunctionLoaderAddress = path.join(rootDirectory, "TeamCode/gen/org/firstinspires/ftc/teamcode/auxilary/dsls/autoauto/runtime/RobotFunctionLoader.java");
 
     var robotFunctionsTemplate = require("./make-robotfunctionloader.js");
     var robotFunctionLoader = robotFunctionsTemplate(
@@ -106,7 +107,7 @@ function makeManagerName(name) {
 async function loadManagersFromFolder(folder) {
     let results = [];
     
-    const sc = folderScanner(folder, x=>(x.endsWith("Manager.java") || x == "PaulMath.java"));
+    const sc = folderScanner(folder, x=>(x.endsWith( commandLineInterface["java-class-suffix"] + ".java" )));
     
     while(true) {
         const file = await sc.next();

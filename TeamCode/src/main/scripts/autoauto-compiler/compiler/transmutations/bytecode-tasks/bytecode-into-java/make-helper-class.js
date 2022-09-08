@@ -1,6 +1,6 @@
 "use strict";
 
-var PRIMITIVES_PACKAGE = `org.firstinspires.ftc.teamcode.auxilary.dsls.autoauto.model.values.primitives`;
+var PRIMITIVES_PACKAGE = `dev.autoauto.runtime.values`;
 
 module.exports = function(packge, className, javaParts) {
     return template(packge, className, javaParts);

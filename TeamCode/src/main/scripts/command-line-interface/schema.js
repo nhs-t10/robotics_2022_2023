@@ -20,6 +20,8 @@
  * @property {string} assets-dir
  * @property {string} test-dir
  * @property {boolean} run-cleanup
+ * @property {string} java-class-suffix
+ * @property {string} java-functions-dir
  */
 
 
@@ -114,6 +116,16 @@ module.exports = {
         value: process.cwd(),
         short: [],
         description: "The directory to write tests into"
+    },
+    "java-class-suffix": {
+        value: "",
+        short: [],
+        description: "Only look for methods in java classes that end with this suffix. See also --java-functions-directory"
+    },
+    "java-functions-dir": {
+        value: process.cwd(),
+        short: [],
+        description: "The directory to look in for Autoauto method implementations. See also --java-functions-directory."
     },
     "run-cleanup": {
         value: false,
