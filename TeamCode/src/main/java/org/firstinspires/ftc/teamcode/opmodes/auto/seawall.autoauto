@@ -1,0 +1,13 @@
+goto getBall;
+
+#getBall:
+    driveOmni(0, 1, 0), after 30cm next; //drive left to get behind the ball
+    driveOmni(1, 0, 0), after 20cm next; //drive forwards; get right behind the ball, but don't hit it
+    driveOmni(0.3, 0, 0), after 40cm next; //drive forwards slowly so the ball doesn't NYOOM all over the place
+    goto deliverBall;
+#deliverBall:
+    driveOmni(-1, 0, 0), after 3cm next; //back a bit
+    driveOmni(0, -1, 0), after 10cm next; //go right to set up the final push
+    driveOmni(1, 0, 0), after 12cm next; //go forwards. We're now in position to push the ball left.
+    driveOmni(0, 1, 0), after 30cm next; //push the ball into the scoring zone
+    stopDrive()

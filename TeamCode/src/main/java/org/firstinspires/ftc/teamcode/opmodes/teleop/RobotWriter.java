@@ -8,12 +8,12 @@ import org.firstinspires.ftc.teamcode.managers.feature.FeatureManager;
 import org.firstinspires.ftc.teamcode.managers.feature.robotconfiguration.RobotConfiguration;
 
 @TeleOp
-public class BigBoyWriter extends OpMode {
+public class RobotWriter extends OpMode {
 
     @Override
     public void init() {
-        FileSaver bigBoyConfiguration = new FileSaver(RobotConfiguration.fileName);
-        bigBoyConfiguration.overwriteFile(RobotConfiguration.bigBoyFileContent);
+        FileSaver file = new FileSaver(RobotConfiguration.fileName);
+        file.overwriteFile(FeatureManager.hotWheelsConfiguration.name);
     }
 
     @Override

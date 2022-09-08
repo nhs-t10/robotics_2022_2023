@@ -43,7 +43,13 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}  # Needed to get PR information, if any
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
-        run: ./gradlew --build-cache --no-daemon TeamCode:testDebugUnitTest TeamCode:createDebugUnitTestCoverageReport --stacktrace sonarqube --info
+        run: ./gradlew --build-cache --no-daemon TeamCode:testDebugUnitTest TeamCode:createDebugUnitTestCoverageReport --stacktrace
+      - name: Upload codecov report
+        uses: actions/upload-artifact@v2
+        with:
+          name: code-coverage
+          path: TeamCode/build/reports/
+
   update-trees:
     name: Update Family Trees
     runs-on: ubuntu-latest

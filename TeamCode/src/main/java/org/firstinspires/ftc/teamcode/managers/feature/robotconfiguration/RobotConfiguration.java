@@ -4,55 +4,55 @@ package org.firstinspires.ftc.teamcode.managers.feature.robotconfiguration;
 import org.firstinspires.ftc.teamcode.auxilary.BasicMapEntry;
 import org.firstinspires.ftc.teamcode.auxilary.UpdatableWeakReference;
 import org.firstinspires.ftc.teamcode.managers.feature.FeatureManager;
+import org.firstinspires.ftc.teamcode.managers.feature.Logger;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 
 public class RobotConfiguration {
+    public static final ArrayList<RobotConfiguration> configurations = new ArrayList<>();
     public final static String fileName = "configuration";
-    public final static String bigBoyFileContent = "bigBoy";
-    public final static String littleBoyFileContent = "littleBoy";
-    public final static String tankBoyFileContent = "tankBoy";
-    public final static String giraffeBoyFileContent = "giraffeBoy";
-    public final static String SpeedyBoyFileContent = "gi";
 
+    public final String name;
     public WheelCoefficients motorCoefficients;
-    public WheelCoefficients autoMotorCoefficients;
-    public WheelCoefficients teleOpMotorCoefficients;
+    public final WheelCoefficients autoMotorCoefficients;
+    public final WheelCoefficients teleOpMotorCoefficients;
 
-    public OmniCalcComponents omniComponents;
+    public final OmniCalcComponents omniComponents;
 
 
 
     /**
      * How many "ticks" quantify a rotation of the motor.
      */
-    public double encoderTicksPerRotation;
+    public final double encoderTicksPerRotation;
     /**
      * The gear ratio of the main drive motors.
      */
-    public double gearRatio;
+    public final double gearRatio;
     /**
      * The diameter of the main drive wheels, in centimeters
      */
-    public double wheelDiameterCm;
+    public final double wheelDiameterCm;
     /**
      * A coefficient indicating how much sliding we can expect of the wheels. 1 is perfect traction; 0 is no traction at all.
      */
-    public double slip;
+    public final double slip;
     /**
      * The circumference of the main drive wheels, in centimeters
      */
-    public double wheelCircumference;
+    public final double wheelCircumference;
 
 
-    public float exponentialScalar;
-    public HashMap<String, float[]> pidCoefs;
+    public final float exponentialScalar;
+    public final HashMap<String, float[]> pidCoefs;
 
 
-    public RobotConfiguration(WheelCoefficients teleOpMotorCoefficients, WheelCoefficients autoMotorCoefficients, OmniCalcComponents omniComponents,
+    public RobotConfiguration(String name, WheelCoefficients teleOpMotorCoefficients, WheelCoefficients autoMotorCoefficients, OmniCalcComponents omniComponents,
                               float pidPCoefficient, double encoderTicksPerRotation, double gearRatio, double wheelDiameterCm,
                               double slip, float exponentialScalar, HashMap<String, float[]> pidCoefs) {
+        this.name = name;
         this.motorCoefficients = teleOpMotorCoefficients;
         this.teleOpMotorCoefficients = teleOpMotorCoefficients;
         this.autoMotorCoefficients = autoMotorCoefficients;
@@ -64,6 +64,8 @@ public class RobotConfiguration {
         this.wheelCircumference = Math.PI * wheelDiameterCm;
         this.exponentialScalar = exponentialScalar;
         this.pidCoefs = pidCoefs;
+
+        RobotConfiguration.configurations.add(this);
     }
 
     public static Map.Entry<String, float[]> PIDC(String n, float... v) {

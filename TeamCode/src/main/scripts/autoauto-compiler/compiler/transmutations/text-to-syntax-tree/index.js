@@ -12,7 +12,7 @@ module.exports = function(context) {
         
         throw {
             kind: "ERROR",
-            text: "Parsing error",
+            text: e.text || e.message || "Parsing error",
             original: e.message,
             hints: hints,
             location: e.location,

@@ -68,5 +68,4 @@ function randomFrom(arr) {
 }
 function startsWithCapital(str) {
     return str.charCodeAt(0) >= 65 && str.charCodeAt(0) <= 90;
-}
-`);
+}`);
