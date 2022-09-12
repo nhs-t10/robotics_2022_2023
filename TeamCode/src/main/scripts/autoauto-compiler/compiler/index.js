@@ -26,7 +26,7 @@ module.exports = (async function main() {
     const startTimeMs = Date.now(); 
     
     await transmutations.loadTaskList();
-    const fileCount = await compileAllFromSourceDirectory();
+    const fileCount = await compileAllWithPool();
 
     androidStudioLogging.printAppendixes();
     
@@ -35,12 +35,21 @@ module.exports = (async function main() {
     androidStudioLogging.printTimingInformation(fileCount, Date.now() - startTimeMs);
 });
 
-async function compileAllFromSourceDirectory() {
-    const compilerWorkers = makeWorkersPool();
+async function compileAllWithPool() {
+    const pool = makeWorkersPool();
+    const fileCount = await compileAllFromSourceDirectory(pool);
+    pool.close();
+    return fileCount;
+}
 
+async function compileAllFromSourceDirectory(compilerWorkers) {
     const preprocessInputs = {};
     const codebaseTransmutationWrites = {};
-    await evaluateCodebaseTasks([], transmutations.getPreProcessTransmutations(), preprocessInputs, codebaseTransmutationWrites);
+    
+    const preProcessSuccessful = 
+        await evaluateCodebaseTasks([], transmutations.getPreProcessTransmutations(), preprocessInputs, codebaseTransmutationWrites);
+        
+    if(!preProcessSuccessful) return 0;
 
     const environmentHash = makeEnvironmentHash(CACHE_VERSION, preprocessInputs, process.argv);
 
@@ -59,10 +68,11 @@ async function compileAllFromSourceDirectory() {
 
     const compilationResults = await Promise.all(jobPromises);
 
-    await evaluateCodebaseTasks(compilationResults, transmutations.getPostProcessTransmutations(), {}, codebaseTransmutationWrites);
+    const postProcessSuccessful =
+        await evaluateCodebaseTasks(compilationResults, transmutations.getPostProcessTransmutations(), {}, codebaseTransmutationWrites);
+    if (!postProcessSuccessful) return 0;
+    
     writeWrittenFiles({ writtenFiles: codebaseTransmutationWrites });
-
-    compilerWorkers.close();
     
     return jobPromises.length;
 }
@@ -155,14 +165,19 @@ function mFileCacheKey(fileContext) {
  * @param {import("./transmutations").SerializableTransmutationInstance[]} codebaseTasks 
  * @param {Object.<string, *>} codebaseInputs 
  * @param {Object.<string, string | Buffer>} codebaseTransmutationWrites 
+ * @returns {Promise<boolean>} `true` if all tasks ran properly 
  */
 async function evaluateCodebaseTasks(allFileContexts, codebaseTasks, codebaseInputs, codebaseTransmutationWrites) {
     for (const transmut of codebaseTasks) {
         const o = makeCodebaseContext(codebaseTransmutationWrites);
         const mutFunc = require(transmut.sourceFile);
         await mutFunc(o, allFileContexts);
-        codebaseInputs[transmut.id] = o.output;
+        
+        if (o.status == "pass") codebaseInputs[transmut.id] = o.output; 
+        else return false;
     }
+    
+    return true;
 }
 
 function sha(s) {

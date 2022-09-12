@@ -75,7 +75,7 @@ function getBuildsFromFileHash(hash, commit) {
 
 function getReleventObjectsInCommit(commitID) {
     try {
-        var genealogy = "TeamCode/src/main/java/org/firstinspires/ftc/teamcode/auxilary/buildhistory/genealogy";
+        var genealogy = "TeamCode/src/main/assets/genealogy";
         var treeID = cp.execSync(`git rev-parse ${commitID} -- ${genealogy}`).toString().split("\n")[0].trim();
 
         var objects = cp.execSync(`git ls-tree -rt --full-tree ${treeID} ${genealogy}`)

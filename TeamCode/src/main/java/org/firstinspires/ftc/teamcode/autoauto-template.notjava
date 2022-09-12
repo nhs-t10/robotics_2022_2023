@@ -2,19 +2,17 @@
 
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
+
 import com.qualcomm.robotcore.hardware.CRServo;
 import com.qualcomm.robotcore.hardware.ColorRangeSensor;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.NormalizedColorSensor;
 import com.qualcomm.robotcore.hardware.Servo;
-import org.firstinspires.ftc.teamcode.auxilary.buildhistory.BuildHistory;
+import com.qualcomm.robotcore.hardware.TouchSensor;
 
 import org.firstinspires.ftc.teamcode.managers.feature.FeatureManager;
 import org.firstinspires.ftc.teamcode.managers.sensor.ColorSensor;
 import org.firstinspires.ftc.teamcode.managers.nate.GiraffeManager;
-import dev.autoauto.model.*;
-import dev.autoauto.runtime.AutoautoRuntime;
-import dev.autoauto.runtime.AutoautoOpmode;
 import org.firstinspires.ftc.teamcode.managers.CV.CVManager;
 import org.firstinspires.ftc.teamcode.managers.imu.ImuManager;
 import org.firstinspires.ftc.teamcode.managers.manipulation.ManipulationManager;
@@ -24,12 +22,14 @@ import org.firstinspires.ftc.teamcode.managers.telemetry.TelemetryManager;
 import org.firstinspires.ftc.teamcode.managers.nate.NateManager;
 import org.firstinspires.ftc.teamcode.managers.autocorrection.AutocorrectionManager;
 
-import com.qualcomm.robotcore.hardware.TouchSensor;
+import dev.autoauto.model.AutoautoProgram;
+import dev.autoauto.runtime.AutoautoRuntime;
+import org.firstinspires.ftc.teamcode.auxilary.buildhistory.BuildHistory;
 
-import java.util.HashMap;
+
 
 @Autonomous(name = "/*NO_CONFLICT_NAME*/")
-public class template extends AutoautoOpmode {
+public class template extends OpMode {
     MovementManager driver;
     ManipulationManager limbs;
     ImuManager imu;
@@ -38,7 +38,6 @@ public class template extends AutoautoOpmode {
     TelemetryManager telemetryManager;
     GiraffeManager neck;
 
-    public AutoautoProgram program = generateProgram();
 
     AutoautoRuntime runtime;
     public void init() {
@@ -67,11 +66,9 @@ public class template extends AutoautoOpmode {
 
         imu = new ImuManager(hardwareMap.get(com.qualcomm.hardware.bosch.BNO055IMU.class, "imu"));
 
-        runtime = new AutoautoRuntime(program, getClass().getCanonicalName(), imu, driver, limbs, telemetryManager, clawPosition, cv, neck);
+        runtime = new AutoautoRuntime(generateProgram(), getClass().getCanonicalName(), imu, driver, limbs, telemetryManager, clawPosition, cv, neck);
         
         /*COMPAT_MODE_SETTING*/
-
-        limbs.setMotorMode("ClawMotor", DcMotor.RunMode.STOP_AND_RESET_ENCODER);
 
         telemetryManager.autoauto.setProgramOutlineJson(/*JSON_SETTING_CODE*/);
         telemetryManager.autoauto.setGlobalScope(runtime.globalScope);
@@ -102,8 +99,6 @@ public class template extends AutoautoOpmode {
     }
 
     public AutoautoProgram generateProgram() {
-        Location.defaultFileName = "/*SOURCE_FILE_NAME*/";
-
-/*JAVA_CREATION_CODE*/
+        /*JAVA_CREATION_CODE*/
     }
 }

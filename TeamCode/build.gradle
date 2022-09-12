@@ -39,7 +39,9 @@ task autoautoCompiler(type: NodeTask) {
             "--assets-dir=${file("src/main/assets")}", //directory to put build-history into
 
             "--java-class-suffix=Manager", //only look for methods in java classes that end with 'Manager'
-            "--java-functions-dir=${file("src/main/java/org/firstinspires/ftc/teamcode/managers")}" //directory to look for Java methods in
+            "--java-functions-dir=${file("src/main/java/org/firstinspires/ftc/teamcode/managers")}", //directory to look for Java methods in
+
+            "--output-java-template=${file("src/main/java/org/firstinspires/ftc/teamcode/autoauto-template.notjava")}" //template for autoauto opmodes
     ]
     script = file("src/main/scripts/autoauto-compiler/index.js")
 }

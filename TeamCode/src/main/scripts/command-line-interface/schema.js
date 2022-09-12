@@ -22,6 +22,7 @@
  * @property {boolean} run-cleanup
  * @property {string} java-class-suffix
  * @property {string} java-functions-dir
+ * @property {string} output-java-template
  */
 
 
@@ -132,5 +133,10 @@ module.exports = {
         short: [],
         description: "Whether to clean-up files in the 'out' directory which aren't generated files.\n" +
             "WARNING: WITH THE DEFAULT SETTINGS, THIS WILL ERASE YOUR CODE. BE CAREFUL!"
+    },
+    "output-java-template": {
+        value: "template.notjava",
+        short: [],
+        description: "The template to use for generating Java files."
     }
 }

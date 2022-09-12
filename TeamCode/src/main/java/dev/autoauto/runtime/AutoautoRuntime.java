@@ -21,7 +21,7 @@ public class AutoautoRuntime {
     }
 
     public void loop() {
-        program.loop();
+            program.loop();
     }
 
     private void initProgram() {
