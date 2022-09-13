@@ -1,5 +1,6 @@
 "use strict";
 
+const { type } = require("os");
 /**
  * @typedef {Object.<string, TypeRecord>} TypeSystem
  */
@@ -271,9 +272,10 @@ async function simpleResolveTypeWithSpecific(typeSystem, typeName, type, visited
         case "binary_operator": return await resolveBinaryOp(typeSystem, typeName, type, visitedTypes, resolutionCache, filename);
         case "apply": return await resolveFunctionApplication(typeSystem, typeName, type, visitedTypes, resolutionCache, filename);
 
+        case "function": return await resolveFunction(typeSystem, typeName, type, visitedTypes, resolutionCache, filename);
+        
         case "primitive": return [type];
         case "object": return [type];
-        case "function": return [type];
 
         
         case "?": return logUnknownType(typeName, type);
@@ -308,6 +310,73 @@ function logUnknownType(typeName, type) {
     return undefined;
 }
 
+
+/**
+ * 
+ * @param {TypeSystem} typeSystem 
+ * @param {typeId} typeName 
+ * @param {FunctionType} type 
+ * @param {TypeRecord[]} visitedTypes 
+ * @param {Map<TypeRecord, TypeRecord[] | undefined>} resolutionCache
+ * @param {string} filename
+ * @returns {Promise<TypeRecord[] | undefined>}
+ */
+async function resolveFunction(typeSystem, typeName, type, visitedTypes, resolutionCache, filename) {
+    
+    const returnTypes = await resolveType(typeSystem, type.return, visitedTypes, resolutionCache, filename);
+    if (returnTypes === undefined) return undefined;
+    
+    const returnId = insertReturnTypes(typeSystem, returnTypes, typeName);
+    
+    
+    return [{
+        type: "function",
+        argnames: type.argnames,
+        location: type.location,
+        return: returnId,
+        varargs: type.varargs,
+        args: type.args
+    }];
+}
+
+/**
+ * 
+ * @param {TypeSystem} typeSystem 
+ * @param {TypeRecord[]} types 
+ * @param {string} typeName 
+ * @returns {string}
+ */
+function insertReturnTypes(typeSystem, types, typeName) {
+    const typeIds = [];
+    const resultId = typeName + "->";
+    
+    if(types.length == 1) {
+        typeSystem[resultId] = types[0];
+        return resultId;
+    }
+    
+    for(let i = types.length - 1; i >= 0; i--) {
+        const type = types[i];
+        if(type.type == "primitive") typeIds.push(type.primitive);
+        else if(type.type == "union") typeIds.push(...type.types);
+        else {
+            const id = resultId + "[" + i + "]";
+            typeSystem[id] = type;
+            typeIds.push(id);
+        }
+    }
+    
+    if(typeIds.length == 1) return typeIds[0];
+    
+    const t = {
+        type: "union",
+        location: typeSystem[typeName].location,
+        types: typeIds
+    };
+    typeSystem[resultId] = t;
+    return resultId;
+}
+
 /**
  * 
  * @param {TypeSystem} typeSystem 
@@ -325,11 +394,26 @@ async function resolveFunctionApplication(typeSystem, typeName, type, visitedTyp
     if (allAreOfDefiniteType(appliedFunction, "function") == false) {
         androidStudioLogging.sendTreeLocationMessage({
             text: "Attempt to call non-function",
-            original: "The type checker can't promise that the given value is a function. Trying to call a non-function can cause problems. This value is " + formatType(type),
+            original: "The type checker can't promise that the given value is a function. Trying to call a non-function can cause problems.\n" +
+            "Expected `function(any...) -> any`; got `" + formatType(appliedFunction, typeSystem) + "`",
             location: type.location,
             kind: "WARNING"
         });
         return undefined;
+    }
+    
+    for(const argumentName in type.namedArguments) {
+        if(allHaveArgumentNamed(appliedFunction, argumentName) == false) {
+            androidStudioLogging.sendTreeLocationMessage({
+                text: "Function called with missing named argument",
+                original: "The type checker can't promise that this function has an argument named `" + argumentName + "`. " +
+                    "Trying to call this function can cause problems.\n" +
+                    "Expected `function(..." + argumentName + ":any...) -> any`; got `" + formatType(appliedFunction, typeSystem) + "`",
+                location: type.location,
+                kind: "WARNING"
+            });
+            return undefined;
+        }
     }
 
     const returnTypeUnionName = unionizeReturnType(appliedFunction, typeSystem, type.location);
@@ -337,6 +421,19 @@ async function resolveFunctionApplication(typeSystem, typeName, type, visitedTyp
     typeSystem[typeName] = typeSystem[returnTypeUnionName];
 
     return await resolveType(typeSystem, returnTypeUnionName, visitedTypes, resolutionCache, filename);
+}
+
+/**
+ * 
+ * @param {FunctionType[]} functions
+ * @param {string} name
+ * @returns {boolean}
+ */
+function allHaveArgumentNamed(functions, name) {
+    for(const func of functions) {
+        if(func.argnames.includes(name) == false) return false;
+    }
+    return true;
 }
 
 /**
