@@ -3,15 +3,6 @@
     "cognomen": "Rotsenick",
     "builds": [
         {
-            "name": "Sage Rotsenick",
-            "time": "2022-05-25T13:08:40.795Z",
-            "buildHash": "cd23e966bb9b18928b06efc2c96be663bdfbc59d865cdf458ce97d171e5d0559",
-            "w3w": "fusion arrow hearth",
-            "phrase": "Gautier’s “Émaux et blanc. Les dômes, sur l’azur des gorges rondes Sort de siêcle.” “Fin du globe.” “Life has got one becomes an honour. “The third edition of chirruping sparrows in less said a language of himself.",
-            "perceptualHash": "f77ef5f93f9fccf44fe2f8fe",
-            "colors": "#83e880,#82cc2a,#54d285,#278030"
-        },
-        {
             "name": "Tiffany Rotsenick",
             "time": "2022-05-25T13:09:51.821Z",
             "buildHash": "ef98919f38c8d9ac38b6911ae0935f42026db0a8d8ce1b51038394b9ba932523",
@@ -901,8 +892,17 @@
             "phrase": "Another cope was curiously cold. The suspense became ghastly pale rose. He understood others. She knew her head at ease as vulgarity are untouched.” “You use one. Women try not Plato, that probably a caprice and uncouth.",
             "perceptualHash": "",
             "colors": ""
+        },
+        {
+            "name": "Joey Rotsenick",
+            "time": "2022-09-12T14:57:00.061Z",
+            "buildHash": "94db6e1eeee41f8608cd3579fe04d43905c22e97059e91bbfd2fc89ce568846b",
+            "w3w": "darkness grouping clearing",
+            "phrase": "Petit is born in Nottinghamshire, entertaining the whole day when people who should never alter.” “That does money waiting for.",
+            "perceptualHash": "",
+            "colors": ""
         }
     ],
-    "buildCount": 208,
-    "lastBuildTimeUnixMs": 1662949436624
+    "buildCount": 209,
+    "lastBuildTimeUnixMs": 1662994629665
 }
