@@ -86,7 +86,9 @@ function formatFunction(type, typeSystem, indentation, allowMultiline) {
         const argType = typeSystem[type.args[i]];
         const argName = type.argnames[i] || String.fromCharCode(97 + i);
 
-        text += partIndent + argName + ": " + formatType(argType, typeSystem, functionPartsIndentLength, allowMultiline);
+        if (allowMultiline) text += partIndent;
+        
+        text += argName + ": " + formatType(argType, typeSystem, functionPartsIndentLength, allowMultiline);
         
         if(type.args.length > i + 1) text += ","; 
         if (allowMultiline) text += "\n";  
