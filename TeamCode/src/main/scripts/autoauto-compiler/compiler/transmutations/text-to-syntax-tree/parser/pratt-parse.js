@@ -99,6 +99,11 @@ function parseUnlabeledStatepath(tokenStream, file) {
 function parseLabeledStatepath(tokenStream, file) {
     const hashtag = tokenStream.pop();
     if(hashtag.name != "HASHTAG") {
+        if (hashtag.name == "DOLLAR_SIGN") {
+            throw improperContextError("There must be only one frontmatter, before all statepaths", hashtag.location, [
+                "Combine all frontmatters: make sure that there is only 1 set of dollar signs, and all frontmatter is inside them"
+            ]);
+        }
         throw improperContextError("Expected a hashtag (#) to start a statepath label", hashtag.location);
     }
     
