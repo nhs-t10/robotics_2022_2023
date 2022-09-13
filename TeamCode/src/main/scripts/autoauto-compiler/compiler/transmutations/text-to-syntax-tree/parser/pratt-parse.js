@@ -81,6 +81,8 @@ function parseFrontmatter(tokenStream) {
  * @returns {AutoautoStatepathElement}
  */
 function parseUnlabeledStatepath(tokenStream, file) {
+    checkDuplicateDollarSign(tokenStream.peek());
+    
     const spContent = parseStatepathContent(tokenStream, file);
     return {
         label: "<init>",
@@ -99,11 +101,7 @@ function parseUnlabeledStatepath(tokenStream, file) {
 function parseLabeledStatepath(tokenStream, file) {
     const hashtag = tokenStream.pop();
     if(hashtag.name != "HASHTAG") {
-        if (hashtag.name == "DOLLAR_SIGN") {
-            throw improperContextError("There must be only one frontmatter, before all statepaths", hashtag.location, [
-                "Combine all frontmatters: make sure that there is only 1 set of dollar signs, and all frontmatter is inside them"
-            ]);
-        }
+        checkDuplicateDollarSign(hashtag);
         throw improperContextError("Expected a hashtag (#) to start a statepath label", hashtag.location);
     }
     
@@ -120,6 +118,14 @@ function parseLabeledStatepath(tokenStream, file) {
         type: "LabeledStatepath",
         location: name.location,
         statepath: parseStatepathContent(tokenStream, file)
+    }
+}
+
+function checkDuplicateDollarSign(token) {
+    if (token.name == "DOLLAR_SIGN") {
+        throw improperContextError("There must be only one frontmatter, before all statepaths", token.location, [
+            "Combine all frontmatters: make sure that there is only 1 set of dollar signs, and all frontmatter is inside them"
+        ]);
     }
 }
 
