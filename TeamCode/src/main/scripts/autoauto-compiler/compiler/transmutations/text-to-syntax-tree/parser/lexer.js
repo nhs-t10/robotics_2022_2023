@@ -63,7 +63,7 @@ module.exports = function* lexer(fileText, file) {
  * @returns {{line: number, col: number}}
  */
 function lineColumnCount(text, startCol, startLine) {
-    let lines = occurances(text, "\n");
+    let lines = occurances("\n", text);
     if(lines == 0) {
         return {
             line: startLine,
@@ -86,8 +86,8 @@ function lineColumnCount(text, startCol, startLine) {
  */
 function occurances(char, str) {
     let count = 0;
-    for(var i = 0; i < str.length; i++) {
-        if(str[i] == char) count++;
+    for(const chIndex of str) {
+        if (chIndex == char) count++;
     }
     return count;
 }
