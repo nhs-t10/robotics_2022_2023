@@ -219,12 +219,12 @@ function createWorkerWrap(worker, queue, finishListeners, allJobs, jobDependency
             const jobId = m.id;
 
             if (alreadyFinishedJob(depId, allJobs)) {
-                sendDependencyComplete(worker, jobId, depId, allJobs[depId]);
+                sendDependencyComplete(worker, jobId, depId, allJobs[depId], allJobs);
             } else if (jobExists(depId, allJobs) || wrap.mayExpectMoreJobs) {
                 assignFromQueue();
                 addFinishListener(finishListeners, depId, function (finishedContext) {
                     wrap.busy = true;
-                    sendDependencyComplete(worker, jobId, depId, finishedContext);
+                    sendDependencyComplete(worker, jobId, depId, finishedContext, allJobs);
                 });
             } else {
                 sendNonexistDependency(worker, jobId, depId);
@@ -287,14 +287,27 @@ function addInProgressJob(allJobs, job) {
  * @param {string} jobId
  * @param {string} depId 
  * @param {import("./worker.js").MaybeCompilation} maybeCompilation 
+ * @param {t_allJobs} allJobs
  */
-function sendDependencyComplete(worker, jobId, depId, maybeCompilation) {
+function sendDependencyComplete(worker, jobId, depId, maybeCompilation, allJobs) {
+    
+    pushUniquely(allJobs[jobId].fileContext.readsAllFiles, depId);
+    
     worker.postMessage({
         type: "dependencyComplete",
         id: jobId,
         dependencyId: depId,
         body: maybeCompilation
     });
+}
+
+/**
+ * 
+ * @param {*[]} arr 
+ * @param {*} itm 
+ */
+function pushUniquely(arr, itm) {
+    if(arr.includes(itm) == false) arr.push(itm);
 }
 
 /**

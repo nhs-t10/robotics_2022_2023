@@ -215,7 +215,7 @@ function loadTransmutation(sourceFile, metaFile) {
  * @property {string} testRoot
  * 
  * @property {Object.<string, string>} writtenFiles
- * @property {string[]} readsAllFiles
+ * @property {string[]} readsAllFiles a list of absolute files which this compilation reads from. Important for caching.
  *
  * @property {boolean} isLibrary
  * @property {object} fileFrontmatter

@@ -147,8 +147,15 @@ function getCacheEntry(fileContext) {
     /** @type {CacheEntry} */
     const cacheEntry = cache.get(mFileCacheKey(fileContext), null);
 
-    if (cacheEntry != null && cacheEntry.subkey == fileContext.cacheKey) return cacheEntry;
-    else return null;
+    const freshKey = makeCacheKey(cacheEntry.fileContext);
+    
+    if (cacheEntry != null && cacheEntry.subkey == freshKey) {
+        fileContext.cacheKey = freshKey;
+        cacheEntry.fileContext.cacheKey = freshKey;
+        return cacheEntry;
+    } else {
+        return null;
+    }
 }
 
 /**
@@ -230,7 +237,6 @@ function makeFileContext(file, preprocessInputs, environmentHash, rootDirectory)
     };
 
     Object.assign(ctx.inputs, preprocessInputs);
-    ctx.cacheKey = makeCacheKey(ctx, environmentHash);
 
     return ctx;
 }
@@ -265,7 +271,7 @@ function keyJsonHash(object) {
  * @param {import("./transmutations").TransmutateContext} fileContext 
  */
 function makeCacheKey(fileContext, environmentHash) {
-    const readFileShas = fileContext.readsAllFiles.map(x => sha(safeFsUtils.cachedSafeReadFile(x))).join("\t");
+    const readFileShas = fileContext.readsAllFiles.map(x => sha(safeFsUtils.cachedSafeReadFile(x))).join("\0");
     const transmutationIdList = fileContext.transmutations.map(x => x.id).join("\t");
 
     const keyDataToSha = [environmentHash, readFileShas,
