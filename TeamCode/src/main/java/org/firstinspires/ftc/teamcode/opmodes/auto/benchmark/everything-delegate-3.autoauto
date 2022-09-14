@@ -2,6 +2,8 @@ $
     compilerMode: "lib"
 $
 
-provide func(x = 0) {
-    return module_args[0] - x
-}
+function f(x = 4) {
+    log("x", x),
+    return(module_args[0] - x)
+}, log("Fromdel", f),
+provide(f)

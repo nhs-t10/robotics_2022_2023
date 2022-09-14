@@ -26,13 +26,14 @@ public class AutoautoOperation {
         //Choose the widest datatype; if there's a tie, choose left, since we read left-to-right.
         boolean chooseLeft = left.dataWidth() >= right.dataWidth();
         AutoautoValue chosen = chooseLeft ? left : right;
+        AutoautoValue nonChosen = chooseLeft ? right : left;
 
         //let people define their own overloads!
         if(chosen instanceof AutoautoTable &&
                 chosen.hasProperty(new AutoautoString(AutoautoSystemVariableNames.OPERATOR_OVERLOADING_PREFIX + operator))) {
             AutoautoValue func = ((AutoautoTable) chosen).getProperty(AutoautoSystemVariableNames.OPERATOR_OVERLOADING_PREFIX + operator);
 
-            AutoautoValue nonChosen = chooseLeft ? right : left;
+
 
             if(func instanceof AutoautoCallableValue) {
                 return ((AutoautoCallableValue) func).call(chosen,
@@ -42,16 +43,16 @@ public class AutoautoOperation {
             } else {
                 return func;
             }
-        } else if(chooseLeft && operatorClass.isInstance(right)) {
-            return dispatchOperator(operator, left, right, false);
-        } else if(operatorClass.isInstance(left)) {
-            return dispatchOperator(operator, right, left, true);
+        } else if(operatorClass.isInstance(chosen)) {
+            return dispatchOperator(operator, chosen, nonChosen, nonChosen == left);
+        } else if(operatorClass.isInstance(nonChosen)) {
+            return dispatchOperator(operator, nonChosen, chosen, chosen == left);
         } //if neither one offers this operator, try casting it to a string? and then redo with that?
         else if(operatorClass.isAssignableFrom(AutoautoString.class)) {
-            return dispatchOperator(operator, right.castToString(), left.castToString(), !chooseLeft);
+            return dispatchOperator(operator, right.castToString(), left.castToString(), true);
         } //if it's *still* nothing, maybe number could do it?
         else if(operatorClass.isAssignableFrom(AutoautoNumericValue.class)) {
-            return dispatchOperator(operator, right.castToNumber(), left.castToNumber(), !chooseLeft);
+            return dispatchOperator(operator, right.castToNumber(), left.castToNumber(), true);
         } //give up and do `undefined`
         else {
             return new AutoautoUndefined();

@@ -105,7 +105,7 @@ public abstract class AutoautoValue implements AutoautoPropertyBearingObject, Au
     //casting!
     public final AutoautoNumericValue castToNumber() {
         if(this instanceof AutoautoNumericValue) return (AutoautoNumericValue) this;
-        if(this instanceof AutoautoUndefined) return new AutoautoNumericValue(Float.NaN);
+        if(this instanceof AutoautoUndefined) return new AutoautoNumericValue(0.0);
         if(this instanceof AutoautoBooleanValue) return new AutoautoNumericValue(((AutoautoBooleanValue) this).value ? 1f : 0f);
         if(this instanceof AutoautoRelation) return ((AutoautoRelation) this).value.castToNumber();
 

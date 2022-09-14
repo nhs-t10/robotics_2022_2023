@@ -2,9 +2,12 @@ package dev.autoauto.model.bytecode;
 
 import androidx.annotation.NonNull;
 
+import org.firstinspires.ftc.teamcode.managers.feature.FeatureManager;
+
 import dev.autoauto.model.Location;
 import dev.autoauto.model.programtypes.BytecodeEvaluationProgram;
 import dev.autoauto.runtime.values.AutoautoCallableValue;
+import dev.autoauto.runtime.values.AutoautoUndefined;
 import dev.autoauto.runtime.values.AutoautoValue;
 import dev.autoauto.runtime.values.AutoautoTable;
 import dev.autoauto.runtime.AutoautoRuntimeVariableScope;
@@ -64,10 +67,13 @@ public class makefunction_i_Bytecode extends AutoautoBytecode {
             scope.systemSet(AutoautoSystemVariableNames.FUNCTION_ARGUMENTS_NAME, new AutoautoTable(args));
 
             for(int i = 0; i < argNames.length; i++) {
-                scope.systemSet(argNames[i], (i < args.length) ? args[i] : defaults[i]);
-            }
-            for(int i = args.length; i < argNames.length; i++) {
-                scope.systemSet(argNames[i], defaults[i]);
+
+                if(i < args.length &&
+                        !(args[i] instanceof AutoautoUndefined)) {
+                            scope.systemSet(argNames[i], args[i]);
+                } else {
+                    scope.systemSet(argNames[i], defaults[i]);
+                }
             }
 
             bytecodeEvaluationProgram.setScope(scope);
@@ -102,12 +108,19 @@ public class makefunction_i_Bytecode extends AutoautoBytecode {
         @NonNull
         @Override
         public String getString() {
-            return "function() {}";
+            StringBuilder s = new StringBuilder("function(");
+            for(int i = 0; i < argNames.length; i++) {
+                s.append(argNames[i]);
+                if(i < defaults.length) s.append(" = ").append(defaults[i]);
+                if(i + 1 < argNames.length) s.append(", ");
+            }
+
+            return s + ") {}";
         }
 
         @Override
         public String getJSONString() {
-            return "\"function() {}\"";
+            return "\"" + getString() + "\"";
         }
 
         @Override
