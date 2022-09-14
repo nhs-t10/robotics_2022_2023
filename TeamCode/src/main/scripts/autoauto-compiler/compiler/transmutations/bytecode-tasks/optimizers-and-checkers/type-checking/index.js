@@ -45,6 +45,9 @@ function rmTypeCruftBc(bc) {
 function replaceCruft(cruftedVarname) {
     if (cruftedVarname.__phi) cruftedVarname = cruftedVarname.__phi[0];
     
+    //if it ends with an @0 but NOT an @@0, it's a built-in. Remove the file-scoping prefix.
+    if(cruftedVarname.endsWith("@0") && !cruftedVarname.endsWith("@@0")) cruftedVarname = cruftedVarname.substring(cruftedVarname.lastIndexOf("-") + 1);
+    
     return cruftedVarname
         .replace(/@\d+$/, "")
         .replace(/.+:([^:]+)/, "$1");
