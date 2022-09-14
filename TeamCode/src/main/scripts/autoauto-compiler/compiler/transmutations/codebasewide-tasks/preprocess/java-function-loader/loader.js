@@ -18,6 +18,7 @@ var generateAaMethods = require("./parse-and-generate-aa-methods.js");
 const safeFsUtils = require("../../../../../../script-helpers/safe-fs-utils");
 const folderScanner = require("../../../../folder-scanner");
 const commandLineInterface = require("../../../../../../command-line-interface");
+const { safeWriteFile } = require("../../../../../../script-helpers/safe-fs-utils");
 
 const managersDir = commandLineInterface["java-functions-dir"];
 const robotFunctionLoaderAddress = path.join(commandLineInterface.out, "dev/autoauto/runtime/RobotFunctionLoader.java");
@@ -64,7 +65,8 @@ module.exports = async function(writtenFiles) {
             ),
         Object.entries(managerArgs),
     );
-    writtenFiles[robotFunctionLoaderAddress] = robotFunctionLoader;
+    writtenFiles[robotFunctionLoaderAddress] = true;
+    safeWriteFile(robotFunctionLoaderAddress, robotFunctionLoader);
     
     addAllRobotfunctionFilesToWrittenFiles(writtenFiles, methods);
 
