@@ -6,9 +6,10 @@ $
 /*
     This is a test of absolutely everything that Autoauto can do,
     as of Feb 14, 2022.
-    There are __PURPOSEFUL ERRORS__ in this.
 
-    This takes a WHILE to compile, so you can comment it out if you need to.
+    There are __PURPOSEFUL WARNINGS__ in this.
+
+    This takes a WHILE to compile, so you can comment it all out if you need to.
 */
 
 //this is an unlabeled statepath. It's the first statepath!
@@ -53,7 +54,7 @@ log("ULS!"), goto afterStatements;
         log(e,k),
         return(e + k + "oop")
     }, next;
-    log("doing my thing"), log(d(24, e = 32)), log("doneit"), log(d(k = 2)), log(d(2, 1)), next;
+    log(d(24, e = 32)), log(d(k = 2)), log(d(2, 1)), next;
     let g = func() {
         log("I don't return anything")
     }, next;
@@ -107,7 +108,7 @@ log("ULS!"), goto afterStatements;
 #delegation:
     log(delegate("./everything-delegate-1.autoauto")), next;
     log(delegate("./everything-delegate-2.autoauto", 3)), next;
-    let f = delegate("./everything-delegate-3.autoauto", 5), log("fromev", f), log(f(30)), next;
+    let f = delegate("./everything-delegate-3.autoauto", 5), log(f(30)), next;
     goto done;
 
 #done:

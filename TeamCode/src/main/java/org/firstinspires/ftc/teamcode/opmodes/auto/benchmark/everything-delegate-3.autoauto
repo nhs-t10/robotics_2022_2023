@@ -2,8 +2,8 @@ $
     compilerMode: "lib"
 $
 
-function f(x = 4) {
+function f(x = 0) {
     log("x", x),
     return(module_args[0] - x)
-}, log("Fromdel", f),
+},
 provide(f)
