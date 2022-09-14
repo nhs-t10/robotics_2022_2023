@@ -13,6 +13,8 @@ const verifyTypeSystem = require("./verify-type-system");
 module.exports = async function run(context) {
     var typeSystem = context.inputs["type-inference"];
     var bytecode = context.inputs["single-static"];
+    
+    if(context.sourceFullFileName.includes("everything")) writeFileSync(__dirname + "/ts", JSON.stringify(typeSystem, null, 2));
 
     await verifyTypeSystem(typeSystem, context.sourceFullFileName);
 

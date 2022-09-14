@@ -2,6 +2,6 @@ $
     compilerMode: "lib"
 $
 
-provide func(x) {
+provide func(x = 0) {
     return module_args[0] - x
 }

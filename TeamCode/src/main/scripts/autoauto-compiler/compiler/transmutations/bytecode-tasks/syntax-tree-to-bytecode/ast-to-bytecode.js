@@ -2,6 +2,7 @@
 
 const { createHash } = require("crypto");
 const path = require("path");
+const { sha } = require("../../../../../script-helpers/sha-string");
 const systemVariableNames = require("../../../data/system-variable-names");
 const { requestDependencyToParent } = require("../../../worker");
 const bytecodeSpec = require("../bytecode-spec");
@@ -369,10 +370,6 @@ function constructDelegatorContinuationBranch(dependencyBlocks, constantPool, as
     ], ast));
 
     return branchBlock;
-}
-
-function sha(t) {
-    return createHash("sha1").update(t).digest("hex");
 }
 
 async function functionCallToBytecode(ast, constantPool) {

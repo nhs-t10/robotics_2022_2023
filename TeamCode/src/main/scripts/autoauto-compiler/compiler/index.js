@@ -14,6 +14,7 @@ const safeFsUtils = require("../../script-helpers/safe-fs-utils");
 const makeWorkersPool = require("./workers-pool");
 const folderScanner = require("./folder-scanner");
 const loadFrontmatter = require("./frontmatter-parser");
+const { sha, shaJSON } = require("../../script-helpers/sha-string");
 
 const BUILD_ROOT_DIRS = (require("./get-build-root"))();
 
@@ -180,9 +181,6 @@ async function evaluateCodebaseTasks(allFileContexts, codebaseTasks, codebaseInp
     return true;
 }
 
-function sha(s) {
-    return crypto.createHash("sha256").update(s).digest("hex");
-}
 
 /**
  * 
@@ -257,7 +255,7 @@ function makeEnvironmentHash(cacheVersion, preprocessInputs, argv) {
 function keyJsonHash(object) {
     let t = [];
     for (const key in object) {
-        t.push(sha(JSON.stringify(object[key])));
+        t.push(shaJSON(object[key]));
     }
     return t.join("");
 }

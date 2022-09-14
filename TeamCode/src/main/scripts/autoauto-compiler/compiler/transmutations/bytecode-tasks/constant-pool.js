@@ -1,6 +1,7 @@
 "use strict";
 
 const { createHash } = require("crypto");
+const { sha } = require("../../../../script-helpers/sha-string");
 const typeSystemCreator = require("./optimizers-and-checkers/type-inference/type-system-creator");
 
 /**
@@ -95,8 +96,4 @@ module.exports = function (fileContext) {
             return "@" + fileAddressSha + "-temp" + (tempvars++);
         }
     }
-}
-
-function sha(str) {
-    return createHash("sha1").update(str).digest("hex");
 }

@@ -1,5 +1,6 @@
 "use strict";
 
+const { sha } = require("../../../../../../script-helpers/sha-string");
 const bytecodeSpec = require("../../bytecode-spec");
 
 module.exports = function run(context) {
@@ -13,18 +14,13 @@ module.exports = function run(context) {
 
     var rootBlocks = getBlocksWithoutParents(bytecode, invertedCgraph);
 
-    rootBlocks.forEach(x => ssaBlock(x, bytecode, cgraph, globalVarnameCounters, getArgPrefix(x)));
+    rootBlocks.forEach(x => ssaBlock(x, bytecode, cgraph, globalVarnameCounters, ""));
     rootBlocks.forEach(x => copyLastSetToChildrenRecursiveNetwork(x.label, cgraph, globalVarnameCounters));
 
     Object.values(bytecode).forEach(x => insertPhiNodes(x, invertedCgraph, globalVarnameCounters));
 
     context.output = bytecode;
     context.status = "pass";
-}
-
-function getArgPrefix(rootBlock) {
-    if (rootBlock.label == "ENTRY") return "";
-    else return rootBlock.label + "|arg:";
 }
 
 function getBlocksWithoutParents(bytecode, invertedCgraph) {
@@ -47,6 +43,9 @@ function insertPhiNodes(block, invertedCgraph, globalVarnameCounters) {
 }
 
 function ssaBlock(block, bytecode, cgraph, globalVarnameCounters, rootBlockPrefix) {
+
+    if (block.label.includes("func-enter")) rootBlockPrefix = block.label + "|arg:";
+
     initVariableCounter(block, globalVarnameCounters);
 
     if (hasBeenSsadAlready(block, globalVarnameCounters)) return;
@@ -70,14 +69,26 @@ function ssaBytecodeInstruction(instr, blockLabel, globalVarnameCounters, rootBl
 
     if (isVariableAddressingInstr(instr)) {
         var varInstr = findVarnameInstructionFromInstr(instr);
-        
-        const variableName = varInstr.__value;
+
+        const plainVariableName = varInstr.__value;
+        const variableName = getShadowedVariableName(plainVariableName, globalVarnameCounters, rootBlockPrefix);
 
         if (isVariableSettingInstr(instr)) incrementSingleStaticVariable(blockLabel, variableName, globalVarnameCounters);
 
-        varInstr.__value = getSingleStaticVariableName(blockLabel, variableName, varInstr, globalVarnameCounters, rootBlockPrefix);
+        varInstr.__value = getSingleStaticVariableName(blockLabel, variableName, varInstr, globalVarnameCounters);
     } else if (isFuncDefInstr(instr)) {
-        assignFunctionArgumentNames(instr, globalVarnameCounters);
+        assignFunctionArgumentNames(instr, globalVarnameCounters, rootBlockPrefix);
+    }
+}
+
+function getShadowedVariableName(plainVariableName, globalVarnameCounters, rootBlockPrefix) {
+    
+    //if it's defined as an argument, prefix it. Otherwise, just use the plain version.
+    if (globalVarnameCounters.definedAsArgument &&
+        globalVarnameCounters.definedAsArgument[rootBlockPrefix + plainVariableName]) {
+            return rootBlockPrefix + plainVariableName;
+    } else {
+        return plainVariableName;
     }
 }
 
@@ -91,13 +102,21 @@ function incrementSingleStaticVariable(blockLabel, plainVariableName, globalVarn
     setLastSetNameForLaterPhi(blockLabel, plainVariableName, variableRecord.varname, globalVarnameCounters);
 }
 
-function assignFunctionArgumentNames(makefunctionInstr, globalVarnameCounters) {
+function assignFunctionArgumentNames(makefunctionInstr, globalVarnameCounters, rootBlockPrefix) {
     var lbl = makefunctionInstr.args[0].__value;
     if (globalVarnameCounters.argumentNames == undefined) globalVarnameCounters.argumentNames = {};
     if (globalVarnameCounters.argumentNames[lbl] == undefined) globalVarnameCounters.argumentNames[lbl] = [];
 
+    if (globalVarnameCounters.definedAsArgument == undefined) globalVarnameCounters.definedAsArgument = {};
+
+    const filePrefix = sha(makefunctionInstr.location.file) + "-";
+    
     for (var i = 1; i < makefunctionInstr.args.length - 1; i += 2) {
-        globalVarnameCounters.argumentNames[lbl].push(makefunctionInstr.args[i].__value);
+        const argname = makefunctionInstr.args[i].__value;
+        const variableReferringToArg = filePrefix + argname;
+        globalVarnameCounters.argumentNames[lbl].push(variableReferringToArg);
+
+        globalVarnameCounters.definedAsArgument[lbl + "|arg:" + variableReferringToArg] = true;
     }
 }
 

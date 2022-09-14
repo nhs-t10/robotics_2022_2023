@@ -1,5 +1,6 @@
 "use strict";
 
+const { sha } = require("../../../../../../script-helpers/sha-string");
 const bc = require("../../bc");
 const bytecodeSpec = require("../../bytecode-spec");
 const typeSystemCreator = require("./type-system-creator");
@@ -189,7 +190,7 @@ function recordFunctionType(instruction, currentTypeKey, typeSystem, blocks) {
 }
 
 function makeArgumentType(type, name, functionBodyLabel, typeSystem, loc) {
-    var tName = "var " + functionBodyLabel + "|arg:" + name;
+    var tName = "var " + functionBodyLabel + "|arg:" + sha(loc.file) + "-" + name + "@0";
     typeSystem.upsertType(tName, {
         type: "alias",
         typeTo: type

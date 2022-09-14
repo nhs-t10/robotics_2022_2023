@@ -1,0 +1,4941 @@
+{
+  "var Math@0": {
+    "type": "object",
+    "some": "undefined",
+    "properties": {
+      "abs": "Math@0/abs",
+      "acos": "Math@0/acos",
+      "asin": "Math@0/asin",
+      "atan": "Math@0/atan",
+      "atan2": "Math@0/atan2",
+      "ceil": "Math@0/ceil",
+      "clz32": "Math@0/clz32",
+      "cos": "Math@0/cos",
+      "exp": "Math@0/exp",
+      "floor": "Math@0/floor",
+      "imul": "Math@0/imul",
+      "fround": "Math@0/fround",
+      "log": "Math@0/log",
+      "max": "Math@0/max",
+      "min": "Math@0/min",
+      "pow": "Math@0/pow",
+      "random": "Math@0/random",
+      "round": "Math@0/round",
+      "sin": "Math@0/sin",
+      "sqrt": "Math@0/sqrt",
+      "tan": "Math@0/tan",
+      "log10": "Math@0/log10",
+      "log2": "Math@0/log2",
+      "log1p": "Math@0/log1p",
+      "expm1": "Math@0/expm1",
+      "cosh": "Math@0/cosh",
+      "sinh": "Math@0/sinh",
+      "tanh": "Math@0/tanh",
+      "acosh": "Math@0/acosh",
+      "asinh": "Math@0/asinh",
+      "atanh": "Math@0/atanh",
+      "hypot": "Math@0/hypot",
+      "trunc": "Math@0/trunc",
+      "sign": "Math@0/sign",
+      "cbrt": "Math@0/cbrt",
+      "clip": "Math@0/clip",
+      "E": "number",
+      "LOG2E": "number",
+      "LOG10E": "number",
+      "LN2": "number",
+      "LN10": "number",
+      "PI": "number",
+      "SQRT2": "number",
+      "SQRT1_2": "number"
+    }
+  },
+  "undefined": {
+    "type": "primitive",
+    "primitive": "undefined"
+  },
+  "Math@0/abs": {
+    "type": "function",
+    "args": [
+      "number"
+    ],
+    "varargs": "undefined",
+    "argnames": [],
+    "return": "number|undefined"
+  },
+  "Math@0/acos": {
+    "type": "function",
+    "args": [
+      "number"
+    ],
+    "varargs": "undefined",
+    "argnames": [],
+    "return": "number|undefined"
+  },
+  "Math@0/asin": {
+    "type": "function",
+    "args": [
+      "number"
+    ],
+    "varargs": "undefined",
+    "argnames": [],
+    "return": "number|undefined"
+  },
+  "Math@0/atan": {
+    "type": "function",
+    "args": [
+      "number"
+    ],
+    "varargs": "undefined",
+    "argnames": [],
+    "return": "number|undefined"
+  },
+  "Math@0/atan2": {
+    "type": "function",
+    "args": [
+      "number",
+      "number"
+    ],
+    "varargs": "undefined",
+    "argnames": [],
+    "return": "number|undefined"
+  },
+  "Math@0/ceil": {
+    "type": "function",
+    "args": [
+      "number"
+    ],
+    "varargs": "undefined",
+    "argnames": [],
+    "return": "number|undefined"
+  },
+  "Math@0/clz32": {
+    "type": "function",
+    "args": [
+      "number"
+    ],
+    "varargs": "undefined",
+    "argnames": [],
+    "return": "number|undefined"
+  },
+  "Math@0/cos": {
+    "type": "function",
+    "args": [
+      "number"
+    ],
+    "varargs": "undefined",
+    "argnames": [],
+    "return": "number|undefined"
+  },
+  "Math@0/exp": {
+    "type": "function",
+    "args": [
+      "number"
+    ],
+    "varargs": "undefined",
+    "argnames": [],
+    "return": "number|undefined"
+  },
+  "Math@0/floor": {
+    "type": "function",
+    "args": [
+      "number"
+    ],
+    "varargs": "undefined",
+    "argnames": [],
+    "return": "number|undefined"
+  },
+  "Math@0/imul": {
+    "type": "function",
+    "args": [
+      "number",
+      "number"
+    ],
+    "varargs": "undefined",
+    "argnames": [],
+    "return": "number|undefined"
+  },
+  "Math@0/fround": {
+    "type": "function",
+    "args": [
+      "number"
+    ],
+    "varargs": "undefined",
+    "argnames": [],
+    "return": "number|undefined"
+  },
+  "Math@0/log": {
+    "type": "function",
+    "args": [
+      "number"
+    ],
+    "varargs": "undefined",
+    "argnames": [],
+    "return": "number|undefined"
+  },
+  "Math@0/max": {
+    "type": "function",
+    "args": [
+      "number",
+      "number"
+    ],
+    "varargs": "number",
+    "argnames": [],
+    "return": "number|undefined"
+  },
+  "Math@0/min": {
+    "type": "function",
+    "args": [
+      "number",
+      "number"
+    ],
+    "varargs": "number",
+    "argnames": [],
+    "return": "number|undefined"
+  },
+  "Math@0/pow": {
+    "type": "function",
+    "args": [
+      "number",
+      "number"
+    ],
+    "varargs": "undefined",
+    "argnames": [],
+    "return": "number|undefined"
+  },
+  "Math@0/random": {
+    "type": "function",
+    "args": [],
+    "varargs": "undefined",
+    "argnames": [],
+    "return": "number"
+  },
+  "Math@0/round": {
+    "type": "function",
+    "args": [
+      "number"
+    ],
+    "varargs": "undefined",
+    "argnames": [],
+    "return": "number|undefined"
+  },
+  "Math@0/sin": {
+    "type": "function",
+    "args": [
+      "number"
+    ],
+    "varargs": "undefined",
+    "argnames": [],
+    "return": "number|undefined"
+  },
+  "Math@0/sqrt": {
+    "type": "function",
+    "args": [
+      "number"
+    ],
+    "varargs": "undefined",
+    "argnames": [],
+    "return": "number|undefined"
+  },
+  "Math@0/tan": {
+    "type": "function",
+    "args": [
+      "number"
+    ],
+    "varargs": "undefined",
+    "argnames": [],
+    "return": "number|undefined"
+  },
+  "Math@0/log10": {
+    "type": "function",
+    "args": [
+      "number"
+    ],
+    "varargs": "undefined",
+    "argnames": [],
+    "return": "number|undefined"
+  },
+  "Math@0/log2": {
+    "type": "function",
+    "args": [
+      "number"
+    ],
+    "varargs": "undefined",
+    "argnames": [],
+    "return": "number|undefined"
+  },
+  "Math@0/log1p": {
+    "type": "function",
+    "args": [
+      "number"
+    ],
+    "varargs": "undefined",
+    "argnames": [],
+    "return": "number|undefined"
+  },
+  "Math@0/expm1": {
+    "type": "function",
+    "args": [
+      "number"
+    ],
+    "varargs": "undefined",
+    "argnames": [],
+    "return": "number|undefined"
+  },
+  "Math@0/cosh": {
+    "type": "function",
+    "args": [
+      "number"
+    ],
+    "varargs": "undefined",
+    "argnames": [],
+    "return": "number|undefined"
+  },
+  "Math@0/sinh": {
+    "type": "function",
+    "args": [
+      "number"
+    ],
+    "varargs": "undefined",
+    "argnames": [],
+    "return": "number|undefined"
+  },
+  "Math@0/tanh": {
+    "type": "function",
+    "args": [
+      "number"
+    ],
+    "varargs": "undefined",
+    "argnames": [],
+    "return": "number|undefined"
+  },
+  "Math@0/acosh": {
+    "type": "function",
+    "args": [
+      "number"
+    ],
+    "varargs": "undefined",
+    "argnames": [],
+    "return": "number|undefined"
+  },
+  "Math@0/asinh": {
+    "type": "function",
+    "args": [
+      "number"
+    ],
+    "varargs": "undefined",
+    "argnames": [],
+    "return": "number|undefined"
+  },
+  "Math@0/atanh": {
+    "type": "function",
+    "args": [
+      "number"
+    ],
+    "varargs": "undefined",
+    "argnames": [],
+    "return": "number|undefined"
+  },
+  "Math@0/hypot": {
+    "type": "function",
+    "args": [
+      "number",
+      "number"
+    ],
+    "varargs": "undefined",
+    "argnames": [],
+    "return": "number|undefined"
+  },
+  "Math@0/trunc": {
+    "type": "function",
+    "args": [
+      "number"
+    ],
+    "varargs": "undefined",
+    "argnames": [],
+    "return": "number|undefined"
+  },
+  "Math@0/sign": {
+    "type": "function",
+    "args": [
+      "number"
+    ],
+    "varargs": "undefined",
+    "argnames": [],
+    "return": "number|undefined"
+  },
+  "Math@0/cbrt": {
+    "type": "function",
+    "args": [
+      "number"
+    ],
+    "varargs": "undefined",
+    "argnames": [],
+    "return": "number|undefined"
+  },
+  "Math@0/clip": {
+    "type": "function",
+    "args": [
+      "number",
+      "number",
+      "number"
+    ],
+    "varargs": "undefined",
+    "argnames": [],
+    "return": "number"
+  },
+  "number": {
+    "type": "primitive",
+    "primitive": "number"
+  },
+  "number|undefined": {
+    "type": "union",
+    "types": [
+      "undefined",
+      "number"
+    ]
+  },
+  "string": {
+    "type": "primitive",
+    "primitive": "string"
+  },
+  "boolean": {
+    "type": "primitive",
+    "primitive": "boolean"
+  },
+  "unit": {
+    "type": "primitive",
+    "primitive": "unit"
+  },
+  "var delegate@0": {
+    "type": "function",
+    "args": [
+      "string"
+    ],
+    "varargs": "*",
+    "argnames": [],
+    "return": "undefined"
+  },
+  "*": {
+    "type": "?",
+    "location": "Error\n    at getType (C:\\Users\\coleh\\Robotics_2022_2023\\TeamCode\\src\\main\\scripts\\autoauto-compiler\\compiler\\transmutations\\bytecode-tasks\\optimizers-and-checkers\\type-inference\\type-system-creator.js:112:62)\n    at resolveFunctionType (C:\\Users\\coleh\\Robotics_2022_2023\\TeamCode\\src\\main\\scripts\\autoauto-compiler\\compiler\\transmutations\\bytecode-tasks\\optimizers-and-checkers\\type-inference\\type-system-creator.js:209:18)\n    at interpertMapping (C:\\Users\\coleh\\Robotics_2022_2023\\TeamCode\\src\\main\\scripts\\autoauto-compiler\\compiler\\transmutations\\bytecode-tasks\\optimizers-and-checkers\\type-inference\\type-system-creator.js:128:33)\n    at upsertInterpretMapping (C:\\Users\\coleh\\Robotics_2022_2023\\TeamCode\\src\\main\\scripts\\autoauto-compiler\\compiler\\transmutations\\bytecode-tasks\\optimizers-and-checkers\\type-inference\\type-system-creator.js:46:23)\n    at restoreFromMappings (C:\\Users\\coleh\\Robotics_2022_2023\\TeamCode\\src\\main\\scripts\\autoauto-compiler\\compiler\\transmutations\\bytecode-tasks\\optimizers-and-checkers\\type-inference\\type-system-creator.js:35:9)\n    at module.exports (C:\\Users\\coleh\\Robotics_2022_2023\\TeamCode\\src\\main\\scripts\\autoauto-compiler\\compiler\\transmutations\\bytecode-tasks\\optimizers-and-checkers\\type-inference\\type-system-creator.js:11:5)\n    at run (C:\\Users\\coleh\\Robotics_2022_2023\\TeamCode\\src\\main\\scripts\\autoauto-compiler\\compiler\\transmutations\\bytecode-tasks\\optimizers-and-checkers\\type-inference\\index.js:12:22)\n    at runTransmutation (C:\\Users\\coleh\\Robotics_2022_2023\\TeamCode\\src\\main\\scripts\\autoauto-compiler\\compiler\\compile-file.js:76:11)\n    at tryRunTransmutation (C:\\Users\\coleh\\Robotics_2022_2023\\TeamCode\\src\\main\\scripts\\autoauto-compiler\\compiler\\compile-file.js:50:15)\n    at compileFile (C:\\Users\\coleh\\Robotics_2022_2023\\TeamCode\\src\\main\\scripts\\autoauto-compiler\\compiler\\compile-file.js:32:30)"
+  },
+  "var provide@0": {
+    "type": "function",
+    "args": [
+      "*"
+    ],
+    "varargs": "undefined",
+    "argnames": [],
+    "return": "undefined"
+  },
+  "var typeof@0": {
+    "type": "function",
+    "args": [
+      "*"
+    ],
+    "varargs": "undefined",
+    "argnames": [],
+    "return": "string"
+  },
+  "var log@0": {
+    "type": "function",
+    "args": [],
+    "varargs": "*",
+    "argnames": [],
+    "return": "undefined"
+  },
+  "var True@0": {
+    "type": "union",
+    "types": [
+      "boolean"
+    ]
+  },
+  "var TRUE@0": {
+    "type": "union",
+    "types": [
+      "boolean"
+    ]
+  },
+  "var False@0": {
+    "type": "union",
+    "types": [
+      "boolean"
+    ]
+  },
+  "var FALSE@0": {
+    "type": "union",
+    "types": [
+      "boolean"
+    ]
+  },
+  "var e@0": {
+    "type": "union",
+    "types": [
+      "number"
+    ]
+  },
+  "var pi@0": {
+    "type": "union",
+    "types": [
+      "number"
+    ]
+  },
+  "var grab@0": {
+    "type": "function",
+    "args": [],
+    "varargs": "undefined",
+    "argnames": [],
+    "return": "undefined"
+  },
+  "var lift@0": {
+    "type": "function",
+    "args": [
+      "$$anonymous inner type #0"
+    ],
+    "varargs": "undefined",
+    "argnames": [
+      "level"
+    ],
+    "return": "undefined"
+  },
+  "$$anonymous inner type #0": {
+    "type": "union",
+    "types": [
+      "undefined",
+      "number"
+    ]
+  },
+  "var reset@0": {
+    "type": "function",
+    "args": [],
+    "varargs": "undefined",
+    "argnames": [],
+    "return": "undefined"
+  },
+  "var resetDrop@0": {
+    "type": "function",
+    "args": [],
+    "varargs": "undefined",
+    "argnames": [],
+    "return": "undefined"
+  },
+  "var drop@0": {
+    "type": "function",
+    "args": [],
+    "varargs": "undefined",
+    "argnames": [],
+    "return": "undefined"
+  },
+  "var getLevel@0": {
+    "type": "function",
+    "args": [],
+    "varargs": "undefined",
+    "argnames": [],
+    "return": "number"
+  },
+  "var calculateCorrection@0": {
+    "type": "function",
+    "args": [],
+    "varargs": "undefined",
+    "argnames": [],
+    "return": "undefined"
+  },
+  "var resetCorrection@0": {
+    "type": "function",
+    "args": [],
+    "varargs": "undefined",
+    "argnames": [],
+    "return": "undefined"
+  },
+  "var doCorrection@0": {
+    "type": "function",
+    "args": [
+      "$$anonymous inner type #1",
+      "$$anonymous inner type #2",
+      "$$anonymous inner type #3"
+    ],
+    "varargs": "undefined",
+    "argnames": [
+      "targetX",
+      "targetY",
+      "targetTheta"
+    ],
+    "return": "undefined"
+  },
+  "$$anonymous inner type #1": {
+    "type": "union",
+    "types": [
+      "undefined",
+      "number"
+    ]
+  },
+  "$$anonymous inner type #2": {
+    "type": "union",
+    "types": [
+      "undefined",
+      "number"
+    ]
+  },
+  "$$anonymous inner type #3": {
+    "type": "union",
+    "types": [
+      "undefined",
+      "number"
+    ]
+  },
+  "var getCVPositionNumberWhereZeroIsLeftOneIsMiddleAndTwoIsRight@0": {
+    "type": "function",
+    "args": [],
+    "varargs": "undefined",
+    "argnames": [],
+    "return": "number"
+  },
+  "var getCVPrecisePosition@0": {
+    "type": "function",
+    "args": [],
+    "varargs": "undefined",
+    "argnames": [],
+    "return": "number"
+  },
+  "var getCVPositionNumberWhereZeroIsLeftOneIsHalfLeftAndTwoIsMiddle@0": {
+    "type": "function",
+    "args": [],
+    "varargs": "undefined",
+    "argnames": [],
+    "return": "number"
+  },
+  "var getCVNumberForTesting@0": {
+    "type": "function",
+    "args": [],
+    "varargs": "undefined",
+    "argnames": [],
+    "return": "number"
+  },
+  "var stopWebcam@0": {
+    "type": "function",
+    "args": [],
+    "varargs": "undefined",
+    "argnames": [],
+    "return": "undefined"
+  },
+  "var setIsOpModeRunning@0": {
+    "type": "function",
+    "args": [
+      "undefined"
+    ],
+    "varargs": "undefined",
+    "argnames": [
+      "b"
+    ],
+    "return": "undefined"
+  },
+  "var reconfigureForTeleop@0": {
+    "type": "function",
+    "args": [],
+    "varargs": "undefined",
+    "argnames": [],
+    "return": "undefined"
+  },
+  "var reconfigureForAuto@0": {
+    "type": "function",
+    "args": [],
+    "varargs": "undefined",
+    "argnames": [],
+    "return": "undefined"
+  },
+  "var getRobotName@0": {
+    "type": "function",
+    "args": [],
+    "varargs": "undefined",
+    "argnames": [],
+    "return": "string"
+  },
+  "var reportEmergencyStop@0": {
+    "type": "function",
+    "args": [
+      "$$anonymous inner type #4"
+    ],
+    "varargs": "undefined",
+    "argnames": [
+      "description"
+    ],
+    "return": "undefined"
+  },
+  "$$anonymous inner type #4": {
+    "type": "union",
+    "types": [
+      "undefined",
+      "string"
+    ]
+  },
+  "var getFirstAngleOrientation@0": {
+    "type": "function",
+    "args": [],
+    "varargs": "undefined",
+    "argnames": [],
+    "return": "number"
+  },
+  "var getSecondAngleOrientation@0": {
+    "type": "function",
+    "args": [],
+    "varargs": "undefined",
+    "argnames": [],
+    "return": "number"
+  },
+  "var getThirdAngleOrientation@0": {
+    "type": "function",
+    "args": [],
+    "varargs": "undefined",
+    "argnames": [],
+    "return": "number"
+  },
+  "var getPositionX@0": {
+    "type": "function",
+    "args": [],
+    "varargs": "undefined",
+    "argnames": [],
+    "return": "number"
+  },
+  "var getPositionY@0": {
+    "type": "function",
+    "args": [],
+    "varargs": "undefined",
+    "argnames": [],
+    "return": "number"
+  },
+  "var getVelocityY@0": {
+    "type": "function",
+    "args": [],
+    "varargs": "undefined",
+    "argnames": [],
+    "return": "number"
+  },
+  "var getVelocityX@0": {
+    "type": "function",
+    "args": [],
+    "varargs": "undefined",
+    "argnames": [],
+    "return": "number"
+  },
+  "var getAccelerationX@0": {
+    "type": "function",
+    "args": [],
+    "varargs": "undefined",
+    "argnames": [],
+    "return": "number"
+  },
+  "var getAccelerationY@0": {
+    "type": "function",
+    "args": [],
+    "varargs": "undefined",
+    "argnames": [],
+    "return": "number"
+  },
+  "var vibrategpTwo@0": {
+    "type": "function",
+    "args": [],
+    "varargs": "undefined",
+    "argnames": [],
+    "return": "undefined"
+  },
+  "var setInputVariable@0": {
+    "type": "function",
+    "args": [
+      "$$anonymous inner type #5",
+      "$$anonymous inner type #6"
+    ],
+    "varargs": "undefined",
+    "argnames": [
+      "name",
+      "f"
+    ],
+    "return": "undefined"
+  },
+  "$$anonymous inner type #5": {
+    "type": "union",
+    "types": [
+      "undefined",
+      "string"
+    ]
+  },
+  "$$anonymous inner type #6": {
+    "type": "union",
+    "types": [
+      "undefined",
+      "number"
+    ]
+  },
+  "var getInputVariable@0": {
+    "type": "function",
+    "args": [
+      "$$anonymous inner type #7"
+    ],
+    "varargs": "undefined",
+    "argnames": [
+      "name"
+    ],
+    "return": "number"
+  },
+  "$$anonymous inner type #7": {
+    "type": "union",
+    "types": [
+      "undefined",
+      "string"
+    ]
+  },
+  "var update@0": {
+    "type": "function",
+    "args": [],
+    "varargs": "undefined",
+    "argnames": [],
+    "return": "undefined"
+  },
+  "var getBool@0": {
+    "type": "function",
+    "args": [
+      "$$anonymous inner type #8"
+    ],
+    "varargs": "undefined",
+    "argnames": [
+      "key"
+    ],
+    "return": "undefined"
+  },
+  "$$anonymous inner type #8": {
+    "type": "union",
+    "types": [
+      "undefined",
+      "string"
+    ]
+  },
+  "var getFloat@0": {
+    "type": "function",
+    "args": [
+      "$$anonymous inner type #9"
+    ],
+    "varargs": "undefined",
+    "argnames": [
+      "key"
+    ],
+    "return": "number"
+  },
+  "$$anonymous inner type #9": {
+    "type": "union",
+    "types": [
+      "undefined",
+      "string"
+    ]
+  },
+  "var setServoPosition@0": {
+    "type": "function",
+    "args": [
+      "$$anonymous inner type #10",
+      "$$anonymous inner type #11"
+    ],
+    "varargs": "undefined",
+    "argnames": [
+      "name",
+      "position"
+    ],
+    "return": "undefined"
+  },
+  "$$anonymous inner type #10": {
+    "type": "union",
+    "types": [
+      "undefined",
+      "string"
+    ]
+  },
+  "$$anonymous inner type #11": {
+    "type": "union",
+    "types": [
+      "undefined",
+      "number"
+    ]
+  },
+  "var setServoPower@0": {
+    "type": "function",
+    "args": [
+      "$$anonymous inner type #12",
+      "$$anonymous inner type #13"
+    ],
+    "varargs": "undefined",
+    "argnames": [
+      "name",
+      "power"
+    ],
+    "return": "undefined"
+  },
+  "$$anonymous inner type #12": {
+    "type": "union",
+    "types": [
+      "undefined",
+      "string"
+    ]
+  },
+  "$$anonymous inner type #13": {
+    "type": "union",
+    "types": [
+      "undefined",
+      "number"
+    ]
+  },
+  "var getMotorPower@0": {
+    "type": "function",
+    "args": [
+      "$$anonymous inner type #14"
+    ],
+    "varargs": "undefined",
+    "argnames": [
+      "name"
+    ],
+    "return": "number"
+  },
+  "$$anonymous inner type #14": {
+    "type": "union",
+    "types": [
+      "undefined",
+      "string"
+    ]
+  },
+  "var getMotorPosition@0": {
+    "type": "function",
+    "args": [
+      "$$anonymous inner type #15"
+    ],
+    "varargs": "undefined",
+    "argnames": [
+      "name"
+    ],
+    "return": "number"
+  },
+  "$$anonymous inner type #15": {
+    "type": "union",
+    "types": [
+      "undefined",
+      "string"
+    ]
+  },
+  "var getServoPower@0": {
+    "type": "function",
+    "args": [
+      "$$anonymous inner type #16"
+    ],
+    "varargs": "undefined",
+    "argnames": [
+      "name"
+    ],
+    "return": "number"
+  },
+  "$$anonymous inner type #16": {
+    "type": "union",
+    "types": [
+      "undefined",
+      "string"
+    ]
+  },
+  "var getServoPosition@0": {
+    "type": "function",
+    "args": [
+      "$$anonymous inner type #17"
+    ],
+    "varargs": "undefined",
+    "argnames": [
+      "name"
+    ],
+    "return": "number"
+  },
+  "$$anonymous inner type #17": {
+    "type": "union",
+    "types": [
+      "undefined",
+      "string"
+    ]
+  },
+  "var resetEncoders@0": {
+    "type": "function",
+    "args": [
+      "$$anonymous inner type #18"
+    ],
+    "varargs": "undefined",
+    "argnames": [
+      "name"
+    ],
+    "return": "undefined"
+  },
+  "$$anonymous inner type #18": {
+    "type": "union",
+    "types": [
+      "undefined",
+      "string"
+    ]
+  },
+  "var runUsingEncoders@0": {
+    "type": "function",
+    "args": [
+      "$$anonymous inner type #19"
+    ],
+    "varargs": "undefined",
+    "argnames": [
+      "name"
+    ],
+    "return": "undefined"
+  },
+  "$$anonymous inner type #19": {
+    "type": "union",
+    "types": [
+      "undefined",
+      "string"
+    ]
+  },
+  "var setMotorPower@0": {
+    "type": "function",
+    "args": [
+      "$$anonymous inner type #20",
+      "$$anonymous inner type #21"
+    ],
+    "varargs": "undefined",
+    "argnames": [
+      "name",
+      "power"
+    ],
+    "return": "undefined"
+  },
+  "$$anonymous inner type #20": {
+    "type": "union",
+    "types": [
+      "undefined",
+      "string"
+    ]
+  },
+  "$$anonymous inner type #21": {
+    "type": "union",
+    "types": [
+      "undefined",
+      "number"
+    ]
+  },
+  "var closeMotors@0": {
+    "type": "function",
+    "args": [],
+    "varargs": "undefined",
+    "argnames": [],
+    "return": "undefined"
+  },
+  "var getMotorTargetPosition@0": {
+    "type": "function",
+    "args": [
+      "$$anonymous inner type #22"
+    ],
+    "varargs": "undefined",
+    "argnames": [
+      "name"
+    ],
+    "return": "number"
+  },
+  "$$anonymous inner type #22": {
+    "type": "union",
+    "types": [
+      "undefined",
+      "string"
+    ]
+  },
+  "var encodeMoveToPosition@0": {
+    "type": "function",
+    "args": [
+      "$$anonymous inner type #23",
+      "$$anonymous inner type #24"
+    ],
+    "varargs": "undefined",
+    "argnames": [
+      "name",
+      "position"
+    ],
+    "return": "undefined"
+  },
+  "$$anonymous inner type #23": {
+    "type": "union",
+    "types": [
+      "undefined",
+      "string"
+    ]
+  },
+  "$$anonymous inner type #24": {
+    "type": "union",
+    "types": [
+      "undefined",
+      "number"
+    ]
+  },
+  "var hasEncodedMovement@0": {
+    "type": "function",
+    "args": [
+      "$$anonymous inner type #25"
+    ],
+    "varargs": "undefined",
+    "argnames": [
+      "name"
+    ],
+    "return": "undefined"
+  },
+  "$$anonymous inner type #25": {
+    "type": "union",
+    "types": [
+      "undefined",
+      "string"
+    ]
+  },
+  "var cancelEncodedMovement@0": {
+    "type": "function",
+    "args": [
+      "$$anonymous inner type #26"
+    ],
+    "varargs": "undefined",
+    "argnames": [
+      "name"
+    ],
+    "return": "undefined"
+  },
+  "$$anonymous inner type #26": {
+    "type": "union",
+    "types": [
+      "undefined",
+      "string"
+    ]
+  },
+  "var setMotorTargetPosition@0": {
+    "type": "function",
+    "args": [
+      "$$anonymous inner type #27",
+      "$$anonymous inner type #28"
+    ],
+    "varargs": "undefined",
+    "argnames": [
+      "name",
+      "position"
+    ],
+    "return": "undefined"
+  },
+  "$$anonymous inner type #27": {
+    "type": "union",
+    "types": [
+      "undefined",
+      "string"
+    ]
+  },
+  "$$anonymous inner type #28": {
+    "type": "union",
+    "types": [
+      "undefined",
+      "number"
+    ]
+  },
+  "var manualMoveEncodedMotor@0": {
+    "type": "function",
+    "args": [
+      "$$anonymous inner type #29",
+      "$$anonymous inner type #30"
+    ],
+    "varargs": "undefined",
+    "argnames": [
+      "name",
+      "increment"
+    ],
+    "return": "undefined"
+  },
+  "$$anonymous inner type #29": {
+    "type": "union",
+    "types": [
+      "undefined",
+      "string"
+    ]
+  },
+  "$$anonymous inner type #30": {
+    "type": "union",
+    "types": [
+      "undefined",
+      "number"
+    ]
+  },
+  "var driveRaw@0": {
+    "type": "function",
+    "args": [
+      "$$anonymous inner type #31",
+      "$$anonymous inner type #32",
+      "$$anonymous inner type #33",
+      "$$anonymous inner type #34"
+    ],
+    "varargs": "undefined",
+    "argnames": [
+      "fl",
+      "fr",
+      "br",
+      "bl"
+    ],
+    "return": "undefined"
+  },
+  "$$anonymous inner type #31": {
+    "type": "union",
+    "types": [
+      "undefined",
+      "number"
+    ]
+  },
+  "$$anonymous inner type #32": {
+    "type": "union",
+    "types": [
+      "undefined",
+      "number"
+    ]
+  },
+  "$$anonymous inner type #33": {
+    "type": "union",
+    "types": [
+      "undefined",
+      "number"
+    ]
+  },
+  "$$anonymous inner type #34": {
+    "type": "union",
+    "types": [
+      "undefined",
+      "number"
+    ]
+  },
+  "var driveBlue@0": {
+    "type": "function",
+    "args": [
+      "$$anonymous inner type #35",
+      "$$anonymous inner type #36",
+      "$$anonymous inner type #37",
+      "$$anonymous inner type #38"
+    ],
+    "varargs": "undefined",
+    "argnames": [
+      "fl",
+      "fr",
+      "br",
+      "bl"
+    ],
+    "return": "undefined"
+  },
+  "$$anonymous inner type #35": {
+    "type": "union",
+    "types": [
+      "undefined",
+      "number"
+    ]
+  },
+  "$$anonymous inner type #36": {
+    "type": "union",
+    "types": [
+      "undefined",
+      "number"
+    ]
+  },
+  "$$anonymous inner type #37": {
+    "type": "union",
+    "types": [
+      "undefined",
+      "number"
+    ]
+  },
+  "$$anonymous inner type #38": {
+    "type": "union",
+    "types": [
+      "undefined",
+      "number"
+    ]
+  },
+  "var stopDrive@0": {
+    "type": "function",
+    "args": [],
+    "varargs": "undefined",
+    "argnames": [],
+    "return": "undefined"
+  },
+  "var driveOmni@0": {
+    "type": "function",
+    "args": [
+      "$$anonymous inner type #39",
+      "$$anonymous inner type #40",
+      "$$anonymous inner type #41"
+    ],
+    "varargs": "undefined",
+    "argnames": [
+      "v",
+      "h",
+      "r"
+    ],
+    "return": "undefined"
+  },
+  "$$anonymous inner type #39": {
+    "type": "union",
+    "types": [
+      "undefined",
+      "number"
+    ]
+  },
+  "$$anonymous inner type #40": {
+    "type": "union",
+    "types": [
+      "undefined",
+      "number"
+    ]
+  },
+  "$$anonymous inner type #41": {
+    "type": "union",
+    "types": [
+      "undefined",
+      "number"
+    ]
+  },
+  "var getFLMotorPower@0": {
+    "type": "function",
+    "args": [],
+    "varargs": "undefined",
+    "argnames": [],
+    "return": "number"
+  },
+  "var getBLMotorPower@0": {
+    "type": "function",
+    "args": [],
+    "varargs": "undefined",
+    "argnames": [],
+    "return": "number"
+  },
+  "var getFRMotorPower@0": {
+    "type": "function",
+    "args": [],
+    "varargs": "undefined",
+    "argnames": [],
+    "return": "number"
+  },
+  "var getBRMotorPower@0": {
+    "type": "function",
+    "args": [],
+    "varargs": "undefined",
+    "argnames": [],
+    "return": "number"
+  },
+  "var resetEncodersMovementManager@0": {
+    "type": "function",
+    "args": [],
+    "varargs": "undefined",
+    "argnames": [],
+    "return": "undefined"
+  },
+  "var runToPosition@0": {
+    "type": "function",
+    "args": [],
+    "varargs": "undefined",
+    "argnames": [],
+    "return": "undefined"
+  },
+  "var runUsingEncodersMovementManager@0": {
+    "type": "function",
+    "args": [],
+    "varargs": "undefined",
+    "argnames": [],
+    "return": "undefined"
+  },
+  "var runWithOutEncoders@0": {
+    "type": "function",
+    "args": [],
+    "varargs": "undefined",
+    "argnames": [],
+    "return": "undefined"
+  },
+  "var setTargetPositions@0": {
+    "type": "function",
+    "args": [
+      "$$anonymous inner type #42",
+      "$$anonymous inner type #43",
+      "$$anonymous inner type #44",
+      "$$anonymous inner type #45"
+    ],
+    "varargs": "undefined",
+    "argnames": [
+      "fl",
+      "fr",
+      "br",
+      "bl"
+    ],
+    "return": "undefined"
+  },
+  "$$anonymous inner type #42": {
+    "type": "union",
+    "types": [
+      "undefined",
+      "number"
+    ]
+  },
+  "$$anonymous inner type #43": {
+    "type": "union",
+    "types": [
+      "undefined",
+      "number"
+    ]
+  },
+  "$$anonymous inner type #44": {
+    "type": "union",
+    "types": [
+      "undefined",
+      "number"
+    ]
+  },
+  "$$anonymous inner type #45": {
+    "type": "union",
+    "types": [
+      "undefined",
+      "number"
+    ]
+  },
+  "var getScale@0": {
+    "type": "function",
+    "args": [],
+    "varargs": "undefined",
+    "argnames": [],
+    "return": "number"
+  },
+  "var upScale@0": {
+    "type": "function",
+    "args": [
+      "$$anonymous inner type #46"
+    ],
+    "varargs": "undefined",
+    "argnames": [
+      "ScaleFactor"
+    ],
+    "return": "undefined"
+  },
+  "$$anonymous inner type #46": {
+    "type": "union",
+    "types": [
+      "undefined",
+      "number"
+    ]
+  },
+  "var downScale@0": {
+    "type": "function",
+    "args": [
+      "$$anonymous inner type #47"
+    ],
+    "varargs": "undefined",
+    "argnames": [
+      "ScaleFactor"
+    ],
+    "return": "undefined"
+  },
+  "$$anonymous inner type #47": {
+    "type": "union",
+    "types": [
+      "undefined",
+      "number"
+    ]
+  },
+  "var setScale@0": {
+    "type": "function",
+    "args": [
+      "$$anonymous inner type #48"
+    ],
+    "varargs": "undefined",
+    "argnames": [
+      "ScaleValue"
+    ],
+    "return": "undefined"
+  },
+  "$$anonymous inner type #48": {
+    "type": "union",
+    "types": [
+      "undefined",
+      "number"
+    ]
+  },
+  "var getTicks@0": {
+    "type": "function",
+    "args": [],
+    "varargs": "undefined",
+    "argnames": [],
+    "return": "number"
+  },
+  "var getHorizontalTicks@0": {
+    "type": "function",
+    "args": [],
+    "varargs": "undefined",
+    "argnames": [],
+    "return": "number"
+  },
+  "var getVerticalTicks@0": {
+    "type": "function",
+    "args": [],
+    "varargs": "undefined",
+    "argnames": [],
+    "return": "number"
+  },
+  "var getMeters@0": {
+    "type": "function",
+    "args": [],
+    "varargs": "undefined",
+    "argnames": [],
+    "return": "number"
+  },
+  "var getCentimeters@0": {
+    "type": "function",
+    "args": [],
+    "varargs": "undefined",
+    "argnames": [],
+    "return": "number"
+  },
+  "var getHorizontalMeters@0": {
+    "type": "function",
+    "args": [],
+    "varargs": "undefined",
+    "argnames": [],
+    "return": "number"
+  },
+  "var getVerticalMeters@0": {
+    "type": "function",
+    "args": [],
+    "varargs": "undefined",
+    "argnames": [],
+    "return": "number"
+  },
+  "var neckEmergencyStop@0": {
+    "type": "function",
+    "args": [],
+    "varargs": "undefined",
+    "argnames": [],
+    "return": "undefined"
+  },
+  "var neckMovementFinished@0": {
+    "type": "function",
+    "args": [],
+    "varargs": "undefined",
+    "argnames": [],
+    "return": "undefined"
+  },
+  "var neckTall@0": {
+    "type": "function",
+    "args": [],
+    "varargs": "undefined",
+    "argnames": [],
+    "return": "undefined"
+  },
+  "var neckShort@0": {
+    "type": "function",
+    "args": [],
+    "varargs": "undefined",
+    "argnames": [],
+    "return": "undefined"
+  },
+  "var neckNeutral@0": {
+    "type": "function",
+    "args": [],
+    "varargs": "undefined",
+    "argnames": [],
+    "return": "undefined"
+  },
+  "var neckHoming@0": {
+    "type": "function",
+    "args": [],
+    "varargs": "undefined",
+    "argnames": [],
+    "return": "undefined"
+  },
+  "var getNeckPosition@0": {
+    "type": "function",
+    "args": [],
+    "varargs": "undefined",
+    "argnames": [],
+    "return": "number"
+  },
+  "var setClawOpen@0": {
+    "type": "function",
+    "args": [
+      "undefined"
+    ],
+    "varargs": "undefined",
+    "argnames": [
+      "open"
+    ],
+    "return": "undefined"
+  },
+  "var toggleClaw@0": {
+    "type": "function",
+    "args": [],
+    "varargs": "undefined",
+    "argnames": [],
+    "return": "undefined"
+  },
+  "var getClawStatus@0": {
+    "type": "function",
+    "args": [],
+    "varargs": "undefined",
+    "argnames": [],
+    "return": "undefined"
+  },
+  "var emergencyStop@0": {
+    "type": "function",
+    "args": [],
+    "varargs": "undefined",
+    "argnames": [],
+    "return": "undefined"
+  },
+  "var liftMovementFinished@0": {
+    "type": "function",
+    "args": [],
+    "varargs": "undefined",
+    "argnames": [],
+    "return": "undefined"
+  },
+  "var positionOne@0": {
+    "type": "function",
+    "args": [],
+    "varargs": "undefined",
+    "argnames": [],
+    "return": "undefined"
+  },
+  "var positionTwo@0": {
+    "type": "function",
+    "args": [],
+    "varargs": "undefined",
+    "argnames": [],
+    "return": "undefined"
+  },
+  "var positionThree@0": {
+    "type": "function",
+    "args": [],
+    "varargs": "undefined",
+    "argnames": [],
+    "return": "undefined"
+  },
+  "var positionNeutral@0": {
+    "type": "function",
+    "args": [],
+    "varargs": "undefined",
+    "argnames": [],
+    "return": "undefined"
+  },
+  "var positionShared@0": {
+    "type": "function",
+    "args": [],
+    "varargs": "undefined",
+    "argnames": [],
+    "return": "undefined"
+  },
+  "var positionHome@0": {
+    "type": "function",
+    "args": [],
+    "varargs": "undefined",
+    "argnames": [],
+    "return": "undefined"
+  },
+  "var homing@0": {
+    "type": "function",
+    "args": [],
+    "varargs": "undefined",
+    "argnames": [],
+    "return": "undefined"
+  },
+  "var ifStableBobDownThenUp@0": {
+    "type": "function",
+    "args": [],
+    "varargs": "undefined",
+    "argnames": [],
+    "return": "undefined"
+  },
+  "var isFound@0": {
+    "type": "function",
+    "args": [],
+    "varargs": "undefined",
+    "argnames": [],
+    "return": "undefined"
+  },
+  "var getClawOpenish@0": {
+    "type": "function",
+    "args": [],
+    "varargs": "undefined",
+    "argnames": [],
+    "return": "number"
+  },
+  "var getClawPosition@0": {
+    "type": "function",
+    "args": [],
+    "varargs": "undefined",
+    "argnames": [],
+    "return": "number"
+  },
+  "var updateAllSensors@0": {
+    "type": "function",
+    "args": [],
+    "varargs": "undefined",
+    "argnames": [],
+    "return": "undefined"
+  },
+  "var updateSensor@0": {
+    "type": "function",
+    "args": [
+      "$$anonymous inner type #49"
+    ],
+    "varargs": "undefined",
+    "argnames": [
+      "index"
+    ],
+    "return": "undefined"
+  },
+  "$$anonymous inner type #49": {
+    "type": "union",
+    "types": [
+      "undefined",
+      "number"
+    ]
+  },
+  "var indexOf@0": {
+    "type": "function",
+    "args": [
+      "$$anonymous inner type #50"
+    ],
+    "varargs": "undefined",
+    "argnames": [
+      "name"
+    ],
+    "return": "number"
+  },
+  "$$anonymous inner type #50": {
+    "type": "union",
+    "types": [
+      "undefined",
+      "string"
+    ]
+  },
+  "var getColorInteger@0": {
+    "type": "function",
+    "args": [
+      "$$anonymous inner type #51"
+    ],
+    "varargs": "undefined",
+    "argnames": [
+      "name"
+    ],
+    "return": "number"
+  },
+  "$$anonymous inner type #51": {
+    "type": "union",
+    "types": [
+      "undefined",
+      "string"
+    ]
+  },
+  "var isSpecial@0": {
+    "type": "function",
+    "args": [
+      "$$anonymous inner type #52"
+    ],
+    "varargs": "undefined",
+    "argnames": [
+      "name"
+    ],
+    "return": "undefined"
+  },
+  "$$anonymous inner type #52": {
+    "type": "union",
+    "types": [
+      "undefined",
+      "string"
+    ]
+  },
+  "var clear@0": {
+    "type": "function",
+    "args": [],
+    "varargs": "undefined",
+    "argnames": [],
+    "return": "undefined"
+  },
+  "var clearAll@0": {
+    "type": "function",
+    "args": [],
+    "varargs": "undefined",
+    "argnames": [],
+    "return": "undefined"
+  },
+  "var speak@0": {
+    "type": "function",
+    "args": [
+      "$$anonymous inner type #53"
+    ],
+    "varargs": "undefined",
+    "argnames": [
+      "text"
+    ],
+    "return": "undefined"
+  },
+  "$$anonymous inner type #53": {
+    "type": "union",
+    "types": [
+      "undefined",
+      "string"
+    ]
+  },
+  "var updateTelemetryManager@0": {
+    "type": "function",
+    "args": [],
+    "varargs": "undefined",
+    "argnames": [],
+    "return": "undefined"
+  },
+  "var isAutoClear@0": {
+    "type": "function",
+    "args": [],
+    "varargs": "undefined",
+    "argnames": [],
+    "return": "undefined"
+  },
+  "var setAutoClear@0": {
+    "type": "function",
+    "args": [
+      "undefined"
+    ],
+    "varargs": "undefined",
+    "argnames": [
+      "autoClear"
+    ],
+    "return": "undefined"
+  },
+  "var getMsTransmissionInterval@0": {
+    "type": "function",
+    "args": [],
+    "varargs": "undefined",
+    "argnames": [],
+    "return": "number"
+  },
+  "var setMsTransmissionInterval@0": {
+    "type": "function",
+    "args": [
+      "$$anonymous inner type #54"
+    ],
+    "varargs": "undefined",
+    "argnames": [
+      "msTransmissionInterval"
+    ],
+    "return": "undefined"
+  },
+  "$$anonymous inner type #54": {
+    "type": "union",
+    "types": [
+      "undefined",
+      "number"
+    ]
+  },
+  "var getItemSeparator@0": {
+    "type": "function",
+    "args": [],
+    "varargs": "undefined",
+    "argnames": [],
+    "return": "string"
+  },
+  "var setItemSeparator@0": {
+    "type": "function",
+    "args": [
+      "$$anonymous inner type #55"
+    ],
+    "varargs": "undefined",
+    "argnames": [
+      "itemSeparator"
+    ],
+    "return": "undefined"
+  },
+  "$$anonymous inner type #55": {
+    "type": "union",
+    "types": [
+      "undefined",
+      "string"
+    ]
+  },
+  "var getCaptionValueSeparator@0": {
+    "type": "function",
+    "args": [],
+    "varargs": "undefined",
+    "argnames": [],
+    "return": "string"
+  },
+  "var setCaptionValueSeparator@0": {
+    "type": "function",
+    "args": [
+      "$$anonymous inner type #56"
+    ],
+    "varargs": "undefined",
+    "argnames": [
+      "captionValueSeparator"
+    ],
+    "return": "undefined"
+  },
+  "$$anonymous inner type #56": {
+    "type": "union",
+    "types": [
+      "undefined",
+      "string"
+    ]
+  },
+  "var readData@0": {
+    "type": "function",
+    "args": [],
+    "varargs": "undefined",
+    "argnames": [],
+    "return": "string"
+  },
+  "var hasNewData@0": {
+    "type": "function",
+    "args": [],
+    "varargs": "undefined",
+    "argnames": [],
+    "return": "undefined"
+  },
+  "var getGamepadOneInfo@0": {
+    "type": "function",
+    "args": [],
+    "varargs": "undefined",
+    "argnames": [],
+    "return": "string"
+  },
+  "var getGamepadTwoInfo@0": {
+    "type": "function",
+    "args": [],
+    "varargs": "undefined",
+    "argnames": [],
+    "return": "string"
+  },
+  "$$anonymous inner type #62": {
+    "type": "apply",
+    "location": {
+      "start": {
+        "line": 15,
+        "column": 10,
+        "offset": 315
+      },
+      "end": {
+        "line": 15,
+        "column": 31,
+        "offset": 334
+      },
+      "file": "C:\\Users\\coleh\\Robotics_2022_2023\\TeamCode\\src\\main\\java\\org\\firstinspires\\ftc\\teamcode\\opmodes\\auto\\benchmark\\everything.autoauto"
+    },
+    "positionalArguments": [
+      "string"
+    ],
+    "namedArguments": {},
+    "operand": "var log@0"
+  },
+  "$$anonymous inner type #65": {
+    "type": "union",
+    "location": {
+      "start": {
+        "line": 15,
+        "column": 35,
+        "offset": 336
+      },
+      "end": {
+        "line": 15,
+        "column": 45,
+        "offset": 345
+      },
+      "file": "C:\\Users\\coleh\\Robotics_2022_2023\\TeamCode\\src\\main\\java\\org\\firstinspires\\ftc\\teamcode\\opmodes\\auto\\benchmark\\everything.autoauto"
+    },
+    "types": [
+      "var @fd0369ca1e087a1d81d0b040782d425f2ed96643905abd59142a0ff69b4ad202-temp0@1",
+      "var @fd0369ca1e087a1d81d0b040782d425f2ed96643905abd59142a0ff69b4ad202-temp0@2"
+    ]
+  },
+  "var @fd0369ca1e087a1d81d0b040782d425f2ed96643905abd59142a0ff69b4ad202-temp0@1": {
+    "type": "union",
+    "location": {
+      "start": {
+        "line": 15,
+        "column": 35,
+        "offset": 336
+      },
+      "end": {
+        "line": 15,
+        "column": 45,
+        "offset": 345
+      },
+      "file": "C:\\Users\\coleh\\Robotics_2022_2023\\TeamCode\\src\\main\\java\\org\\firstinspires\\ftc\\teamcode\\opmodes\\auto\\benchmark\\everything.autoauto"
+    },
+    "types": [
+      "boolean"
+    ]
+  },
+  "var @fd0369ca1e087a1d81d0b040782d425f2ed96643905abd59142a0ff69b4ad202-temp0@2": {
+    "type": "union",
+    "location": {
+      "start": {
+        "line": 15,
+        "column": 35,
+        "offset": 336
+      },
+      "end": {
+        "line": 15,
+        "column": 45,
+        "offset": 345
+      },
+      "file": "C:\\Users\\coleh\\Robotics_2022_2023\\TeamCode\\src\\main\\java\\org\\firstinspires\\ftc\\teamcode\\opmodes\\auto\\benchmark\\everything.autoauto"
+    },
+    "types": [
+      "boolean"
+    ]
+  },
+  "var @fd0369ca1e087a1d81d0b040782d425f2ed96643905abd59142a0ff69b4ad202-temp3@1": {
+    "type": "union",
+    "location": {
+      "start": {
+        "line": 17,
+        "column": 34,
+        "offset": 408
+      },
+      "end": {
+        "line": 17,
+        "column": 48,
+        "offset": 421
+      },
+      "file": "C:\\Users\\coleh\\Robotics_2022_2023\\TeamCode\\src\\main\\java\\org\\firstinspires\\ftc\\teamcode\\opmodes\\auto\\benchmark\\everything.autoauto"
+    },
+    "types": [
+      "boolean"
+    ]
+  },
+  "var @fd0369ca1e087a1d81d0b040782d425f2ed96643905abd59142a0ff69b4ad202-temp1@1": {
+    "type": "union",
+    "location": {
+      "start": {
+        "line": 15,
+        "column": 35,
+        "offset": 336
+      },
+      "end": {
+        "line": 15,
+        "column": 45,
+        "offset": 345
+      },
+      "file": "C:\\Users\\coleh\\Robotics_2022_2023\\TeamCode\\src\\main\\java\\org\\firstinspires\\ftc\\teamcode\\opmodes\\auto\\benchmark\\everything.autoauto"
+    },
+    "types": [
+      "number"
+    ]
+  },
+  "$$anonymous inner type #102": {
+    "type": "apply",
+    "location": {
+      "start": {
+        "line": 17,
+        "column": 10,
+        "offset": 388
+      },
+      "end": {
+        "line": 17,
+        "column": 30,
+        "offset": 406
+      },
+      "file": "C:\\Users\\coleh\\Robotics_2022_2023\\TeamCode\\src\\main\\java\\org\\firstinspires\\ftc\\teamcode\\opmodes\\auto\\benchmark\\everything.autoauto"
+    },
+    "positionalArguments": [
+      "string"
+    ],
+    "namedArguments": {},
+    "operand": "var log@0"
+  },
+  "$$anonymous inner type #105": {
+    "type": "union",
+    "location": {
+      "start": {
+        "line": 17,
+        "column": 34,
+        "offset": 408
+      },
+      "end": {
+        "line": 17,
+        "column": 48,
+        "offset": 421
+      },
+      "file": "C:\\Users\\coleh\\Robotics_2022_2023\\TeamCode\\src\\main\\java\\org\\firstinspires\\ftc\\teamcode\\opmodes\\auto\\benchmark\\everything.autoauto"
+    },
+    "types": [
+      "var @fd0369ca1e087a1d81d0b040782d425f2ed96643905abd59142a0ff69b4ad202-temp3@1",
+      "var @fd0369ca1e087a1d81d0b040782d425f2ed96643905abd59142a0ff69b4ad202-temp3@2"
+    ]
+  },
+  "var @fd0369ca1e087a1d81d0b040782d425f2ed96643905abd59142a0ff69b4ad202-temp3@2": {
+    "type": "union",
+    "location": {
+      "start": {
+        "line": 17,
+        "column": 34,
+        "offset": 408
+      },
+      "end": {
+        "line": 17,
+        "column": 48,
+        "offset": 421
+      },
+      "file": "C:\\Users\\coleh\\Robotics_2022_2023\\TeamCode\\src\\main\\java\\org\\firstinspires\\ftc\\teamcode\\opmodes\\auto\\benchmark\\everything.autoauto"
+    },
+    "types": [
+      "boolean"
+    ]
+  },
+  "var @fd0369ca1e087a1d81d0b040782d425f2ed96643905abd59142a0ff69b4ad202-temp6@1": {
+    "type": "union",
+    "location": {
+      "start": {
+        "line": 18,
+        "column": 40,
+        "offset": 462
+      },
+      "end": {
+        "line": 18,
+        "column": 50,
+        "offset": 471
+      },
+      "file": "C:\\Users\\coleh\\Robotics_2022_2023\\TeamCode\\src\\main\\java\\org\\firstinspires\\ftc\\teamcode\\opmodes\\auto\\benchmark\\everything.autoauto"
+    },
+    "types": [
+      "boolean"
+    ]
+  },
+  "var @fd0369ca1e087a1d81d0b040782d425f2ed96643905abd59142a0ff69b4ad202-temp4@1": {
+    "type": "union",
+    "location": {
+      "start": {
+        "line": 17,
+        "column": 34,
+        "offset": 408
+      },
+      "end": {
+        "line": 17,
+        "column": 48,
+        "offset": 421
+      },
+      "file": "C:\\Users\\coleh\\Robotics_2022_2023\\TeamCode\\src\\main\\java\\org\\firstinspires\\ftc\\teamcode\\opmodes\\auto\\benchmark\\everything.autoauto"
+    },
+    "types": [
+      "number"
+    ]
+  },
+  "$$anonymous inner type #142": {
+    "type": "apply",
+    "location": {
+      "start": {
+        "line": 18,
+        "column": 10,
+        "offset": 436
+      },
+      "end": {
+        "line": 18,
+        "column": 36,
+        "offset": 460
+      },
+      "file": "C:\\Users\\coleh\\Robotics_2022_2023\\TeamCode\\src\\main\\java\\org\\firstinspires\\ftc\\teamcode\\opmodes\\auto\\benchmark\\everything.autoauto"
+    },
+    "positionalArguments": [
+      "string"
+    ],
+    "namedArguments": {},
+    "operand": "var log@0"
+  },
+  "$$anonymous inner type #145": {
+    "type": "union",
+    "location": {
+      "start": {
+        "line": 18,
+        "column": 40,
+        "offset": 462
+      },
+      "end": {
+        "line": 18,
+        "column": 50,
+        "offset": 471
+      },
+      "file": "C:\\Users\\coleh\\Robotics_2022_2023\\TeamCode\\src\\main\\java\\org\\firstinspires\\ftc\\teamcode\\opmodes\\auto\\benchmark\\everything.autoauto"
+    },
+    "types": [
+      "var @fd0369ca1e087a1d81d0b040782d425f2ed96643905abd59142a0ff69b4ad202-temp6@1",
+      "var @fd0369ca1e087a1d81d0b040782d425f2ed96643905abd59142a0ff69b4ad202-temp6@2"
+    ]
+  },
+  "var @fd0369ca1e087a1d81d0b040782d425f2ed96643905abd59142a0ff69b4ad202-temp6@2": {
+    "type": "union",
+    "location": {
+      "start": {
+        "line": 18,
+        "column": 40,
+        "offset": 462
+      },
+      "end": {
+        "line": 18,
+        "column": 50,
+        "offset": 471
+      },
+      "file": "C:\\Users\\coleh\\Robotics_2022_2023\\TeamCode\\src\\main\\java\\org\\firstinspires\\ftc\\teamcode\\opmodes\\auto\\benchmark\\everything.autoauto"
+    },
+    "types": [
+      "boolean"
+    ]
+  },
+  "var @fd0369ca1e087a1d81d0b040782d425f2ed96643905abd59142a0ff69b4ad202-temp9@1": {
+    "type": "union",
+    "location": {
+      "start": {
+        "line": 19,
+        "column": 39,
+        "offset": 511
+      },
+      "end": {
+        "line": 19,
+        "column": 49,
+        "offset": 520
+      },
+      "file": "C:\\Users\\coleh\\Robotics_2022_2023\\TeamCode\\src\\main\\java\\org\\firstinspires\\ftc\\teamcode\\opmodes\\auto\\benchmark\\everything.autoauto"
+    },
+    "types": [
+      "boolean"
+    ]
+  },
+  "var @fd0369ca1e087a1d81d0b040782d425f2ed96643905abd59142a0ff69b4ad202-temp7@1": {
+    "type": "union",
+    "location": {
+      "start": {
+        "line": 18,
+        "column": 40,
+        "offset": 462
+      },
+      "end": {
+        "line": 18,
+        "column": 50,
+        "offset": 471
+      },
+      "file": "C:\\Users\\coleh\\Robotics_2022_2023\\TeamCode\\src\\main\\java\\org\\firstinspires\\ftc\\teamcode\\opmodes\\auto\\benchmark\\everything.autoauto"
+    },
+    "types": [
+      "number"
+    ]
+  },
+  "$$anonymous inner type #182": {
+    "type": "apply",
+    "location": {
+      "start": {
+        "line": 19,
+        "column": 10,
+        "offset": 486
+      },
+      "end": {
+        "line": 19,
+        "column": 35,
+        "offset": 509
+      },
+      "file": "C:\\Users\\coleh\\Robotics_2022_2023\\TeamCode\\src\\main\\java\\org\\firstinspires\\ftc\\teamcode\\opmodes\\auto\\benchmark\\everything.autoauto"
+    },
+    "positionalArguments": [
+      "string"
+    ],
+    "namedArguments": {},
+    "operand": "var log@0"
+  },
+  "$$anonymous inner type #185": {
+    "type": "union",
+    "location": {
+      "start": {
+        "line": 19,
+        "column": 39,
+        "offset": 511
+      },
+      "end": {
+        "line": 19,
+        "column": 49,
+        "offset": 520
+      },
+      "file": "C:\\Users\\coleh\\Robotics_2022_2023\\TeamCode\\src\\main\\java\\org\\firstinspires\\ftc\\teamcode\\opmodes\\auto\\benchmark\\everything.autoauto"
+    },
+    "types": [
+      "var @fd0369ca1e087a1d81d0b040782d425f2ed96643905abd59142a0ff69b4ad202-temp9@1",
+      "var @fd0369ca1e087a1d81d0b040782d425f2ed96643905abd59142a0ff69b4ad202-temp9@2"
+    ]
+  },
+  "var @fd0369ca1e087a1d81d0b040782d425f2ed96643905abd59142a0ff69b4ad202-temp9@2": {
+    "type": "union",
+    "location": {
+      "start": {
+        "line": 19,
+        "column": 39,
+        "offset": 511
+      },
+      "end": {
+        "line": 19,
+        "column": 49,
+        "offset": 520
+      },
+      "file": "C:\\Users\\coleh\\Robotics_2022_2023\\TeamCode\\src\\main\\java\\org\\firstinspires\\ftc\\teamcode\\opmodes\\auto\\benchmark\\everything.autoauto"
+    },
+    "types": [
+      "boolean"
+    ]
+  },
+  "var @fd0369ca1e087a1d81d0b040782d425f2ed96643905abd59142a0ff69b4ad202-temp12@1": {
+    "type": "union",
+    "location": {
+      "start": {
+        "line": 20,
+        "column": 39,
+        "offset": 560
+      },
+      "end": {
+        "line": 20,
+        "column": 49,
+        "offset": 569
+      },
+      "file": "C:\\Users\\coleh\\Robotics_2022_2023\\TeamCode\\src\\main\\java\\org\\firstinspires\\ftc\\teamcode\\opmodes\\auto\\benchmark\\everything.autoauto"
+    },
+    "types": [
+      "boolean"
+    ]
+  },
+  "var @fd0369ca1e087a1d81d0b040782d425f2ed96643905abd59142a0ff69b4ad202-temp10@1": {
+    "type": "union",
+    "location": {
+      "start": {
+        "line": 19,
+        "column": 39,
+        "offset": 511
+      },
+      "end": {
+        "line": 19,
+        "column": 49,
+        "offset": 520
+      },
+      "file": "C:\\Users\\coleh\\Robotics_2022_2023\\TeamCode\\src\\main\\java\\org\\firstinspires\\ftc\\teamcode\\opmodes\\auto\\benchmark\\everything.autoauto"
+    },
+    "types": [
+      "number"
+    ]
+  },
+  "$$anonymous inner type #222": {
+    "type": "apply",
+    "location": {
+      "start": {
+        "line": 20,
+        "column": 10,
+        "offset": 535
+      },
+      "end": {
+        "line": 20,
+        "column": 35,
+        "offset": 558
+      },
+      "file": "C:\\Users\\coleh\\Robotics_2022_2023\\TeamCode\\src\\main\\java\\org\\firstinspires\\ftc\\teamcode\\opmodes\\auto\\benchmark\\everything.autoauto"
+    },
+    "positionalArguments": [
+      "string"
+    ],
+    "namedArguments": {},
+    "operand": "var log@0"
+  },
+  "$$anonymous inner type #225": {
+    "type": "union",
+    "location": {
+      "start": {
+        "line": 20,
+        "column": 39,
+        "offset": 560
+      },
+      "end": {
+        "line": 20,
+        "column": 49,
+        "offset": 569
+      },
+      "file": "C:\\Users\\coleh\\Robotics_2022_2023\\TeamCode\\src\\main\\java\\org\\firstinspires\\ftc\\teamcode\\opmodes\\auto\\benchmark\\everything.autoauto"
+    },
+    "types": [
+      "var @fd0369ca1e087a1d81d0b040782d425f2ed96643905abd59142a0ff69b4ad202-temp12@1",
+      "var @fd0369ca1e087a1d81d0b040782d425f2ed96643905abd59142a0ff69b4ad202-temp12@2"
+    ]
+  },
+  "var @fd0369ca1e087a1d81d0b040782d425f2ed96643905abd59142a0ff69b4ad202-temp12@2": {
+    "type": "union",
+    "location": {
+      "start": {
+        "line": 20,
+        "column": 39,
+        "offset": 560
+      },
+      "end": {
+        "line": 20,
+        "column": 49,
+        "offset": 569
+      },
+      "file": "C:\\Users\\coleh\\Robotics_2022_2023\\TeamCode\\src\\main\\java\\org\\firstinspires\\ftc\\teamcode\\opmodes\\auto\\benchmark\\everything.autoauto"
+    },
+    "types": [
+      "boolean"
+    ]
+  },
+  "var @fd0369ca1e087a1d81d0b040782d425f2ed96643905abd59142a0ff69b4ad202-temp13@1": {
+    "type": "union",
+    "location": {
+      "start": {
+        "line": 20,
+        "column": 39,
+        "offset": 560
+      },
+      "end": {
+        "line": 20,
+        "column": 49,
+        "offset": 569
+      },
+      "file": "C:\\Users\\coleh\\Robotics_2022_2023\\TeamCode\\src\\main\\java\\org\\firstinspires\\ftc\\teamcode\\opmodes\\auto\\benchmark\\everything.autoauto"
+    },
+    "types": [
+      "number"
+    ]
+  },
+  "$$anonymous inner type #264": {
+    "type": "apply",
+    "location": {
+      "start": {
+        "line": 23,
+        "column": 26,
+        "offset": 625
+      },
+      "end": {
+        "line": 23,
+        "column": 52,
+        "offset": 649
+      },
+      "file": "C:\\Users\\coleh\\Robotics_2022_2023\\TeamCode\\src\\main\\java\\org\\firstinspires\\ftc\\teamcode\\opmodes\\auto\\benchmark\\everything.autoauto"
+    },
+    "positionalArguments": [
+      "string"
+    ],
+    "namedArguments": {},
+    "operand": "var log@0"
+  },
+  "$$anonymous inner type #281": {
+    "type": "apply",
+    "location": {
+      "start": {
+        "line": 24,
+        "column": 24,
+        "offset": 677
+      },
+      "end": {
+        "line": 24,
+        "column": 34,
+        "offset": 685
+      },
+      "file": "C:\\Users\\coleh\\Robotics_2022_2023\\TeamCode\\src\\main\\java\\org\\firstinspires\\ftc\\teamcode\\opmodes\\auto\\benchmark\\everything.autoauto"
+    },
+    "positionalArguments": [
+      "string"
+    ],
+    "namedArguments": {},
+    "operand": "var log@0"
+  },
+  "$$anonymous inner type #298": {
+    "type": "apply",
+    "location": {
+      "start": {
+        "line": 25,
+        "column": 24,
+        "offset": 772
+      },
+      "end": {
+        "line": 25,
+        "column": 34,
+        "offset": 780
+      },
+      "file": "C:\\Users\\coleh\\Robotics_2022_2023\\TeamCode\\src\\main\\java\\org\\firstinspires\\ftc\\teamcode\\opmodes\\auto\\benchmark\\everything.autoauto"
+    },
+    "positionalArguments": [
+      "string"
+    ],
+    "namedArguments": {},
+    "operand": "var log@0"
+  },
+  "$$anonymous inner type #304": {
+    "type": "object",
+    "location": {
+      "start": {
+        "line": 30,
+        "column": 21,
+        "offset": 891
+      },
+      "end": {
+        "line": 30,
+        "column": 24,
+        "offset": 893
+      },
+      "file": "C:\\Users\\coleh\\Robotics_2022_2023\\TeamCode\\src\\main\\java\\org\\firstinspires\\ftc\\teamcode\\opmodes\\auto\\benchmark\\everything.autoauto"
+    },
+    "some": "$$anonymous inner type #305",
+    "properties": {
+      "foup": "string"
+    }
+  },
+  "$$anonymous inner type #305": {
+    "type": "union",
+    "types": []
+  },
+  "var fd0369ca1e087a1d81d0b040782d425f2ed96643905abd59142a0ff69b4ad202-table@1": {
+    "type": "union",
+    "location": {
+      "start": {
+        "line": 30,
+        "column": 6,
+        "offset": 879
+      },
+      "end": {
+        "line": 30,
+        "column": 9,
+        "offset": 882
+      },
+      "file": "C:\\Users\\coleh\\Robotics_2022_2023\\TeamCode\\src\\main\\java\\org\\firstinspires\\ftc\\teamcode\\opmodes\\auto\\benchmark\\everything.autoauto"
+    },
+    "types": [
+      "$$anonymous inner type #304"
+    ]
+  },
+  "$$anonymous inner type #318": {
+    "type": "apply",
+    "location": {
+      "start": {
+        "line": 33,
+        "column": 10,
+        "offset": 986
+      },
+      "end": {
+        "line": 33,
+        "column": 19,
+        "offset": 993
+      },
+      "file": "C:\\Users\\coleh\\Robotics_2022_2023\\TeamCode\\src\\main\\java\\org\\firstinspires\\ftc\\teamcode\\opmodes\\auto\\benchmark\\everything.autoauto"
+    },
+    "positionalArguments": [
+      "var fd0369ca1e087a1d81d0b040782d425f2ed96643905abd59142a0ff69b4ad202-table@1"
+    ],
+    "namedArguments": {},
+    "operand": "var log@0"
+  },
+  "var fd0369ca1e087a1d81d0b040782d425f2ed96643905abd59142a0ff69b4ad202-table@2": {
+    "type": "union",
+    "location": {
+      "start": {
+        "line": 34,
+        "column": 6,
+        "offset": 1006
+      },
+      "end": {
+        "line": 34,
+        "column": 9,
+        "offset": 1009
+      },
+      "file": "C:\\Users\\coleh\\Robotics_2022_2023\\TeamCode\\src\\main\\java\\org\\firstinspires\\ftc\\teamcode\\opmodes\\auto\\benchmark\\everything.autoauto"
+    },
+    "types": [
+      "number"
+    ]
+  },
+  "$$anonymous inner type #329": {
+    "type": "apply",
+    "location": {
+      "start": {
+        "line": 35,
+        "column": 10,
+        "offset": 1068
+      },
+      "end": {
+        "line": 35,
+        "column": 19,
+        "offset": 1075
+      },
+      "file": "C:\\Users\\coleh\\Robotics_2022_2023\\TeamCode\\src\\main\\java\\org\\firstinspires\\ftc\\teamcode\\opmodes\\auto\\benchmark\\everything.autoauto"
+    },
+    "positionalArguments": [
+      "var fd0369ca1e087a1d81d0b040782d425f2ed96643905abd59142a0ff69b4ad202-table@2"
+    ],
+    "namedArguments": {},
+    "operand": "var log@0"
+  },
+  "var fd0369ca1e087a1d81d0b040782d425f2ed96643905abd59142a0ff69b4ad202-counter@1": {
+    "type": "union",
+    "location": {
+      "start": {
+        "line": 39,
+        "column": 6,
+        "offset": 1127
+      },
+      "end": {
+        "line": 39,
+        "column": 9,
+        "offset": 1130
+      },
+      "file": "C:\\Users\\coleh\\Robotics_2022_2023\\TeamCode\\src\\main\\java\\org\\firstinspires\\ftc\\teamcode\\opmodes\\auto\\benchmark\\everything.autoauto"
+    },
+    "types": [
+      "number"
+    ]
+  },
+  "$$anonymous inner type #338": {
+    "type": "union",
+    "location": {
+      "start": {
+        "line": 40,
+        "column": 23,
+        "offset": 1205
+      },
+      "end": {
+        "line": 40,
+        "column": 30,
+        "offset": 1212
+      },
+      "file": "C:\\Users\\coleh\\Robotics_2022_2023\\TeamCode\\src\\main\\java\\org\\firstinspires\\ftc\\teamcode\\opmodes\\auto\\benchmark\\everything.autoauto"
+    },
+    "types": [
+      "var fd0369ca1e087a1d81d0b040782d425f2ed96643905abd59142a0ff69b4ad202-counter@1",
+      "var fd0369ca1e087a1d81d0b040782d425f2ed96643905abd59142a0ff69b4ad202-counter@2"
+    ]
+  },
+  "var fd0369ca1e087a1d81d0b040782d425f2ed96643905abd59142a0ff69b4ad202-counter@2": {
+    "type": "union",
+    "location": {
+      "start": {
+        "line": 40,
+        "column": 6,
+        "offset": 1191
+      },
+      "end": {
+        "line": 40,
+        "column": 9,
+        "offset": 1194
+      },
+      "file": "C:\\Users\\coleh\\Robotics_2022_2023\\TeamCode\\src\\main\\java\\org\\firstinspires\\ftc\\teamcode\\opmodes\\auto\\benchmark\\everything.autoauto"
+    },
+    "types": [
+      "$$anonymous inner type #340"
+    ]
+  },
+  "$$anonymous inner type #340": {
+    "type": "binary_operator",
+    "location": {
+      "start": {
+        "line": 40,
+        "column": 23,
+        "offset": 1205
+      },
+      "end": {
+        "line": 40,
+        "column": 36,
+        "offset": 1216
+      },
+      "file": "C:\\Users\\coleh\\Robotics_2022_2023\\TeamCode\\src\\main\\java\\org\\firstinspires\\ftc\\teamcode\\opmodes\\auto\\benchmark\\everything.autoauto"
+    },
+    "op": "+",
+    "left": "$$anonymous inner type #338",
+    "right": "number"
+  },
+  "$$anonymous inner type #347": {
+    "type": "binary_operator",
+    "location": {
+      "start": {
+        "line": 40,
+        "column": 46,
+        "offset": 1222
+      },
+      "end": {
+        "line": 40,
+        "column": 67,
+        "offset": 1241
+      },
+      "file": "C:\\Users\\coleh\\Robotics_2022_2023\\TeamCode\\src\\main\\java\\org\\firstinspires\\ftc\\teamcode\\opmodes\\auto\\benchmark\\everything.autoauto"
+    },
+    "op": "+",
+    "left": "string",
+    "right": "var fd0369ca1e087a1d81d0b040782d425f2ed96643905abd59142a0ff69b4ad202-counter@2"
+  },
+  "$$anonymous inner type #350": {
+    "type": "apply",
+    "location": {
+      "start": {
+        "line": 40,
+        "column": 44,
+        "offset": 1221
+      },
+      "end": {
+        "line": 40,
+        "column": 69,
+        "offset": 1242
+      },
+      "file": "C:\\Users\\coleh\\Robotics_2022_2023\\TeamCode\\src\\main\\java\\org\\firstinspires\\ftc\\teamcode\\opmodes\\auto\\benchmark\\everything.autoauto"
+    },
+    "positionalArguments": [
+      "$$anonymous inner type #347"
+    ],
+    "namedArguments": {},
+    "operand": "var log@0"
+  },
+  "$$anonymous inner type #371": {
+    "type": "binary_operator",
+    "location": {
+      "start": {
+        "line": 46,
+        "column": 19,
+        "offset": 1386
+      },
+      "end": {
+        "line": 46,
+        "column": 30,
+        "offset": 1395
+      }
+    },
+    "op": "+",
+    "left": "var e@0",
+    "right": "string"
+  },
+  "var subcat/fd0369ca1e087a1d81d0b040782d425f2ed96643905abd59142a0ff69b4ad202/func-enter/26|arg:fd0369ca1e087a1d81d0b040782d425f2ed96643905abd59142a0ff69b4ad202-e@0": {
+    "type": "union",
+    "location": {
+      "start": {
+        "line": 45,
+        "column": 6,
+        "offset": 1350
+      },
+      "end": {
+        "line": 47,
+        "column": 7,
+        "offset": 1403
+      },
+      "file": "C:\\Users\\coleh\\Robotics_2022_2023\\TeamCode\\src\\main\\java\\org\\firstinspires\\ftc\\teamcode\\opmodes\\auto\\benchmark\\everything.autoauto"
+    },
+    "types": [
+      "number"
+    ]
+  },
+  "$$anonymous inner type #367": {
+    "type": "function",
+    "location": {
+      "start": {
+        "line": 45,
+        "column": 6,
+        "offset": 1350
+      },
+      "end": {
+        "line": 47,
+        "column": 7,
+        "offset": 1403
+      },
+      "file": "C:\\Users\\coleh\\Robotics_2022_2023\\TeamCode\\src\\main\\java\\org\\firstinspires\\ftc\\teamcode\\opmodes\\auto\\benchmark\\everything.autoauto"
+    },
+    "args": [
+      "var subcat/fd0369ca1e087a1d81d0b040782d425f2ed96643905abd59142a0ff69b4ad202/func-enter/26|arg:fd0369ca1e087a1d81d0b040782d425f2ed96643905abd59142a0ff69b4ad202-e@0"
+    ],
+    "varargs": "undefined",
+    "argnames": [
+      "e"
+    ],
+    "return": "$$anonymous inner type #373"
+  },
+  "$$anonymous inner type #373": {
+    "type": "union",
+    "types": [
+      "$$anonymous inner type #371"
+    ]
+  },
+  "var fd0369ca1e087a1d81d0b040782d425f2ed96643905abd59142a0ff69b4ad202-f@1": {
+    "type": "union",
+    "location": {
+      "start": {
+        "line": 45,
+        "column": 6,
+        "offset": 1350
+      },
+      "end": {
+        "line": 47,
+        "column": 7,
+        "offset": 1403
+      },
+      "file": "C:\\Users\\coleh\\Robotics_2022_2023\\TeamCode\\src\\main\\java\\org\\firstinspires\\ftc\\teamcode\\opmodes\\auto\\benchmark\\everything.autoauto"
+    },
+    "types": [
+      "$$anonymous inner type #367"
+    ]
+  },
+  "$$anonymous inner type #384": {
+    "type": "apply",
+    "location": {
+      "start": {
+        "line": 48,
+        "column": 14,
+        "offset": 1421
+      },
+      "end": {
+        "line": 48,
+        "column": 19,
+        "offset": 1424
+      },
+      "file": "C:\\Users\\coleh\\Robotics_2022_2023\\TeamCode\\src\\main\\java\\org\\firstinspires\\ftc\\teamcode\\opmodes\\auto\\benchmark\\everything.autoauto"
+    },
+    "positionalArguments": [
+      "number"
+    ],
+    "namedArguments": {},
+    "operand": "var fd0369ca1e087a1d81d0b040782d425f2ed96643905abd59142a0ff69b4ad202-f@1"
+  },
+  "$$anonymous inner type #387": {
+    "type": "apply",
+    "location": {
+      "start": {
+        "line": 48,
+        "column": 10,
+        "offset": 1419
+      },
+      "end": {
+        "line": 48,
+        "column": 21,
+        "offset": 1425
+      },
+      "file": "C:\\Users\\coleh\\Robotics_2022_2023\\TeamCode\\src\\main\\java\\org\\firstinspires\\ftc\\teamcode\\opmodes\\auto\\benchmark\\everything.autoauto"
+    },
+    "positionalArguments": [
+      "$$anonymous inner type #384"
+    ],
+    "namedArguments": {},
+    "operand": "var log@0"
+  },
+  "$$anonymous inner type #396": {
+    "type": "apply",
+    "location": {
+      "start": {
+        "line": 48,
+        "column": 33,
+        "offset": 1432
+      },
+      "end": {
+        "line": 48,
+        "column": 41,
+        "offset": 1438
+      },
+      "file": "C:\\Users\\coleh\\Robotics_2022_2023\\TeamCode\\src\\main\\java\\org\\firstinspires\\ftc\\teamcode\\opmodes\\auto\\benchmark\\everything.autoauto"
+    },
+    "positionalArguments": [
+      "string"
+    ],
+    "namedArguments": {},
+    "operand": "var fd0369ca1e087a1d81d0b040782d425f2ed96643905abd59142a0ff69b4ad202-f@1"
+  },
+  "$$anonymous inner type #399": {
+    "type": "apply",
+    "location": {
+      "start": {
+        "line": 48,
+        "column": 29,
+        "offset": 1430
+      },
+      "end": {
+        "line": 48,
+        "column": 43,
+        "offset": 1439
+      },
+      "file": "C:\\Users\\coleh\\Robotics_2022_2023\\TeamCode\\src\\main\\java\\org\\firstinspires\\ftc\\teamcode\\opmodes\\auto\\benchmark\\everything.autoauto"
+    },
+    "positionalArguments": [
+      "$$anonymous inner type #396"
+    ],
+    "namedArguments": {},
+    "operand": "var log@0"
+  },
+  "var subcat/fd0369ca1e087a1d81d0b040782d425f2ed96643905abd59142a0ff69b4ad202/func-enter/2a|arg:fd0369ca1e087a1d81d0b040782d425f2ed96643905abd59142a0ff69b4ad202-k@0": {
+    "type": "union",
+    "location": {
+      "start": {
+        "line": 49,
+        "column": 17,
+        "offset": 1460
+      },
+      "end": {
+        "line": 51,
+        "column": 7,
+        "offset": 1518
+      },
+      "file": "C:\\Users\\coleh\\Robotics_2022_2023\\TeamCode\\src\\main\\java\\org\\firstinspires\\ftc\\teamcode\\opmodes\\auto\\benchmark\\everything.autoauto"
+    },
+    "types": [
+      "string"
+    ]
+  },
+  "$$anonymous inner type #413": {
+    "type": "binary_operator",
+    "location": {
+      "start": {
+        "line": 50,
+        "column": 19,
+        "offset": 1497
+      },
+      "end": {
+        "line": 50,
+        "column": 26,
+        "offset": 1502
+      }
+    },
+    "op": "+",
+    "left": "var e@0",
+    "right": "var subcat/fd0369ca1e087a1d81d0b040782d425f2ed96643905abd59142a0ff69b4ad202/func-enter/2a|arg:fd0369ca1e087a1d81d0b040782d425f2ed96643905abd59142a0ff69b4ad202-k@0"
+  },
+  "$$anonymous inner type #415": {
+    "type": "binary_operator",
+    "location": {
+      "start": {
+        "line": 50,
+        "column": 19,
+        "offset": 1497
+      },
+      "end": {
+        "line": 50,
+        "column": 36,
+        "offset": 1510
+      }
+    },
+    "op": "+",
+    "left": "$$anonymous inner type #413",
+    "right": "string"
+  },
+  "var subcat/fd0369ca1e087a1d81d0b040782d425f2ed96643905abd59142a0ff69b4ad202/func-enter/2a|arg:fd0369ca1e087a1d81d0b040782d425f2ed96643905abd59142a0ff69b4ad202-e@0": {
+    "type": "union",
+    "location": {
+      "start": {
+        "line": 49,
+        "column": 17,
+        "offset": 1460
+      },
+      "end": {
+        "line": 51,
+        "column": 7,
+        "offset": 1518
+      },
+      "file": "C:\\Users\\coleh\\Robotics_2022_2023\\TeamCode\\src\\main\\java\\org\\firstinspires\\ftc\\teamcode\\opmodes\\auto\\benchmark\\everything.autoauto"
+    },
+    "types": [
+      "undefined"
+    ]
+  },
+  "$$anonymous inner type #408": {
+    "type": "function",
+    "location": {
+      "start": {
+        "line": 49,
+        "column": 17,
+        "offset": 1460
+      },
+      "end": {
+        "line": 51,
+        "column": 7,
+        "offset": 1518
+      },
+      "file": "C:\\Users\\coleh\\Robotics_2022_2023\\TeamCode\\src\\main\\java\\org\\firstinspires\\ftc\\teamcode\\opmodes\\auto\\benchmark\\everything.autoauto"
+    },
+    "args": [
+      "var subcat/fd0369ca1e087a1d81d0b040782d425f2ed96643905abd59142a0ff69b4ad202/func-enter/2a|arg:fd0369ca1e087a1d81d0b040782d425f2ed96643905abd59142a0ff69b4ad202-e@0",
+      "var subcat/fd0369ca1e087a1d81d0b040782d425f2ed96643905abd59142a0ff69b4ad202/func-enter/2a|arg:fd0369ca1e087a1d81d0b040782d425f2ed96643905abd59142a0ff69b4ad202-k@0"
+    ],
+    "varargs": "undefined",
+    "argnames": [
+      "e",
+      "k"
+    ],
+    "return": "$$anonymous inner type #417"
+  },
+  "$$anonymous inner type #417": {
+    "type": "union",
+    "types": [
+      "$$anonymous inner type #415"
+    ]
+  },
+  "var fd0369ca1e087a1d81d0b040782d425f2ed96643905abd59142a0ff69b4ad202-d@1": {
+    "type": "union",
+    "location": {
+      "start": {
+        "line": 49,
+        "column": 6,
+        "offset": 1452
+      },
+      "end": {
+        "line": 49,
+        "column": 9,
+        "offset": 1455
+      },
+      "file": "C:\\Users\\coleh\\Robotics_2022_2023\\TeamCode\\src\\main\\java\\org\\firstinspires\\ftc\\teamcode\\opmodes\\auto\\benchmark\\everything.autoauto"
+    },
+    "types": [
+      "$$anonymous inner type #408"
+    ]
+  },
+  "$$anonymous inner type #430": {
+    "type": "apply",
+    "location": {
+      "start": {
+        "line": 52,
+        "column": 14,
+        "offset": 1536
+      },
+      "end": {
+        "line": 52,
+        "column": 42,
+        "offset": 1558
+      },
+      "file": "C:\\Users\\coleh\\Robotics_2022_2023\\TeamCode\\src\\main\\java\\org\\firstinspires\\ftc\\teamcode\\opmodes\\auto\\benchmark\\everything.autoauto"
+    },
+    "positionalArguments": [
+      "number"
+    ],
+    "namedArguments": {
+      "nonexistent": "number"
+    },
+    "operand": "var fd0369ca1e087a1d81d0b040782d425f2ed96643905abd59142a0ff69b4ad202-d@1"
+  },
+  "$$anonymous inner type #433": {
+    "type": "apply",
+    "location": {
+      "start": {
+        "line": 52,
+        "column": 10,
+        "offset": 1534
+      },
+      "end": {
+        "line": 52,
+        "column": 44,
+        "offset": 1559
+      },
+      "file": "C:\\Users\\coleh\\Robotics_2022_2023\\TeamCode\\src\\main\\java\\org\\firstinspires\\ftc\\teamcode\\opmodes\\auto\\benchmark\\everything.autoauto"
+    },
+    "positionalArguments": [
+      "$$anonymous inner type #430"
+    ],
+    "namedArguments": {},
+    "operand": "var log@0"
+  },
+  "$$anonymous inner type #443": {
+    "type": "apply",
+    "location": {
+      "start": {
+        "line": 52,
+        "column": 56,
+        "offset": 1566
+      },
+      "end": {
+        "line": 52,
+        "column": 67,
+        "offset": 1573
+      },
+      "file": "C:\\Users\\coleh\\Robotics_2022_2023\\TeamCode\\src\\main\\java\\org\\firstinspires\\ftc\\teamcode\\opmodes\\auto\\benchmark\\everything.autoauto"
+    },
+    "positionalArguments": [],
+    "namedArguments": {
+      "k": "number"
+    },
+    "operand": "var fd0369ca1e087a1d81d0b040782d425f2ed96643905abd59142a0ff69b4ad202-d@1"
+  },
+  "$$anonymous inner type #446": {
+    "type": "apply",
+    "location": {
+      "start": {
+        "line": 52,
+        "column": 52,
+        "offset": 1564
+      },
+      "end": {
+        "line": 52,
+        "column": 69,
+        "offset": 1574
+      },
+      "file": "C:\\Users\\coleh\\Robotics_2022_2023\\TeamCode\\src\\main\\java\\org\\firstinspires\\ftc\\teamcode\\opmodes\\auto\\benchmark\\everything.autoauto"
+    },
+    "positionalArguments": [
+      "$$anonymous inner type #443"
+    ],
+    "namedArguments": {},
+    "operand": "var log@0"
+  },
+  "$$anonymous inner type #456": {
+    "type": "apply",
+    "location": {
+      "start": {
+        "line": 52,
+        "column": 81,
+        "offset": 1581
+      },
+      "end": {
+        "line": 52,
+        "column": 91,
+        "offset": 1587
+      },
+      "file": "C:\\Users\\coleh\\Robotics_2022_2023\\TeamCode\\src\\main\\java\\org\\firstinspires\\ftc\\teamcode\\opmodes\\auto\\benchmark\\everything.autoauto"
+    },
+    "positionalArguments": [
+      "number",
+      "number"
+    ],
+    "namedArguments": {},
+    "operand": "var fd0369ca1e087a1d81d0b040782d425f2ed96643905abd59142a0ff69b4ad202-d@1"
+  },
+  "$$anonymous inner type #459": {
+    "type": "apply",
+    "location": {
+      "start": {
+        "line": 52,
+        "column": 77,
+        "offset": 1579
+      },
+      "end": {
+        "line": 52,
+        "column": 93,
+        "offset": 1588
+      },
+      "file": "C:\\Users\\coleh\\Robotics_2022_2023\\TeamCode\\src\\main\\java\\org\\firstinspires\\ftc\\teamcode\\opmodes\\auto\\benchmark\\everything.autoauto"
+    },
+    "positionalArguments": [
+      "$$anonymous inner type #456"
+    ],
+    "namedArguments": {},
+    "operand": "var log@0"
+  },
+  "$$anonymous inner type #470": {
+    "type": "apply",
+    "location": {
+      "start": {
+        "line": 54,
+        "column": 14,
+        "offset": 1630
+      },
+      "end": {
+        "line": 54,
+        "column": 43,
+        "offset": 1657
+      },
+      "file": "C:\\Users\\coleh\\Robotics_2022_2023\\TeamCode\\src\\main\\java\\org\\firstinspires\\ftc\\teamcode\\opmodes\\auto\\benchmark\\everything.autoauto"
+    },
+    "positionalArguments": [
+      "string"
+    ],
+    "namedArguments": {},
+    "operand": "var log@0"
+  },
+  "$$anonymous inner type #464": {
+    "type": "function",
+    "location": {
+      "start": {
+        "line": 53,
+        "column": 17,
+        "offset": 1609
+      },
+      "end": {
+        "line": 55,
+        "column": 7,
+        "offset": 1664
+      },
+      "file": "C:\\Users\\coleh\\Robotics_2022_2023\\TeamCode\\src\\main\\java\\org\\firstinspires\\ftc\\teamcode\\opmodes\\auto\\benchmark\\everything.autoauto"
+    },
+    "args": [],
+    "varargs": "undefined",
+    "argnames": [],
+    "return": "$$anonymous inner type #474"
+  },
+  "$$anonymous inner type #474": {
+    "type": "union",
+    "types": [
+      "undefined"
+    ]
+  },
+  "var fd0369ca1e087a1d81d0b040782d425f2ed96643905abd59142a0ff69b4ad202-g@1": {
+    "type": "union",
+    "location": {
+      "start": {
+        "line": 53,
+        "column": 6,
+        "offset": 1601
+      },
+      "end": {
+        "line": 53,
+        "column": 9,
+        "offset": 1604
+      },
+      "file": "C:\\Users\\coleh\\Robotics_2022_2023\\TeamCode\\src\\main\\java\\org\\firstinspires\\ftc\\teamcode\\opmodes\\auto\\benchmark\\everything.autoauto"
+    },
+    "types": [
+      "$$anonymous inner type #464"
+    ]
+  },
+  "$$anonymous inner type #482": {
+    "type": "apply",
+    "location": {
+      "start": {
+        "line": 56,
+        "column": 8,
+        "offset": 1678
+      },
+      "end": {
+        "line": 56,
+        "column": 11,
+        "offset": 1680
+      },
+      "file": "C:\\Users\\coleh\\Robotics_2022_2023\\TeamCode\\src\\main\\java\\org\\firstinspires\\ftc\\teamcode\\opmodes\\auto\\benchmark\\everything.autoauto"
+    },
+    "positionalArguments": [],
+    "namedArguments": {},
+    "operand": "var fd0369ca1e087a1d81d0b040782d425f2ed96643905abd59142a0ff69b4ad202-g@1"
+  },
+  "$$anonymous inner type #489": {
+    "type": "apply",
+    "location": {
+      "start": {
+        "line": 56,
+        "column": 17,
+        "offset": 1683
+      },
+      "end": {
+        "line": 56,
+        "column": 22,
+        "offset": 1686
+      },
+      "file": "C:\\Users\\coleh\\Robotics_2022_2023\\TeamCode\\src\\main\\java\\org\\firstinspires\\ftc\\teamcode\\opmodes\\auto\\benchmark\\everything.autoauto"
+    },
+    "positionalArguments": [
+      "number"
+    ],
+    "namedArguments": {},
+    "operand": "var fd0369ca1e087a1d81d0b040782d425f2ed96643905abd59142a0ff69b4ad202-g@1"
+  },
+  "$$anonymous inner type #497": {
+    "type": "apply",
+    "location": {
+      "start": {
+        "line": 56,
+        "column": 28,
+        "offset": 1689
+      },
+      "end": {
+        "line": 56,
+        "column": 70,
+        "offset": 1727
+      },
+      "file": "C:\\Users\\coleh\\Robotics_2022_2023\\TeamCode\\src\\main\\java\\org\\firstinspires\\ftc\\teamcode\\opmodes\\auto\\benchmark\\everything.autoauto"
+    },
+    "positionalArguments": [],
+    "namedArguments": {
+      "ff": "string"
+    },
+    "operand": "var fd0369ca1e087a1d81d0b040782d425f2ed96643905abd59142a0ff69b4ad202-g@1"
+  },
+  "var fd0369ca1e087a1d81d0b040782d425f2ed96643905abd59142a0ff69b4ad202-undefinedvariablethatwedontknowof@0": {
+    "type": "?",
+    "location": {
+      "start": {
+        "line": 65,
+        "column": 17,
+        "offset": 1901
+      },
+      "end": {
+        "line": 65,
+        "column": 50,
+        "offset": 1934
+      },
+      "file": "C:\\Users\\coleh\\Robotics_2022_2023\\TeamCode\\src\\main\\java\\org\\firstinspires\\ftc\\teamcode\\opmodes\\auto\\benchmark\\everything.autoauto"
+    }
+  },
+  "var fd0369ca1e087a1d81d0b040782d425f2ed96643905abd59142a0ff69b4ad202-u@1": {
+    "type": "union",
+    "location": {
+      "start": {
+        "line": 65,
+        "column": 6,
+        "offset": 1893
+      },
+      "end": {
+        "line": 65,
+        "column": 9,
+        "offset": 1896
+      },
+      "file": "C:\\Users\\coleh\\Robotics_2022_2023\\TeamCode\\src\\main\\java\\org\\firstinspires\\ftc\\teamcode\\opmodes\\auto\\benchmark\\everything.autoauto"
+    },
+    "types": [
+      "var fd0369ca1e087a1d81d0b040782d425f2ed96643905abd59142a0ff69b4ad202-undefinedvariablethatwedontknowof@0"
+    ]
+  },
+  "$$anonymous inner type #509": {
+    "type": "apply",
+    "location": {
+      "start": {
+        "line": 66,
+        "column": 10,
+        "offset": 1950
+      },
+      "end": {
+        "line": 66,
+        "column": 15,
+        "offset": 1953
+      },
+      "file": "C:\\Users\\coleh\\Robotics_2022_2023\\TeamCode\\src\\main\\java\\org\\firstinspires\\ftc\\teamcode\\opmodes\\auto\\benchmark\\everything.autoauto"
+    },
+    "positionalArguments": [
+      "var fd0369ca1e087a1d81d0b040782d425f2ed96643905abd59142a0ff69b4ad202-u@1"
+    ],
+    "namedArguments": {},
+    "operand": "var log@0"
+  },
+  "$$anonymous inner type #516": {
+    "type": "object_apply",
+    "location": {
+      "start": {
+        "line": 67,
+        "column": 12,
+        "offset": 1970
+      },
+      "end": {
+        "line": 67,
+        "column": 22,
+        "offset": 1978
+      },
+      "file": "C:\\Users\\coleh\\Robotics_2022_2023\\TeamCode\\src\\main\\java\\org\\firstinspires\\ftc\\teamcode\\opmodes\\auto\\benchmark\\everything.autoauto"
+    },
+    "object": "var fd0369ca1e087a1d81d0b040782d425f2ed96643905abd59142a0ff69b4ad202-u@1",
+    "key": "sjkdla"
+  },
+  "$$anonymous inner type #519": {
+    "type": "apply",
+    "location": {
+      "start": {
+        "line": 67,
+        "column": 10,
+        "offset": 1969
+      },
+      "end": {
+        "line": 67,
+        "column": 24,
+        "offset": 1979
+      },
+      "file": "C:\\Users\\coleh\\Robotics_2022_2023\\TeamCode\\src\\main\\java\\org\\firstinspires\\ftc\\teamcode\\opmodes\\auto\\benchmark\\everything.autoauto"
+    },
+    "positionalArguments": [
+      "$$anonymous inner type #516"
+    ],
+    "namedArguments": {},
+    "operand": "var log@0"
+  },
+  "$$anonymous inner type #526": {
+    "type": "apply",
+    "location": {
+      "start": {
+        "line": 68,
+        "column": 10,
+        "offset": 1995
+      },
+      "end": {
+        "line": 68,
+        "column": 19,
+        "offset": 2000
+      },
+      "file": "C:\\Users\\coleh\\Robotics_2022_2023\\TeamCode\\src\\main\\java\\org\\firstinspires\\ftc\\teamcode\\opmodes\\auto\\benchmark\\everything.autoauto"
+    },
+    "positionalArguments": [
+      "undefined"
+    ],
+    "namedArguments": {},
+    "operand": "var log@0"
+  },
+  "$$anonymous inner type #530": {
+    "type": "object",
+    "location": {
+      "start": {
+        "line": 69,
+        "column": 20,
+        "offset": 2024
+      },
+      "end": {
+        "line": 69,
+        "column": 23,
+        "offset": 2026
+      },
+      "file": "C:\\Users\\coleh\\Robotics_2022_2023\\TeamCode\\src\\main\\java\\org\\firstinspires\\ftc\\teamcode\\opmodes\\auto\\benchmark\\everything.autoauto"
+    },
+    "some": "$$anonymous inner type #531",
+    "properties": {}
+  },
+  "$$anonymous inner type #531": {
+    "type": "union",
+    "types": []
+  },
+  "var fd0369ca1e087a1d81d0b040782d425f2ed96643905abd59142a0ff69b4ad202-fdjk@1": {
+    "type": "union",
+    "location": {
+      "start": {
+        "line": 69,
+        "column": 6,
+        "offset": 2013
+      },
+      "end": {
+        "line": 69,
+        "column": 9,
+        "offset": 2016
+      },
+      "file": "C:\\Users\\coleh\\Robotics_2022_2023\\TeamCode\\src\\main\\java\\org\\firstinspires\\ftc\\teamcode\\opmodes\\auto\\benchmark\\everything.autoauto"
+    },
+    "types": [
+      "$$anonymous inner type #530"
+    ]
+  },
+  "$$anonymous inner type #536": {
+    "type": "object_apply",
+    "location": {
+      "start": {
+        "line": 70,
+        "column": 11,
+        "offset": 2042
+      },
+      "end": {
+        "line": 70,
+        "column": 24,
+        "offset": 2053
+      },
+      "file": "C:\\Users\\coleh\\Robotics_2022_2023\\TeamCode\\src\\main\\java\\org\\firstinspires\\ftc\\teamcode\\opmodes\\auto\\benchmark\\everything.autoauto"
+    },
+    "object": "var Math@0",
+    "key": "random"
+  },
+  "$$anonymous inner type #539": {
+    "type": "apply",
+    "location": {
+      "start": {
+        "line": 70,
+        "column": 25,
+        "offset": 2053
+      },
+      "end": {
+        "line": 70,
+        "column": 28,
+        "offset": 2055
+      },
+      "file": "C:\\Users\\coleh\\Robotics_2022_2023\\TeamCode\\src\\main\\java\\org\\firstinspires\\ftc\\teamcode\\opmodes\\auto\\benchmark\\everything.autoauto"
+    },
+    "positionalArguments": [],
+    "namedArguments": {},
+    "operand": "$$anonymous inner type #536"
+  },
+  "$$anonymous inner type #549": {
+    "type": "union",
+    "location": {
+      "start": {
+        "line": 71,
+        "column": 12,
+        "offset": 2125
+      },
+      "end": {
+        "line": 71,
+        "column": 14,
+        "offset": 2127
+      },
+      "file": "C:\\Users\\coleh\\Robotics_2022_2023\\TeamCode\\src\\main\\java\\org\\firstinspires\\ftc\\teamcode\\opmodes\\auto\\benchmark\\everything.autoauto"
+    },
+    "types": [
+      "var fd0369ca1e087a1d81d0b040782d425f2ed96643905abd59142a0ff69b4ad202-dd@1",
+      "var fd0369ca1e087a1d81d0b040782d425f2ed96643905abd59142a0ff69b4ad202-dd@2"
+    ]
+  },
+  "var fd0369ca1e087a1d81d0b040782d425f2ed96643905abd59142a0ff69b4ad202-dd@1": {
+    "type": "union",
+    "location": {
+      "start": {
+        "line": 70,
+        "column": 40,
+        "offset": 2063
+      },
+      "end": {
+        "line": 70,
+        "column": 43,
+        "offset": 2066
+      },
+      "file": "C:\\Users\\coleh\\Robotics_2022_2023\\TeamCode\\src\\main\\java\\org\\firstinspires\\ftc\\teamcode\\opmodes\\auto\\benchmark\\everything.autoauto"
+    },
+    "types": [
+      "$$anonymous inner type #571"
+    ]
+  },
+  "var fd0369ca1e087a1d81d0b040782d425f2ed96643905abd59142a0ff69b4ad202-dd@2": {
+    "type": "union",
+    "location": {
+      "start": {
+        "line": 70,
+        "column": 70,
+        "offset": 2086
+      },
+      "end": {
+        "line": 70,
+        "column": 73,
+        "offset": 2089
+      },
+      "file": "C:\\Users\\coleh\\Robotics_2022_2023\\TeamCode\\src\\main\\java\\org\\firstinspires\\ftc\\teamcode\\opmodes\\auto\\benchmark\\everything.autoauto"
+    },
+    "types": [
+      "$$anonymous inner type #578"
+    ]
+  },
+  "$$anonymous inner type #552": {
+    "type": "apply",
+    "location": {
+      "start": {
+        "line": 71,
+        "column": 10,
+        "offset": 2124
+      },
+      "end": {
+        "line": 71,
+        "column": 16,
+        "offset": 2128
+      },
+      "file": "C:\\Users\\coleh\\Robotics_2022_2023\\TeamCode\\src\\main\\java\\org\\firstinspires\\ftc\\teamcode\\opmodes\\auto\\benchmark\\everything.autoauto"
+    },
+    "positionalArguments": [
+      "$$anonymous inner type #549"
+    ],
+    "namedArguments": {},
+    "operand": "var log@0"
+  },
+  "$$anonymous inner type #557": {
+    "type": "object_apply",
+    "location": {
+      "start": {
+        "line": 75,
+        "column": 11,
+        "offset": 2174
+      },
+      "end": {
+        "line": 75,
+        "column": 24,
+        "offset": 2185
+      },
+      "file": "C:\\Users\\coleh\\Robotics_2022_2023\\TeamCode\\src\\main\\java\\org\\firstinspires\\ftc\\teamcode\\opmodes\\auto\\benchmark\\everything.autoauto"
+    },
+    "object": "var Math@0",
+    "key": "random"
+  },
+  "$$anonymous inner type #560": {
+    "type": "apply",
+    "location": {
+      "start": {
+        "line": 75,
+        "column": 25,
+        "offset": 2185
+      },
+      "end": {
+        "line": 75,
+        "column": 28,
+        "offset": 2187
+      },
+      "file": "C:\\Users\\coleh\\Robotics_2022_2023\\TeamCode\\src\\main\\java\\org\\firstinspires\\ftc\\teamcode\\opmodes\\auto\\benchmark\\everything.autoauto"
+    },
+    "positionalArguments": [],
+    "namedArguments": {},
+    "operand": "$$anonymous inner type #557"
+  },
+  "$$anonymous inner type #571": {
+    "type": "binary_operator",
+    "location": {
+      "start": {
+        "line": 70,
+        "column": 52,
+        "offset": 2072
+      },
+      "end": {
+        "line": 70,
+        "column": 62,
+        "offset": 2080
+      },
+      "file": "C:\\Users\\coleh\\Robotics_2022_2023\\TeamCode\\src\\main\\java\\org\\firstinspires\\ftc\\teamcode\\opmodes\\auto\\benchmark\\everything.autoauto"
+    },
+    "op": "/",
+    "left": "var fd0369ca1e087a1d81d0b040782d425f2ed96643905abd59142a0ff69b4ad202-fdjk@1",
+    "right": "number"
+  },
+  "$$anonymous inner type #578": {
+    "type": "object",
+    "location": {
+      "start": {
+        "line": 70,
+        "column": 89,
+        "offset": 2101
+      },
+      "end": {
+        "line": 70,
+        "column": 90,
+        "offset": 2102
+      },
+      "file": "C:\\Users\\coleh\\Robotics_2022_2023\\TeamCode\\src\\main\\java\\org\\firstinspires\\ftc\\teamcode\\opmodes\\auto\\benchmark\\everything.autoauto"
+    },
+    "some": "undefined",
+    "properties": {
+      "ohoho": "undefined"
+    }
+  },
+  "$$anonymous inner type #585": {
+    "type": "union",
+    "location": {
+      "start": {
+        "line": 76,
+        "column": 12,
+        "offset": 2249
+      },
+      "end": {
+        "line": 76,
+        "column": 15,
+        "offset": 2252
+      },
+      "file": "C:\\Users\\coleh\\Robotics_2022_2023\\TeamCode\\src\\main\\java\\org\\firstinspires\\ftc\\teamcode\\opmodes\\auto\\benchmark\\everything.autoauto"
+    },
+    "types": [
+      "var fd0369ca1e087a1d81d0b040782d425f2ed96643905abd59142a0ff69b4ad202-fif@1",
+      "var fd0369ca1e087a1d81d0b040782d425f2ed96643905abd59142a0ff69b4ad202-fif@2"
+    ]
+  },
+  "var fd0369ca1e087a1d81d0b040782d425f2ed96643905abd59142a0ff69b4ad202-fif@1": {
+    "type": "union",
+    "location": {
+      "start": {
+        "line": 75,
+        "column": 43,
+        "offset": 2197
+      },
+      "end": {
+        "line": 75,
+        "column": 46,
+        "offset": 2200
+      },
+      "file": "C:\\Users\\coleh\\Robotics_2022_2023\\TeamCode\\src\\main\\java\\org\\firstinspires\\ftc\\teamcode\\opmodes\\auto\\benchmark\\everything.autoauto"
+    },
+    "types": [
+      "number"
+    ]
+  },
+  "var fd0369ca1e087a1d81d0b040782d425f2ed96643905abd59142a0ff69b4ad202-fif@2": {
+    "type": "union",
+    "location": {
+      "start": {
+        "line": 75,
+        "column": 71,
+        "offset": 2218
+      },
+      "end": {
+        "line": 75,
+        "column": 74,
+        "offset": 2221
+      },
+      "file": "C:\\Users\\coleh\\Robotics_2022_2023\\TeamCode\\src\\main\\java\\org\\firstinspires\\ftc\\teamcode\\opmodes\\auto\\benchmark\\everything.autoauto"
+    },
+    "types": [
+      "string"
+    ]
+  },
+  "$$anonymous inner type #588": {
+    "type": "apply",
+    "location": {
+      "start": {
+        "line": 76,
+        "column": 10,
+        "offset": 2248
+      },
+      "end": {
+        "line": 76,
+        "column": 17,
+        "offset": 2253
+      },
+      "file": "C:\\Users\\coleh\\Robotics_2022_2023\\TeamCode\\src\\main\\java\\org\\firstinspires\\ftc\\teamcode\\opmodes\\auto\\benchmark\\everything.autoauto"
+    },
+    "positionalArguments": [
+      "$$anonymous inner type #585"
+    ],
+    "namedArguments": {},
+    "operand": "var log@0"
+  },
+  "$$anonymous inner type #593": {
+    "type": "object_apply",
+    "location": {
+      "start": {
+        "line": 77,
+        "column": 11,
+        "offset": 2269
+      },
+      "end": {
+        "line": 77,
+        "column": 24,
+        "offset": 2280
+      },
+      "file": "C:\\Users\\coleh\\Robotics_2022_2023\\TeamCode\\src\\main\\java\\org\\firstinspires\\ftc\\teamcode\\opmodes\\auto\\benchmark\\everything.autoauto"
+    },
+    "object": "var Math@0",
+    "key": "random"
+  },
+  "$$anonymous inner type #596": {
+    "type": "apply",
+    "location": {
+      "start": {
+        "line": 77,
+        "column": 25,
+        "offset": 2280
+      },
+      "end": {
+        "line": 77,
+        "column": 28,
+        "offset": 2282
+      },
+      "file": "C:\\Users\\coleh\\Robotics_2022_2023\\TeamCode\\src\\main\\java\\org\\firstinspires\\ftc\\teamcode\\opmodes\\auto\\benchmark\\everything.autoauto"
+    },
+    "positionalArguments": [],
+    "namedArguments": {},
+    "operand": "$$anonymous inner type #593"
+  },
+  "var fd0369ca1e087a1d81d0b040782d425f2ed96643905abd59142a0ff69b4ad202-ire@1": {
+    "type": "union",
+    "location": {
+      "start": {
+        "line": 77,
+        "column": 43,
+        "offset": 2292
+      },
+      "end": {
+        "line": 77,
+        "column": 46,
+        "offset": 2295
+      },
+      "file": "C:\\Users\\coleh\\Robotics_2022_2023\\TeamCode\\src\\main\\java\\org\\firstinspires\\ftc\\teamcode\\opmodes\\auto\\benchmark\\everything.autoauto"
+    },
+    "types": [
+      "number"
+    ]
+  },
+  "$$anonymous inner type #619": {
+    "type": "apply",
+    "location": {
+      "start": {
+        "line": 78,
+        "column": 10,
+        "offset": 2321
+      },
+      "end": {
+        "line": 78,
+        "column": 17,
+        "offset": 2326
+      },
+      "file": "C:\\Users\\coleh\\Robotics_2022_2023\\TeamCode\\src\\main\\java\\org\\firstinspires\\ftc\\teamcode\\opmodes\\auto\\benchmark\\everything.autoauto"
+    },
+    "positionalArguments": [
+      "var fd0369ca1e087a1d81d0b040782d425f2ed96643905abd59142a0ff69b4ad202-ire@1"
+    ],
+    "namedArguments": {},
+    "operand": "var log@0"
+  },
+  "var fd0369ca1e087a1d81d0b040782d425f2ed96643905abd59142a0ff69b4ad202-two@1": {
+    "type": "union",
+    "location": {
+      "start": {
+        "line": 86,
+        "column": 6,
+        "offset": 2651
+      },
+      "end": {
+        "line": 86,
+        "column": 9,
+        "offset": 2654
+      },
+      "file": "C:\\Users\\coleh\\Robotics_2022_2023\\TeamCode\\src\\main\\java\\org\\firstinspires\\ftc\\teamcode\\opmodes\\auto\\benchmark\\everything.autoauto"
+    },
+    "types": [
+      "number"
+    ]
+  },
+  "$$anonymous inner type #632": {
+    "type": "apply",
+    "location": {
+      "start": {
+        "line": 87,
+        "column": 10,
+        "offset": 2678
+      },
+      "end": {
+        "line": 87,
+        "column": 24,
+        "offset": 2688
+      },
+      "file": "C:\\Users\\coleh\\Robotics_2022_2023\\TeamCode\\src\\main\\java\\org\\firstinspires\\ftc\\teamcode\\opmodes\\auto\\benchmark\\everything.autoauto"
+    },
+    "positionalArguments": [
+      "boolean"
+    ],
+    "namedArguments": {},
+    "operand": "var log@0"
+  },
+  "$$anonymous inner type #644": {
+    "type": "apply",
+    "location": {
+      "start": {
+        "line": 88,
+        "column": 10,
+        "offset": 2704
+      },
+      "end": {
+        "line": 88,
+        "column": 38,
+        "offset": 2724
+      },
+      "file": "C:\\Users\\coleh\\Robotics_2022_2023\\TeamCode\\src\\main\\java\\org\\firstinspires\\ftc\\teamcode\\opmodes\\auto\\benchmark\\everything.autoauto"
+    },
+    "positionalArguments": [
+      "boolean"
+    ],
+    "namedArguments": {},
+    "operand": "var log@0"
+  },
+  "$$anonymous inner type #654": {
+    "type": "apply",
+    "location": {
+      "start": {
+        "line": 89,
+        "column": 10,
+        "offset": 2740
+      },
+      "end": {
+        "line": 89,
+        "column": 23,
+        "offset": 2749
+      },
+      "file": "C:\\Users\\coleh\\Robotics_2022_2023\\TeamCode\\src\\main\\java\\org\\firstinspires\\ftc\\teamcode\\opmodes\\auto\\benchmark\\everything.autoauto"
+    },
+    "positionalArguments": [
+      "boolean"
+    ],
+    "namedArguments": {},
+    "operand": "var log@0"
+  },
+  "$$anonymous inner type #664": {
+    "type": "apply",
+    "location": {
+      "start": {
+        "line": 90,
+        "column": 10,
+        "offset": 2765
+      },
+      "end": {
+        "line": 90,
+        "column": 24,
+        "offset": 2775
+      },
+      "file": "C:\\Users\\coleh\\Robotics_2022_2023\\TeamCode\\src\\main\\java\\org\\firstinspires\\ftc\\teamcode\\opmodes\\auto\\benchmark\\everything.autoauto"
+    },
+    "positionalArguments": [
+      "boolean"
+    ],
+    "namedArguments": {},
+    "operand": "var log@0"
+  },
+  "$$anonymous inner type #672": {
+    "type": "object",
+    "location": {
+      "start": {
+        "line": 91,
+        "column": 12,
+        "offset": 2792
+      },
+      "end": {
+        "line": 91,
+        "column": 19,
+        "offset": 2797
+      },
+      "file": "C:\\Users\\coleh\\Robotics_2022_2023\\TeamCode\\src\\main\\java\\org\\firstinspires\\ftc\\teamcode\\opmodes\\auto\\benchmark\\everything.autoauto"
+    },
+    "some": "$$anonymous inner type #673",
+    "properties": {
+      "0": "var fd0369ca1e087a1d81d0b040782d425f2ed96643905abd59142a0ff69b4ad202-two@1"
+    }
+  },
+  "$$anonymous inner type #673": {
+    "type": "union",
+    "types": []
+  },
+  "$$anonymous inner type #677": {
+    "type": "object",
+    "location": {
+      "start": {
+        "line": 91,
+        "column": 25,
+        "offset": 2801
+      },
+      "end": {
+        "line": 91,
+        "column": 30,
+        "offset": 2804
+      },
+      "file": "C:\\Users\\coleh\\Robotics_2022_2023\\TeamCode\\src\\main\\java\\org\\firstinspires\\ftc\\teamcode\\opmodes\\auto\\benchmark\\everything.autoauto"
+    },
+    "some": "$$anonymous inner type #678",
+    "properties": {
+      "0": "number"
+    }
+  },
+  "$$anonymous inner type #678": {
+    "type": "union",
+    "types": []
+  },
+  "$$anonymous inner type #682": {
+    "type": "apply",
+    "location": {
+      "start": {
+        "line": 91,
+        "column": 10,
+        "offset": 2791
+      },
+      "end": {
+        "line": 91,
+        "column": 32,
+        "offset": 2805
+      },
+      "file": "C:\\Users\\coleh\\Robotics_2022_2023\\TeamCode\\src\\main\\java\\org\\firstinspires\\ftc\\teamcode\\opmodes\\auto\\benchmark\\everything.autoauto"
+    },
+    "positionalArguments": [
+      "boolean"
+    ],
+    "namedArguments": {},
+    "operand": "var log@0"
+  },
+  "$$anonymous inner type #692": {
+    "type": "apply",
+    "location": {
+      "start": {
+        "line": 92,
+        "column": 10,
+        "offset": 2821
+      },
+      "end": {
+        "line": 92,
+        "column": 24,
+        "offset": 2831
+      },
+      "file": "C:\\Users\\coleh\\Robotics_2022_2023\\TeamCode\\src\\main\\java\\org\\firstinspires\\ftc\\teamcode\\opmodes\\auto\\benchmark\\everything.autoauto"
+    },
+    "positionalArguments": [
+      "boolean"
+    ],
+    "namedArguments": {},
+    "operand": "var log@0"
+  },
+  "$$anonymous inner type #702": {
+    "type": "apply",
+    "location": {
+      "start": {
+        "line": 93,
+        "column": 10,
+        "offset": 2847
+      },
+      "end": {
+        "line": 93,
+        "column": 29,
+        "offset": 2862
+      },
+      "file": "C:\\Users\\coleh\\Robotics_2022_2023\\TeamCode\\src\\main\\java\\org\\firstinspires\\ftc\\teamcode\\opmodes\\auto\\benchmark\\everything.autoauto"
+    },
+    "positionalArguments": [
+      "boolean"
+    ],
+    "namedArguments": {},
+    "operand": "var log@0"
+  },
+  "$$anonymous inner type #710": {
+    "type": "object",
+    "location": {
+      "start": {
+        "line": 94,
+        "column": 12,
+        "offset": 2879
+      },
+      "end": {
+        "line": 94,
+        "column": 23,
+        "offset": 2886
+      },
+      "file": "C:\\Users\\coleh\\Robotics_2022_2023\\TeamCode\\src\\main\\java\\org\\firstinspires\\ftc\\teamcode\\opmodes\\auto\\benchmark\\everything.autoauto"
+    },
+    "some": "$$anonymous inner type #711",
+    "properties": {
+      "a": "var fd0369ca1e087a1d81d0b040782d425f2ed96643905abd59142a0ff69b4ad202-two@1"
+    }
+  },
+  "$$anonymous inner type #711": {
+    "type": "union",
+    "types": []
+  },
+  "$$anonymous inner type #715": {
+    "type": "object",
+    "location": {
+      "start": {
+        "line": 94,
+        "column": 26,
+        "offset": 2887
+      },
+      "end": {
+        "line": 94,
+        "column": 35,
+        "offset": 2892
+      },
+      "file": "C:\\Users\\coleh\\Robotics_2022_2023\\TeamCode\\src\\main\\java\\org\\firstinspires\\ftc\\teamcode\\opmodes\\auto\\benchmark\\everything.autoauto"
+    },
+    "some": "$$anonymous inner type #716",
+    "properties": {
+      "b": "number"
+    }
+  },
+  "$$anonymous inner type #716": {
+    "type": "union",
+    "types": []
+  },
+  "$$anonymous inner type #717": {
+    "type": "binary_operator",
+    "location": {
+      "start": {
+        "line": 94,
+        "column": 12,
+        "offset": 2879
+      },
+      "end": {
+        "line": 94,
+        "column": 35,
+        "offset": 2892
+      },
+      "file": "C:\\Users\\coleh\\Robotics_2022_2023\\TeamCode\\src\\main\\java\\org\\firstinspires\\ftc\\teamcode\\opmodes\\auto\\benchmark\\everything.autoauto"
+    },
+    "op": "+",
+    "left": "$$anonymous inner type #710",
+    "right": "$$anonymous inner type #715"
+  },
+  "$$anonymous inner type #723": {
+    "type": "object",
+    "location": {
+      "start": {
+        "line": 94,
+        "column": 39,
+        "offset": 2894
+      },
+      "end": {
+        "line": 94,
+        "column": 56,
+        "offset": 2903
+      },
+      "file": "C:\\Users\\coleh\\Robotics_2022_2023\\TeamCode\\src\\main\\java\\org\\firstinspires\\ftc\\teamcode\\opmodes\\auto\\benchmark\\everything.autoauto"
+    },
+    "some": "$$anonymous inner type #724",
+    "properties": {
+      "a": "number",
+      "b": "number"
+    }
+  },
+  "$$anonymous inner type #724": {
+    "type": "union",
+    "types": []
+  },
+  "$$anonymous inner type #728": {
+    "type": "apply",
+    "location": {
+      "start": {
+        "line": 94,
+        "column": 10,
+        "offset": 2878
+      },
+      "end": {
+        "line": 94,
+        "column": 58,
+        "offset": 2904
+      },
+      "file": "C:\\Users\\coleh\\Robotics_2022_2023\\TeamCode\\src\\main\\java\\org\\firstinspires\\ftc\\teamcode\\opmodes\\auto\\benchmark\\everything.autoauto"
+    },
+    "positionalArguments": [
+      "boolean"
+    ],
+    "namedArguments": {},
+    "operand": "var log@0"
+  },
+  "$$anonymous inner type #735": {
+    "type": "binary_operator",
+    "location": {
+      "start": {
+        "line": 95,
+        "column": 12,
+        "offset": 2921
+      },
+      "end": {
+        "line": 95,
+        "column": 21,
+        "offset": 2928
+      },
+      "file": "C:\\Users\\coleh\\Robotics_2022_2023\\TeamCode\\src\\main\\java\\org\\firstinspires\\ftc\\teamcode\\opmodes\\auto\\benchmark\\everything.autoauto"
+    },
+    "op": "+",
+    "left": "var fd0369ca1e087a1d81d0b040782d425f2ed96643905abd59142a0ff69b4ad202-two@1",
+    "right": "string"
+  },
+  "$$anonymous inner type #740": {
+    "type": "apply",
+    "location": {
+      "start": {
+        "line": 95,
+        "column": 10,
+        "offset": 2920
+      },
+      "end": {
+        "line": 95,
+        "column": 31,
+        "offset": 2935
+      },
+      "file": "C:\\Users\\coleh\\Robotics_2022_2023\\TeamCode\\src\\main\\java\\org\\firstinspires\\ftc\\teamcode\\opmodes\\auto\\benchmark\\everything.autoauto"
+    },
+    "positionalArguments": [
+      "boolean"
+    ],
+    "namedArguments": {},
+    "operand": "var log@0"
+  },
+  "$$anonymous inner type #747": {
+    "type": "binary_operator",
+    "location": {
+      "start": {
+        "line": 96,
+        "column": 12,
+        "offset": 2952
+      },
+      "end": {
+        "line": 96,
+        "column": 19,
+        "offset": 2957
+      },
+      "file": "C:\\Users\\coleh\\Robotics_2022_2023\\TeamCode\\src\\main\\java\\org\\firstinspires\\ftc\\teamcode\\opmodes\\auto\\benchmark\\everything.autoauto"
+    },
+    "op": "+",
+    "left": "var fd0369ca1e087a1d81d0b040782d425f2ed96643905abd59142a0ff69b4ad202-two@1",
+    "right": "number"
+  },
+  "$$anonymous inner type #752": {
+    "type": "apply",
+    "location": {
+      "start": {
+        "line": 96,
+        "column": 10,
+        "offset": 2951
+      },
+      "end": {
+        "line": 96,
+        "column": 28,
+        "offset": 2963
+      },
+      "file": "C:\\Users\\coleh\\Robotics_2022_2023\\TeamCode\\src\\main\\java\\org\\firstinspires\\ftc\\teamcode\\opmodes\\auto\\benchmark\\everything.autoauto"
+    },
+    "positionalArguments": [
+      "boolean"
+    ],
+    "namedArguments": {},
+    "operand": "var log@0"
+  },
+  "$$anonymous inner type #759": {
+    "type": "binary_operator",
+    "location": {
+      "start": {
+        "line": 97,
+        "column": 12,
+        "offset": 2980
+      },
+      "end": {
+        "line": 97,
+        "column": 21,
+        "offset": 2987
+      },
+      "file": "C:\\Users\\coleh\\Robotics_2022_2023\\TeamCode\\src\\main\\java\\org\\firstinspires\\ftc\\teamcode\\opmodes\\auto\\benchmark\\everything.autoauto"
+    },
+    "op": "/",
+    "left": "var fd0369ca1e087a1d81d0b040782d425f2ed96643905abd59142a0ff69b4ad202-two@1",
+    "right": "number"
+  },
+  "$$anonymous inner type #764": {
+    "type": "apply",
+    "location": {
+      "start": {
+        "line": 97,
+        "column": 10,
+        "offset": 2979
+      },
+      "end": {
+        "line": 97,
+        "column": 32,
+        "offset": 2995
+      },
+      "file": "C:\\Users\\coleh\\Robotics_2022_2023\\TeamCode\\src\\main\\java\\org\\firstinspires\\ftc\\teamcode\\opmodes\\auto\\benchmark\\everything.autoauto"
+    },
+    "positionalArguments": [
+      "boolean"
+    ],
+    "namedArguments": {},
+    "operand": "var log@0"
+  },
+  "$$anonymous inner type #771": {
+    "type": "binary_operator",
+    "location": {
+      "start": {
+        "line": 98,
+        "column": 12,
+        "offset": 3012
+      },
+      "end": {
+        "line": 98,
+        "column": 21,
+        "offset": 3019
+      },
+      "file": "C:\\Users\\coleh\\Robotics_2022_2023\\TeamCode\\src\\main\\java\\org\\firstinspires\\ftc\\teamcode\\opmodes\\auto\\benchmark\\everything.autoauto"
+    },
+    "op": "-",
+    "left": "var fd0369ca1e087a1d81d0b040782d425f2ed96643905abd59142a0ff69b4ad202-two@1",
+    "right": "number"
+  },
+  "$$anonymous inner type #776": {
+    "type": "apply",
+    "location": {
+      "start": {
+        "line": 98,
+        "column": 10,
+        "offset": 3011
+      },
+      "end": {
+        "line": 98,
+        "column": 30,
+        "offset": 3025
+      },
+      "file": "C:\\Users\\coleh\\Robotics_2022_2023\\TeamCode\\src\\main\\java\\org\\firstinspires\\ftc\\teamcode\\opmodes\\auto\\benchmark\\everything.autoauto"
+    },
+    "positionalArguments": [
+      "boolean"
+    ],
+    "namedArguments": {},
+    "operand": "var log@0"
+  },
+  "$$anonymous inner type #783": {
+    "type": "binary_operator",
+    "location": {
+      "start": {
+        "line": 99,
+        "column": 12,
+        "offset": 3042
+      },
+      "end": {
+        "line": 99,
+        "column": 22,
+        "offset": 3050
+      },
+      "file": "C:\\Users\\coleh\\Robotics_2022_2023\\TeamCode\\src\\main\\java\\org\\firstinspires\\ftc\\teamcode\\opmodes\\auto\\benchmark\\everything.autoauto"
+    },
+    "op": "**",
+    "left": "number",
+    "right": "var fd0369ca1e087a1d81d0b040782d425f2ed96643905abd59142a0ff69b4ad202-two@1"
+  },
+  "$$anonymous inner type #788": {
+    "type": "apply",
+    "location": {
+      "start": {
+        "line": 99,
+        "column": 10,
+        "offset": 3041
+      },
+      "end": {
+        "line": 99,
+        "column": 31,
+        "offset": 3056
+      },
+      "file": "C:\\Users\\coleh\\Robotics_2022_2023\\TeamCode\\src\\main\\java\\org\\firstinspires\\ftc\\teamcode\\opmodes\\auto\\benchmark\\everything.autoauto"
+    },
+    "positionalArguments": [
+      "boolean"
+    ],
+    "namedArguments": {},
+    "operand": "var log@0"
+  },
+  "$$anonymous inner type #795": {
+    "type": "binary_operator",
+    "location": {
+      "start": {
+        "line": 100,
+        "column": 12,
+        "offset": 3073
+      },
+      "end": {
+        "line": 100,
+        "column": 21,
+        "offset": 3080
+      },
+      "file": "C:\\Users\\coleh\\Robotics_2022_2023\\TeamCode\\src\\main\\java\\org\\firstinspires\\ftc\\teamcode\\opmodes\\auto\\benchmark\\everything.autoauto"
+    },
+    "op": "**",
+    "left": "number",
+    "right": "var fd0369ca1e087a1d81d0b040782d425f2ed96643905abd59142a0ff69b4ad202-two@1"
+  },
+  "$$anonymous inner type #800": {
+    "type": "apply",
+    "location": {
+      "start": {
+        "line": 100,
+        "column": 10,
+        "offset": 3072
+      },
+      "end": {
+        "line": 100,
+        "column": 30,
+        "offset": 3086
+      },
+      "file": "C:\\Users\\coleh\\Robotics_2022_2023\\TeamCode\\src\\main\\java\\org\\firstinspires\\ftc\\teamcode\\opmodes\\auto\\benchmark\\everything.autoauto"
+    },
+    "positionalArguments": [
+      "boolean"
+    ],
+    "namedArguments": {},
+    "operand": "var log@0"
+  },
+  "$$anonymous inner type #807": {
+    "type": "binary_operator",
+    "location": {
+      "start": {
+        "line": 101,
+        "column": 12,
+        "offset": 3103
+      },
+      "end": {
+        "line": 101,
+        "column": 21,
+        "offset": 3110
+      },
+      "file": "C:\\Users\\coleh\\Robotics_2022_2023\\TeamCode\\src\\main\\java\\org\\firstinspires\\ftc\\teamcode\\opmodes\\auto\\benchmark\\everything.autoauto"
+    },
+    "op": "%",
+    "left": "number",
+    "right": "var fd0369ca1e087a1d81d0b040782d425f2ed96643905abd59142a0ff69b4ad202-two@1"
+  },
+  "$$anonymous inner type #812": {
+    "type": "apply",
+    "location": {
+      "start": {
+        "line": 101,
+        "column": 10,
+        "offset": 3102
+      },
+      "end": {
+        "line": 101,
+        "column": 30,
+        "offset": 3116
+      },
+      "file": "C:\\Users\\coleh\\Robotics_2022_2023\\TeamCode\\src\\main\\java\\org\\firstinspires\\ftc\\teamcode\\opmodes\\auto\\benchmark\\everything.autoauto"
+    },
+    "positionalArguments": [
+      "boolean"
+    ],
+    "namedArguments": {},
+    "operand": "var log@0"
+  },
+  "$$anonymous inner type #821": {
+    "type": "object",
+    "location": {
+      "start": {
+        "line": 105,
+        "column": 12,
+        "offset": 3175
+      },
+      "end": {
+        "line": 105,
+        "column": 59,
+        "offset": 3219
+      },
+      "file": "C:\\Users\\coleh\\Robotics_2022_2023\\TeamCode\\src\\main\\java\\org\\firstinspires\\ftc\\teamcode\\opmodes\\auto\\benchmark\\everything.autoauto"
+    },
+    "some": "$$anonymous inner type #822",
+    "properties": {}
+  },
+  "$$anonymous inner type #822": {
+    "type": "union",
+    "types": []
+  },
+  "var b8ea37d1b204e1b3af1e60b5d25d400420b8c44f8c14a19baf6972b5cb53c871-module_args@1": {
+    "type": "union",
+    "location": {
+      "file": "C:\\Users\\coleh\\Robotics_2022_2023\\TeamCode\\src\\main\\java\\org\\firstinspires\\ftc\\teamcode\\opmodes\\auto\\benchmark\\everything-delegate-1.autoauto",
+      "synthetic": true
+    },
+    "types": [
+      "$$anonymous inner type #821"
+    ]
+  },
+  "var b8ea37d1b204e1b3af1e60b5d25d400420b8c44f8c14a19baf6972b5cb53c871-\tcontinuation@@0": {
+    "type": "union",
+    "location": {
+      "start": {
+        "line": 5,
+        "column": 2,
+        "offset": 33
+      },
+      "end": {
+        "line": 5,
+        "column": 9,
+        "offset": 40
+      },
+      "file": "C:\\Users\\coleh\\Robotics_2022_2023\\TeamCode\\src\\main\\java\\org\\firstinspires\\ftc\\teamcode\\opmodes\\auto\\benchmark\\everything-delegate-1.autoauto",
+      "fileStack": [
+        "C:\\Users\\coleh\\Robotics_2022_2023\\TeamCode\\src\\main\\java\\org\\firstinspires\\ftc\\teamcode\\opmodes\\auto\\benchmark\\everything-delegate-1.autoauto",
+        "C:\\Users\\coleh\\Robotics_2022_2023\\TeamCode\\src\\main\\java\\org\\firstinspires\\ftc\\teamcode\\opmodes\\auto\\benchmark\\everything.autoauto"
+      ]
+    },
+    "types": [
+      "number"
+    ]
+  },
+  "$$anonymous inner type #818": {
+    "type": "function",
+    "location": {
+      "start": {
+        "line": 105,
+        "column": 12,
+        "offset": 3175
+      },
+      "end": {
+        "line": 105,
+        "column": 59,
+        "offset": 3219
+      },
+      "file": "C:\\Users\\coleh\\Robotics_2022_2023\\TeamCode\\src\\main\\java\\org\\firstinspires\\ftc\\teamcode\\opmodes\\auto\\benchmark\\everything.autoauto"
+    },
+    "args": [],
+    "varargs": "undefined",
+    "argnames": [],
+    "return": "$$anonymous inner type #841"
+  },
+  "$$anonymous inner type #841": {
+    "type": "union",
+    "types": [
+      "undefined",
+      "string"
+    ]
+  },
+  "$$anonymous inner type #844": {
+    "type": "apply",
+    "location": {
+      "start": {
+        "line": 105,
+        "column": 12,
+        "offset": 3175
+      },
+      "end": {
+        "line": 105,
+        "column": 59,
+        "offset": 3219
+      },
+      "file": "C:\\Users\\coleh\\Robotics_2022_2023\\TeamCode\\src\\main\\java\\org\\firstinspires\\ftc\\teamcode\\opmodes\\auto\\benchmark\\everything.autoauto"
+    },
+    "positionalArguments": [],
+    "namedArguments": {},
+    "operand": "$$anonymous inner type #818"
+  },
+  "$$anonymous inner type #847": {
+    "type": "apply",
+    "location": {
+      "start": {
+        "line": 105,
+        "column": 10,
+        "offset": 3174
+      },
+      "end": {
+        "line": 105,
+        "column": 61,
+        "offset": 3220
+      },
+      "file": "C:\\Users\\coleh\\Robotics_2022_2023\\TeamCode\\src\\main\\java\\org\\firstinspires\\ftc\\teamcode\\opmodes\\auto\\benchmark\\everything.autoauto"
+    },
+    "positionalArguments": [
+      "$$anonymous inner type #844"
+    ],
+    "namedArguments": {},
+    "operand": "var log@0"
+  },
+  "$$anonymous inner type #868": {
+    "type": "object",
+    "location": {
+      "start": {
+        "line": 106,
+        "column": 12,
+        "offset": 3237
+      },
+      "end": {
+        "line": 106,
+        "column": 64,
+        "offset": 3284
+      },
+      "file": "C:\\Users\\coleh\\Robotics_2022_2023\\TeamCode\\src\\main\\java\\org\\firstinspires\\ftc\\teamcode\\opmodes\\auto\\benchmark\\everything.autoauto"
+    },
+    "some": "$$anonymous inner type #869",
+    "properties": {
+      "0": "number"
+    }
+  },
+  "$$anonymous inner type #869": {
+    "type": "union",
+    "types": []
+  },
+  "var 043b00f319be99b55e208d3b61cea0a04d30ac64c3e7c9c0505bc8b3f3ea2885-module_args@1": {
+    "type": "union",
+    "location": {
+      "file": "C:\\Users\\coleh\\Robotics_2022_2023\\TeamCode\\src\\main\\java\\org\\firstinspires\\ftc\\teamcode\\opmodes\\auto\\benchmark\\everything-delegate-2.autoauto",
+      "synthetic": true
+    },
+    "types": [
+      "$$anonymous inner type #868"
+    ]
+  },
+  "var 043b00f319be99b55e208d3b61cea0a04d30ac64c3e7c9c0505bc8b3f3ea2885-\tcontinuation@@0": {
+    "type": "union",
+    "location": {
+      "start": {
+        "line": 5,
+        "column": 2,
+        "offset": 33
+      },
+      "end": {
+        "line": 5,
+        "column": 9,
+        "offset": 40
+      },
+      "file": "C:\\Users\\coleh\\Robotics_2022_2023\\TeamCode\\src\\main\\java\\org\\firstinspires\\ftc\\teamcode\\opmodes\\auto\\benchmark\\everything-delegate-2.autoauto",
+      "fileStack": [
+        "C:\\Users\\coleh\\Robotics_2022_2023\\TeamCode\\src\\main\\java\\org\\firstinspires\\ftc\\teamcode\\opmodes\\auto\\benchmark\\everything-delegate-2.autoauto",
+        "C:\\Users\\coleh\\Robotics_2022_2023\\TeamCode\\src\\main\\java\\org\\firstinspires\\ftc\\teamcode\\opmodes\\auto\\benchmark\\everything.autoauto"
+      ]
+    },
+    "types": [
+      "number"
+    ]
+  },
+  "$$anonymous inner type #887": {
+    "type": "object_apply",
+    "location": {
+      "start": {
+        "line": 5,
+        "column": 24,
+        "offset": 52
+      },
+      "end": {
+        "line": 5,
+        "column": 29,
+        "offset": 55
+      },
+      "fileStack": [
+        null,
+        "C:\\Users\\coleh\\Robotics_2022_2023\\TeamCode\\src\\main\\java\\org\\firstinspires\\ftc\\teamcode\\opmodes\\auto\\benchmark\\everything.autoauto"
+      ]
+    },
+    "object": "var 043b00f319be99b55e208d3b61cea0a04d30ac64c3e7c9c0505bc8b3f3ea2885-module_args@1",
+    "key": "0"
+  },
+  "$$anonymous inner type #889": {
+    "type": "binary_operator",
+    "location": {
+      "start": {
+        "line": 5,
+        "column": 24,
+        "offset": 52
+      },
+      "end": {
+        "line": 5,
+        "column": 35,
+        "offset": 59
+      },
+      "fileStack": [
+        null,
+        "C:\\Users\\coleh\\Robotics_2022_2023\\TeamCode\\src\\main\\java\\org\\firstinspires\\ftc\\teamcode\\opmodes\\auto\\benchmark\\everything.autoauto"
+      ]
+    },
+    "op": "-",
+    "left": "$$anonymous inner type #887",
+    "right": "number"
+  },
+  "$$anonymous inner type #863": {
+    "type": "function",
+    "location": {
+      "start": {
+        "line": 106,
+        "column": 12,
+        "offset": 3237
+      },
+      "end": {
+        "line": 106,
+        "column": 64,
+        "offset": 3284
+      },
+      "file": "C:\\Users\\coleh\\Robotics_2022_2023\\TeamCode\\src\\main\\java\\org\\firstinspires\\ftc\\teamcode\\opmodes\\auto\\benchmark\\everything.autoauto"
+    },
+    "args": [],
+    "varargs": "undefined",
+    "argnames": [],
+    "return": "$$anonymous inner type #893"
+  },
+  "$$anonymous inner type #893": {
+    "type": "union",
+    "types": [
+      "undefined",
+      "$$anonymous inner type #889"
+    ]
+  },
+  "$$anonymous inner type #896": {
+    "type": "apply",
+    "location": {
+      "start": {
+        "line": 106,
+        "column": 12,
+        "offset": 3237
+      },
+      "end": {
+        "line": 106,
+        "column": 64,
+        "offset": 3284
+      },
+      "file": "C:\\Users\\coleh\\Robotics_2022_2023\\TeamCode\\src\\main\\java\\org\\firstinspires\\ftc\\teamcode\\opmodes\\auto\\benchmark\\everything.autoauto"
+    },
+    "positionalArguments": [],
+    "namedArguments": {},
+    "operand": "$$anonymous inner type #863"
+  },
+  "$$anonymous inner type #899": {
+    "type": "apply",
+    "location": {
+      "start": {
+        "line": 106,
+        "column": 10,
+        "offset": 3236
+      },
+      "end": {
+        "line": 106,
+        "column": 66,
+        "offset": 3285
+      },
+      "file": "C:\\Users\\coleh\\Robotics_2022_2023\\TeamCode\\src\\main\\java\\org\\firstinspires\\ftc\\teamcode\\opmodes\\auto\\benchmark\\everything.autoauto"
+    },
+    "positionalArguments": [
+      "$$anonymous inner type #896"
+    ],
+    "namedArguments": {},
+    "operand": "var log@0"
+  },
+  "$$anonymous inner type #911": {
+    "type": "object",
+    "location": {
+      "start": {
+        "line": 107,
+        "column": 17,
+        "offset": 3306
+      },
+      "end": {
+        "line": 107,
+        "column": 69,
+        "offset": 3353
+      },
+      "file": "C:\\Users\\coleh\\Robotics_2022_2023\\TeamCode\\src\\main\\java\\org\\firstinspires\\ftc\\teamcode\\opmodes\\auto\\benchmark\\everything.autoauto"
+    },
+    "some": "$$anonymous inner type #912",
+    "properties": {
+      "0": "number"
+    }
+  },
+  "$$anonymous inner type #912": {
+    "type": "union",
+    "types": []
+  },
+  "var b1da225a7632b173539a34fe2c68a9dc2d0c96fee4bd6580f37e8e62aeed0875-module_args@1": {
+    "type": "union",
+    "location": {
+      "file": "C:\\Users\\coleh\\Robotics_2022_2023\\TeamCode\\src\\main\\java\\org\\firstinspires\\ftc\\teamcode\\opmodes\\auto\\benchmark\\everything-delegate-3.autoauto",
+      "synthetic": true
+    },
+    "types": [
+      "$$anonymous inner type #911"
+    ]
+  },
+  "var b1da225a7632b173539a34fe2c68a9dc2d0c96fee4bd6580f37e8e62aeed0875-\tcontinuation@@0": {
+    "type": "union",
+    "location": {
+      "start": {
+        "line": 5,
+        "column": 2,
+        "offset": 33
+      },
+      "end": {
+        "line": 5,
+        "column": 9,
+        "offset": 40
+      },
+      "file": "C:\\Users\\coleh\\Robotics_2022_2023\\TeamCode\\src\\main\\java\\org\\firstinspires\\ftc\\teamcode\\opmodes\\auto\\benchmark\\everything-delegate-3.autoauto",
+      "fileStack": [
+        "C:\\Users\\coleh\\Robotics_2022_2023\\TeamCode\\src\\main\\java\\org\\firstinspires\\ftc\\teamcode\\opmodes\\auto\\benchmark\\everything-delegate-3.autoauto",
+        "C:\\Users\\coleh\\Robotics_2022_2023\\TeamCode\\src\\main\\java\\org\\firstinspires\\ftc\\teamcode\\opmodes\\auto\\benchmark\\everything.autoauto"
+      ]
+    },
+    "types": [
+      "number"
+    ]
+  },
+  "$$anonymous inner type #935": {
+    "type": "object_apply",
+    "location": {
+      "start": {
+        "line": 6,
+        "column": 26,
+        "offset": 78
+      },
+      "end": {
+        "line": 6,
+        "column": 31,
+        "offset": 81
+      },
+      "file": "C:\\Users\\coleh\\Robotics_2022_2023\\TeamCode\\src\\main\\java\\org\\firstinspires\\ftc\\teamcode\\opmodes\\auto\\benchmark\\everything-delegate-3.autoauto",
+      "fileStack": [
+        "C:\\Users\\coleh\\Robotics_2022_2023\\TeamCode\\src\\main\\java\\org\\firstinspires\\ftc\\teamcode\\opmodes\\auto\\benchmark\\everything-delegate-3.autoauto",
+        "C:\\Users\\coleh\\Robotics_2022_2023\\TeamCode\\src\\main\\java\\org\\firstinspires\\ftc\\teamcode\\opmodes\\auto\\benchmark\\everything.autoauto"
+      ]
+    },
+    "object": "var b1da225a7632b173539a34fe2c68a9dc2d0c96fee4bd6580f37e8e62aeed0875-module_args@1",
+    "key": "0"
+  },
+  "var subcat/b1da225a7632b173539a34fe2c68a9dc2d0c96fee4bd6580f37e8e62aeed0875/func-enter/4|arg:b1da225a7632b173539a34fe2c68a9dc2d0c96fee4bd6580f37e8e62aeed0875-x@0": {
+    "type": "union",
+    "location": {
+      "start": {
+        "line": 5,
+        "column": 11,
+        "offset": 41
+      },
+      "end": {
+        "line": 7,
+        "column": 3,
+        "offset": 88
+      },
+      "file": "C:\\Users\\coleh\\Robotics_2022_2023\\TeamCode\\src\\main\\java\\org\\firstinspires\\ftc\\teamcode\\opmodes\\auto\\benchmark\\everything-delegate-3.autoauto",
+      "fileStack": [
+        "C:\\Users\\coleh\\Robotics_2022_2023\\TeamCode\\src\\main\\java\\org\\firstinspires\\ftc\\teamcode\\opmodes\\auto\\benchmark\\everything-delegate-3.autoauto",
+        "C:\\Users\\coleh\\Robotics_2022_2023\\TeamCode\\src\\main\\java\\org\\firstinspires\\ftc\\teamcode\\opmodes\\auto\\benchmark\\everything.autoauto"
+      ]
+    },
+    "types": [
+      "number"
+    ]
+  },
+  "$$anonymous inner type #938": {
+    "type": "binary_operator",
+    "location": {
+      "start": {
+        "line": 6,
+        "column": 26,
+        "offset": 78
+      },
+      "end": {
+        "line": 6,
+        "column": 37,
+        "offset": 85
+      },
+      "file": "C:\\Users\\coleh\\Robotics_2022_2023\\TeamCode\\src\\main\\java\\org\\firstinspires\\ftc\\teamcode\\opmodes\\auto\\benchmark\\everything-delegate-3.autoauto",
+      "fileStack": [
+        "C:\\Users\\coleh\\Robotics_2022_2023\\TeamCode\\src\\main\\java\\org\\firstinspires\\ftc\\teamcode\\opmodes\\auto\\benchmark\\everything-delegate-3.autoauto",
+        "C:\\Users\\coleh\\Robotics_2022_2023\\TeamCode\\src\\main\\java\\org\\firstinspires\\ftc\\teamcode\\opmodes\\auto\\benchmark\\everything.autoauto"
+      ]
+    },
+    "op": "-",
+    "left": "$$anonymous inner type #935",
+    "right": "var subcat/b1da225a7632b173539a34fe2c68a9dc2d0c96fee4bd6580f37e8e62aeed0875/func-enter/4|arg:b1da225a7632b173539a34fe2c68a9dc2d0c96fee4bd6580f37e8e62aeed0875-x@0"
+  },
+  "$$anonymous inner type #931": {
+    "type": "function",
+    "location": {
+      "start": {
+        "line": 5,
+        "column": 11,
+        "offset": 41
+      },
+      "end": {
+        "line": 7,
+        "column": 3,
+        "offset": 88
+      },
+      "file": "C:\\Users\\coleh\\Robotics_2022_2023\\TeamCode\\src\\main\\java\\org\\firstinspires\\ftc\\teamcode\\opmodes\\auto\\benchmark\\everything-delegate-3.autoauto",
+      "fileStack": [
+        "C:\\Users\\coleh\\Robotics_2022_2023\\TeamCode\\src\\main\\java\\org\\firstinspires\\ftc\\teamcode\\opmodes\\auto\\benchmark\\everything-delegate-3.autoauto",
+        "C:\\Users\\coleh\\Robotics_2022_2023\\TeamCode\\src\\main\\java\\org\\firstinspires\\ftc\\teamcode\\opmodes\\auto\\benchmark\\everything.autoauto"
+      ]
+    },
+    "args": [
+      "var subcat/b1da225a7632b173539a34fe2c68a9dc2d0c96fee4bd6580f37e8e62aeed0875/func-enter/4|arg:b1da225a7632b173539a34fe2c68a9dc2d0c96fee4bd6580f37e8e62aeed0875-x@0"
+    ],
+    "varargs": "undefined",
+    "argnames": [
+      "x"
+    ],
+    "return": "$$anonymous inner type #940"
+  },
+  "$$anonymous inner type #940": {
+    "type": "union",
+    "types": [
+      "$$anonymous inner type #938"
+    ]
+  },
+  "$$anonymous inner type #906": {
+    "type": "function",
+    "location": {
+      "start": {
+        "line": 107,
+        "column": 17,
+        "offset": 3306
+      },
+      "end": {
+        "line": 107,
+        "column": 69,
+        "offset": 3353
+      },
+      "file": "C:\\Users\\coleh\\Robotics_2022_2023\\TeamCode\\src\\main\\java\\org\\firstinspires\\ftc\\teamcode\\opmodes\\auto\\benchmark\\everything.autoauto"
+    },
+    "args": [],
+    "varargs": "undefined",
+    "argnames": [],
+    "return": "$$anonymous inner type #944"
+  },
+  "$$anonymous inner type #944": {
+    "type": "union",
+    "types": [
+      "undefined",
+      "$$anonymous inner type #931"
+    ]
+  },
+  "$$anonymous inner type #947": {
+    "type": "apply",
+    "location": {
+      "start": {
+        "line": 107,
+        "column": 17,
+        "offset": 3306
+      },
+      "end": {
+        "line": 107,
+        "column": 69,
+        "offset": 3353
+      },
+      "file": "C:\\Users\\coleh\\Robotics_2022_2023\\TeamCode\\src\\main\\java\\org\\firstinspires\\ftc\\teamcode\\opmodes\\auto\\benchmark\\everything.autoauto"
+    },
+    "positionalArguments": [],
+    "namedArguments": {},
+    "operand": "$$anonymous inner type #906"
+  },
+  "var fd0369ca1e087a1d81d0b040782d425f2ed96643905abd59142a0ff69b4ad202-f@2": {
+    "type": "union",
+    "location": {
+      "start": {
+        "line": 107,
+        "column": 6,
+        "offset": 3298
+      },
+      "end": {
+        "line": 107,
+        "column": 9,
+        "offset": 3301
+      },
+      "file": "C:\\Users\\coleh\\Robotics_2022_2023\\TeamCode\\src\\main\\java\\org\\firstinspires\\ftc\\teamcode\\opmodes\\auto\\benchmark\\everything.autoauto"
+    },
+    "types": [
+      "$$anonymous inner type #947"
+    ]
+  },
+  "$$anonymous inner type #954": {
+    "type": "union",
+    "location": {
+      "start": {
+        "line": 107,
+        "column": 79,
+        "offset": 3359
+      },
+      "end": {
+        "line": 107,
+        "column": 80,
+        "offset": 3360
+      },
+      "file": "C:\\Users\\coleh\\Robotics_2022_2023\\TeamCode\\src\\main\\java\\org\\firstinspires\\ftc\\teamcode\\opmodes\\auto\\benchmark\\everything.autoauto"
+    },
+    "types": [
+      "var fd0369ca1e087a1d81d0b040782d425f2ed96643905abd59142a0ff69b4ad202-f@2",
+      "var fd0369ca1e087a1d81d0b040782d425f2ed96643905abd59142a0ff69b4ad202-f@1"
+    ]
+  },
+  "$$anonymous inner type #958": {
+    "type": "apply",
+    "location": {
+      "start": {
+        "line": 107,
+        "column": 81,
+        "offset": 3360
+      },
+      "end": {
+        "line": 107,
+        "column": 86,
+        "offset": 3363
+      },
+      "file": "C:\\Users\\coleh\\Robotics_2022_2023\\TeamCode\\src\\main\\java\\org\\firstinspires\\ftc\\teamcode\\opmodes\\auto\\benchmark\\everything.autoauto"
+    },
+    "positionalArguments": [
+      "number"
+    ],
+    "namedArguments": {},
+    "operand": "$$anonymous inner type #954"
+  },
+  "$$anonymous inner type #961": {
+    "type": "apply",
+    "location": {
+      "start": {
+        "line": 107,
+        "column": 77,
+        "offset": 3358
+      },
+      "end": {
+        "line": 107,
+        "column": 88,
+        "offset": 3364
+      },
+      "file": "C:\\Users\\coleh\\Robotics_2022_2023\\TeamCode\\src\\main\\java\\org\\firstinspires\\ftc\\teamcode\\opmodes\\auto\\benchmark\\everything.autoauto"
+    },
+    "positionalArguments": [
+      "$$anonymous inner type #958"
+    ],
+    "namedArguments": {},
+    "operand": "var log@0"
+  },
+  "$$anonymous inner type #982": {
+    "type": "apply",
+    "location": {
+      "start": {
+        "line": 12,
+        "column": 6,
+        "offset": 254
+      },
+      "end": {
+        "line": 12,
+        "column": 16,
+        "offset": 262
+      },
+      "file": "C:\\Users\\coleh\\Robotics_2022_2023\\TeamCode\\src\\main\\java\\org\\firstinspires\\ftc\\teamcode\\opmodes\\auto\\benchmark\\everything.autoauto"
+    },
+    "positionalArguments": [
+      "string"
+    ],
+    "namedArguments": {},
+    "operand": "var log@0"
+  }
+}

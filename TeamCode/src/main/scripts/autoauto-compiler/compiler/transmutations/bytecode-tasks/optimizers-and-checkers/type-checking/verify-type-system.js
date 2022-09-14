@@ -296,7 +296,8 @@ function logUnknownType(typeName, type) {
         
         const text = typeIsFromVariable ? "Unknown Variable" : "Unknown Typing";
         const explanation = typeIsFromVariable ? "The variable '" + 
-            typeName.substring(typeName.indexOf("-") + 1, typeName.indexOf("@")) + "' couldn't be resolved"
+            getVariableName(typeName) +
+             "' couldn't be resolved"
             : "There was an unresolved type. Unfortunately, that's all we know.\n\nDEBUG: `typeName`: " + typeName;
         
         androidStudioLogging.sendTreeLocationMessage({
@@ -405,7 +406,7 @@ async function resolveFunctionApplication(typeSystem, typeName, type, visitedTyp
     for(const argumentName in type.namedArguments) {
         if(allHaveArgumentNamed(appliedFunction, argumentName) == false) {
             androidStudioLogging.sendTreeLocationMessage({
-                text: "Function called with missing named argument",
+                text: "Function called with unknown named argument",
                 original: "The type checker can't promise that this function has an argument named `" + argumentName + "`. " +
                     "Trying to call this function can cause problems.\n" +
                     "Expected `function(..." + argumentName + ":any...) -> any`; got `" + formatType(appliedFunction, typeSystem) + "`",
@@ -604,6 +605,30 @@ async function resolveUnion(typeSystem, typeName, type, visitedTypes, resolution
     }
 
     const types = Array.from(u);
+    
+    if(checkUndefinedArgument(typeName, types)) return [
+        Object.assign({}, typeSystem["undefined"], { isArgument: getVariableName(typeName) })
+    ];
 
     return types;
+}
+
+/**
+ * 
+ * @param {string} typeName 
+ * @returns {string}
+ */
+function getVariableName(typeName) {
+    return typeName.substring(typeName.lastIndexOf("-") + 1, typeName.indexOf("@"));
+}
+
+/**
+ * 
+ * @param {string} typeName 
+ * @param {TypeRecord[]} types 
+ * @returns {boolean}
+ */
+function checkUndefinedArgument(typeName, types) {
+    if (types.length == 1 && types[0].primitive == "undefined" && typeName.startsWith("var") && typeName.includes("|arg:")) return true;
+    else return false;
 }

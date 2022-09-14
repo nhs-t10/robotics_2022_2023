@@ -5,6 +5,7 @@ var fs = require("fs");
 
 var makePersonSvg = require("./make-person-svg");
 var familyColors = require("./family-colors");
+const { sha } = require("../../script-helpers/sha-string");
 
 var builds = require("./generate-build-dataset")();
 
@@ -226,9 +227,6 @@ function seededRandom(seed) {
     }
 }
 
-function sha(t) {
-    return crypto.createHash("sha256").update(t + "").digest("hex");
-}
 
 function transformSvg(svg, x, y) {
     return `<g transform="translate(${x} ${y})">${svg}</g>`

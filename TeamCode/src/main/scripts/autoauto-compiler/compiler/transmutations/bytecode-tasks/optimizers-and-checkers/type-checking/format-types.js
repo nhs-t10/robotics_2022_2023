@@ -145,7 +145,7 @@ function formatTableRecord(type, typeSystem, indentation, allowMultiline) {
 function formatLocation(location) {
     if (location === undefined) return "<built-in>";
     else if(location.synthetic) return location.file;
-    else return location.file + ", line " + location.start.line + ", column " + location.start.column;
+    else return location.file + ":" + location.start.line + ":" + location.start.column;
 }
 
 /**

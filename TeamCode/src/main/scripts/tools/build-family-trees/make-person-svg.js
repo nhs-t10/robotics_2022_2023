@@ -1,6 +1,7 @@
 "use strict";
 
 var crypto = require("crypto");
+const { sha } = require("../../script-helpers/sha-string");
 var familyColors = require("./family-colors");
 
 module.exports = function(build, x, y, size) {
@@ -64,8 +65,4 @@ function seededRandom(seed) {
         t ^= t + Math.imul(t ^ t >>> 7, t | 61);
         return ((t ^ t >>> 14) >>> 0) / 4294967296;
     }
-}
-
-function sha(t) {
-    return crypto.createHash("sha256").update(t + "").digest("hex");
 }

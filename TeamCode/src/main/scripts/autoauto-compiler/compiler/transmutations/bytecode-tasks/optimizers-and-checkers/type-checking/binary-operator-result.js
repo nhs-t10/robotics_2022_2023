@@ -149,17 +149,39 @@ function plusOp(left, right, location, typeSystem) {
 function constrainNumeric(type, relativeOperatorSide, parentLocation, typeSystem) {
 
     
-    const hasNum = (type.length == 1 && type[0].type == "primitive" && type[0].primitive == "number");
+    const hasNum = (type.length == 1 && type[0].type == "primitive" && type[0].primitive == "number") || isNumberOrUndefined(type); 
+    
+    if(hasNum) return true;
+    
+    let hints = [], hintLong = "";
+    
+    if(type.length == 1 && type[0].isArgument) {
+        hints.push("Add a default argument value (e.g. `" + type[0].isArgument + " = 0`)");
+        hintLong += "\nThe type checker can't make sure that there's always a value for this argument.\n" + 
+        "Yes, this is a weakness in the checker. Someone should work on it. Regardless, if you add a default value, it would really help. Thank you!"
+    }
 
-    if(!hasNum) androidStudioLogging.sendTreeLocationMessage({
+    androidStudioLogging.sendTreeLocationMessage({
         text: `Uncheckable type mismatch on binary operator`,
-        original: `This operator uses a numeric type, but the type checker could only promise \`${formatType(type, typeSystem)}\` for the ${relativeOperatorSide} side.\n` +
-        `The ${relativeOperatorSide} side's value is defined at ` + formatLocation(type.location),
+        original: `This operator uses a numeric type, but the type checker could only promise \`${formatType(type, typeSystem)}\` for the ${relativeOperatorSide} side.` +
+            hintLong + 
+        `\nThe ${relativeOperatorSide} side's value is defined at ` + formatLocation(type.location) + hintLong,
+        hints: hints,
         kind: "WARNING",
         location: parentLocation
     });
+}
 
-    return hasNum;
+/**
+ * 
+ * @param {TypeRecord[]} types 
+ */
+function isNumberOrUndefined(types) {
+    return types.length == 2 && (
+        (types[0].primitive == "number" && types[1].primitive == "undefined"
+    ) || (
+        types[0].primitive == "undefined" && types[1].primitive == "number"
+    ));
 }
 
 /**
