@@ -3,7 +3,7 @@ $
 $
 
 function f(x = 0) {
-    log("x", x),
-    return(module_args[0] - x)
+    let argx = x,
+    return(delegate("./everything-transitive-delegate.autoauto", module_args[0], argx))
 },
 provide(f)

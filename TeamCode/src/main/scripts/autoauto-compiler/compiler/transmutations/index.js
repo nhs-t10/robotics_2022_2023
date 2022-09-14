@@ -216,10 +216,12 @@ function loadTransmutation(sourceFile, metaFile) {
  * 
  * @property {Object.<string, string>} writtenFiles
  * @property {string[]} readsAllFiles a list of absolute files which this compilation reads from. Important for caching.
+ * 
  *
  * @property {boolean} isLibrary
  * @property {object} fileFrontmatter
  * @property {SerializableTransmutationInstance[]} transmutations
  * 
  * @property {string} cacheKey
+ * @property {Object.<string, string>} dependsOn a map of dependency files to their fresh cache keys. Important for caching.
  */

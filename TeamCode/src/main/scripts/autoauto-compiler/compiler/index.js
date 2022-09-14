@@ -15,6 +15,7 @@ const makeWorkersPool = require("./workers-pool");
 const folderScanner = require("./folder-scanner");
 const loadFrontmatter = require("./frontmatter-parser");
 const { sha, shaJSON } = require("../../script-helpers/sha-string");
+const { finishCacheKeys, makeCacheKey } = require("./cache-keys");
 
 const BUILD_ROOT_DIRS = (require("./get-build-root"))();
 
@@ -65,6 +66,7 @@ async function compileAllFromSourceDirectory(compilerWorkers) {
             makeContextAndCompileFile(file[1], compilerWorkers, preprocessInputs, environmentHash, file[0])
         );
     }
+    finishCacheKeys();
     await compilerWorkers.finishGivingJobs();
 
     const compilationResults = await Promise.all(jobPromises);
@@ -88,10 +90,11 @@ async function compileAllFromSourceDirectory(compilerWorkers) {
  * @returns {Promise<import("./worker").MaybeCompilation>}
  */
 function makeContextAndCompileFile(filename, compilerWorkers, preprocessInputs, environmentHash, rootDirectory) {
-    const fileContext = makeFileContext(filename, preprocessInputs, environmentHash, rootDirectory);
-    const cacheEntry = getCacheEntry(fileContext);
     
-    return new Promise(function (resolve, reject) {
+    return new Promise(async function (resolve, reject) {
+        const fileContext = makeFileContext(filename, preprocessInputs, rootDirectory);
+        const cacheEntry = await getCacheEntry(fileContext, environmentHash);
+        
         if (cacheEntry) {
             const cacheContext = cacheEntry.fileContext;
 
@@ -139,15 +142,17 @@ function saveCacheEntry(finishedRun) {
 /**
  * 
  * @param {import("./transmutations").TransmutateContext} fileContext
- * @returns {CacheEntry?}
+ * @param {string} environmentHash
+ * @returns {Promise<CacheEntry?>}
  */
-function getCacheEntry(fileContext) {
+async function getCacheEntry(fileContext, environmentHash) {
     if (commandLineInterface["no-cache"]) return null;
 
     /** @type {CacheEntry} */
     const cacheEntry = cache.get(mFileCacheKey(fileContext), null);
 
-    const freshKey = makeCacheKey(cacheEntry.fileContext);
+    //if the cache entry exists, then use its fileContext for the cache key. Otherwise, use the clean one we were given.
+    const freshKey = await makeCacheKey(cacheEntry ? cacheEntry.fileContext : fileContext, environmentHash);
     
     if (cacheEntry != null && cacheEntry.subkey == freshKey) {
         fileContext.cacheKey = freshKey;
@@ -205,7 +210,7 @@ function makeCodebaseContext(codebaseTransmutationWrites) {
     }
 }
 
-function makeFileContext(file, preprocessInputs, environmentHash, rootDirectory) {
+function makeFileContext(file, preprocessInputs, rootDirectory) {
 
     const resultFile = getResultFor(file, rootDirectory);
     const fileContent = fs.readFileSync(file).toString();
@@ -231,6 +236,8 @@ function makeFileContext(file, preprocessInputs, environmentHash, rootDirectory)
         inputs: {},
         cacheKey: undefined,
         writtenFiles: {},
+        
+        dependsOn: {},
 
         transmutations: tPath,
         readsAllFiles: tPath.map(x => x.readsFiles || []).flat()
@@ -264,20 +271,6 @@ function keyJsonHash(object) {
         t.push(shaJSON(object[key]));
     }
     return t.join("");
-}
-
-/**
- * 
- * @param {import("./transmutations").TransmutateContext} fileContext 
- */
-function makeCacheKey(fileContext, environmentHash) {
-    const readFileShas = fileContext.readsAllFiles.map(x => sha(safeFsUtils.cachedSafeReadFile(x))).join("\0");
-    const transmutationIdList = fileContext.transmutations.map(x => x.id).join("\t");
-
-    const keyDataToSha = [environmentHash, readFileShas,
-        fileContext.sourceFullFileName, fileContext.fileContentText, transmutationIdList];
-
-    return sha(keyDataToSha.join("\0"));
 }
 
 function getResultFor(filename, root) {

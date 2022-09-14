@@ -289,6 +289,7 @@ async function createDependencyBlocks(currentFile, dependencyFile, constantPool,
 
     const dependencyBlocks = Object.values(depBytecode);
 
+    if(!ast.location.file) console.log(ast);
     addFileToLocations(dependencyBlocks, ast.location.file);
 
     //rename the ENTRY block to a non-overlapping label

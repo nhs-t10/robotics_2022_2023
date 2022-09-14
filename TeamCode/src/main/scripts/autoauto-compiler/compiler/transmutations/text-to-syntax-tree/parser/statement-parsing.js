@@ -665,10 +665,10 @@ function parseParameter(tokenStream) {
     }
 }
 
-function parseParenGroup(tokenStream) {
+function parseParenGroup(tokenStream, file) {
     const locStart = tokenStream.pop().location.start;
 
-    const expr = parseExpression(tokenStream);
+    const expr = parseExpression(tokenStream, file);
 
     const closingParen = tokenStream.pop();
     if (closingParen.name != "CLOSE_PAREN") {

@@ -291,7 +291,7 @@ function addInProgressJob(allJobs, job) {
  */
 function sendDependencyComplete(worker, jobId, depId, maybeCompilation, allJobs) {
     
-    pushUniquely(allJobs[jobId].fileContext.readsAllFiles, depId);
+    allJobs[jobId].fileContext.dependsOn[depId] = allJobs[depId].fileContext.cacheKey;
     
     worker.postMessage({
         type: "dependencyComplete",
