@@ -5,6 +5,7 @@ repositories {
     flatDir {
         dirs rootProject.file('libs')
     }
+    maven { url = 'https://maven.brott.dev/' }
 }
 
 dependencies {
@@ -20,5 +21,8 @@ dependencies {
     implementation 'androidx.appcompat:appcompat:1.2.0'
     implementation 'org.firstinspires.ftc:gameAssets-FreightFrenzy:1.0.0'
     implementation 'org.openftc:easyopencv:1.5.1'
+    implementation ('com.acmerobotics.dashboard:dashboard:0.4.5') {
+        exclude group: 'org.firstinspires.ftc'
+    }
 }
 

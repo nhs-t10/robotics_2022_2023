@@ -8,6 +8,6 @@ goto getBall;
 #deliverBall:
     driveOmni(-1, 0, 0), after 3cm next; //back a bit
     driveOmni(0, -1, 0), after 10cm next; //go right to set up the final push
-    driveOmni(1, 0, 0), after 12cm next; //go forwards. We're now in position to push the ball left.
-    driveOmni(0, 1, 0), after 30cm next; //push the ball into the scoring zone
+    driveOmni(1, 0, 0), after 15cm next; //go forwards. We're now in position to push the ball left.
+    driveOmni(0, 1, 0), after 25cm next; //push the ball into the scoring zone
     stopDrive()
