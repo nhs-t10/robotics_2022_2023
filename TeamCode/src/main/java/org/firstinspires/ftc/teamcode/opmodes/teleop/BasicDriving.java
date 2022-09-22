@@ -81,12 +81,20 @@ public class BasicDriving extends OpMode {
         packet.put("x", 3.7);
         packet.put("status", "alive");
         FtcDashboard dashboard = FtcDashboard.getInstance();
-        Telemetry dashboardTelemetry = dashboard.getTelemetry();
         telemetry.addData("FL Power", driver.frontLeft.getPower());
         telemetry.addData("FR Power", driver.frontRight.getPower());
         telemetry.addData("BR Power", driver.backLeft.getPower());
         telemetry.addData("BL Power", driver.backRight.getPower());
         dashboard.sendTelemetryPacket(packet);
+        double coordx = 0.0;
+        double coordy = 0.0;
+        double[] pointsX = {coordx, coordx + 24, coordx + 24, coordx, coordx};
+        double[] pointsY = {coordy, coordy, coordy + 24, coordy + 24, coordy};
+        packet.fieldOverlay()
+                .setStroke("blue")
+                .setStrokeWidth(1)
+                .strokePolyline(pointsX, pointsY);
+
     }
     private boolean looping = false;
     private boolean shouldActuallyDoThings = true;
@@ -107,11 +115,6 @@ public class BasicDriving extends OpMode {
     }
     public void real_loop_Bad_Practice_Fix_Me_Later() {
         input.update();
-        //FeatureManager.logger.log(BuildHistory.buildName);
-        telemetry.addData("FL Power", driver.frontLeft.getPower());
-        telemetry.addData("FR Power", driver.frontRight.getPower());
-        telemetry.addData("BR Power", driver.backLeft.getPower());
-        telemetry.addData("BL Power", driver.backRight.getPower());
         telemetry.update();
 
     }
