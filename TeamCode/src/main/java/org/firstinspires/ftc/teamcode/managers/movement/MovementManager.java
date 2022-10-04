@@ -96,11 +96,6 @@ public class MovementManager extends FeatureManager {
     /**
      * Stop all drive motors directly. <br>
      * Equivalent to {@code driveOmni(0,0,0)}.
-     * <br><br>
-     * If you are changing this method's signature:
-     * <ul>
-     *     <li>Change {@linkplain org.firstinspires.ftc.teamcode.auxilary.dsls.autoauto.model.State#init() its usage in Autoauto}, if necessary</li>
-     * </ul>
      */
     public void stopDrive() {
         frontLeft.setPower(0);

@@ -1,3 +1,5 @@
+"use strict";
+
 const sentenceGenerator = require("./sentence-generator");
 const simpleNouns = require("./words/simple-nouns.js");
 const SIMPLE_NOUNS_LIMIT = 3;

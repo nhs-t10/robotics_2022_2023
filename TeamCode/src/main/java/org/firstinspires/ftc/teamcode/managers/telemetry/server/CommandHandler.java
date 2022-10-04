@@ -1,9 +1,9 @@
 package org.firstinspires.ftc.teamcode.managers.telemetry.server;
 
-import org.firstinspires.ftc.teamcode.auxilary.dsls.autoauto.model.values.primitives.AutoautoNumericValue;
-import org.firstinspires.ftc.teamcode.auxilary.dsls.autoauto.model.values.primitives.AutoautoPrimitive;
-import org.firstinspires.ftc.teamcode.auxilary.dsls.autoauto.model.values.primitives.AutoautoString;
-import org.firstinspires.ftc.teamcode.auxilary.dsls.autoauto.runtime.AutoautoSystemVariableNames;
+import dev.autoauto.runtime.values.AutoautoNumericValue;
+import dev.autoauto.runtime.values.AutoautoValue;
+import dev.autoauto.runtime.values.AutoautoString;
+import dev.autoauto.runtime.AutoautoSystemVariableNames;
 import org.firstinspires.ftc.teamcode.managers.feature.FeatureManager;
 import org.firstinspires.ftc.teamcode.managers.telemetry.TelemetryManager;
 
@@ -76,7 +76,7 @@ public class CommandHandler {
 
         //check that the requested statepath exists
         String lengthOfStatepathVariableName = AutoautoSystemVariableNames.STATE_COUNT_OF_PREFIX + statepathName;
-        AutoautoPrimitive lengthOfStatepath = dataSource.autoauto.globalScope.get(lengthOfStatepathVariableName);
+        AutoautoValue lengthOfStatepath = dataSource.autoauto.globalScope.get(lengthOfStatepathVariableName);
         if(lengthOfStatepath == null) return HttpStatusCodeReplies.Not_Found;
 
         //if it's not null, but also not a numeric value, that's the server's fault

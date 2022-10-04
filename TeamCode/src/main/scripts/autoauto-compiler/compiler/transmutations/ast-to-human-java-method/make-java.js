@@ -1,3 +1,5 @@
+"use strict";
+
 var nicelyIndent = require("./good-indenting");
 
 module.exports = function(ast, functionLookup) {
@@ -25,8 +27,8 @@ module.exports = function(ast, functionLookup) {
             ${switchStatement}
         }
         public void stepInit() {}
-        public org.firstinspires.ftc.teamcode.auxilary.dsls.autoauto.runtime.AutoautoRuntimeVariableScope getScope() { return null; }
-        public void setScope(org.firstinspires.ftc.teamcode.auxilary.dsls.autoauto.runtime.AutoautoRuntimeVariableScope s) {};
+        public dev.autoauto.runtime.AutoautoRuntimeVariableScope getScope() { return null; }
+        public void setScope(dev.autoauto.runtime.AutoautoRuntimeVariableScope s) {};
         public Location getLocation() { return null; }
         public void setLocation(Location s) {};
         public AutoautoProgram clone() {return this;}

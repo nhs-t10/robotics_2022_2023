@@ -1,3 +1,5 @@
+"use strict";
+
 module.exports = function parseFrontmatter(fileContent) {    
     var MODE = "base";
     var frontmatterObject = {}, ctx = { key: "", value: "", group: 0, afterCommentReturnInFrontmatter: false };

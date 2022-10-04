@@ -1,3 +1,5 @@
+"use strict";
+
 /**
  * @typedef {object} CommandLineArguments
  * @property {boolean} ascii
@@ -10,6 +12,17 @@
  * @property {boolean} agpbi
  * @property {boolean} build-history
  * @property {boolean} help
+ * @property {boolean} debug
+ * @property {"units" | ""} help-detail
+ * @property {boolean} no-appendix
+ * @property {string[]} in
+ * @property {string} out
+ * @property {string} assets-dir
+ * @property {string} test-dir
+ * @property {boolean} run-cleanup
+ * @property {string} java-class-suffix
+ * @property {string} java-functions-dir
+ * @property {string} output-java-template
  */
 
 
@@ -63,5 +76,67 @@ module.exports = {
         value: false,
         short: ["h"],
         description: "Print help message and exit"
+    },
+    debug: {
+        value: false,
+        short: [],
+        description: "Print detailed debug information"
+    },
+    "help-detail": {
+        value: "",
+        short: [],
+        description: "Print detailed help information and exit. Use 'units' to specify the part that you want help for."
+    },
+    "no-appendix": {
+        value: false,
+        short: [],
+        description: "Hide detailed type outlines."
+    },
+    "make-tests": {
+        value: false,
+        short: [],
+        description: "Generate tests in the __testedautoauto directory"
+    },
+    "in": {
+        default: [process.cwd()],
+        value: [],
+        short: [],
+        description: "The directory(s) to find Autoauto files from"
+    },
+    "out": {
+        value: process.cwd(),
+        short: [],
+        description: "The directory to write generated files into"
+    },
+    "assets-dir": {
+        value: process.cwd(),
+        short: [],
+        description: "The directory to write assets into"
+    },
+    "test-dir": {
+        value: process.cwd(),
+        short: [],
+        description: "The directory to write tests into"
+    },
+    "java-class-suffix": {
+        value: "",
+        short: [],
+        description: "Only look for methods in java classes that end with this suffix. See also --java-functions-directory"
+    },
+    "java-functions-dir": {
+        value: process.cwd(),
+        short: [],
+        description: "The directory to look in for Autoauto method implementations. See also --java-functions-directory."
+    },
+    "run-cleanup": {
+        value: false,
+        short: [],
+        description: "Whether to clean-up files in the 'out' directory which aren't generated files.\n" +
+            "WARNING: WITH THE DEFAULT SETTINGS, THIS WILL ERASE YOUR CODE. BE CAREFUL!"
+    },
+    "output-java-template": {
+        value: "template.notjava",
+        short: [],
+        description: "The template to use for generating Java files."
     }
 }

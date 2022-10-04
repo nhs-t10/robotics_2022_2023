@@ -1,3 +1,5 @@
+"use strict";
+
 const structuredSerialise = require("./index");
 
 (function main() {

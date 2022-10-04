@@ -1,3 +1,5 @@
+"use strict";
+
 var makeMapSvg = require("./make-svg");
 var loadControlMaps = require("./load-control-maps");
 

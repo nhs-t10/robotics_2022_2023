@@ -1,2 +1,7 @@
+"use strict";
+
+const { existsSync } = require("fs");
 var path = require("path");
-module.exports = path.join(__dirname, "../../data/template.notjava");
+const commandLineInterface = require("../../../../command-line-interface");
+
+module.exports = path.resolve(".", commandLineInterface["output-java-template"]);

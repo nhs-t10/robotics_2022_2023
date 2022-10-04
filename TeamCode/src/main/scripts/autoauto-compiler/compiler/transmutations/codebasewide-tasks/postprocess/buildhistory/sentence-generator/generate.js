@@ -1,3 +1,5 @@
+"use strict";
+
 var corpus = require("./text/dorian.js");
 
 /**

@@ -1,3 +1,5 @@
+"use strict";
+
 const os = require("os");
 const crypto = require("crypto");
 const path = require("path");
@@ -7,16 +9,17 @@ const what3Words = require("./what-3-words-hash.js");
 const buildPng = require("./build-png");
 const safeFsUtils = require("../../../../../../script-helpers/safe-fs-utils.js");
 const androidStudioLogging = require("../../../../../../script-helpers/android-studio-logging.js");
+const { readJSONFile } = require("../../../../../../script-helpers/safe-fs-utils.js");
 
 const HASH_SECRET = "autoauto family";
 const BUILD_HASH_IGNORED = ["gen", "genealogy", ".cache", "buildimgs", "scripts"];
 
-module.exports = async function (srcDirectory, assetsDirectory, genDirectory) {
+module.exports = async function (srcDirectories, assetsDirectory, genDirectory) {
     
     const computerHash = getComputerHash();
     const familyTreeRecordsDirectory = getFamilyTreeRecordsDirectory(assetsDirectory);
     const familyLineFile = getFamilyLineFile(familyTreeRecordsDirectory, computerHash);
-    const familyLine = readJsonFile(familyLineFile);
+    const familyLine = readJSONFile(familyLineFile, {});
     
     if (!familyLine.browser) {
         familyLine.browser = "Removed_for_privacy_reasons_" + Math.round(Math.random() * 0xFF_FF_FF).toString(16);
@@ -30,12 +33,12 @@ module.exports = async function (srcDirectory, assetsDirectory, genDirectory) {
 
     var name = getName(familyLine.buildCount, familyLine.cognomen);
     var time = (new Date()).toISOString();
-    var buildHash = await getDirectorySha(srcDirectory, BUILD_HASH_IGNORED);
+    var buildHash = await getDirectorySha(srcDirectories, BUILD_HASH_IGNORED);
     var w3w = what3Words.simpleNouns(buildHash);
     var phrase = what3Words.complexPhrase(buildHash);
-    var pngFile = await buildPng(familyLine.buildCount, srcDirectory, BUILD_HASH_IGNORED, assetsDirectory);
+    var pngFile = await buildPng(familyLine.buildCount, srcDirectories, BUILD_HASH_IGNORED, assetsDirectory);
     
-    androidStudioLogging.sendPlainMessage({
+    androidStudioLogging.sendTreeLocationMessage({
         kind: "INFO",
         text: "Build Name: " + name
     });
@@ -86,11 +89,7 @@ function getFamilyLineFile(genealogyDir, computerHash) {
 }
 
 function getComputerHash() {
-    var mac = "";
-
-    try {
-        mac = Object.values(os.networkInterfaces()).flat().map(x => x.mac).filter(x => x != '00:00:00:00:00:00')[0];
-    } catch (e) { }
+    var mac = Object.values(os.networkInterfaces()).flat().map(x => x.mac).filter(x => x != '00:00:00:00:00:00')[0] + "";
 
     var computerUniqueIdentifier = ([mac, os.cpus()[0].model, os.hostname(), os.platform()]).join(",");
 
@@ -177,15 +176,6 @@ function generateCognomen(hash) {
 
     return name.charAt(0).toUpperCase() + name.substring(1).toLowerCase();
 
-}
-
-function readJsonFile(file) {
-    if(!fs.existsSync(file)) return {};
-    try {
-        return JSON.parse(fs.readFileSync(file).toString());
-    } catch(e) {
-        return {};
-    }
 }
 
 function random(seed) {

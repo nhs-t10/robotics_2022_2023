@@ -1,22 +1,37 @@
+"use strict";
+
 //https://github.com/zawn/android-gradle-plugin-src/blob/master/sdk-common/src/main/java/com/android/ide/common/blame/MessageJsonSerializer.java
 
-var cFs = require("./cached-fs");
+const cFs = require("./cached-fs");
 const commandLineArguments = require("../command-line-interface");
 const errorResolutionSuggestions = require("./error-resolution-suggestions");
+const { colourString } = require("./format-helpers/ansi-terminal-color");
+const { sha } = require("./sha-string");
 
 module.exports = {
-    sendPlainMessage: sendPlainMessage,
     sendTreeLocationMessage: sendTreeLocationMessage,
-    
+
     warning: sendWarn,
     error: sendError,
 
     beginOutputCapture: beginOutputCapture,
     getCapturedOutput: getCapturedOutput,
+    isCapturingOutput: isCapturingOutput,
 
     sendMessages: sendMessages,
+
+    printTypeCounts: printTypeCounts,
+    resetTypeCounts: resetTypeCounts,
+
+    sendInternalError: sendInternalError,
+
+    getGlobalState: getGlobalState,
+    setGlobalState: setGlobalState,
     
-    printTypeCounts: printTypeCounts
+    printTimingInformation: printTimingInformation,
+    
+    addAppendix: addAppendix,
+    printAppendixes: printAppendixes
 };
 
 
@@ -28,70 +43,118 @@ const COLOURS = {
     INFO: "#6666aa",
     UNKNOWN_MESSAGE_KIND: "#99cccc",
     HINT: "#cc66cc",
-    LINE_NUMBER: "#666666"
+    LINE_NUMBER: "#666666",
+    NUMBER: "#3333ff"
 }
 
 var capturingOutput = false;
 var captured = [];
 
-var counts = {
+const DEFAULT_ZERO_COUNTS = {
     ERROR: 0,
     WARNING: 0,
     INFO: 0,
     BARELY_WARNING: 0
 };
+
+var appendices = new Set();
+var counts = Object.assign({}, DEFAULT_ZERO_COUNTS);
+
 const logLevel = commandLineArguments.quiet ? 3 : 0;
+
+function getGlobalState() {
+    var _cO = capturingOutput;
+    var _cd = captured;
+    return function () {
+        return {
+            cO: _cO,
+            cd: _cd
+        };
+    }
+}
+
+function setGlobalState(s) {
+    var r = s();
+    capturingOutput = r.cO;
+    captured = r.cd;
+}
 
 function beginOutputCapture() {
     capturingOutput = true;
     captured = [];
 }
 
+function isCapturingOutput() {
+    return capturingOutput;
+}
+
 function getCapturedOutput() {
     capturingOutput = false;
-    var t = captured;
+    const t = captured;
     captured = [];
     return t;
 }
 
 function sendWarn(msgStr) {
-    sendPlainMessage({
+    sendTreeLocationMessage({
         kind: "WARNING",
         text: msgStr
     });
 }
 
 function sendError(msgStr) {
-    sendPlainMessage({
+    sendTreeLocationMessage({
         kind: "ERROR",
         text: msgStr
     });
 }
 
-function sendMessages(msgs) {
-    msgs.forEach(x=>sendPlainMessage(x));
+function printAppendixes() {
+    if(commandLineArguments["no-appendix"]) return;
+    
+    for (const apx of appendices) sendRawText(apx);
 }
 
-function sendPlainMessage (msg) {
-    var l = ["INFO", "BARELY_WARNING", "WARNING","ERROR"].indexOf(msg.kind);
+function addAppendix(appendixText) {
+    var appendixTitle = sha(appendixText).substring(0, 7);
+    sendPlainMessage({
+        appendix: "Appendix " + appendixTitle + "\n===\n" + appendixText,
+        kind: "BARELY_WARNING"
+    });
     
-    incrementTypeCount(msg.kind);
-    
-    if (logLevel <= l || l === -1) {
-        if(capturingOutput) {
-            captured.push(msg);
-        } else {            
-            if(commandLineArguments["agpbi"]) formatAndSendJsonFormat(msg);
-            
-            formatAndSendHumanyFormat(msg);
+    return appendixTitle;
+}
+
+function sendMessages(msgs) {
+    msgs.forEach(x => sendPlainMessage(x));
+}
+
+function sendPlainMessage(msg) {
+    const l = ["INFO", "BARELY_WARNING", "WARNING", "ERROR"].indexOf(msg.kind);
+
+    if (capturingOutput) {
+        captured.push(msg);
+    } else {
+        incrementTypeCount(msg.kind);
+
+        if (logLevel <= l || l === -1) {
+            if (capturingOutput) {
+                captured.push(msg);
+            } else if(typeof msg.appendix === "string") {
+                appendices.add(msg.appendix);
+            } else {                
+                if (commandLineArguments["agpbi"]) formatAndSendJsonFormat(msg);
+
+                formatAndSendHumanyFormat(msg);
+            }
         }
     }
 }
 
 function incrementTypeCount(kind) {
     kind = ("" + kind).toUpperCase();
-    
-    if(kind in counts) counts[kind]++
+
+    if (kind in counts) counts[kind]++;
 }
 
 function printTypeCounts() {
@@ -109,15 +172,34 @@ function printTypeCounts() {
     );
 }
 
+function printTimingInformation(filesCompiled, timeMs) {
+    const roundedSeconds = Math.round(timeMs / 1000 * 1e5) / 1e5;
+    
+    const timePerFile = roundedSeconds / filesCompiled;
+    const failedTimeGoodness = timePerFile > 1;
+    const timeColour = failedTimeGoodness ? COLOURS.ERROR : COLOURS.BARELY_WARNING;
+    
+    
+    sendRawText(
+        colourString(COLOURS.NUMBER, filesCompiled + " files") + 
+        " processed; took " +
+        colourString(timeColour, roundedSeconds + " seconds") + " in total"
+    );
+}
+
+function resetTypeCounts() {
+    Object.assign(counts, DEFAULT_ZERO_COUNTS);
+}
+
 function maybePlural(num, word) {
-    if(num == 1) return word;
+    if (num == 1) return word;
     else return word + "s";
 }
 
 function formatAndSendJsonFormat(msg) {
-    var f = Object.assign({}, msg);
+    const f = Object.assign({}, msg);
 
-    if(f.kind == "BARELY_WARNING") f.kind = "WARNING";
+    if (f.kind == "BARELY_WARNING") f.kind = "WARNING";
     f.original = humanReadableFormat(msg);
 
     sendRawText("AGPBI: " + JSON.stringify(f));
@@ -134,13 +216,14 @@ function sendRawText(txt) {
 function humanReadableFormat(msg) {
     var mForm = "";
 
-    if(msg.sources) {
+    if (msg.sources) {
         if (msg.sources[0]) {
-            mForm += msg.sources[0].file + ":";
+            if (msg.sources[0].file) mForm += msg.sources[0].file + ":";
+
             if (msg.sources[0].location) {
                 mForm += msg.sources[0].location.startLine + ":";
             }
-            mForm += " ";
+            if (mForm != "") mForm += " ";
         }
     }
 
@@ -158,53 +241,148 @@ function singleLine(t) {
 }
 
 function indent(indentBy, t) {
-    return t.split("\n").map(x=>indentBy + x).join("\n");
+    return t.split("\n").map(x => indentBy + x).join("\n");
 }
 
+/**
+ * 
+ * @param {Partial<CompilerMessage} res 
+ * @param {string?} file 
+ * @param {string?} defaultKind 
+ */
 function sendTreeLocationMessage(res, file, defaultKind) {
-    massageResIntoArrayOfMessages(res, file, defaultKind).forEach(x=>sendPlainMessage(x));
+    sendMessages(massageResIntoArrayOfMessages(res, file, defaultKind));
+}
+
+function sendInternalError(err, file) {
+    if (err === undefined || err === null) return sendInternalError(new Error("undefined internal error"));
+
+    if (err instanceof Error) {
+        sendTreeLocationMessage({
+            kind: "ERROR",
+            text: "Internal Compiler Error",
+            original: `There was an internal error. This file will be skipped, but others will still be compiled.\n` +
+                `Please contact these people in this order: \n` +
+                `1) Connor\n` +
+                `2) Chloe\n` +
+                `\n` +
+                `The stack of the error is below:\n` +
+                err.message + "\n" + err.stack
+        }, file, "ERROR");
+    } else {
+        sendTreeLocationMessage(err, file, "ERROR");
+    }
 }
 
 
+/**
+ * 
+ * @param {Partial<CompilerMessage> | Partial<CompilerMessage>[]} res 
+ * @param {string?} file 
+ * @param {string?} defaultKind 
+ * @returns {AndroidStudioMessage[]}
+ */
 function massageResIntoArrayOfMessages(res, file, defaultKind) {
-    if(res.constructor === Array) return res.map(x=>massageResIntoMessage(x, file, defaultKind));
+    if (res.constructor === Array) return res.map(x => massageResIntoMessage(x, file, defaultKind));
     else return [massageResIntoMessage(res, file, defaultKind)];
 }
 
+/**
+ * @typedef {object} CompilerMessage
+ * @property {"INFO" | "WARNING" | "BARELY_WARNING" | "ERROR"} kind
+ * @property {string} text
+ * @property {string} original
+ * @property {string[]} hints
+ * @property {string?} appendix
+ * @property {import("../autoauto-compiler/compiler/transmutations/text-to-syntax-tree/parser").Location} location
+ */
+
+/**
+ * @typedef {object} AndroidStudioMessage
+ * @property {"INFO" | "WARNING" | "BARELY_WARNING" | "ERROR"} kind
+ * @property {string} text
+ * @property {string} original
+ * @property {AgpbiSource[]} sources
+ */
+
+/**
+ * @typedef {object} AgpbiSource
+ * @property {string} file
+ * @property {AgpbiCursor} location
+ */
+
+/**
+ * @typedef {object} AgpbiCursor 
+ * @property {number} startLine
+ * @property {number} startColumn
+ * @property {number} startOffset
+ * @property {number} endLine
+ * @property {number} endColumn
+ * @property {number} endOffset
+ */
+
+/**
+ * 
+ * @param {Partial<CompilerMessage> | string} res 
+ * @param {string?} file 
+ * @param {string?} defaultKind 
+ * @returns {AndroidStudioMessage}
+ */
 function massageResIntoMessage(res, file, defaultKind) {
-    if(typeof res === "string") res = { text: res };
-    
-    if(!res.kind) res.kind = defaultKind;
-    
-    if(!res.original) res.original = "";
-    
-    if(res instanceof Error) {
+    if (typeof res === "string") res = { text: res };
+
+    if (defaultKind === undefined) defaultKind = "INFO";
+
+    if (!res.kind) res.kind = defaultKind;
+
+    if (!res.original) res.original = "";
+
+    if (res.location && res.location.file) file = res.location.file;
+
+    if (res instanceof Error) {
         res = {
             kind: "ERROR",
             text: res.toString(),
             original: res.toString() + ":\n"
-            + errorResolutionSuggestions(res)
-            + "\n" + res.stack,
+                + errorResolutionSuggestions(res)
+                + "\n" + res.stack,
             location: res.location
         }
     }
 
-    if(res.fail) res.text += " | Skipping File";
+    if (res.fail) res.original += " | Skipping File";
 
-    if(res.sources === undefined) {
-            res.sources = [{
+    if (res.sources === undefined) {
+        res.sources = [{
             file: file
         }];
     }
-    if(res.location && !res.sources[0].location) {
+    if (res.location && !res.sources[0].location) {
         res.sources[0].location = {
-            startLine: res.location.start.line,
-            startColumn: res.location.start.column,
-            startOffset: res.location.start.offset,
-            endLine: res.location.end.line,
-            endColumn: res.location.end.line,
-            endOffset: res.location.end.offset
+            startLine: -1,
+            startColumn: -1,
+            startOffset: -1,
+            endLine: -1,
+            endColumn: -1,
+            endOffset: -1,
         };
+
+
+        if (typeof res.location.start === "object") {
+            Object.assign(res.sources[0].location, {
+                startLine: res.location.start.line,
+                startColumn: res.location.start.column,
+                startOffset: res.location.start.offset
+            });
+        }
+        if (typeof res.location.end === "object") {
+            Object.assign(res.sources[0].location, {
+                endLine: res.location.end.line,
+                endColumn: res.location.end.column,
+                endOffset: res.location.end.offset
+            });
+        }
+
         res.original = formatPointerToCode(file, res.location, res.kind, res.text, res.hints || []) + "\n" + res.original;
         delete res.location;
     }
@@ -212,45 +390,61 @@ function massageResIntoMessage(res, file, defaultKind) {
 }
 
 function formatPointerToCode(file, location, kind, label, hints) {
-    if(!file) return "";
-    
+    if (!file || !location.start || !location.end) return "";
+
+    var fileStack = formatFileStack(location.fileStack);
+
     var fContent = cFs.readFileSync(file).toString();
-    
+
     var lineStart = fContent.lastIndexOf("\n", location.start.offset);
     var lineEnd = fContent.indexOf("\n", location.end.offset);
-    
+
     //give one line of context on either side, if there's space
     if (lineStart != -1) lineStart = fContent.lastIndexOf("\n", lineStart - 1);
-    if(lineStart < 0) lineStart = 0;
-    
+    if (lineStart < 0) lineStart = 0;
+
     if (lineEnd != -1) lineEnd = fContent.indexOf("\n", lineEnd + 1);
     if (lineEnd < 0) lineEnd = fContent.length;
-    
+
     var snippet = fContent.substring(lineStart, lineEnd);
-    
+
     //calculate index of selection within the substring
     var selectionStart = location.start.offset - lineStart;
     var selectionEnd = location.end.offset - lineStart;
-    
+
     var colour = getKindColour(kind);
-    
+
     var selBeg = snippet.substring(1, selectionStart);
     var sel = snippet.substring(selectionStart, selectionEnd);
     var selEnd = snippet.substring(selectionEnd);
-    
+
     var selected = selBeg + colourString(colour, sel) + selEnd;
-    
+
     var selectedWithRowNumbers = addRowNumbers(selected, location.start.line - 1);
     var rowNumberWidth = (location.start.line + 1).toString().length + 3;
-    
+
     var rowWidthUntilSelected = selectionStart - (snippet.lastIndexOf("\n", selectionStart) + 1);
     var margin = " ".repeat(rowWidthUntilSelected + rowNumberWidth);
-    
+
     var pointer = margin + colourString(colour, "^ " + label);
-    
+
     var hintText = hints.map(x => `\n${margin}  ${colourString(COLOURS.HINT, x)}`).join("");
-    
-    return selectedWithRowNumbers + "\n" + pointer +  hintText;
+
+    return fileStack + selectedWithRowNumbers + "\n" + pointer + hintText;
+}
+
+function formatFileStack(stack) {
+    if (stack === undefined) return "";
+
+    const arrow = commandLineArguments.ascii ? "<--" : "\u250c\u2500\u2500";
+
+    var result = "";
+    var pad = " ";
+    for (const file of stack) {
+        result = pad + arrow + file + "\n" + result;
+        pad += " ";
+    }
+    return result;
 }
 
 function getKindColour(kind) {
@@ -258,16 +452,16 @@ function getKindColour(kind) {
 }
 
 function addRowNumbers(text, startRow) {
-    
+
     var rows = extractColorFromRows(text);
-    
+
     var maxRow = startRow + rows.length - 1;
     var w = (maxRow + "").length;
 
     var lineCharacter = commandLineArguments.ascii ? "\u2502" : "|";
-    
+
     return rows
-        .map((x,i)=> {
+        .map((x, i) => {
             var rN = startRow + i;
             return colourString(COLOURS.LINE_NUMBER, `${pad(rN, w)} ${lineCharacter} `) + x.replace(/\r/g, "");
         })
@@ -276,9 +470,9 @@ function addRowNumbers(text, startRow) {
 
 function pad(txt, width) {
     txt += "";
-    
-    while(txt.length < width) txt = " " + txt;
-    
+
+    while (txt.length < width) txt = " " + txt;
+
     return txt;
 }
 
@@ -286,44 +480,25 @@ function extractColorFromRows(string) {
     var colourCodeStack = [];
     var rows = [];
     var row = "";
-    
-    for(var i = 0; i < string.length; i++) {
-        if(string.startsWith("\033[", i)) {
+    var tag = "";
+
+    for (var i = 0; i < string.length; i++) {
+        if (string.startsWith("\u001b[", i)) {
             var end = string.indexOf("m", i);
             tag = string.substring(i, end) + "m";
             i = end;
-            if(tag == "\033[0m") colourCodeStack.pop();
+            if (tag == "\u001b[0m") colourCodeStack.pop();
             else colourCodeStack.push(tag);
             row += tag;
-        } else if(string[i] == "\n") {
-            var r = colourCodeStack.join("") + row + "\033[0m";
+        } else if (string[i] == "\n") {
+            var r = colourCodeStack.join("") + row + "\u001b[0m";
             row = "";
             rows.push(r);
         } else {
-            if(string[i] != "\r") row += string[i];
+            if (string[i] != "\r") row += string[i];
         }
     }
-    rows.push(colourCodeStack.join("") + row + "\033[0m");
-    
+    rows.push(colourCodeStack.join("") + row + "\u001b[0m");
+
     return rows;
-}
-
-function colourString(colour, string) {
-    var ctrl = "\033[";
-    var cCode = `${ctrl}38;5;${ rgb216(colour) }m`;
-    var rCode = `${ctrl}0m`;
-    
-    return `${cCode}${string}${rCode}`;
-}
-
-function rgb216(r, g, b) {
-    if (typeof r === "string") {
-        r = r.replace("#", "");
-
-        b = (parseInt(r.substring(4, 6), 16) / 0xff) || 0;
-        g = (parseInt(r.substring(2, 4), 16) / 0xff) || 0;
-        r = (parseInt(r.substring(0, 2), 16) / 0xff) || 0;
-    }
-    var rf = Math.round(r * 5), gf = Math.round(g * 5), bf = Math.round(b * 5);
-    return (rf * 36) + (gf * 6) + (bf) + 16
 }
