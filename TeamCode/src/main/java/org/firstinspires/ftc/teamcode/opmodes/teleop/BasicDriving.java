@@ -85,7 +85,7 @@ public class BasicDriving extends OpMode {
         telemetry.addData("FR Power", driver.frontRight.getPower());
         telemetry.addData("BR Power", driver.backLeft.getPower());
         telemetry.addData("BL Power", driver.backRight.getPower());
-        dashboard.sendTelemetryPacket(packet);
+        //dashboard.sendTelemetryPacket(packet);
         double coordx = 0.0;
         double coordy = 0.0;
         double[] pointsX = {coordx, coordx + 24, coordx + 24, coordx, coordx};

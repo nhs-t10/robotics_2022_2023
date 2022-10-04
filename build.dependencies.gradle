@@ -24,5 +24,7 @@ dependencies {
     implementation ('com.acmerobotics.dashboard:dashboard:0.4.5') {
         exclude group: 'org.firstinspires.ftc'
     }
+
+    implementation 'com.acmerobotics.dashboard:dashboard:0.4.5'
 }
 
