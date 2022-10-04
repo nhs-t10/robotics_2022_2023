@@ -28,11 +28,11 @@ public class RobotConfiguration {
      */
     public final double encoderTicksPerRotation;
     /**
-     * The gear ratio of the main drive motors.
+     * The gear ratio of the main org.firstinspires.ftc.teamcode.drive motors.
      */
     public final double gearRatio;
     /**
-     * The diameter of the main drive wheels, in centimeters
+     * The diameter of the main org.firstinspires.ftc.teamcode.drive wheels, in centimeters
      */
     public final double wheelDiameterCm;
     /**
@@ -40,7 +40,7 @@ public class RobotConfiguration {
      */
     public final double slip;
     /**
-     * The circumference of the main drive wheels, in centimeters
+     * The circumference of the main org.firstinspires.ftc.teamcode.drive wheels, in centimeters
      */
     public final double wheelCircumference;
 

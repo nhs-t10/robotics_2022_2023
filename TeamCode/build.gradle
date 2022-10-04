@@ -25,6 +25,10 @@ dependencies {
     implementation 'junit:junit:4.13.2'
     testImplementation 'junit:junit:4.13.2'
     implementation 'org.jetbrains:annotations-java5:23.0.0'
+    implementation 'org.apache.commons:commons-math3:3.6.1'
+
+    implementation 'com.acmerobotics.roadrunner:core:0.5.5'
+
 }
 
 

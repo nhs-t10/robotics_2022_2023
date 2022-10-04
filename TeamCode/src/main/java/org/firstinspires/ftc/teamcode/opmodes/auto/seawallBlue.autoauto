@@ -1,9 +1,9 @@
 goto getBall;
 
 #getBall:
-    driveOmni(0, -1, 0), after 30cm next; //drive right to get behind the ball
-    driveOmni(1, 0, 0), after 18cm next; //drive forwards; get right behind the ball, but don't hit it
-    driveOmni(0.3, 0, 0), after 40cm next; //drive forwards slowly so the ball doesn't NYOOM all over the place
+    driveOmni(0, -1, 0), after 30cm next; //org.firstinspires.ftc.teamcode.drive right to get behind the ball
+    driveOmni(1, 0, 0), after 18cm next; //org.firstinspires.ftc.teamcode.drive forwards; get right behind the ball, but don't hit it
+    driveOmni(0.3, 0, 0), after 40cm next; //org.firstinspires.ftc.teamcode.drive forwards slowly so the ball doesn't NYOOM all over the place
     goto deliverBall;
 #deliverBall:
     driveOmni(-1, 0, 0), after 3cm next; //back a bit
