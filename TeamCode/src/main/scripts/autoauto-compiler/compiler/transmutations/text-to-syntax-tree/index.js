@@ -1,18 +1,18 @@
+"use strict";
+
 var parser = require("./parser");
 var makeHints = require("./hints");
 
 module.exports = function(context) {
     try {
-        context.output = parser(context.lastInput);
+        context.output = parser(context.lastInput, context.sourceFullFileName);
         context.status = "pass";
     } catch(e) {
-        var basic = "Unexpected " + JSON.stringify(e.found);
-        
         var hints = makeHints(context.lastInput, e);
         
         throw {
             kind: "ERROR",
-            text: basic,
+            text: e.text || e.message || "Parsing error",
             original: e.message,
             hints: hints,
             location: e.location,

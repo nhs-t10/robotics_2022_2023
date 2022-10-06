@@ -1,3 +1,5 @@
+"use strict";
+
 var crypto = require("crypto");
 
 var fs = require("fs");
@@ -8,10 +10,11 @@ const structuredSerialise = require("../script-helpers/structured-serialise");
 const cleanOldCache = require("./clean-old-cache");
 const cacheMetadata = require("./cache-metadata");
 const androidStudioLogging = require("../script-helpers/android-studio-logging");
+const { shaJSON } = require("../script-helpers/sha-string");
 
 const CACHE_DIR = findCacheDirectory();
 const CACHE_MAX_BYTES = 20_000_000; //20 MB
-const CACHE_META_FILE = path.join(__dirname, ".cache.meta.json");
+const CACHE_META_FILE = path.join(CACHE_DIR, ".cache.meta.json");
 
 
 var cacheMeta = cacheMetadata(CACHE_META_FILE);
@@ -20,7 +23,7 @@ cleanOldCache(cacheMeta.getDataObject(), CACHE_DIR, CACHE_MAX_BYTES);
 
 module.exports = {
     save: function(key, value) {
-        var encodedKey = sha(key);
+        var encodedKey = shaJSON(key);
         var filename = keyFile(encodedKey);
         var dataBuffer = serialiseData(value);
 
@@ -29,7 +32,7 @@ module.exports = {
         safeFsUtils.safeWriteFile(filename, dataBuffer);
     },
     get: function(key, defaultValue) {
-        var encodedKey = sha(key);
+        var encodedKey = shaJSON(key);
         
         var file = keyFile(encodedKey);
         
@@ -37,7 +40,7 @@ module.exports = {
         else return defaultValue;
     },
     remove: function(key) {
-        var encodedKey = sha(key);
+        var encodedKey = shaJSON(key);
         var file = keyFile(encodedKey);
         cacheMeta.removeKey(encodedKey);
         if(fs.existsSync(file)) fs.unlinkSync(file);
@@ -96,8 +99,3 @@ function keyFile(encodedKey, n, pfx) {
 
     return path.join(pfx, encodedKey.substring(0,n), encodedKey.substring(n) + ".cached");
 }
-
-function sha(k) {
-    return crypto.createHash("sha256").update(JSON.stringify(k)).digest("hex");
-}
-

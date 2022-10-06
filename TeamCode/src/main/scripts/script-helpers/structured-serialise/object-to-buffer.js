@@ -3,14 +3,18 @@
 const version = require("./version");
 const magic = require("./magic");
 
-const typeCodes = require("./types");
+const { t_array, t_boolean, t_null, t_number, t_object, t_string, t_undefined, t_wellKnownObject } = require("./types");
 const wellKnownConstructors = require("./well-known-constructors");
+
+const v8 = require("v8");
 
 const VALUE_ENTRY_HEADER_SIZE = 5;
 
 module.exports = objectToBuffer;
 
 function objectToBuffer(obj) {
+    if("serialize" in v8) return addHeaderToBuffer(v8.serialize(obj), version.V8_SERIAL);
+
     const valuePool = {
         pool: [],
         invertedPoolMap: new Map()
@@ -22,7 +26,7 @@ function objectToBuffer(obj) {
 }
 
 function poolToBuffer(pool) {
-    return addHeaderToBuffer(Buffer.concat(pool));
+    return addHeaderToBuffer(Buffer.concat(pool), version.CUSTOM_SERIAL);
 }
 
 //WARNING: USES UNSAFE MEMORY THINGS.
@@ -38,28 +42,28 @@ function poolToBuffer(pool) {
  * @param {Buffer} originBlob 
  * @returns Buffer
  */
-function addHeaderToBuffer(originBlob) {
+function addHeaderToBuffer(originBlob, versionNumber) {
     const magicLen = magic.length;
     const b = Buffer.allocUnsafe(magicLen + 1 + originBlob.length);
 
     for(let i = 0; i < magicLen; i++) b[i] = magic[i];
-    b[magicLen] = version;
+    b[magicLen] = versionNumber;
     originBlob.copy(b, magicLen + 1, 0, originBlob.length);
     
     return b;
 }
 
 function createOrGetIdInValuepool(obj, valuePool) {
-
-    const type = getStructureType(obj);
-
-    if(valuePool.invertedPoolMap.has(obj)) return valuePool.invertedPoolMap.get(obj);
-
-    const entryId = valuePool.pool.length++
+    if (valuePool.invertedPoolMap.has(obj)) return valuePool.invertedPoolMap.get(obj);
+    
+    const type = getStructureType(obj) | 0;
+    const entryId = (valuePool.pool.length++) | 0;
     valuePool.invertedPoolMap.set(obj, entryId);
 
     const vBytes = getValueBytes(type, obj, valuePool);
     vBytes.writeUInt8(type, 0);
+    
+    if(vBytes.length - VALUE_ENTRY_HEADER_SIZE >= 0xFFFFFFFF) throw "Serialization of value results in a chunk over 0xFFFFFFFF bytes long";
     vBytes.writeUInt32LE(vBytes.length - VALUE_ENTRY_HEADER_SIZE, 1);
     
     valuePool.pool[entryId] = vBytes;
@@ -69,16 +73,16 @@ function createOrGetIdInValuepool(obj, valuePool) {
 
 function getValueBytes(type, obj, valuePool) {
     switch (type) {
-        case typeCodes.boolean: return getBooleanBuffer(obj);
-        case typeCodes.number: return getNumberBuffer(obj);
-        case typeCodes.string: return getStringBuffer(obj);
-        case typeCodes.array: return getArrayElementBytes(obj, valuePool);
-        case typeCodes.object: return getEntriesBytes(obj, valuePool, 0);
-        case typeCodes.wellKnownObject:
+        case t_boolean: return getBooleanBuffer(obj);
+        case t_number: return getNumberBuffer(obj);
+        case t_string: return getStringBuffer(obj);
+        case t_array: return getArrayElementBytes(obj, valuePool);
+        case t_object: return getEntriesBytes(obj, valuePool, VALUE_ENTRY_HEADER_SIZE);
+        case t_wellKnownObject:
             //wellknownobjects record their constructor so they can be re-constructed later
             return getWellKnownObjectBytes(obj, valuePool); 
-        case typeCodes.undefined:
-        case typeCodes.null:
+        case t_undefined:
+        case t_null:
         default: 
             //null and undefined will fall down here
             return Buffer.allocUnsafe(VALUE_ENTRY_HEADER_SIZE);
@@ -110,14 +114,17 @@ function getStringBuffer(str) {
 function getStructureType(obj) {
     const type = typeof obj;
     
-    if(obj === null) {
-        return typeCodes.null;
-    } else if(Array.isArray(obj)) {
-        return typeCodes.array;
-    } else if (type === "object" && wellKnownConstructors.isWellKnownObject(obj)) {
-        return typeCodes.wellKnownObject;
-    } else {
-        return typeCodes[type];
+    if(obj === null) return t_null; 
+    if(Array.isArray(obj)) return t_array;
+    if (type === "object" && obj.constructor != Object && wellKnownConstructors.isWellKnownObject(obj)) return t_wellKnownObject;
+    
+    switch(type) {
+        case "boolean": return t_boolean;
+        case "number": return t_number;
+        case "string": return t_string;
+        case "object": return t_object;
+        case "undefined": return t_undefined;
+        default: throw new Error("Error serialising value of type " + type);
     }
 }
 
@@ -125,9 +132,12 @@ function getArrayElementBytes(arr, valuePool) {
     const b = Buffer.allocUnsafe(arr.length * 4 + VALUE_ENTRY_HEADER_SIZE);
     
     let i = VALUE_ENTRY_HEADER_SIZE;
-    for(const elem of arr) {
-        b.writeUInt32LE(createOrGetIdInValuepool(elem, valuePool), i);
-        i += 4;
+    //This `Array.isArray` check will always evaluate to true. It's still here because V8 can optimize the `for` loop better with that assurance.
+    if(Array.isArray(arr)) {
+        for(const elem of arr) {
+            b.writeUInt32LE(createOrGetIdInValuepool(elem, valuePool), i);
+            i += 4;
+        }
     }
     
     return b;
@@ -135,9 +145,9 @@ function getArrayElementBytes(arr, valuePool) {
 
 function getEntriesBytes(obj, valuePool, requiredHeaderLength) {
     const keys = Object.keys(obj)
-    const b = Buffer.allocUnsafe(keys.length * 8 + requiredHeaderLength + VALUE_ENTRY_HEADER_SIZE);
+    const b = Buffer.allocUnsafe(keys.length * 8 + requiredHeaderLength);
     
-    let i = requiredHeaderLength + VALUE_ENTRY_HEADER_SIZE;
+    let i = requiredHeaderLength;
     for(const prop of keys) {
         b.writeUInt32LE(createOrGetIdInValuepool(prop, valuePool), i);
         b.writeUInt32LE(createOrGetIdInValuepool(obj[prop], valuePool), i + 4);
@@ -158,7 +168,7 @@ function getWellKnownObjectBytes(obj, valuePool) {
 
 function writeWellKnownInfo(obj, valuePool, resultInfoBuffer, offset) {
 
-    var constructorName = wellKnownConstructors.getName(obj);
+    var constructorName = wellKnownConstructors.getConstructorName(obj);
     var constructorPoolId = createOrGetIdInValuepool(constructorName, valuePool);
     
     var paramVal = undefined;

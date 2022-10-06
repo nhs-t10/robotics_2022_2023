@@ -1,3 +1,5 @@
+"use strict";
+
 const emptyblock = require("./check-sources/emptyBlock");
 const noStatepaths = require("./check-sources/noStatepaths");
 const singleStatementBlock = require("./check-sources/singleStatementBlock");

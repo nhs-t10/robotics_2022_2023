@@ -1,3 +1,5 @@
+"use strict";
+
 const bcMnemoms = require("./bc");
 
 module.exports = {

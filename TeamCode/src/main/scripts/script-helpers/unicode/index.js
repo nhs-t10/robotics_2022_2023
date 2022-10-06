@@ -1,3 +1,5 @@
+"use strict";
+
 var homoglyphs = require("./homoglyphs.json");
 var table = require("./table.json");
 

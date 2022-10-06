@@ -1,10 +1,12 @@
+"use strict";
+
 module.exports = Object.freeze({
-    "undefined": 85, //ascii U
-    "boolean": 66, //ascii B
-    "number": 78, //ascii N
-    "string": 83, //ascii S 
-    "object": 79, //ascii O
-    "null": 95, //ascii _
-    "wellKnownObject": 67, //ascii C (for Constructor)
-    "array": 65 //ascii A
+    "t_undefined": 85, //ascii U
+    "t_boolean": 66, //ascii B
+    "t_number": 78, //ascii N
+    "t_string": 83, //ascii S 
+    "t_object": 79, //ascii O
+    "t_null": 95, //ascii _
+    "t_wellKnownObject": 67, //ascii C (for Constructor)
+    "t_array": 65 //ascii A
 });

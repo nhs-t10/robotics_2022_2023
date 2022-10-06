@@ -1,3 +1,5 @@
+"use strict";
+
 var astTools = require("./ast-tools");
 
 module.exports = function run(context) {

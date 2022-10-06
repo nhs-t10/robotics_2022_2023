@@ -1,0 +1,5 @@
+$
+    compilerMode: "lib"
+$
+
+provide(module_args[0] - 2)

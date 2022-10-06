@@ -1,20 +1,20 @@
+"use strict";
+
 const commandLineInterface = require("../../../../../../command-line-interface/index.js");
 const processHistory = require("./process-history.js");
 const path = require("path");
 
 /**
- * 
- * @param {import("../../../../transmutations").TransmutateContext} context
- * @param {*} contexts 
+ * @type {import("../../..").CodebaseTransmutateFunction}
  */
 module.exports = async function(context, contexts) {
     
-    const srcDirectory = context.sourceRoot;
+    const srcDirectories = context.sourceRoots;
     const assetsDir = context.assetsRoot;
     const genDirectory = context.resultRoot;
     
     if (commandLineInterface["build-history"]) {
-        var buildHistoryFile = await processHistory(srcDirectory, assetsDir, genDirectory)
+        var buildHistoryFile = await processHistory(srcDirectories, assetsDir, genDirectory)
         context.writtenFiles[buildHistoryFile] = true;
     }
 }

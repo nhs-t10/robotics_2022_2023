@@ -1,7 +1,9 @@
+"use strict";
+
 var hintFunctions = [gitMerge];
 
 module.exports = function(fileContent, syntaxError) {
-    var hints = [];
+    var hints = syntaxError.hints || [];
     for(var i = 0; i < hintFunctions.length; i++) {
         var h = hintFunctions[i](fileContent, syntaxError);
         if(h) hints.push("hint: " + h);

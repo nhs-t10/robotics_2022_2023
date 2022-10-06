@@ -1,3 +1,5 @@
+"use strict";
+
 
 
 module.exports = {
@@ -6,9 +8,19 @@ module.exports = {
     unexpectedError: unexpectedError
 }
 
+/**
+ * 
+ * @param {import("./token-stream").TokenStream} tokenStream 
+ * @param {import("./base-token-types").tokenId} name 
+ * @param {string} message 
+ * @param {string[]?} hints 
+ * @returns {import("./lexer").AutoautoToken} the token which was expected
+ */
 function expect(tokenStream, name, message, hints) {
     const p = tokenStream.pop();
-    if (p.name != name) throw {
+    
+    
+    if (!p || p.name != name) throw {
         location: p.location,
         message: message + " " + p.name + " '" + p.content + "'",
         hints: hints
@@ -18,7 +30,12 @@ function expect(tokenStream, name, message, hints) {
 }
 
 
-
+/**
+ * 
+ * @param {string} message 
+ * @param {import(".").Location} location 
+ * @param {string[]?} hints
+ */
 function improperContextError(message, location, hints) {
     return {
         message: message,
@@ -29,6 +46,13 @@ function improperContextError(message, location, hints) {
     }
 }
 
+/**
+ * 
+ * @param {string} name 
+ * @param {import(".").Location} location 
+ * @param {import("./base-token-types").tokenId} tokenName 
+ * @param {string[]?} hints 
+ */
 function unexpectedError(name, location, tokenName, hints) {
     return {
         hints: hints,

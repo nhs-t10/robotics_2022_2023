@@ -28,12 +28,12 @@ public class OpmodeTester {
         return runTestOn(opmode, DEFAULT_SIMULATED_MS);
     }
     public static synchronized boolean runTestOn(OpMode opmode, long simulatedMsFor) {
-        return runTestOn(opmode, simulatedMsFor, DEFAULT_INLOOP_FUNCTION);
+        return runTestOn(opmode, simulatedMsFor, simulatedMsFor);
     }
-    public static synchronized boolean runTestOn(OpMode opmode, long simulatedMsFor, RunWhileInLoopFunction function) {
-        return runTestOn(opmode, simulatedMsFor, function, DEFAULT_REALTIME_MS);
+    public static synchronized boolean runTestOn(OpMode opmode, long simulatedMsFor, long realMsFor) {
+        return runTestOn(opmode, simulatedMsFor, realMsFor, DEFAULT_INLOOP_FUNCTION);
     }
-    public static synchronized boolean runTestOn(OpMode opmode, long simulatedMsFor, RunWhileInLoopFunction function, long realMsFor) {
+    public static synchronized boolean runTestOn(OpMode opmode, long simulatedMsFor, long realMsFor, RunWhileInLoopFunction function) {
         synchronized (TEST_LOCK) {
             PrintStream originalStdout = FeatureManager.logger.fallbackBackend;
             DummyPrintStream fakeStdout = new DummyPrintStream(new DummyOutputStream());

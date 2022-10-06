@@ -1,3 +1,5 @@
+"use strict";
+
 var INDENTATION = "    ";
 
 module.exports = function(src, baseLevel) {

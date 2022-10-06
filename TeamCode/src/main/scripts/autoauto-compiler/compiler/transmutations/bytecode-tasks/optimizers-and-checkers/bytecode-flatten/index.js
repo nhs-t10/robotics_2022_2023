@@ -1,28 +1,46 @@
+"use strict";
+
 var calculateBlockLength = require("./block-length");
 var replaceLabelWithIndex = require("./label-to-index");
 var flattenBlock = require("./block-flatten");
 var makeOrderedBlocks = require("./ordered-block-array");
+const { structuredClone } = require("../../../../../../script-helpers/structured-serialise");
 
+/**
+ * 
+ * @typedef {import("../../syntax-tree-to-bytecode/ast-to-bytecode").Block} Block
+ * @typedef {import("../../syntax-tree-to-bytecode/ast-to-bytecode").Bytecode} Bytecode
+ */
+
+/**
+ * 
+ * @param {import("../../../../transmutations").TransmutateContext} context
+ */
 module.exports = function run(context) {
-    var bytecode = context.lastInput;
+    var bytecode = structuredClone(context.lastInput);
+    /** @type {Block[]} */
     var blocks = makeOrderedBlocks(bytecode);
 
     //calculate how long each block will be, when it's flattened
-    blocks.forEach(x => x.length = calculateBlockLength(x));
+    var lengths = blocks.map(x => calculateBlockLength(x));
 
     //use that to calculate each block's offset
     var o = 0;
-    blocks.forEach(x => {
-        x.offset = o;
-        o += x.length;
+    var offsets = {};
+    blocks.forEach((x,i) => {
+        offsets[x.label] = o;
+        o += lengths[i];
     });
 
-    //replace labeled jumps with bytecode-number jumps
-    blocks.forEach(x => replaceLabelWithIndex(x, bytecode));
+    /** @type {Bytecode[]}*/
+    const flatBc = [];
 
-    //and finally, flatten! this WILL remove blocks.
-    var flatBc = blocks.map(x => flattenBlock(x)).flat(1);
+    //flatten each block into bytecodes, and add them to the flatBc array
+    for(const b of blocks) {
+        flatBc.push(...flattenBlock(b));
+    }
 
-    context.output = flatBc;
+    //replace labeled jumps with relative bytecode-number jumps
+    context.output = replaceLabelWithIndex(flatBc, offsets);
     context.status = "pass";
 }

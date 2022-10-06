@@ -1,2 +1,6 @@
+$
+    compilerMode: "lib"
+$
+
 #b:
 log(module_args[0] + " 33!")

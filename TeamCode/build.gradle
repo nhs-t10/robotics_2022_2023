@@ -12,10 +12,8 @@
 // Custom definitions may go here
 plugins {
     id "com.github.node-gradle.node" version "3.0.1"
-    id "org.sonarqube" version "3.3"
 }
 
-apply plugin: 'jacoco'
 
 // Include common definitions from above.
 apply from: '../build.common.gradle'
@@ -27,23 +25,29 @@ dependencies {
     implementation 'junit:junit:4.13.2'
     testImplementation 'junit:junit:4.13.2'
     implementation 'org.jetbrains:annotations-java5:23.0.0'
+    implementation 'org.apache.commons:commons-math3:3.6.1'
+
+    implementation 'com.acmerobotics.roadrunner:core:0.5.5'
+
 }
 
 
 task autoautoCompiler(type: NodeTask) {
-    args = ["--build-history", "--agpbi"]
-    script = file("src/main/scripts/autoauto-compiler/index.js")
-}
+    args = ["--build-history", "--agpbi", "--make-tests", "--run-cleanup",
+            //The `--in` and `--out` arguments use GStrings, a fancy way of putting strings together.
+            //See <http://docs.groovy-lang.org/latest/html/documentation/index.html#all-strings> for more info.
 
-sonarqube {
-    properties {
-        property "sonar.projectKey", "nhs-t10_Robotics_2021_2022"
-        property "sonar.organization", "nhs-t10"
-        property "sonar.host.url", "https://sonarcloud.io"
-        property "sonar.exclusions", "**/unitTests/**"
-        property "sonar.java.coveragePlugin", "jacoco"
-        property "sonar.coverage.jacoco.xmlReportPaths", "build/reports/coverage/test/debug/report.xml"
-    }
+            "--in=${file("src/main/java")}", "--in=${file("src/test/java")}", //Directories to take Autoauto files from
+            "--out=${file("gen")}", //directory to put generated opmodes into
+            "--test-dir=${file("src/test/java")}", //directory to toss tests into
+            "--assets-dir=${file("src/main/assets")}", //directory to put build-history into
+
+            "--java-class-suffix=Manager", //only look for methods in java classes that end with 'Manager'
+            "--java-functions-dir=${file("src/main/java/org/firstinspires/ftc/teamcode/managers")}", //directory to look for Java methods in
+
+            "--output-java-template=${file("src/main/java/org/firstinspires/ftc/teamcode/autoauto-template.notjava")}" //template for autoauto opmodes
+    ]
+    script = file("src/main/scripts/autoauto-compiler/index.js")
 }
 
 android {
@@ -53,11 +57,7 @@ android {
     gradle.projectsEvaluated {
         preBuild.dependsOn(autoautoCompiler)
     }
-    buildTypes {
-        debug {
-            testCoverageEnabled = true
-        }
-    }
+
     sourceSets {
         test {
             java.srcDir("gen/")
@@ -65,22 +65,10 @@ android {
         }
         debug {
             java.srcDir("gen/")
-            java.srcDir("src/test/java")
         }
         main {
             java.srcDir("gen/")
 
-        }
-    }
-    jacoco {
-        version = '0.7.9'
-    }
-    testOptions {
-        unitTests.all {
-            reports {
-                junitXml.enabled = true
-            }
-            ignoreFailures = true
         }
     }
     defaultConfig {

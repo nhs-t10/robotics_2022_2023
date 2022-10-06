@@ -1,4 +1,7 @@
+"use strict";
+
 var crypto = require("crypto");
+const { sha } = require("../../script-helpers/sha-string");
 
 var familyRecords = {};
 
@@ -68,10 +71,6 @@ function fullColorScheme(build) {
     }
 
     return colours;
-}
-
-function sha(t) {
-    return crypto.createHash("sha256").update(t + "").digest("hex");
 }
 
 function shade(color, coef) {

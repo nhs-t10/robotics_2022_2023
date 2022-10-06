@@ -1,3 +1,5 @@
+"use strict";
+
 var binaryTools = require("./binary.js");
 
 var crcTable = (function(){

@@ -1,3 +1,5 @@
+"use strict";
+
 var generate = require("./generate");
 module.exports = function(seed) {
     var seedBuffer = Buffer.from(seed || randomSeed(), "hex");

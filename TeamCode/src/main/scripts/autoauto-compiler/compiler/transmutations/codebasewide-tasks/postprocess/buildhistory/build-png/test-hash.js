@@ -1,3 +1,5 @@
+"use strict";
+
 var badPercepHash = require("./bad-percep-hash");
 
 var ins = process.argv.slice(2);

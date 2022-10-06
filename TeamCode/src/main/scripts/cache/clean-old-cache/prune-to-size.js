@@ -1,3 +1,5 @@
+"use strict";
+
 const safeFsUtils = require("../../script-helpers/safe-fs-utils");
 
 module.exports = function(cacheMeta, cacheDir, cacheMaxBytes) {
@@ -23,7 +25,9 @@ module.exports = function(cacheMeta, cacheDir, cacheMaxBytes) {
 }
 
 function removeMetaEntry(cacheMeta, cacheMetaEntry) {
-    console.warn("Flushing cache entry " + cacheMetaEntry.key);
-    delete cacheMeta[cacheMetaEntry.key];
-    fs.unlinkSync(cacheMetaEntry.file);
+    if(cacheMetaEntry != undefined) {
+        console.warn("Flushing cache entry " + cacheMetaEntry.key);
+        delete cacheMeta[cacheMetaEntry.key];
+        fs.unlinkSync(cacheMetaEntry.file);
+    }
 }

@@ -1,6 +1,14 @@
+"use strict";
+
 const baseTokenTypes = require("./base-token-types");
 
-module.exports = function* lexer(fileText) {
+/**
+ * 
+ * @param {string} fileText 
+ * @param {string} file 
+ * @returns {Generator<AutoautoToken, never, unknown>}
+ */
+module.exports = function* lexer(fileText, file) {
     let line = 1, column = 0;
     
     for(var i = 0; i < fileText.length; i++) {
@@ -22,7 +30,7 @@ module.exports = function* lexer(fileText) {
             if(regexResult && regexResult.index == 0) {
                 const lineColInMatch = lineColumnCount(regexResult[0], column, line);
                 
-                yield assembleResultToken(lexRule, regexResult, line, column, i, lineColInMatch.line, lineColInMatch.col, i + regexResult[0].length);
+                yield assembleResultToken(lexRule, regexResult, line, column, i, lineColInMatch.line, lineColInMatch.col, i + regexResult[0].length, file);
                 
                 column = lineColInMatch.col | 0;
                 line = lineColInMatch.line | 0;
@@ -33,18 +41,29 @@ module.exports = function* lexer(fileText) {
             }
         }
         if(!matched) {
+            const ln = { line: line, column: column, offset: i }
             throw {
-                location: { line: line, column: column, offset: i},
+                location: {start: ln, end: ln, file: file},
                 message: "Invalid token '" + forRegex.substring(0, 10) + "...'"
             }
         }
     }
     
-    yield assembleResultToken({ name: "EOF" }, [""], line, column, fileText.length, line, column, fileText.length);
+    while(true) {
+        yield assembleResultToken({ name: "EOF" }, [""], line, column, fileText.length, line, column, fileText.length, file);
+    }
 }
 
+/**
+ * Calculates the amount of lines and columns in a piece of text, and then
+ * returns a relative offset from the startCol and startLine, respectively.
+ * @param {string} text 
+ * @param {number} startCol 
+ * @param {number} startLine 
+ * @returns {{line: number, col: number}}
+ */
 function lineColumnCount(text, startCol, startLine) {
-    let lines = occurances(text, "\n");
+    let lines = occurances("\n", text);
     if(lines == 0) {
         return {
             line: startLine,
@@ -59,42 +78,50 @@ function lineColumnCount(text, startCol, startLine) {
     }
 }
 
+/**
+ * 
+ * @param {string} char 
+ * @param {string} str 
+ * @returns {number}
+ */
 function occurances(char, str) {
     let count = 0;
-    for(var i = 0; i < str.length; i++) {
-        if(str[i] == char) count++;
+    for(const chIndex of str) {
+        if (chIndex == char) count++;
     }
     return count;
 }
 
-function assembleResultToken(lexRule, regexResult, startLine, startColumn, startOffset, endLine, endColumn, endOffset) {
+/**
+ * 
+ * @param {import("./base-token-types").LexerRule} lexRule 
+ * @param {RegExpExecArray} regexResult 
+ * @param {number} startLine 
+ * @param {number} startColumn 
+ * @param {number} startOffset 
+ * @param {number} endLine 
+ * @param {number} endColumn 
+ * @param {number} endOffset 
+ * @param {string} file 
+ * @returns {AutoautoToken}
+ */
+function assembleResultToken(lexRule, regexResult, startLine, startColumn, startOffset, endLine, endColumn, endOffset, file) {
     return {
         name: lexRule.name,
         content: regexResult[0],
         regex: regexResult,
         location: {
             start: { line: startLine, column: startColumn, offset: startOffset },
-            end: { line: endLine, column: endColumn, offset: endOffset }
+            end: { line: endLine, column: endColumn, offset: endOffset },
+            file: file
         }
     }
 }
 
 /**
- * @typedef {object} token
- * @property {string} name
+ * @typedef {object} AutoautoToken
+ * @property {import("./base-token-types").tokenId} name
  * @property {string} content
- * @property {locationRange} location
- */
-
-/**
- * @typedef {object} locationRange
- * @property {locationPoint} start 
- * @property {locationPoint} end
- */
-
-/**
- * @typedef {object} locationPoint
- * @property {number} line
- * @property {number} column
- * @property {number} offset
+ * @property {RegExpExecArray} regex
+ * @property {import(".").RealSourceCodeLocation} location
  */

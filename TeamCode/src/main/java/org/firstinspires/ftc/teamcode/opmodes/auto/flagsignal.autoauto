@@ -1,0 +1,10 @@
+#init:
+    driveOmni(1, 0, 0), after 13in next;
+    let cv_magic = getCVNumberForTesting(), next;
+    if(cv_magic == 1) {goto blue} else goto red
+    #blue:
+    pass
+    //do stuff
+    #red:
+    pass
+    //do stuff

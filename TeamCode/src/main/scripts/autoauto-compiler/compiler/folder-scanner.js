@@ -1,5 +1,8 @@
+"use strict";
+
 const path = require("path");
 const fs = require("fs");
+const { sendTreeLocationMessage } = require("../../script-helpers/android-studio-logging");
 
 module.exports = folderScanner
 
@@ -9,14 +12,39 @@ module.exports = folderScanner
  * @returns {boolean} Whether or not to include the file.
  */
 
+
 /**
  * 
- * @param {string} folder folder to search. Should exist.
+ * @param {string | string[]} folder folder(s) to search. May exist or not.
+ * @param {string|includeFileCallback} extension Either a string file extension, or a function used to filter files.
+ * @param {boolean} [requiresSort] if the output requires a defined order. Default: false.
+ * @param {boolean} includeRoot If `true`, yields an array for each item. The array holds the root directory and the file address, in that order. Default: false.
+ * @returns {Generator<Promise<string | string[]>, undefined, undefined>}
+ */
+async function* folderScanner(folders, extension, requiresSort, includeRoot) {
+    if (typeof folders === "string") {
+        for await (const file of individualFolderScanner(folders, extension, requiresSort)) {
+            yield file;
+        }
+    } else {
+        for (const folder of folders) {
+            for await (const file of individualFolderScanner(folder, extension, requiresSort)) {
+                if(includeRoot) yield [folder, file];
+                else yield file;
+            }
+        }
+    }
+    return undefined;
+}
+
+/**
+ * 
+ * @param {string} folder folder to search. May exist or not.
  * @param {string|includeFileCallback} extension Either a string file extension, or a function used to filter files.
  * @param {boolean?} requiresSort if the output requires a defined order. Default: false.
  * @returns 
  */
-async function* folderScanner(folder, extension, requiresSort) {
+async function* individualFolderScanner(folder, extension, requiresSort) {
     let folderContents = await getMatchingFolderContents(folder, extension, requiresSort);
 
 
@@ -39,11 +67,24 @@ async function getMatchingFolderContents(folder, extension, requiresSort) {
         typeof extension === "undefined" ? ()=>true :
             x => x.endsWith(extension);
     
-    return new Promise(function(resolve, reject) {
+    return new Promise(function(resolve, reject) {        
         fs.readdir(folder, {
             withFileTypes: true
         }, function(err, names) {
-            if(err) reject(err);
+            if(err) {
+                if (err.errno === -4058) {
+                    sendTreeLocationMessage({
+                        text: "Searched folder doesn't exist",
+                        original: "The compiler attempted to search the folder '" + folder + "', but it doesn't exist",
+                        kind: "WARNING"
+                    });
+                    return resolve([]);
+                } else if (err.errno === -4052) {
+                    return resolve([{ name: folder }]);
+                } else {
+                    return reject(err);
+                }
+            }
             
             const filepaths = [];
 

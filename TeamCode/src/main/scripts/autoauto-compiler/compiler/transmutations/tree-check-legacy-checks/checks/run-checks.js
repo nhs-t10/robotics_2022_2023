@@ -1,3 +1,5 @@
+"use strict";
+
 var fs = require("fs");
 var path = require("path");
 var androidStudioLogging = require("../../../../../script-helpers/android-studio-logging");
@@ -37,13 +39,4 @@ function shouldStopAnalysis(messageArray) {
     if(typeof messageArray.find != "function") messageArray = [messageArray];
     
     return !!messageArray.find(x=>x instanceof Error || x.kind == "ERROR" || x.fail == true);
-}
-
-
-function loadChecksFromFiles(files) {
-    return files.map(x=> {
-        var check = require(x);
-        check.id = path.basename(x).replace(".js", "").toUpperCase();
-        return check;
-    });
 }

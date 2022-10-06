@@ -1,9 +1,6 @@
+"use strict";
+
 module.exports = {
-    "var module_args@0": {
-        type: "object",
-        some: "*",
-        properties: {}  
-    },
     "var Math@0": {
         type: "object",
         some: "undefined",
@@ -43,6 +40,7 @@ module.exports = {
             "trunc": "Math@0/trunc",
             "sign": "Math@0/sign",
             "cbrt": "Math@0/cbrt",
+            "clip": "Math@0/clip",
             "E": "number",
             "LOG2E": "number",
             "LOG10E": "number",
@@ -53,6 +51,7 @@ module.exports = {
             "SQRT1_2": "number"
         }
     },
+    "Math@0/clip": { "type": "function", "args": ["number", "number", "number"], "return": "number" },
     "Math@0/abs": { "type": "function", "args": ["number"], "return": "number|undefined" },
     "Math@0/acos": { "type": "function", "args": ["number"], "return": "number|undefined" },
     "Math@0/asin": { "type": "function", "args": ["number"], "return": "number|undefined" },
@@ -69,7 +68,7 @@ module.exports = {
     "Math@0/max": { "type": "function", "args": ["number", "number"], varargs: "number", "return": "number|undefined" },
     "Math@0/min": { "type": "function", "args": ["number", "number"], varargs: "number", "return": "number|undefined" },
     "Math@0/pow": { "type": "function", "args": ["number", "number"], "return": "number|undefined" },
-    "Math@0/random": { "type": "function", "args": ["number"], "return": "number|undefined" },
+    "Math@0/random": { "type": "function", "args": [], "return": "number" },
     "Math@0/round": { "type": "function", "args": ["number"], "return": "number|undefined" },
     "Math@0/sin": { "type": "function", "args": ["number"], "return": "number|undefined" },
     "Math@0/sqrt": { "type": "function", "args": ["number"], "return": "number|undefined" },
@@ -88,6 +87,7 @@ module.exports = {
     "Math@0/trunc": { "type": "function", "args": ["number"], "return": "number|undefined" },
     "Math@0/sign": { "type": "function", "args": ["number"], "return": "number|undefined" },
     "Math@0/cbrt": { "type": "function", "args": ["number"], "return": "number|undefined" },
+    
     "number|undefined": { type: "union", types: ["undefined", "number"] },
     
     "number": { type: "primitive", primitive: "number" },

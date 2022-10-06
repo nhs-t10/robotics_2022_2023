@@ -1,23 +1,38 @@
-var loadArgv = require("./command-line-arguments");
+"use strict";
+
+const { workerData } = require("worker_threads");
+const unitConversionHelp = require("../unit-conversion/help");
+
+var loadArgv = require("./parse-args");
 const printHelpInfo = require("./help");
 var schema = require("./schema");
 
 
 /**
- * @typedef {import("./schema").CommandLineArguments} CommandLineArguments
+ * @type {import("./schema").CommandLineArguments}
  */
+const commandLineInterface = {};
+module.exports = commandLineInterface;
 
+loadCommandLineInterface();
 
-/**
- * @type CommandLineArguments
- */
-var cla = {};
+testHelpFlags();
 
-module.exports = cla;
-Object.assign(cla, loadArgv(schema));
+function loadCommandLineInterface() {
+    if(typeof workerData === "object" && Array.isArray(workerData)) {
+        process.argv = process.argv.concat(workerData);
+    }
+    Object.assign(commandLineInterface, loadArgv(schema));
+}
 
-
-if(cla.help) {
-    printHelpInfo(schema);
-    process.exit();
+function testHelpFlags() {
+    if(commandLineInterface.help) {
+        printHelpInfo(schema);
+        process.exit();
+    }
+    
+    if(commandLineInterface["help-detail"] === "units") {
+        unitConversionHelp.printUnitsAndExit();
+        process.exit();
+    }
 }

@@ -14,7 +14,7 @@ Basic:	    This is a minimally functional OpMode used to illustrate the skeleton
             of a particular style of OpMode.  These are bare bones Tank Drive examples.
 
 Sensor:    	This is a Sample OpMode that shows how to use a specific sensor.
-            It is not intended to drive a functioning robot, it is simply showing the minimal code
+            It is not intended to org.firstinspires.ftc.teamcode.drive a functioning robot, it is simply showing the minimal code
             required to read and display the sensor values.
 
 Hardware:	This is not an actual OpMode, but a helper class that is used to describe

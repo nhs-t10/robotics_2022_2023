@@ -1,7 +1,21 @@
+"use strict";
+
 const lexer = require("./lexer")
 
-module.exports = function tokenStream(text) {
-    const lexGenerator = lexer(text);
+/**
+ * @typedef {object} TokenStream 
+ * @property {() => import("./lexer").AutoautoToken} peek
+ * @property {() => import("./lexer").AutoautoToken} pop
+ */
+
+/**
+ * 
+ * @param {string} text 
+ * @param {string} file 
+ * @returns {AutoautoTokenStream}
+ */
+module.exports = function tokenStream(text, file) {
+    const lexGenerator = lexer(text, file);
     
     let lookahead = undefined;
     
@@ -15,12 +29,12 @@ module.exports = function tokenStream(text) {
         else return lookahead = lexGenerator.next().value;
     }
     function pop() {
-        if (lookahead) {
+        if (lookahead != undefined) {
             let swap = lookahead;
             lookahead = undefined;
             return swap;
         } else {
-            return lexGenerator.next().value;
+            return nextToken;
         }
     }
     
@@ -35,20 +49,3 @@ module.exports = function tokenStream(text) {
         }
     }
 }
-
-/**
- * @typedef {object} TokenStream
- * @property {peekFunction} peek
- * @property {popFunction} pop
- */
-
-/**
- * @callback peekFunction
- * @returns {import("./lexer").token}
- */
-
-
-/**
- * @callback popFunction
- * @returns {import("./lexer").token}
- */

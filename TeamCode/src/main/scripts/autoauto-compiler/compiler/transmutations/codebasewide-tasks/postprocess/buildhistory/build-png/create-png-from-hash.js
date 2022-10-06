@@ -1,3 +1,5 @@
+"use strict";
+
 var pixelsToMatrix = require("./pixels-to-matrix.js");
 
 var savePng = require("./save-png");

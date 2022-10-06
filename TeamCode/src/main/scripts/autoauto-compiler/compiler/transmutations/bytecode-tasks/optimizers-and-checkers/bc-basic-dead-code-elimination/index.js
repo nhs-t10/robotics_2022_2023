@@ -1,3 +1,5 @@
+"use strict";
+
 module.exports = function (context) {
     var bytecode = context.inputs["bc-condense-constants"];
     var cgraph = context.inputs["build-cgraph"];
@@ -6,7 +8,7 @@ module.exports = function (context) {
     var memoReachability = {};
 
     Object.keys(bytecode).forEach(x => {
-        removeBlockIfDead(x, bytecode, cgraph, invertedCGraph, memoReachability);
+        removeBlockIfDead(x, bytecode, invertedCGraph, memoReachability);
     });
 
     cleanCgraphs(bytecode, cgraph, invertedCGraph);
@@ -20,7 +22,7 @@ module.exports = function (context) {
 
 }
 
-function removeBlockIfDead(blockLabel, bytecode, cgraph, invertedCgraph, memoReachability) {
+function removeBlockIfDead(blockLabel, bytecode, invertedCgraph, memoReachability) {
 
     if (!isReachable(blockLabel, invertedCgraph, memoReachability)) {
         delete bytecode[blockLabel];
@@ -30,11 +32,11 @@ function removeBlockIfDead(blockLabel, bytecode, cgraph, invertedCgraph, memoRea
 function cleanCgraphs(bytecode, cgraph, invertedCGraph) {
     Object.keys(invertedCGraph).forEach(x => {
         if (!bytecode[x]) delete invertedCGraph[x];
-        else invertedCGraph[x] = invertedCGraph[x].filter(y => bytecode[y] != undefined);
+        else invertedCGraph[x] = invertedCGraph[x].filter(y => bytecode[y.label] != undefined);
     });
     Object.keys(cgraph).forEach(x => {
         if (!bytecode[x]) delete cgraph[x];
-        else cgraph[x] = cgraph[x].filter(y => bytecode[y] != undefined);
+        else cgraph[x] = cgraph[x].filter(y => bytecode[y.label] != undefined);
 
     });
 }
@@ -51,12 +53,12 @@ function isReachable(blockLabel, invertedCgraph, memoReachability, previouslySca
     //put it on the start instead of the end. This makes `includes()` quicker, on average.
     previouslyScannedBlocks.unshift(blockLabel);
     //clone it so that the recursion won't modify other branches
-    previouslyScannedBlocks = previouslyScannedBlocks.slice()
+    previouslyScannedBlocks = previouslyScannedBlocks.slice();
 
     var cacheSaveValid = true;
     var parents = invertedCgraph[blockLabel];
     for (var i = 0; i < parents.length; i++) {
-        var pReach = isReachable(parents[i], invertedCgraph, memoReachability, previouslyScannedBlocks);
+        var pReach = isReachable(parents[i].label, invertedCgraph, memoReachability, previouslyScannedBlocks);
         if (pReach) {
             return memoReachability[blockLabel] = true;
         }
@@ -73,5 +75,5 @@ function isReachable(blockLabel, invertedCgraph, memoReachability, previouslySca
 }
 
 function isDynamicallyReferenced(blockLabel) {
-    return blockLabel == "ENTRY" || blockLabel.includes("func_enter");
+    return blockLabel == "ENTRY" || blockLabel.includes("func-enter");
 }
