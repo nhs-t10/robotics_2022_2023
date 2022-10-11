@@ -88,8 +88,9 @@ public class BasicDriving extends OpMode {
         dashboard.sendTelemetryPacket(packet);
         double coordx = 0.0;
         double coordy = 0.0;
-        double[] pointsX = {coordx, coordx + 24, coordx + 24, coordx, coordx};
-        double[] pointsY = {coordy, coordy, coordy + 24, coordy + 24, coordy};
+        //Coordinates are measured in a unit that appears to match inches, robot is 17in x 17in
+        double[] pointsX = {coordx, coordx + 17, coordx + 17, coordx, coordx};
+        double[] pointsY = {coordy, coordy, coordy + 17, coordy + 17, coordy};
         packet.fieldOverlay()
                 .setStroke("blue")
                 .setStrokeWidth(1)
