@@ -1,0 +1,1 @@
+node autoauto-compiler --in=../java --out=../../../gen --java-functions-dir=../java/org/firstinspires/ftc/teamcode/managers --java-class-suffix=Manager --output-java-template=../java/org/firstinspires/ftc/teamcode/autoauto-template.notjava --no-cache --threads=1

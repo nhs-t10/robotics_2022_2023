@@ -1,3 +1,5 @@
+"use strict";
+
 var bitwiseyHelpers = require("./bitwisey-helpers.js");
 
 var crcTable = (function(){

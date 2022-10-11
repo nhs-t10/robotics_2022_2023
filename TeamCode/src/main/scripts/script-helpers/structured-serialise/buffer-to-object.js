@@ -6,6 +6,8 @@ const arrayReader = require("../../script-helpers/array-reader");
 const types = require("./types");
 const wellKnownConstructors = require("./well-known-constructors");
 
+const v8 = require("v8");
+
 module.exports = bufferToObject
 
 
@@ -13,8 +15,14 @@ function bufferToObject(buf, valueOnUnreadable) {
     //reader starts at `i=magic.length` to skip over the magic values.
     const reader = arrayReader(buf, magic.length);
 
-    if (reader.read() != version) return valueOnUnreadable;
+    const bufferVersion = reader.read();
 
+    if (bufferVersion == version.V8_SERIAL) return v8.deserialize(buf.slice(magic.length + 1));
+    else if(bufferVersion == version.CUSTOM_SERIAL) return readThroughBuffer(reader);
+    else return valueOnUnreadable;
+}
+
+function readThroughBuffer(reader) {
     let pool = {};
 
     reconstructPool(pool, reader);

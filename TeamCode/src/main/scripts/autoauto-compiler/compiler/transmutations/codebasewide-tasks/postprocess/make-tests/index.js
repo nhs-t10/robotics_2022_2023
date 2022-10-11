@@ -1,18 +1,25 @@
+"use strict";
+
 var path = require("path");
-const { safeWriteFile } = require("../../../../../../script-helpers/safe-fs-utils");
+const commandLineInterface = require("../../../../../../command-line-interface");
 
 var maketest = require("./make-test");
 
 /**
- * 
- * @param {*} context 
- * @param {(import("../../../index").TransmutateContext)[]} contexts
+ * @type {import("../../..").CodebaseTransmutateFunction}
  */
 module.exports = function(context, contexts) {
-    var testDir = path.join(context.testRoot, "org/firstinspires/ftc/teamcode/unitTests/__testautoauto");
     
+    if(commandLineInterface["make-tests"] == false) return;
+    
+    
+    var testDir = path.join(context.testRoot, "org/firstinspires/ftc/teamcode/unitTests/__testedautoautos");
+    
+
     var testRecords = contexts
-    .filter(x=>x.status == "pass" && ("get-result-package" in x.inputs))
+    .filter(x=>x.success == "SUCCESS")
+    .map(x=>x.fileContext)
+    .filter(x=> "write-to-output-file" in x.inputs)
     .map(x=>({
         frontmatter: x.fileFrontmatter,
         className: x.resultBaseFileName.split(".")[0],
@@ -21,11 +28,6 @@ module.exports = function(context, contexts) {
     
     var fileWrittenIn = maketest(testRecords, testDir);
     
-    addGitignoreOfTesters(testDir);
-    
     context.writtenFiles[fileWrittenIn] = true;
 }
 
-function addGitignoreOfTesters(testDir) {
-    safeWriteFile(path.join(testDir, ".gitignore"), "*.java");
-}

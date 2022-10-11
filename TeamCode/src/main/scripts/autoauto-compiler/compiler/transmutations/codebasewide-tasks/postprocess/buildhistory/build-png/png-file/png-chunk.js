@@ -1,3 +1,5 @@
+"use strict";
+
 var crcSum = require("./crc.js");
 var binaryTools = require("./binary.js");
 

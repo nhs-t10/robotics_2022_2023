@@ -1,6 +1,7 @@
+"use strict";
+
 var fs = require("fs");
 var path = require("path");
-const androidStudioLogging = require("./android-studio-logging");
 const cachedFs = require("./cached-fs");
 
 
@@ -16,8 +17,22 @@ module.exports = {
     cachedSafeReadFile: cachedSafeReadFile,
     safeWriteFileEventually: safeWriteFileEventually,
     deleteIfExists: deleteIfExists,
+    readJSONFile: readJSONFile,
     getGitRootDirectory: ()=>cachedGitDirectory,
     getGradleRootDirectory: ()=>cachedGradleRootDirectory
+}
+
+/**
+ * @template T
+ * @param {string} file 
+ * @param {T} defaultValue 
+ * @returns {T | *}
+ */
+function readJSONFile(file, defaultValue) {
+    try {
+        return JSON.parse(fs.readFileSync(file))
+    } catch(e) {}
+    return defaultValue;
 }
 
 function cachedSafeReadFile(filename) {
@@ -51,7 +66,7 @@ function safeWriteFileEventually(fileName, content) {
 
 function reportNodeJSFileError(err, file, stack) {
     if(stack) err.stack = stack;
-    androidStudioLogging.sendTreeLocationMessage(err, file, "ERROR");
+    console.error("ERROR: " + file + "\n" + err + "\n" + err.stack);
 }
 
 function safeWriteFile(fileName, content) {

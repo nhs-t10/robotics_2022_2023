@@ -54,7 +54,7 @@ public class MovementManager extends FeatureManager {
     }
 
     /**
-     * Just drive the motors, without <u>any</u> calculations.
+     * Just org.firstinspires.ftc.teamcode.drive the motors, without <u>any</u> calculations.
      *
      * <h2 class="AutoautoDontUseProd">Never use this unless you are testing motors. This is for <u>testing only</u>. Don't use this in final OpModes.<br>
      *      If you need to individually control each motor, try {@linkplain #driveBlue(float, float, float, float) driveBlue} instead so that it can account for robot differences.</h2>
@@ -94,13 +94,8 @@ public class MovementManager extends FeatureManager {
     }
 
     /**
-     * Stop all drive motors directly. <br>
+     * Stop all org.firstinspires.ftc.teamcode.drive motors directly. <br>
      * Equivalent to {@code driveOmni(0,0,0)}.
-     * <br><br>
-     * If you are changing this method's signature:
-     * <ul>
-     *     <li>Change {@linkplain org.firstinspires.ftc.teamcode.auxilary.dsls.autoauto.model.State#init() its usage in Autoauto}, if necessary</li>
-     * </ul>
      */
     public void stopDrive() {
         frontLeft.setPower(0);
@@ -115,10 +110,10 @@ public class MovementManager extends FeatureManager {
      * Any combination of directions may be used, but <u>straight lines are the most stable</u> for auto.</p>
      * <h2>Usage Examples</h2>
      * <ul>
-     * <li>To drive <u>forwards</u>, use {@code driveOmni(1, 0, 0)}</li>
-     * <li>To drive <u>backwards</u>, use {@code driveOmni(-1, 0, 0)}</li>
-     * <li>To drive <u>right</u>, use {@code driveOmni(0, 1, 0)}</li>
-     * <li>To drive <u>left</u>, use {@code driveOmni(0, -1, 0)}</li>
+     * <li>To org.firstinspires.ftc.teamcode.drive <u>forwards</u>, use {@code driveOmni(1, 0, 0)}</li>
+     * <li>To org.firstinspires.ftc.teamcode.drive <u>backwards</u>, use {@code driveOmni(-1, 0, 0)}</li>
+     * <li>To org.firstinspires.ftc.teamcode.drive <u>right</u>, use {@code driveOmni(0, 1, 0)}</li>
+     * <li>To org.firstinspires.ftc.teamcode.drive <u>left</u>, use {@code driveOmni(0, -1, 0)}</li>
      * <li>To turn <u>right</u>, use {@code driveOmni(0, 0, 1)}</li>
      * <li>To turn <u>left</u>, use {@code driveOmni(0, 0, -1)}</li>
      * </ul>

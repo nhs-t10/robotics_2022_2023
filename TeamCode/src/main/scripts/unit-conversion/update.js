@@ -1,3 +1,5 @@
+"use strict";
+
 var https = require("https");
 var fs = require("fs");
 var androidStudioLogging = require("../script-helpers/android-studio-logging");

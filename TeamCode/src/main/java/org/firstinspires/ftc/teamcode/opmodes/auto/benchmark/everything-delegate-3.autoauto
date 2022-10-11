@@ -1,0 +1,9 @@
+$
+    compilerMode: "lib"
+$
+
+function f(x = 0) {
+    let argx = x,
+    return(delegate("./everything-transitive-delegate.autoauto", module_args[0], argx))
+},
+provide(f)

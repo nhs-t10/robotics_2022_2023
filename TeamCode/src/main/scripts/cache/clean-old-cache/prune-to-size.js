@@ -1,3 +1,5 @@
+"use strict";
+
 const safeFsUtils = require("../../script-helpers/safe-fs-utils");
 
 module.exports = function(cacheMeta, cacheDir, cacheMaxBytes) {

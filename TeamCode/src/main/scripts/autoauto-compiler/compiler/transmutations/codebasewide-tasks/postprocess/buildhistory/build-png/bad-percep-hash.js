@@ -1,3 +1,5 @@
+"use strict";
+
 var crc = require("./png-file/crc");
 
 module.exports = {

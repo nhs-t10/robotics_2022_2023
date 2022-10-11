@@ -1,3 +1,5 @@
+"use strict";
+
 var characterNames = ["Dorian", "Gray", "Basil", "Hallward", "Lord", "Henry", "Harry", "Wotton", 
                 "Sibyl", "Vane", "James", "Vane", 
                 "Alan", "Campbell", "Lord", "Fermor", "Adrian", "Singleton"];
@@ -38,13 +40,12 @@ function findIndexesOf(str) {
 }
 
 fs.writeFileSync(__dirname + "/dorian.js", `
-const dorian = ${JSON.stringify(dissasociatedBody)};
-
-const keys = Object.keys(dorian);
-const sentenceStarts = keys.filter(x => startsWithCapital(x));
-
+var dorian = ${JSON.stringify(dissasociatedBody)};
 module.exports = {
-    randomStart: function(num) {        
+    randomStart: function(num) {
+        var keys = Object.keys(dorian);
+        var sentenceStarts = keys.filter(x=>startsWithCapital(x));
+        
         var sentence = [randomFrom(sentenceStarts)];
         
         for(var i = 0; i < num; i++) {
@@ -58,7 +59,7 @@ module.exports = {
 }
 
 function nextWordFrom(leadin) {
-    if (!dorian[leadin]) return randomFrom(sentenceStarts);
+    if(!dorian[leadin]) throw "no? " + leadin
     return dorian[leadin];
 }
 
@@ -67,5 +68,4 @@ function randomFrom(arr) {
 }
 function startsWithCapital(str) {
     return str.charCodeAt(0) >= 65 && str.charCodeAt(0) <= 90;
-}
-`);
+}`);

@@ -1,3 +1,5 @@
+"use strict";
+
 module.exports = function run(context) {
     context.output = getDebugJsonSettingCode(context.inputs["text-to-syntax-tree"]);
     context.status = "pass";

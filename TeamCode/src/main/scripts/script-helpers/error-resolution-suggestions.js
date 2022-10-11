@@ -1,3 +1,5 @@
+"use strict";
+
 module.exports = function(error) {
     var sugs = getSuggestionsArray(error);
     

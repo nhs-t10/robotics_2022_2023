@@ -1,3 +1,5 @@
+"use strict";
+
 var deprecatedGlobalKeys = ["GLOBAL", "root"];
 
 var wkc = Object.getOwnPropertyNames(globalThis)

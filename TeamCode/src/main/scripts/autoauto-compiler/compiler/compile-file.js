@@ -1,78 +1,85 @@
+"use strict";
+
+const commandLineInterface = require("../../command-line-interface");
 const androidStudioLogging = require("../../script-helpers/android-studio-logging");
 
-
-module.exports = async function(fileContext) {
-    androidStudioLogging.beginOutputCapture();
-    var success = await compileFile(fileContext);
-    var log = androidStudioLogging.getCapturedOutput();
-
-    return {
-        success: success,
-        fileContext: fileContext,
-        log: log
-    }
-}
 
 /**
  * 
  * @param {import("./transmutations").TransmutateContext} fileContext 
+ * @returns {Promise<import("./worker").MaybeCompilation>}
  */
-async function compileFile(fileContext) {
-    var transmuts = fileContext.transmutations;
-    for(var i = 0; i < transmuts.length; i++) {
-        
-        var mutRan = await tryRunTransmutation(transmuts[i], fileContext);
-        
-        if(!mutRan) break;
+module.exports = async function (fileContext) {
+    androidStudioLogging.beginOutputCapture();
+    var sucStatus = await compileFile(fileContext);
+    var log = androidStudioLogging.getCapturedOutput();
+
+    return {
+        success: sucStatus,
+        fileContext: fileContext,
+        log: log,
+        fileAddress: fileContext.sourceFullFileName
     }
-    return i == transmuts.length;
 }
 
+/**
+ * Mutates the given fileContext into a completed, compiled version.
+ * @param {import("./transmutations").TransmutateContext} fileContext 
+ * @returns {Promise<"SUCCESS"|"COMPILATION_FAILED">} Success state
+ */
+async function compileFile(fileContext) {
+    for (const mut of fileContext.transmutations) {
+        const mutRan = await tryRunTransmutation(mut, fileContext);
+        
+        if (!mutRan) return "COMPILATION_FAILED";
+    }
+
+    return "SUCCESS";
+}
+
+/**
+ * 
+ * @param {import("./transmutations").SerializableTransmutationInstance} transmutation 
+ * @param {import("./transmutations").TransmutateContext} fileContext 
+ * @returns 
+ */
 async function tryRunTransmutation(transmutation, fileContext) {
+    delete fileContext.status;
+
     try {
-        delete fileContext.status;
-        
         await runTransmutation(transmutation, fileContext);
-        
-        if(fileContext.status != "pass") throw {kind: "ERROR", text: `Task ${transmutation.id} didn't report success` };
-        
-        return true;
     } catch(e) {
-        fileContext.status = "fail";
-        
-        if(e instanceof Error) {
+        androidStudioLogging.sendInternalError(e, fileContext.sourceFullFileName);
+    }
+
+    if (fileContext.status === "pass") {
+        return true;
+    } else {
+        if(commandLineInterface.debug) {
             androidStudioLogging.sendTreeLocationMessage({
-                kind: "ERROR",
-                text: "Internal Compiler Error",
-                original: `There was an internal error. This file will be skipped, but others will still be compiled.\n` + 
-                `Please contact these people in this order: \n` +
-                `1) Connor\n` +
-                `2) Chloe\n` +
-                `\n` +
-                `The stack of the error is below:\n` +
-                e.message + "\n" + e.stack
-            });
-        } else {
-            androidStudioLogging.sendTreeLocationMessage(e, fileContext.sourceFullFileName, "ERROR");
+                kind: "WARNING", text: `Task ${transmutation.id} didn't report a successful completion`
+            }, fileContext.sourceFullFileName, "WARNING");
         }
-        
+
         return false;
     }
 }
 
 async function runTransmutation(transmutation, fileContext) {
-    
+
     var c = {};
     Object.assign(c, fileContext);
     delete c.status;
     c.writtenFiles = {};
-    
+
     var tRunMethod = require(transmutation.sourceFile);
     await tRunMethod(c);
-    
+
     fileContext.status = c.status;
     Object.assign(fileContext.writtenFiles, c.writtenFiles);
+
     
-    fileContext.inputs[transmutation.id] = c.output;
-    if(c.output !== undefined && !transmutation.isDependency) fileContext.lastInput = c.output;
+    fileContext.inputs[transmutation.id] = c.output === undefined ? null : c.output;
+
+    if (c.output !== undefined && !transmutation.isDependency) fileContext.lastInput = c.output;
 }

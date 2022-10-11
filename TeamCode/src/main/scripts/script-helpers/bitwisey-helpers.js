@@ -1,3 +1,5 @@
+"use strict";
+
 module.exports = {
 /**
 * Encode integers extremely efficiently. Every 7 bits, if the integer is over, insert a 1 bit. Otherwise, insert a 0.

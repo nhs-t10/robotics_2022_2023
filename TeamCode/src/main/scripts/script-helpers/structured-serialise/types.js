@@ -1,3 +1,5 @@
+"use strict";
+
 module.exports = Object.freeze({
     "t_undefined": 85, //ascii U
     "t_boolean": 66, //ascii B

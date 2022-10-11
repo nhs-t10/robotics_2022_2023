@@ -25,4 +25,4 @@ let currentLowestPrime = i, let primes[currentLowestPrime] = true, goto startNex
 
 #outputDone:
 log(primes), next;
-exit()
+pass

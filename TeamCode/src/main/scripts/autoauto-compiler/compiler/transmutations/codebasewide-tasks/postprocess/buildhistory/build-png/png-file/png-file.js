@@ -1,3 +1,5 @@
+"use strict";
+
 var binaryTools = require("./binary.js");
 var Chunk = require("./png-chunk.js");
 var zlib = require("zlib");

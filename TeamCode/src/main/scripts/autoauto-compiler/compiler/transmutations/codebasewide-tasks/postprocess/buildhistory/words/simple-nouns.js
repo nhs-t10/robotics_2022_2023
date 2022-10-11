@@ -1,3 +1,5 @@
+"use strict";
+
 var fullNouns = require("./nouns.json");
 
 //simple nouns are nouns with less than 3 vowel parts, not counting silent "e" at the end

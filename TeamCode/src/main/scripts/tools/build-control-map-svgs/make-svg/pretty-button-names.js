@@ -1,3 +1,5 @@
+"use strict";
+
 var nameMap = {
     touchpadfinger1: "Touchpad",
     touchpadfinger2: "Touchpad",
