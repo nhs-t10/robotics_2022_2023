@@ -37,17 +37,19 @@ public class ColorSensor123 extends PipelineThatExposesSomeAnalysis {
         Core.extractChannel(YCrCb, Cb, 2);
     }
 
-    static final Scalar color1_min = new Scalar(0, 0, 0); //todo: fix colors
-    static final Scalar color1_max = new Scalar(0, 0, 0); //todo: fix colors
-    static final Scalar color2_min = new Scalar(0, 0, 0); //todo: fix colors
-    static final Scalar color2_max = new Scalar(0, 0, 0); //todo: fix colors
-    static final Scalar color3_min = new Scalar(0, 0, 0); //todo: fix colors
-    static final Scalar color3_max = new Scalar(0, 0, 0); //todo: fix colors
+    static final Scalar color1_min = new Scalar(107, 179, 199); //purple min
+    static final Scalar color1_max = new Scalar(94, 144, 231); //purple max
+    static final Scalar color2_min = new Scalar(165, 96, 74); //green min
+    static final Scalar color2_max = new Scalar(164, 142, 20); //green max
+    static final Scalar color3_min = new Scalar(142, 146, 58); //teal min
+    static final Scalar color3_max = new Scalar(99, 206, 68); //teal max
+    static final Scalar color4_min = new Scalar(155, 62, 168); //orange min (Base color is RGB #E89910)
+    static final Scalar color4_max = new Scalar(183, 40, 151); //orange max (Base color is RGB #E89910)
 
 
-    static final Point TopLeftAnchorPoint = new Point(109,98); //todo: fix numbers on rectangle
-    static final int REGION_WIDTH = 20; //todo: fix numbers on rectangle
-    static final int REGION_HEIGHT = 20; //todo: fix numbers on rectangle
+    static final Point TopLeftAnchorPoint = new Point(500,388); //Base Picture is 1280 x 720 when taken on my computer. Should be adjusted for the robot if needed, as current numbers are for that measurement.
+    static final int REGION_WIDTH = 55; //1cm
+    static final int REGION_HEIGHT = 55; //1cm
     static final Point BottomRightAnchorPoint = new Point(TopLeftAnchorPoint.x + REGION_WIDTH,TopLeftAnchorPoint.y + REGION_HEIGHT);
 
 
