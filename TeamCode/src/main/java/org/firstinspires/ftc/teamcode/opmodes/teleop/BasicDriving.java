@@ -8,12 +8,15 @@ import com.acmerobotics.dashboard.FtcDashboard;
 import com.acmerobotics.dashboard.canvas.Canvas;
 import com.acmerobotics.dashboard.telemetry.MultipleTelemetry;
 import com.acmerobotics.dashboard.telemetry.TelemetryPacket;
+<<<<<<< HEAD
 import com.acmerobotics.roadrunner.*;
 import com.acmerobotics.roadrunner.geometry.Pose2d;
 import com.acmerobotics.roadrunner.geometry.Vector2d;
 import com.acmerobotics.roadrunner.trajectory.MarkerCallback;
 import com.acmerobotics.roadrunner.trajectory.Trajectory;
 import com.acmerobotics.roadrunner.trajectory.TrajectoryBuilder;
+=======
+>>>>>>> fb6e828663f416c19a31991aa2a0d29d0597bd88
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
@@ -122,8 +125,9 @@ public class BasicDriving extends OpMode {
         //dashboard.sendTelemetryPacket(packet);
         double coordx = 0.0;
         double coordy = 0.0;
-        double[] pointsX = {coordx, coordx + 24, coordx + 24, coordx, coordx};
-        double[] pointsY = {coordy, coordy, coordy + 24, coordy + 24, coordy};
+        //Coordinates are measured in a unit that appears to match inches, robot is 17in x 17in
+        double[] pointsX = {coordx, coordx + 17, coordx + 17, coordx, coordx};
+        double[] pointsY = {coordy, coordy, coordy + 17, coordy + 17, coordy};
         packet.fieldOverlay()
                 .setStroke("blue")
                 .setStrokeWidth(1)
