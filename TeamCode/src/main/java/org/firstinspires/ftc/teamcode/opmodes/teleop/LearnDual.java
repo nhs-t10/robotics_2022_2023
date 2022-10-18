@@ -13,6 +13,7 @@ import org.firstinspires.ftc.teamcode.auxilary.integratedasync.PriorityAsyncOpmo
 import org.firstinspires.ftc.teamcode.managers.apple.AppleManager;
 import org.firstinspires.ftc.teamcode.managers.feature.FeatureManager;
 import org.firstinspires.ftc.teamcode.managers.input.InputManager;
+import org.firstinspires.ftc.teamcode.managers.bigArm.bigArmManager;
 import org.firstinspires.ftc.teamcode.managers.input.InputOverlapResolutionMethod;
 import org.firstinspires.ftc.teamcode.managers.input.nodes.AnyNode;
 import org.firstinspires.ftc.teamcode.managers.input.nodes.ButtonNode;
@@ -39,6 +40,7 @@ public class LearnDual extends OpMode {
     public InputManager input;
     public NateManager clawPosition;
     public SensorManager sensor;
+    public bigArmManager arm;
     private boolean precision = false;
     private boolean dashing = false;
     private double clawCheck;
@@ -69,6 +71,7 @@ public class LearnDual extends OpMode {
         );
 
         oranges = new AppleManager(hands);
+        arm = new bigArmManager(hands);
 
         clawPosition = new NateManager(hands, hardwareMap.get(TouchSensor.class, "limit"));
         input = new InputManager(gamepad1, gamepad2);

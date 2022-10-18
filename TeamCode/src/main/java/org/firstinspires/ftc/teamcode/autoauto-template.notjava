@@ -21,6 +21,7 @@ import org.firstinspires.ftc.teamcode.managers.sensor.SensorManager;
 import org.firstinspires.ftc.teamcode.managers.telemetry.TelemetryManager;
 import org.firstinspires.ftc.teamcode.managers.nate.NateManager;
 import org.firstinspires.ftc.teamcode.managers.autocorrection.AutocorrectionManager;
+import org.firstinspires.ftc.teamcode.managers.bigArm.bigArmManager;
 
 import dev.autoauto.model.AutoautoProgram;
 import dev.autoauto.runtime.AutoautoRuntime;
@@ -37,6 +38,7 @@ public class template extends OpMode {
     NateManager clawPosition;
     TelemetryManager telemetryManager;
     GiraffeManager neck;
+    bigArmManager arm;
 
 
     AutoautoRuntime runtime;
@@ -66,7 +68,9 @@ public class template extends OpMode {
 
         imu = new ImuManager(hardwareMap.get(com.qualcomm.hardware.bosch.BNO055IMU.class, "imu"));
 
-        runtime = new AutoautoRuntime(generateProgram(), getClass().getCanonicalName(), imu, driver, limbs, telemetryManager, clawPosition, cv, neck);
+        arm = new bigArmManager(limbs);
+
+        runtime = new AutoautoRuntime(generateProgram(), getClass().getCanonicalName(), imu, driver, limbs, telemetryManager, clawPosition, cv, neck, arm);
         
         /*COMPAT_MODE_SETTING*/
 
