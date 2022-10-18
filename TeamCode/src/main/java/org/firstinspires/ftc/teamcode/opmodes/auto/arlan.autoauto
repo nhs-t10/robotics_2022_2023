@@ -5,7 +5,15 @@ $
 goto start;
 
 #start:
-    wait;
+    startWebcam(), next;
+    logger.log(colorFind(0)), next;
+    logger.log(colorFind(1)), after 10s next;
+    logger.log(colorFind(0)), next;
+    logger.log(colorFind(1)), after 10s next;
+    logger.log(colorFind(0)), next;
+    logger.log(colorFind(1)), after 10s next;
+    goto end;
+
 
 
 
