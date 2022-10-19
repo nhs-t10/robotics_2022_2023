@@ -25,11 +25,11 @@ public class bigArmManager extends FeatureManager {
 
     public void toggleArm(){
         if (armStatus) {
-            hands.setServoPower("liftServo", 0.5);
+            hands.setServoPosition("grabber", 0.5);
             armStatus = false;
         }
         else {
-            hands.setServoPower("liftServo", -0.5);
+            hands.setServoPosition("grabber", -0.5);
             armStatus = true;
         }
     }

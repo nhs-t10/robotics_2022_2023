@@ -4,6 +4,8 @@ import static org.firstinspires.ftc.teamcode.managers.manipulation.ManipulationM
 import static org.firstinspires.ftc.teamcode.managers.manipulation.ManipulationManager.motor;
 import static org.firstinspires.ftc.teamcode.managers.manipulation.ManipulationManager.servo;
 
+import android.widget.Button;
+
 import com.acmerobotics.dashboard.FtcDashboard;
 import com.acmerobotics.dashboard.canvas.Canvas;
 import com.acmerobotics.dashboard.telemetry.MultipleTelemetry;
@@ -25,6 +27,7 @@ import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.teamcode.auxilary.integratedasync.PriorityAsyncOpmodeComponent;
 import org.firstinspires.ftc.teamcode.drive.SampleMecanumDrive;
 import org.firstinspires.ftc.teamcode.managers.apple.AppleManager;
+import org.firstinspires.ftc.teamcode.managers.bigArm.bigArmManager;
 import org.firstinspires.ftc.teamcode.managers.feature.FeatureManager;
 import org.firstinspires.ftc.teamcode.managers.input.InputManager;
 import org.firstinspires.ftc.teamcode.managers.input.InputOverlapResolutionMethod;
@@ -49,10 +52,11 @@ public class BasicDriving extends OpMode {
     public MovementManager driver;
     public ManipulationManager hands;
     public InputManager input;
-    public NateManager clawPosition;
+    //public NateManager clawPosition;
     public SensorManager sensor;
     public SampleMecanumDrive drive;
     public TrajectoryBuilder trajBuild;
+    public bigArmManager monkeyArm;
     @Override
     public void init() {
         // Phone is labelled as Not Ready For Use
@@ -74,10 +78,11 @@ public class BasicDriving extends OpMode {
         hands = new ManipulationManager(
                 hardwareMap,
                 crservo         (),
-                servo           (),
-                motor           ()
+                servo           ("monkeyHand"),
+                motor           ("monkeyShoulder")
         );
         input = new InputManager(gamepad1, gamepad2);
+        monkeyArm = new bigArmManager(hands);
         input.registerInput("drivingControls",
                 new MultiplyNode(
                     new IfNode(new ToggleNode(new ButtonNode("a")), new StaticValueNode(1.1f), new StaticValueNode(1f)),
@@ -88,6 +93,15 @@ public class BasicDriving extends OpMode {
                     )
                 )
             );
+        input.registerInput("toggleHand",
+                new ButtonNode("b")
+        );
+        input.registerInput("extendArm",
+                new ButtonNode("right trigger")
+        );
+        input.registerInput("retractArm",
+                new ButtonNode("left trigger")
+        );
 
         input.setOverlapResolutionMethod(InputOverlapResolutionMethod.MOST_COMPLEX_ARE_THE_FAVOURITE_CHILD);
         PriorityAsyncOpmodeComponent.start(() -> {
@@ -152,6 +166,21 @@ public class BasicDriving extends OpMode {
     //TODO: We gonna fix this?
     public void real_loop_Bad_Practice_Fix_Me_Later() {
         input.update();
+        if (input.getBool("grabberToggle")){
+            //B button
+            monkeyArm.toggleArm();
+        }
+        if (input.getBool("extendArm")){
+            //right shoulder
+            monkeyArm.extendArm();
+        }
+        if (input.getBool("retractArm")){
+            //left shoulder
+            monkeyArm.retractArm();
+        }
+
+
+
         telemetry.update();
     }
     public void stop() {
