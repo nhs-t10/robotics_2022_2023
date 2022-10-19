@@ -6,12 +6,12 @@ goto start;
 
 #start:
     startWebcam(), next;
-    logger.log(colorFind(0)), next;
-    logger.log(colorFind(1)), after 10s next;
-    logger.log(colorFind(0)), next;
-    logger.log(colorFind(1)), after 10s next;
-    logger.log(colorFind(0)), next;
-    logger.log(colorFind(1)), after 10s next;
+    log(colorFind(0)), next;
+    log(colorFind(1)), after 10s next;
+    log(colorFind(0)), next;
+    log(colorFind(1)), after 10s next;
+    log(colorFind(0)), next;
+    log(colorFind(1)), after 10s next;
     goto end;
 
 
