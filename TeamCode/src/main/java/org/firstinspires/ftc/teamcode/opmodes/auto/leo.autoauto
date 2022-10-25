@@ -2,8 +2,8 @@
 
 
 #one:
-    driveOmni(1,0,0), after 3ly next;
-    driveOmni(1,0,0), after 3s next;
+    driveOmni(1,0,0), after 1s next;
+    driveOmni(0,1,0), after 1s next;
     driveOmni(r=-1), after 90deg goto end;
 
 

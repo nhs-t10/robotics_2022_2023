@@ -93,7 +93,7 @@ public class BasicDriving extends OpMode {
                     )
                 )
             );
-        input.registerInput("toggleHand",
+        input.registerInput("grabberToggle",
                 new ButtonNode("b")
         );
         input.registerInput("extendArm",
