@@ -93,14 +93,14 @@ public class BasicDriving extends OpMode {
                     )
                 )
             );
-        input.registerInput("toggleHand",
+        input.registerInput("grabberToggle",
                 new ButtonNode("b")
         );
         input.registerInput("extendArm",
-                new ButtonNode("right trigger")
+                new ButtonNode("righttrigger")
         );
         input.registerInput("retractArm",
-                new ButtonNode("left trigger")
+                new ButtonNode("lefttrigger")
         );
 
         input.setOverlapResolutionMethod(InputOverlapResolutionMethod.MOST_COMPLEX_ARE_THE_FAVOURITE_CHILD);

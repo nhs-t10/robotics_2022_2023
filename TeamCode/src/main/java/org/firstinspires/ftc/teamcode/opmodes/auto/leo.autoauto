@@ -1,6 +1,3 @@
-
-
-
 #one:
     driveOmni(1,0,0), after 3ly next;
     driveOmni(1,0,0), after 3s next;
