@@ -48,7 +48,7 @@ public class CVManager extends FeatureManager
         //only initialize the webcam if we're NOT unit-testing.
         //Trying to test cv on a laptop doesn't work :'(
         if(hardwareMap.appContext != null) {
-            this.pipeline = new FancyPantsEdgeDetectionPipeline();
+            this.pipeline = new ColorSensor123_TEST();
             /*
              * Instantiate an OpenCvCamera object for the camera we'll be using.
              * In this sample, we're using a webcam. Note that you will need to

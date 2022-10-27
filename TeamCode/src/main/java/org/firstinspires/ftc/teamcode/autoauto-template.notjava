@@ -60,17 +60,16 @@ public class template extends OpMode {
                                 new String[] {"nateClaw", "rampLeft", "rampRight", "intakeMoverRight", "intakeMoverLeft"},
                                 new String[] {"Carousel", "ClawMotor", "noodle", "intake", "NeckMotor"}
                         );
+       clawPosition = new NateManager(limbs, hardwareMap.tryGet(TouchSensor.class, "limit"));
+       neck = new GiraffeManager(clawPosition);
 
-        clawPosition = new NateManager(limbs, hardwareMap.tryGet(TouchSensor.class, "limit"));
-        neck = new GiraffeManager(clawPosition);
-
-        cv = new CVManager(hardwareMap);
+        //cv = new CVManager(hardwareMap);
 
         imu = new ImuManager(hardwareMap.get(com.qualcomm.hardware.bosch.BNO055IMU.class, "imu"));
 
         arm = new bigArmManager(limbs);
 
-        runtime = new AutoautoRuntime(generateProgram(), getClass().getCanonicalName(), imu, driver, limbs, telemetryManager, clawPosition, cv, neck, arm);
+        runtime = new AutoautoRuntime(generateProgram(), getClass().getCanonicalName(), imu, driver, limbs, telemetryManager, cv, clawPosition, neck, arm);
         
         /*COMPAT_MODE_SETTING*/
 
