@@ -305,9 +305,9 @@ public class FtcRobotControllerActivity extends Activity
     preferencesHelper.writeBooleanPrefIfDifferent(context.getString(R.string.pref_rc_connected), true);
     preferencesHelper.getSharedPreferences().registerOnSharedPreferenceChangeListener(sharedPreferencesListener);
 
-    // Check if this RC app is from a later FTC season than what was installed previously
+    // Check if this RC app is from a later FTC season that what was installed previously
     int ftcSeasonYearOfPreviouslyInstalledRc = preferencesHelper.readInt(getString(R.string.pref_ftc_season_year_of_current_rc), 0);
-    int ftcSeasonYearOfCurrentlyInstalledRc = AppUtil.getInstance().getFtcSeasonYear(AppUtil.getInstance().getLocalSdkBuildMonth()).getValue();
+    int ftcSeasonYearOfCurrentlyInstalledRc = AppUtil.getInstance().getFtcSeasonYear(YearMonth.now()).getValue();
     if (ftcSeasonYearOfCurrentlyInstalledRc > ftcSeasonYearOfPreviouslyInstalledRc) {
       preferencesHelper.writeIntPrefIfDifferent(getString(R.string.pref_ftc_season_year_of_current_rc), ftcSeasonYearOfCurrentlyInstalledRc);
       // Since it's a new FTC season, we should reset certain settings back to their default values.
@@ -392,9 +392,10 @@ public class FtcRobotControllerActivity extends Activity
     readNetworkType();
     ServiceController.startService(FtcRobotControllerWatchdogService.class);
     bindToService();
-    RobotLog.logAppInfo();
-    RobotLog.logDeviceInfo();
+    logPackageVersions();
+    logDeviceSerialNumber();
     AndroidBoard.getInstance().logAndroidBoardInfo();
+    RobotLog.logDeviceInfo();
 
     if (preferencesHelper.readBoolean(getString(R.string.pref_wifi_automute), false)) {
       initWifiMute(true);
@@ -492,6 +493,19 @@ public class FtcRobotControllerActivity extends Activity
       unbindService(connection);
       serviceShouldUnbind = false;
     }
+  }
+
+  protected void logPackageVersions() {
+    RobotLog.logBuildConfig(BuildConfig.class);
+    RobotLog.logBuildConfig(com.qualcomm.robotcore.BuildConfig.class);
+    RobotLog.logBuildConfig(com.qualcomm.hardware.BuildConfig.class);
+    RobotLog.logBuildConfig(com.qualcomm.ftccommon.BuildConfig.class);
+    RobotLog.logBuildConfig(com.google.blocks.BuildConfig.class);
+    RobotLog.logBuildConfig(org.firstinspires.inspection.BuildConfig.class);
+  }
+
+  protected void logDeviceSerialNumber() {
+    RobotLog.ii(TAG, "Android device serial number: " + Device.getSerialNumberOrUnknown());
   }
 
   protected void readNetworkType() {
