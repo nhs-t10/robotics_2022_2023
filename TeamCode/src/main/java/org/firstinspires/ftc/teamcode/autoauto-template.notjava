@@ -63,7 +63,7 @@ public class template extends OpMode {
        clawPosition = new NateManager(limbs, hardwareMap.tryGet(TouchSensor.class, "limit"));
        neck = new GiraffeManager(clawPosition);
 
-        //cv = new CVManager(hardwareMap);
+        cv = new CVManager(hardwareMap);
 
         imu = new ImuManager(hardwareMap.get(com.qualcomm.hardware.bosch.BNO055IMU.class, "imu"));
 

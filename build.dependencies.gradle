@@ -18,7 +18,7 @@ dependencies {
     implementation 'org.firstinspires.ftc:FtcCommon:8.0.0'
     implementation 'org.tensorflow:tensorflow-lite-task-vision:0.2.0'
     implementation 'org.firstinspires.ftc:gameAssets-PowerPlay:1.0.0'
-    implementation 'org.openftc:easyopencv:1.5.1'
+    implementation 'org.openftc:easyopencv:1.5.2'
     implementation ('com.acmerobotics.dashboard:dashboard:0.4.5') {
         exclude group: 'org.firstinspires.ftc'
     }
