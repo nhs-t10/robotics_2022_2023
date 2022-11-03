@@ -25,7 +25,7 @@ import org.firstinspires.ftc.teamcode.managers.bigArm.bigArmManager;
 
 import dev.autoauto.model.AutoautoProgram;
 import dev.autoauto.runtime.AutoautoRuntime;
-import org.firstinspires.ftc.teamcode.auxilary.buildhistory.BuildHistory;
+import org.firstinspires.ftc.teamcode.auxilary.buildhistory.BuildHistory;//reconfigureForAuto
 import com.acmerobotics.roadrunner.*;
 
 
@@ -63,7 +63,7 @@ public class template extends OpMode {
        clawPosition = new NateManager(limbs, hardwareMap.tryGet(TouchSensor.class, "limit"));
        neck = new GiraffeManager(clawPosition);
 
-        //cv = new CVManager(hardwareMap);
+        cv = new CVManager(hardwareMap);
 
         imu = new ImuManager(hardwareMap.get(com.qualcomm.hardware.bosch.BNO055IMU.class, "imu"));
 
