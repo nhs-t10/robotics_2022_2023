@@ -48,7 +48,7 @@ public class CVManager extends FeatureManager
         //only initialize the webcam if we're NOT unit-testing.
         //Trying to test cv on a laptop doesn't work :'(
         if(hardwareMap.appContext != null) {
-            this.pipeline = new ColorSensor123_TEST();
+            this.pipeline = new ColorSensor123();
             /*
              * Instantiate an OpenCvCamera object for the camera we'll be using.
              * In this sample, we're using a webcam. Note that you will need to
@@ -134,6 +134,26 @@ public class CVManager extends FeatureManager
 
     public int getCbOrCrValue() {
         return pipeline.getAnalysis();
+    }
+
+    public String getColor() {
+        int color = pipeline.getAnalysis();
+        if (color == 1)
+        {
+            return "Pink";
+        }
+        else if (color == 2)
+        {
+            return "Green";
+        }
+        else if (color == 3)
+        {
+            return "Blue";
+        }
+        else
+        {
+            return "Error";
+        }
     }
 
 
