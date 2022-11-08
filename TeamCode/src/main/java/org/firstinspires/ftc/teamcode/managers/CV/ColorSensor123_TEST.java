@@ -86,6 +86,6 @@ public class ColorSensor123_TEST extends PipelineThatExposesSomeAnalysis {
 
     @Override
     int getAnalysis() {
-        return color;
+        return colorFind(1);
     }
 }
