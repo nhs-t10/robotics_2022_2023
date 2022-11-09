@@ -221,6 +221,9 @@ public class SampleMecanumDrive extends MecanumDrive {
     public boolean isBusy() {
         return trajectorySequenceRunner.isBusy();
     }
+    public boolean notBusy() {
+        return !trajectorySequenceRunner.isBusy();
+    }
 
     public void setMode(DcMotor.RunMode runMode) {
         for (DcMotorEx motor : motors) {
