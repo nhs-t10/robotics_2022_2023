@@ -16,37 +16,37 @@ public class bigArmManager extends FeatureManager {
     }
 
     public void extendArm(){
-        hands.setMotorPower("armMotor", 0.5);
+        hands.setMotorPower("monkeyShoulder", 0.5);
     }
 
     public void retractArm(){
-        hands.setMotorPower("armMotor", -0.5);
+        hands.setMotorPower("monkeyShoulder", -0.5);
     }
 
     public void toggleArm(){
         if (armStatus) {
-            hands.setServoPosition("grabber", 0.5);
+            hands.setServoPosition("monkeyHand", 0.5);
             armStatus = false;
         }
         else {
-            hands.setServoPosition("grabber", -0.5);
+            hands.setServoPosition("monkeyHand", -0.5);
             armStatus = true;
         }
     }
 
     public void setPositionFloorLocation(){
-        hands.encodeMoveToPosition("armMotor", positionFloorLocation);
+        hands.encodeMoveToPosition("monkeyShoulder", positionFloorLocation);
     }
 
     public void setPositionLowLocation(){
-        hands.encodeMoveToPosition("armMotor", positionLowLocation);
+        hands.encodeMoveToPosition("monkeyShoulder", positionLowLocation);
     }
 
     public void setPositionMiddleLocation(){
-        hands.encodeMoveToPosition("armMotor", positionMiddleLocation);
+        hands.encodeMoveToPosition("monkeyShoulder", positionMiddleLocation);
     }
 
     public void setPositionHighLocation(){
-        hands.encodeMoveToPosition("armMotor", positionHighLocation);
+        hands.encodeMoveToPosition("monkeyShoulder", positionHighLocation);
     }
 }
