@@ -48,7 +48,7 @@ public class MonkeyMode extends OpMode {
     public Pose2d lastError;
     @Override
     public void init() {
-        // Phone is labelled as Not Ready For Use
+        // Phone is labelled as T-10 Melman
         FeatureManager.setIsOpModeRunning(true);
         FeatureManager.reconfigureForTeleop();
         TelemetryManager telemetryManager = new TelemetryManager(telemetry, this, TelemetryManager.BITMASKS.NONE);
@@ -132,8 +132,8 @@ public class MonkeyMode extends OpMode {
                 lastError = drive.getLastError();
             }
         });
-        telemetry = new MultipleTelemetry(telemetry, FtcDashboard.getInstance().getTelemetry());
         drive.getLocalizer().update();
+        telemetry = new MultipleTelemetry(telemetry, FtcDashboard.getInstance().getTelemetry());
         telemetry.addData("FL Power", driver.frontLeft.getPower());
         telemetry.addData("FR Power", driver.frontRight.getPower());
         telemetry.addData("BR Power", driver.backLeft.getPower());
@@ -164,7 +164,42 @@ public class MonkeyMode extends OpMode {
     public void loop() {
         looping = true;
         try {
-            if(shouldActuallyDoThings) real_loop_Bad_Practice_Fix_Me_Later();
+            if(shouldActuallyDoThings){
+                input.update();
+                if (input.getBool("grabberToggle")){
+                    monkeyArm.toggleArm();
+                }
+                if (input.getBool("extendArm")){
+                    monkeyArm.extendArm();
+                }
+                if (input.getBool("retractArm")){
+                    monkeyArm.retractArm();
+                }
+                if (input.getBool("armLengthNone")){
+                    monkeyArm.setPositionFloorLocation();
+                }
+                if (input.getBool("armLengthSmall")){
+                    monkeyArm.setPositionLowLocation();
+                }
+                if (input.getBool("armLengthMedium")){
+                    monkeyArm.setPositionMiddleLocation();
+                }
+                if (input.getBool("armLengthTall")){
+                    monkeyArm.setPositionHighLocation();
+                }
+                if (input.getBool("distanceTrackOn")){
+                    if (tracking) {
+                        endPosition = driver.frontLeft.getCurrentPosition();
+                        distance = endPosition - startPosition;
+                        tracking = false;
+                    }
+                    else {
+                        startPosition = driver.frontLeft.getCurrentPosition();
+                        tracking = true;
+                    }
+                }
+                telemetry.update();
+            }
         }
         catch (Throwable t) {
             FeatureManager.logger.log(t.toString());
@@ -175,43 +210,6 @@ public class MonkeyMode extends OpMode {
             shouldActuallyDoThings = false;
             telemetry.update();
         }
-    }
-    //TODO: We gonna fix this?
-    public void real_loop_Bad_Practice_Fix_Me_Later() {
-        input.update();
-        if (input.getBool("grabberToggle")){
-            monkeyArm.toggleArm();
-        }
-        if (input.getBool("extendArm")){
-            monkeyArm.extendArm();
-        }
-        if (input.getBool("retractArm")){
-            monkeyArm.retractArm();
-        }
-        if (input.getBool("armLengthNone")){
-            monkeyArm.setPositionFloorLocation();
-        }
-        if (input.getBool("armLengthSmall")){
-            monkeyArm.setPositionLowLocation();
-        }
-        if (input.getBool("armLengthMedium")){
-            monkeyArm.setPositionMiddleLocation();
-        }
-        if (input.getBool("armLengthTall")){
-            monkeyArm.setPositionHighLocation();
-        }
-        if (input.getBool("distanceTrackOn")){
-            if (tracking) {
-                endPosition = driver.frontLeft.getCurrentPosition();
-                distance = endPosition - startPosition;
-                tracking = false;
-            }
-            else {
-                startPosition = driver.frontLeft.getCurrentPosition();
-                tracking = true;
-            }
-        }
-        telemetry.update();
     }
     public void stop() {
         FeatureManager.setIsOpModeRunning(false);
