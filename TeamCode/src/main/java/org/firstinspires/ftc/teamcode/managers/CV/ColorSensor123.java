@@ -58,8 +58,8 @@ public class ColorSensor123 extends PipelineThatExposesSomeAnalysis {
 
 
     static final Point TopLeftAnchorPoint = new Point(600,388); //Base Picture is 1280 x 720 when taken on my computer. Should be adjusted for the robot if needed, as current numbers are for that measurement.
-    static final int REGION_WIDTH = 20;
-    static final int REGION_HEIGHT = 20;
+    static final int REGION_WIDTH = 20; //max width: 720
+    static final int REGION_HEIGHT = 20; //max height: 1280
     static final Point BottomRightAnchorPoint = new Point(TopLeftAnchorPoint.x + REGION_WIDTH,TopLeftAnchorPoint.y + REGION_HEIGHT);
 
 
