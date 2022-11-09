@@ -10,7 +10,6 @@ import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.TouchSensor;
 
 import org.firstinspires.ftc.teamcode.auxilary.integratedasync.PriorityAsyncOpmodeComponent;
-import org.firstinspires.ftc.teamcode.managers.apple.AppleManager;
 import org.firstinspires.ftc.teamcode.managers.feature.FeatureManager;
 import org.firstinspires.ftc.teamcode.managers.input.InputManager;
 import org.firstinspires.ftc.teamcode.managers.bigArm.bigArmManager;
@@ -45,7 +44,6 @@ public class LearnDual extends OpMode {
     private boolean dashing = false;
     private double clawCheck;
     private int clawPos;
-    private AppleManager oranges;
 
     @Override
     public void init() {
@@ -70,7 +68,6 @@ public class LearnDual extends OpMode {
                 motor           ("Catapault")
         );
 
-        oranges = new AppleManager(hands);
         arm = new bigArmManager(hands);
 
         clawPosition = new NateManager(hands, hardwareMap.get(TouchSensor.class, "limit"));
