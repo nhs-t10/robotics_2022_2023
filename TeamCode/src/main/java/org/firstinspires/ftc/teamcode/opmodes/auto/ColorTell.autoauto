@@ -1,0 +1,19 @@
+$
+    ignorewarning_american_m_unit: true
+$
+
+goto start;
+
+#start:
+    startWebcam(), goto process;
+
+#process:
+    log(getColor()), next;
+    after 1s goto process;
+
+
+
+
+#end:
+    stopWebcam();
+    log("i got to the end!");
