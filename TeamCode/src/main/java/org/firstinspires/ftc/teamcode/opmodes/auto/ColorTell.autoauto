@@ -5,9 +5,11 @@ $
 goto start;
 
 #start:
-    startWebcam(), next;
-    log(getColor()), after 40s next;
-    goto end;
+    startWebcam(), goto process;
+
+#process:
+    log(getColor()), next;
+    after 1s goto process;
 
 
 

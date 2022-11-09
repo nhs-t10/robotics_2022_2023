@@ -55,13 +55,11 @@ public class ColorSensor123 extends PipelineThatExposesSomeAnalysis {
     //static final Scalar color3_max = new Scalar(99, 206, 68); //teal max
     static final int color3_max_Cr = 100; //teal max cr
     static final int color3_max_Cb = 190; //teal max cb
-    static final Scalar color4_min = new Scalar(155, 62, 168); //orange min (Base color is RGB #E89910)
-    static final Scalar color4_max = new Scalar(183, 40, 151); //orange max (Base color is RGB #E89910)
 
 
-    static final Point TopLeftAnchorPoint = new Point(500,388); //Base Picture is 1280 x 720 when taken on my computer. Should be adjusted for the robot if needed, as current numbers are for that measurement.
-    static final int REGION_WIDTH = 55; //1cm
-    static final int REGION_HEIGHT = 55; //1cm
+    static final Point TopLeftAnchorPoint = new Point(600,388); //Base Picture is 1280 x 720 when taken on my computer. Should be adjusted for the robot if needed, as current numbers are for that measurement.
+    static final int REGION_WIDTH = 20;
+    static final int REGION_HEIGHT = 20;
     static final Point BottomRightAnchorPoint = new Point(TopLeftAnchorPoint.x + REGION_WIDTH,TopLeftAnchorPoint.y + REGION_HEIGHT);
 
 
@@ -100,14 +98,6 @@ public class ColorSensor123 extends PipelineThatExposesSomeAnalysis {
         {
             color = 0;
         }
-
-
-        Imgproc.rectangle(
-                input, // Buffer to draw on
-                TopLeftAnchorPoint, // First point which defines the rectangle
-                BottomRightAnchorPoint, // Second point which defines the rectangle
-                BLUE, // The color the rectangle is drawn in
-                2); // Thickness of the rectangle lines
 
 
         return input;
