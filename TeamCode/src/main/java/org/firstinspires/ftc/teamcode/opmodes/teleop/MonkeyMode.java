@@ -46,6 +46,8 @@ public class MonkeyMode extends OpMode {
     public int endPosition;
     public boolean tracking;
     public Pose2d lastError;
+    private boolean looping = false;
+    private boolean shouldActuallyDoThings = true;
     @Override
     public void init() {
         // Phone is labelled as T-10 Melman
@@ -159,14 +161,10 @@ public class MonkeyMode extends OpMode {
                 .strokePolyline(pointsX, pointsY);
                 */
     }
-    private boolean looping = false;
-    private boolean shouldActuallyDoThings = true;
     public void loop() {
-        looping = true;
-        try {
             if(shouldActuallyDoThings){
                 input.update();
-                if (input.getBool("grabberToggle")){
+                if (input.getBool("handToggle")){
                     monkeyArm.toggleArm();
                 }
                 if (input.getBool("extendArm")){
@@ -201,16 +199,6 @@ public class MonkeyMode extends OpMode {
                 telemetry.update();
             }
         }
-        catch (Throwable t) {
-            FeatureManager.logger.log(t.toString());
-            StackTraceElement[] e = t.getStackTrace();
-            for(int i = 0; i < 3 && i < e.length;i++) {
-                FeatureManager.logger.log(e[i].toString());
-            }
-            shouldActuallyDoThings = false;
-            telemetry.update();
-        }
-    }
     public void stop() {
         FeatureManager.setIsOpModeRunning(false);
     }
