@@ -162,36 +162,36 @@ public class MonkeyMode extends OpMode {
                 */
     }
     public void loop() {
-            if(shouldActuallyDoThings){
+        try {
+            if (shouldActuallyDoThings) {
                 input.update();
-                if (input.getBool("handToggle")){
+                if (input.getBool("handToggle")) {
                     monkeyArm.toggleArm();
                 }
-                if (input.getBool("extendArm")){
+                if (input.getBool("extendArm")) {
                     monkeyArm.extendArm();
                 }
-                if (input.getBool("retractArm")){
+                if (input.getBool("retractArm")) {
                     monkeyArm.retractArm();
                 }
-                if (input.getBool("armLengthNone")){
+                if (input.getBool("armLengthNone")) {
                     monkeyArm.setPositionFloorLocation();
                 }
-                if (input.getBool("armLengthSmall")){
+                if (input.getBool("armLengthSmall")) {
                     monkeyArm.setPositionLowLocation();
                 }
-                if (input.getBool("armLengthMedium")){
+                if (input.getBool("armLengthMedium")) {
                     monkeyArm.setPositionMiddleLocation();
                 }
-                if (input.getBool("armLengthTall")){
+                if (input.getBool("armLengthTall")) {
                     monkeyArm.setPositionHighLocation();
                 }
-                if (input.getBool("distanceTrackOn")){
+                if (input.getBool("distanceTrackOn")) {
                     if (tracking) {
                         endPosition = driver.frontLeft.getCurrentPosition();
                         distance = endPosition - startPosition;
                         tracking = false;
-                    }
-                    else {
+                    } else {
                         startPosition = driver.frontLeft.getCurrentPosition();
                         tracking = true;
                     }
@@ -199,6 +199,16 @@ public class MonkeyMode extends OpMode {
                 telemetry.update();
             }
         }
+        catch (Throwable t) {
+            FeatureManager.logger.log(t.toString());
+            StackTraceElement[] e = t.getStackTrace();
+            for(int i = 0; i < 3 && i < e.length;i++) {
+                FeatureManager.logger.log(e[i].toString());
+            }
+            shouldActuallyDoThings = false;
+            telemetry.update();
+        }
+    }
     public void stop() {
         FeatureManager.setIsOpModeRunning(false);
     }
