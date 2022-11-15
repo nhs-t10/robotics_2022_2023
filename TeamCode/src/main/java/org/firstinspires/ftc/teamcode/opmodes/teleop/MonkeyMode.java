@@ -116,7 +116,24 @@ public class MonkeyMode extends OpMode {
                 new ButtonNode("dpaddown")
         );
         input.setOverlapResolutionMethod(InputOverlapResolutionMethod.MOST_COMPLEX_ARE_THE_FAVOURITE_CHILD);
-        PriorityAsyncOpmodeComponent.start(() -> {driver.driveOmni(input.getFloatArrayOfInput("drivingControls"));});
+        PriorityAsyncOpmodeComponent.start(() -> {
+            if(drive.notBusy()){
+                driver.driveOmni(input.getFloatArrayOfInput("drivingControls"));
+            }
+            if(input.getBool("D-Up") && drive.notBusy()){
+                drive.followTrajectory(trajBuild.splineToLinearHeading(new Pose2d(36, 36), Math.toRadians(90)).build());
+            }
+            if(input.getBool("D-Down") && drive.notBusy()){
+                drive.followTrajectory(trajBuild.strafeTo(new Vector2d(14, 28)).build());
+            }
+            if(input.getBool("D-Right") && drive.notBusy()){
+                trajBuild.addDisplacementMarker(drive.getLocalizer().getPoseEstimate().vec().distTo(new Vector2d(0, 0)), () -> {});
+            }
+            if(input.getBool("D-Left")){
+                drive.waitForIdle();
+                lastError = drive.getLastError();
+            }
+        });
         drive.getLocalizer().update();
         telemetry = new MultipleTelemetry(telemetry, FtcDashboard.getInstance().getTelemetry());
         telemetry.addData("FL Power", driver.frontLeft.getPower());
