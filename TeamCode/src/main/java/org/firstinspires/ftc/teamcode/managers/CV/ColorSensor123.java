@@ -80,6 +80,12 @@ public class ColorSensor123 extends PipelineThatExposesSomeAnalysis {
         avg_Cr = (int) Core.mean(Region_Cr).val[0];
         avg_Cb = (int) Core.mean(Region_Cb).val[0];
 
+        Imgproc.rectangle(
+                input, // Buffer to draw on
+                TopLeftAnchorPoint, // First point which defines the rectangle
+                BottomRightAnchorPoint, // Second point which defines the rectangle
+                BLUE, // The color the rectangle is drawn in
+                2); // Thickness of the rectangle lines
 
 
         if (color1_min_Cb <= avg_Cb && avg_Cb <= color1_max_Cb && color1_min_Cr <= avg_Cr && avg_Cr <= color1_max_Cr)

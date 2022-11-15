@@ -21,6 +21,8 @@
 
 package org.firstinspires.ftc.teamcode.managers.CV;
 
+import static org.firstinspires.ftc.robotcore.external.BlocksOpModeCompanion.hardwareMap;
+
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.HardwareMap;
@@ -36,18 +38,18 @@ import org.opencv.imgproc.Imgproc;
 import org.openftc.easyopencv.OpenCvCamera;
 import org.openftc.easyopencv.OpenCvCameraFactory;
 import org.openftc.easyopencv.OpenCvCameraRotation;
+import org.openftc.easyopencv.OpenCvInternalCamera;
 import org.openftc.easyopencv.OpenCvPipeline;
 import org.openftc.easyopencv.OpenCvWebcam;
 
-public class CVManager extends FeatureManager
-{
+public class CVManager extends FeatureManager {
     OpenCvWebcam webcam;
     PipelineThatExposesSomeAnalysis pipeline;
 
-    public CVManager (HardwareMap hardwareMap) {
+    public CVManager(HardwareMap hardwareMap) {
         //only initialize the webcam if we're NOT unit-testing.
         //Trying to test cv on a laptop doesn't work :'(
-        if(hardwareMap.appContext != null) {
+        if (hardwareMap.appContext != null) {
             this.pipeline = new ColorSensor123();
             /*
              * Instantiate an OpenCvCamera object for the camera we'll be using.
@@ -115,12 +117,12 @@ public class CVManager extends FeatureManager
     }
 
     public int getCVPositionNumberWhereZeroIsLeftOneIsMiddleAndTwoIsRight() {
-        if(pipeline == null) return 0;
+        if (pipeline == null) return 0;
         else return pipeline.getAnalysis();
     }
 
     public double getCVPrecisePosition() {
-        if(pipeline == null) return 0;
+        if (pipeline == null) return 0;
         else return pipeline.getAnalysisPrecise();
     }
 
@@ -138,23 +140,25 @@ public class CVManager extends FeatureManager
 
     public String getColor() {
         int color = pipeline.getAnalysis();
-        if (color == 1)
-        {
+        if (color == 1) {
             return "Pink";
-        }
-        else if (color == 2)
-        {
+        } else if (color == 2) {
             return "Green";
-        }
-        else if (color == 3)
-        {
+        } else if (color == 3) {
             return "Blue";
-        }
-        else
-        {
+        } else {
             return "Error";
         }
     }
+
+    public int getCameraId()
+    {
+        int cameraMonitorViewId = hardwareMap.appContext.getResources().getIdentifier("cameraMonitorViewId", "id", hardwareMap.appContext.getPackageName());
+        OpenCvCamera camera = OpenCvCameraFactory.getInstance().createInternalCamera(OpenCvInternalCamera.CameraDirection.BACK, cameraMonitorViewId);
+
+        return cameraMonitorViewId;
+    }
+
 
 
     public void stopWebcam() {
