@@ -116,7 +116,24 @@ public class MonkeyMode extends OpMode {
                 new ButtonNode("dpaddown")
         );
         input.setOverlapResolutionMethod(InputOverlapResolutionMethod.MOST_COMPLEX_ARE_THE_FAVOURITE_CHILD);
-        PriorityAsyncOpmodeComponent.start(() -> {driver.driveOmni(input.getFloatArrayOfInput("drivingControls"));});
+        PriorityAsyncOpmodeComponent.start(() -> {
+            if(drive.notBusy()){
+                driver.driveOmni(input.getFloatArrayOfInput("drivingControls"));
+            }
+            if(input.getBool("D-Up") && drive.notBusy()){
+                drive.followTrajectory(trajBuild.splineToLinearHeading(new Pose2d(36, 36), Math.toRadians(90)).build());
+            }
+            if(input.getBool("D-Down") && drive.notBusy()){
+                drive.followTrajectory(trajBuild.strafeTo(new Vector2d(14, 28)).build());
+            }
+            if(input.getBool("D-Right") && drive.notBusy()){
+                trajBuild.addDisplacementMarker(drive.getLocalizer().getPoseEstimate().vec().distTo(new Vector2d(0, 0)), () -> {});
+            }
+            if(input.getBool("D-Left")){
+                drive.waitForIdle();
+                lastError = drive.getLastError();
+            }
+        });
         drive.getLocalizer().update();
         telemetry = new MultipleTelemetry(telemetry, FtcDashboard.getInstance().getTelemetry());
         telemetry.addData("FL Power", driver.frontLeft.getPower());
@@ -145,52 +162,65 @@ public class MonkeyMode extends OpMode {
                 */
     }
     public void loop() {
-            if(shouldActuallyDoThings){
+        try {
+            if (shouldActuallyDoThings) {
                 input.update();
-                if (input.getBool("grabberToggle")){
+                if (input.getBool("handToggle")) {
+                    monkeyArm.toggleArm();
+                }
+                if (input.getBool("grabberToggle")) {
                     if (armStatus) {
                         hands.setServoPosition("monkeyHand", 0.5);
                         armStatus = false;
-                    }
-                    else {
+                    } else {
                         hands.setServoPosition("monkeyHand", -0.5);
                         armStatus = true;
                     }
                 }
                 if (input.getBool("extendArm")) {
                     monkeyArm.extendArm();
-                }
-                else if (input.getBool("retractArm")){
+                } else if (input.getBool("retractArm")) {
                     monkeyArm.retractArm();
                 } else {
                     monkeyArm.stopArm();
                 }
-                if (input.getBool("armLengthNone")){
+                if (input.getBool("armLengthNone")) {
                     monkeyArm.setPositionFloorLocation();
                 }
-                if (input.getBool("armLengthSmall")){
+                if (input.getBool("armLengthSmall")) {
                     monkeyArm.setPositionLowLocation();
                 }
-                if (input.getBool("armLengthMedium")){
+                if (input.getBool("armLengthMedium")) {
                     monkeyArm.setPositionMiddleLocation();
                 }
-                if (input.getBool("armLengthTall")){
+                if (input.getBool("armLengthTall")) {
                     monkeyArm.setPositionHighLocation();
                 }
-                if (input.getBool("distanceTrackToggle")){
-                    if (tracking) {
-                        endPosition = driver.frontLeft.getCurrentPosition();
-                        distance = endPosition - startPosition;
-                        tracking = false;
+                if (input.getBool("distanceTrackOn")) {
+                    if (input.getBool("distanceTrackToggle")) {
+                        if (tracking) {
+                            endPosition = driver.frontLeft.getCurrentPosition();
+                            distance = endPosition - startPosition;
+                            tracking = false;
+                        } else {
+                            startPosition = driver.frontLeft.getCurrentPosition();
+                            tracking = true;
+                        }
                     }
-                    else {
-                        startPosition = driver.frontLeft.getCurrentPosition();
-                        tracking = true;
-                    }
+                    telemetry.update();
                 }
-                telemetry.update();
             }
         }
+        catch (Throwable t) {
+            FeatureManager.logger.log(t.toString());
+            StackTraceElement[] e = t.getStackTrace();
+            for(int i = 0; i < 3 && i < e.length;i++) {
+                FeatureManager.logger.log(e[i].toString());
+            }
+            shouldActuallyDoThings = false;
+            telemetry.update();
+        }
+    }
     public void stop() {
         FeatureManager.setIsOpModeRunning(false);
     }
