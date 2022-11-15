@@ -22,6 +22,7 @@ public class bigArmManager extends FeatureManager {
     public void retractArm(){
         hands.setMotorPower("monkeyShoulder", -0.5);
     }
+    public void stopArm(){hands.setMotorPower("monkeyShoulder",0);}
 
     public void toggleArm(){
         if (armStatus) {
