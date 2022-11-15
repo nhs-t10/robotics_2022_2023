@@ -6,7 +6,6 @@ goto start;
 
 #start:
     webcam.startStreaming(640, 480, OpenCvCameraRotation.UPRIGHT), next;
-    let cameraMonitorViewId = hardwareMap.appContext.getResources().getIdentifier("cameraMonitorViewId", "id", hardwareMap.appContext.getPackageName()), next;
     goto process;
 
 #process:

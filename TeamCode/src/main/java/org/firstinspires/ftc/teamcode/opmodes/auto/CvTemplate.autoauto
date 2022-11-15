@@ -1,0 +1,53 @@
+$
+    ignorewarning_american_m_unit: true
+$
+
+goto start;
+
+#start:
+    webcam.startStreaming(640, 480, OpenCvCameraRotation.UPRIGHT), next; // Standardize window size
+    goto getColor;
+
+#getColor:
+let color = getAnalysis(), next;
+stopWebcam(), next;
+goto process;
+
+#process:
+    if (color == 1)
+    {
+    goto color1;
+    }
+    else if (color == 2)
+    {
+    goto color2;
+    }
+    else if (color == 3)
+    {
+    goto color3;
+    }
+    else
+    {
+    goto error;
+    }
+
+#color1:
+next;//do stuff
+goto end;
+
+#color2:
+next;//do stuff
+goto end;
+
+#color3:
+next;//do stuff
+goto end;
+
+#error:
+log("color problem"), next;
+goto end;
+
+#end:
+    stopWebcam();
+    log("i got to the end!");
+
