@@ -41,6 +41,7 @@ public class MonkeyMode extends OpMode {
     public SampleMecanumDrive drive;
     public TrajectoryBuilder trajBuild;
     public bigArmManager monkeyArm;
+    private boolean armStatus = false;
     public int distance;
     public int startPosition;
     public int endPosition;
@@ -78,7 +79,7 @@ public class MonkeyMode extends OpMode {
                         new JoystickNode("right_stick_x")
                     )
             );
-        input.registerInput("handToggle",
+        input.registerInput("grabberToggle",
                 new ButtonNode("rightbumper")
         );
         input.registerInput("extendArm",
@@ -115,25 +116,7 @@ public class MonkeyMode extends OpMode {
                 new ButtonNode("dpaddown")
         );
         input.setOverlapResolutionMethod(InputOverlapResolutionMethod.MOST_COMPLEX_ARE_THE_FAVOURITE_CHILD);
-
-        PriorityAsyncOpmodeComponent.start(() -> {
-            if(looping && drive.notBusy()){
-                driver.driveOmni(input.getFloatArrayOfInput("drivingControls"));
-            }
-            if(looping && input.getBool("D-Up") && drive.notBusy()){
-                drive.followTrajectory(trajBuild.splineToLinearHeading(new Pose2d(36, 36), Math.toRadians(90)).build());
-            }
-            if(looping && input.getBool("D-Down") && drive.notBusy()){
-                drive.followTrajectory(trajBuild.strafeTo(new Vector2d(14, 28)).build());
-            }
-            if(looping && input.getBool("D-Right") && drive.notBusy()){
-                trajBuild.addDisplacementMarker(drive.getLocalizer().getPoseEstimate().vec().distTo(new Vector2d(0, 0)), () -> {});
-            }
-            if(looping && input.getBool("D-Left")){
-                drive.waitForIdle();
-                lastError = drive.getLastError();
-            }
-        });
+        PriorityAsyncOpmodeComponent.start(() -> {driver.driveOmni(input.getFloatArrayOfInput("drivingControls"));});
         drive.getLocalizer().update();
         telemetry = new MultipleTelemetry(telemetry, FtcDashboard.getInstance().getTelemetry());
         telemetry.addData("FL Power", driver.frontLeft.getPower());
@@ -168,11 +151,21 @@ public class MonkeyMode extends OpMode {
                 if (input.getBool("handToggle")) {
                     monkeyArm.toggleArm();
                 }
+                if (input.getBool("grabberToggle")) {
+                    if (armStatus) {
+                        hands.setServoPosition("monkeyHand", 0.5);
+                        armStatus = false;
+                    } else {
+                        hands.setServoPosition("monkeyHand", -0.5);
+                        armStatus = true;
+                    }
+                }
                 if (input.getBool("extendArm")) {
                     monkeyArm.extendArm();
-                }
-                if (input.getBool("retractArm")) {
+                } else if (input.getBool("retractArm")) {
                     monkeyArm.retractArm();
+                } else {
+                    monkeyArm.stopArm();
                 }
                 if (input.getBool("armLengthNone")) {
                     monkeyArm.setPositionFloorLocation();
@@ -187,16 +180,18 @@ public class MonkeyMode extends OpMode {
                     monkeyArm.setPositionHighLocation();
                 }
                 if (input.getBool("distanceTrackOn")) {
-                    if (tracking) {
-                        endPosition = driver.frontLeft.getCurrentPosition();
-                        distance = endPosition - startPosition;
-                        tracking = false;
-                    } else {
-                        startPosition = driver.frontLeft.getCurrentPosition();
-                        tracking = true;
+                    if (input.getBool("distanceTrackToggle")) {
+                        if (tracking) {
+                            endPosition = driver.frontLeft.getCurrentPosition();
+                            distance = endPosition - startPosition;
+                            tracking = false;
+                        } else {
+                            startPosition = driver.frontLeft.getCurrentPosition();
+                            tracking = true;
+                        }
                     }
+                    telemetry.update();
                 }
-                telemetry.update();
             }
         }
         catch (Throwable t) {
