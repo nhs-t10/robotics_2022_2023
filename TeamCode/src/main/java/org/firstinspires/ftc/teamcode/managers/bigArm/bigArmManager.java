@@ -5,7 +5,6 @@ import org.firstinspires.ftc.teamcode.managers.manipulation.ManipulationManager;
 
 public class bigArmManager extends FeatureManager {
     ManipulationManager hands;
-    private boolean armStatus = false;
     final int positionFloorLocation = 0; //To be filled in later
     final int positionLowLocation = 0; //To be filled in later
     final int positionMiddleLocation = 0; //To be filled in later
@@ -24,15 +23,11 @@ public class bigArmManager extends FeatureManager {
     }
     public void stopArm(){hands.setMotorPower("monkeyShoulder",0);}
 
-    public void toggleArm(){
-        if (armStatus) {
-            hands.setServoPosition("monkeyHand", 0.5);
-            armStatus = false;
-        }
-        else {
-            hands.setServoPosition("monkeyHand", -0.5);
-            armStatus = true;
-        }
+    public void openArm(){
+        hands.setServoPosition("monkeyHand", 0.5);
+    }
+    public void closeArm(){
+        hands.setServoPosition("monkeyHand", -0.5);
     }
 
     public void setPositionFloorLocation(){

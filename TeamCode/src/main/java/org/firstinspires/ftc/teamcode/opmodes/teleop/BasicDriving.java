@@ -167,7 +167,7 @@ public class BasicDriving extends OpMode {
         input.update();
         if (input.getBool("grabberToggle")){
             //B button
-            monkeyArm.toggleArm();
+            //monkeyArm.toggleArm();
         }
         if (input.getBool("extendArm")){
             //right shoulder
