@@ -134,9 +134,6 @@ public class CVManager extends FeatureManager {
         return 0;
     }
 
-    public int getCbOrCrValue() {
-        return pipeline.getAnalysis();
-    }
 
     public String getColor() {
         int color = pipeline.getAnalysis();
@@ -157,6 +154,11 @@ public class CVManager extends FeatureManager {
         OpenCvCamera camera = OpenCvCameraFactory.getInstance().createInternalCamera(OpenCvInternalCamera.CameraDirection.BACK, cameraMonitorViewId);
 
         return cameraMonitorViewId;
+    }
+
+    public int getAnalysis()
+    {
+        return pipeline.getAnalysis();
     }
 
 
