@@ -32,15 +32,15 @@ goto process;
     }
 
 #color1:
-next;//do stuff
+next;//go forward, go left
 goto end;
 
 #color2:
-next;//do stuff
+next;//go forward, stop
 goto end;
 
 #color3:
-next;//do stuff
+next;//go forward, go right
 goto end;
 
 #error:
