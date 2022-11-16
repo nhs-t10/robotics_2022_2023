@@ -5,7 +5,7 @@ $
 goto start;
 
 #start:
-    webcam.startStreaming(640, 480, OpenCvCameraRotation.UPRIGHT), next; // Standardize window size
+    webcam.startStreaming(1280, 720, OpenCvCameraRotation.UPRIGHT), next; // Standardize window size
     goto getColor;
 
 #getColor:
