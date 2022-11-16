@@ -32,15 +32,15 @@ goto process;
     }
 
 #color1:
-next;//go forward, go left
+next;//go left one tile, go forward 1.5 tiles
 goto end;
 
 #color2:
-next;//go forward, stop
+next;//go forward 1.5 tiles
 goto end;
 
 #color3:
-next;//go forward, go right
+next;//go right one tile, go forward 1.5 tiles
 goto end;
 
 #error:
