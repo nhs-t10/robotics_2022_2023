@@ -27,7 +27,7 @@ public class FeatureManager {
 
 
     public static final RobotConfiguration hotWheelsConfiguration = new RobotConfiguration("HotWheels",
-            W(1,-1,1,1), W(1,-1,1,1),
+            W(-1,-1,1,1), W(-1,-1,1,1),
             new OmniCalcComponents(
                 vertical      (-1f,1f,1f,-1f),
                 rotational    (1f, 1f, -1f, -1f),
