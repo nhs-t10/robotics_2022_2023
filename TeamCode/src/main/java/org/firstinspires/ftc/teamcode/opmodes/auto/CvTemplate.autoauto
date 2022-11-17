@@ -9,43 +9,39 @@ goto start;
     goto getColor;
 
 #getColor:
-let color = getAnalysis(), next;
-stopWebcam(), next;
-goto process;
+    let color = getAnalysis(), next;
+    stopWebcam(), next;
+    goto process;
 
 #process:
-    if (color == 1)
-    {
-    goto color1;
+    if (color == 1) {
+        goto color1;
     }
-    else if (color == 2)
-    {
-    goto color2;
+    else if (color == 2) {
+        goto color2;
     }
-    else if (color == 3)
-    {
-    goto color3;
+    else if (color == 3) {
+        goto color3;
     }
-    else
-    {
-    goto error;
+    else {
+        goto error;
     }
 
 #color1:
-next;//go left one tile, go forward 1.5 tiles
-goto end;
+    next;//go left one tile, go forward 1.5 tiles
+    goto end;
 
 #color2:
-next;//go forward 1.5 tiles
-goto end;
+    next;//go forward 1.5 tiles
+    goto end;
 
 #color3:
-next;//go right one tile, go forward 1.5 tiles
-goto end;
+    next;//go right one tile, go forward 1.5 tiles
+    goto end;
 
 #error:
-log("color problem"), next;
-goto end;
+    log("color problem"), next;
+    goto end;
 
 #end:
     stopWebcam();
