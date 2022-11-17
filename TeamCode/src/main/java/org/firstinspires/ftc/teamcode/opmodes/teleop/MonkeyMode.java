@@ -100,7 +100,7 @@ public class MonkeyMode extends OpMode {
         input.registerInput("armLengthNone",
                 new ButtonNode("b")
         );
-        input.registerInput("distanceTrackToggle",
+        input.registerInput("distanceTracker",
                 new ButtonNode("leftbumper")
         );
         input.registerInput("D-Up",
@@ -183,15 +183,17 @@ public class MonkeyMode extends OpMode {
             if (input.getBool("armLengthTall")) {
                 monkeyArm.setPositionHighLocation();
             }
-            if (input.getBool("distanceTrackToggle")) {
-                if (tracking) {
-                    endPosition = driver.frontLeft.getCurrentPosition();
-                    distance = endPosition - startPosition;
-                    tracking = false;
-                } else {
+            if (input.getBool("distanceTracker")) {
+                if (!tracking){
                     startPosition = driver.frontLeft.getCurrentPosition();
                     tracking = true;
                 }
+                endPosition = driver.frontLeft.getCurrentPosition();
+                distance = endPosition - startPosition;
+                telemetry.addLine("Distance Traveled: " + distance);
+            }
+            else {
+                tracking = false;
             }
             telemetry.addData("FL Power", driver.frontLeft.getPower());
             telemetry.addData("FR Power", driver.frontRight.getPower());
