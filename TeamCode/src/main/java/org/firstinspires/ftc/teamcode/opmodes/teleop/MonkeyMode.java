@@ -121,7 +121,7 @@ public class MonkeyMode extends OpMode {
                 drive.followTrajectory(trajBuild.splineToLinearHeading(new Pose2d(36, 36), Math.toRadians(90)).build());
             }
             if(input.getBool("D-Down") && drive.notBusy()){
-                drive.followTrajectory(trajBuild.strafeTo(new Vector2d(14, 28)).build());
+                drive.followTrajectory(trajBuild.splineToSplineHeading(new Pose2d(14, 28), Math.toRadians(drive.getExternalHeading())).build());
             }
             if(input.getBool("D-Right") && drive.notBusy()){
                 trajBuild.addDisplacementMarker(drive.getLocalizer().getPoseEstimate().vec().distTo(new Vector2d(0, 0)), () -> {});
