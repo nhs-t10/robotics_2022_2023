@@ -133,14 +133,6 @@ public class MonkeyMode extends OpMode {
         });
         drive.getLocalizer().update();
         telemetry = new MultipleTelemetry(telemetry, FtcDashboard.getInstance().getTelemetry());
-        telemetry.addData("FL Power", driver.frontLeft.getPower());
-        telemetry.addData("FR Power", driver.frontRight.getPower());
-        telemetry.addData("BR Power", driver.backLeft.getPower());
-        telemetry.addData("BL Power", driver.backRight.getPower());
-        telemetry.addData("Distance Traveled", distance);
-        telemetry.addData("Roadrunner Busy: ", drive.isBusy());
-        telemetry.addData("Heading", drive.getLocalizer().getPoseEstimate());
-        telemetry.addData("Last Error: ", lastError);
         //dashboard.sendTelemetryPacket(packet);
         /*
         TelemetryPacket packet = new TelemetryPacket();
@@ -201,18 +193,25 @@ public class MonkeyMode extends OpMode {
                     tracking = true;
                 }
             }
-        telemetry.update();
+            telemetry.addData("FL Power", driver.frontLeft.getPower());
+            telemetry.addData("FR Power", driver.frontRight.getPower());
+            telemetry.addData("BR Power", driver.backLeft.getPower());
+            telemetry.addData("BL Power", driver.backRight.getPower());
+            telemetry.addData("Distance Traveled", distance);
+            telemetry.addData("Roadrunner Busy: ", drive.isBusy());
+            telemetry.addData("Heading", drive.getLocalizer().getPoseEstimate());
+            telemetry.addData("Last Error: ", lastError);
+            telemetry.update();
         }
         catch (Throwable t) {
             FeatureManager.logger.log(t.toString());
             StackTraceElement[] e = t.getStackTrace();
-            for(int i = 0; i < 3 && i < e.length;i++) {
+            for (int i = 0; i < 3 && i < e.length; i++) {
                 FeatureManager.logger.log(e[i].toString());
             }
             shouldActuallyDoThings = false;
             telemetry.update();
         }
-        telemetry.update();
     }
     public void stop() {
         FeatureManager.setIsOpModeRunning(false);

@@ -177,9 +177,12 @@ public class BasicDriving extends OpMode {
             //left shoulder
             monkeyArm.retractArm();
         }
-
-
-
+        telemetry.addData("FL Power", driver.frontLeft.getPower());
+        telemetry.addData("FR Power", driver.frontRight.getPower());
+        telemetry.addData("BR Power", driver.backLeft.getPower());
+        telemetry.addData("BL Power", driver.backRight.getPower());
+        telemetry.addData("Roadrunner Busy: ", drive.isBusy());
+        telemetry.addData("Heading", drive.getLocalizer().getPoseEstimate());
         telemetry.update();
     }
     public void stop() {
