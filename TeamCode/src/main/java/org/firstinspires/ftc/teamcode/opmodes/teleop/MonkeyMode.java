@@ -159,9 +159,11 @@ public class MonkeyMode extends OpMode {
             if (input.getBool("handToggle")) {
                 if (armStatus){
                     monkeyArm.openArm();
+                    armStatus = false;
                 }
                 else {
                     monkeyArm.closeArm();
+                    armStatus = true;
                 }
             }
             if (input.getBool("extendArm")) {
