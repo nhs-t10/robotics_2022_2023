@@ -1,0 +1,53 @@
+$
+    ignorewarning_american_m_unit: true
+$
+
+goto start;
+
+#start:
+    webcam.startStreaming(1280, 720, OpenCvCameraRotation.UPRIGHT), next; // Standardize window size
+    goto getColor;
+
+#getColor:
+    let color = getAnalysis(), next;
+    stopWebcam(), next;
+    goto process;
+
+#process:
+    if (color == 1) {
+        goto color1;
+    }
+    else if (color == 2) {
+        goto color2;
+    }
+    else if (color == 3) {
+        goto color3;
+    }
+    else {
+        goto error;
+    }
+
+#color1:
+    driveOmni(0,-1,0), after 2ft next;
+    driveOmni(1,0,0), after 3ft next;
+    next;//go left one tile, go forward 1.5 tiles
+    goto end;
+
+#color2:
+    driveOmni(1,0,0), after 3ft next;
+    next;//go forward 1.5 tiles
+    goto end;
+
+#color3:
+    driveOmni(0,1,0), after 2ft next;
+    driveOmni(1,0,0), after 3ft next;
+    next;//go right one tile, go forward 1.5 tiles
+    goto end;
+
+#error:
+    log("color problem"), after 2s next;
+    goto end;
+
+#end:
+    log("i got to the end!");
+
