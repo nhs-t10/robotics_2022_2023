@@ -118,10 +118,10 @@ public class MonkeyMode extends OpMode {
         input.setOverlapResolutionMethod(InputOverlapResolutionMethod.MOST_COMPLEX_ARE_THE_FAVOURITE_CHILD);
         PriorityAsyncOpmodeComponent.start(() -> {
             if(input.getBool("D-Up") && drive.notBusy()){
-                drive.followTrajectory(trajBuild.splineToLinearHeading(new Pose2d(36, 36), Math.toRadians(90)).build());
+                drive.followTrajectory(trajBuild.splineToLinearHeading(new Pose2d(-24, 12), Math.toRadians(90)).build());
             }
             if(input.getBool("D-Down") && drive.notBusy()){
-                drive.followTrajectory(trajBuild.splineToSplineHeading(new Pose2d(14, 28), Math.toRadians(drive.getExternalHeading())).build());
+                drive.followTrajectory(trajBuild.splineToSplineHeading(new Pose2d(0, 72), Math.toRadians(drive.getExternalHeading())).build());
             }
             if(input.getBool("D-Right") && drive.notBusy()){
                 trajBuild.addDisplacementMarker(drive.getLocalizer().getPoseEstimate().vec().distTo(new Vector2d(0, 0)), () -> {});
