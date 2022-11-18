@@ -42,6 +42,7 @@ public class MonkeyMode extends OpMode {
     public TrajectoryBuilder trajBuild;
     public bigArmManager monkeyArm;
     private boolean armStatus = false;
+    private boolean intakeToggle = false;
     public int distance;
     public int startPosition;
     public int endPosition;
@@ -156,15 +157,16 @@ public class MonkeyMode extends OpMode {
             if(drive.notBusy()){
                 driver.driveOmni(input.getFloatArrayOfInput("drivingControls"));
             }
-            if (input.getBool("handToggle")) {
-                if (armStatus){
-                    monkeyArm.openArm();
+            if (input.getBool("handToggle") && !armStatus) {
+                intakeToggle=!intakeToggle;
+                armStatus = true;
+            } else if (!input.getBool("handToggle") && armStatus){
                     armStatus = false;
-                }
-                else {
-                    monkeyArm.closeArm();
-                    armStatus = true;
-                }
+            }
+            if (intakeToggle){
+                monkeyArm.openArm();
+            } else {
+                monkeyArm.closeArm();
             }
             if (input.getBool("extendArm")) {
                 monkeyArm.extendArm();
