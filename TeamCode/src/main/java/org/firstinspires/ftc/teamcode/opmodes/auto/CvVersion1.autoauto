@@ -1,7 +1,6 @@
 $
     ignorewarning_american_m_unit: true
 $
-
 goto start;
 
 #start:
@@ -15,7 +14,7 @@ goto start;
     goto process;
 
 #process:
-    driveOmni(0,0.5,0), after 3in next;
+    driveOmni(0,0.5,0), after 2s next;
     if (color == 1) {
         goto color1;
     }
@@ -49,6 +48,7 @@ goto start;
 #error:
     log("color problem"), next;
     let rep_times = rep_times + 1, next;
+    driveOmni(0,0,0), after 1s next;
     goto end;
 
 #end:

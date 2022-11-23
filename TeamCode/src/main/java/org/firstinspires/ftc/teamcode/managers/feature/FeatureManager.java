@@ -26,14 +26,14 @@ public class FeatureManager {
     }
 
 
-    public static final RobotConfiguration hotWheelsConfiguration = new RobotConfiguration("HotWheels",
+    public static final RobotConfiguration monkeyWheelsConfiguration = new RobotConfiguration("monkeyWheels",
             W(-1f,-1,1,1), W(-1f,-1,1,1),
             new OmniCalcComponents(
                 vertical      (-1f,1f,1f,-1f),
                 rotational    (1f, 1f, -1f, -1f),
                 horizontal    (1f,1f,1f,1f)
             ),
-            0.03f, 1680, 1, 8.9, 1, 3f,
+            0.03f, 537.7, 1, 8.9, 1, 3f,
             PIDMAP(
                 PIDC("ClawMotor", 0.05f, 0f, 0f)
             )
@@ -48,7 +48,7 @@ public class FeatureManager {
         getRobotConfiguration().motorCoefficients = getRobotConfiguration().autoMotorCoefficients;
     }
 
-    public static final RobotConfiguration defaultConfiguration = hotWheelsConfiguration;
+    public static final RobotConfiguration defaultConfiguration = monkeyWheelsConfiguration;
 
 
     private static RobotConfiguration cachedConfiguration;
