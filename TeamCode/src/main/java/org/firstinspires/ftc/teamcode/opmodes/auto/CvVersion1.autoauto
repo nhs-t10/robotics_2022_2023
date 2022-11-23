@@ -15,7 +15,7 @@ goto start;
     goto process;
 
 #process:
-    driveOmni(0,0.5,0), after 3in next;
+    driveOmni(0,0.5,0), after 3in stopDrive(), next;
     if (color == 1) {
         goto color1;
     }
@@ -30,19 +30,19 @@ goto start;
     }
 
 #color1:
-    driveOmni(0,-1,0), after 2ft next;
-    driveOmni(1,0,0), after 3ft next;
+    driveOmni(0,1,0), after 2ft stopDrive(), next;
+    driveOmni(1,0,0), after 3ft stopDrive(), next;
     next;//go left one tile, go forward 1.5 tiles
     goto end;
 
 #color2:
-    driveOmni(1,0,0), after 3ft next;
+    driveOmni(1,0,0), after 3ft stopDrive(), next;
     next;//go forward 1.5 tiles
     goto end;
 
 #color3:
-    driveOmni(0,1,0), after 2ft next;
-    driveOmni(1,0,0), after 3ft next;
+    driveOmni(0,1,0), after 2ft stopDrive(), next;
+    driveOmni(1,0,0), after 3ft stopDrive(), next;
     next;//go right one tile, go forward 1.5 tiles
     goto end;
 
