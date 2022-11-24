@@ -13,7 +13,7 @@ public class RobotWriter extends OpMode {
     @Override
     public void init() {
         FileSaver file = new FileSaver(RobotConfiguration.fileName);
-        file.overwriteFile(FeatureManager.hotWheelsConfiguration.name);
+        file.overwriteFile(FeatureManager.monkeyWheelsConfiguration.name);
     }
 
     @Override
