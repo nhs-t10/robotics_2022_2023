@@ -206,6 +206,7 @@ public class MonkeyMode extends OpMode {
             telemetry.addData("Distance Traveled", distance);
             telemetry.addData("Roadrunner Busy: ", drive.isBusy());
             telemetry.addData("Heading", drive.getLocalizer().getPoseEstimate());
+            telemetry.addData("Servo Open",""+intakeToggle);
             telemetry.addData("Last Error: ", lastError);
             telemetry.update();
         }
