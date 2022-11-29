@@ -38,11 +38,11 @@ public class ColorSensor123 extends PipelineThatExposesSomeAnalysis {
     }
     //todo: fix numbers
     //static final Scalar color1_min = new Scalar(107, 179, 199); //purple min
-    static final int color1_min_Cr = 180; //purple min cr ColorFind.autoauto
-    static final int color1_min_Cb = 120; //purple min cb
+    static final int color1_min_Cr = 130; //purple min cr
+    static final int color1_min_Cb = 160; //purple min cb
     //static final Scalar color1_max = new Scalar(94, 144, 231); //purple max
-    static final int color1_max_Cr = 210; //purple max cr
-    static final int color1_max_Cb = 150; //purple max cb
+    static final int color1_max_Cr = 160; //purple max cr
+    static final int color1_max_Cb = 190; //purple max cb
     //static final Scalar color2_min = new Scalar(165, 96, 74); //green min
     static final int color2_min_Cr = 95; //green min cr
     static final int color2_min_Cb = 110; //green min cb
@@ -57,7 +57,7 @@ public class ColorSensor123 extends PipelineThatExposesSomeAnalysis {
     static final int color3_max_Cb = 190; //teal max cb
 
 
-    static final Point TopLeftAnchorPoint = new Point(385,290); //Base Picture is 600 x 480 when taken on the robot.
+    static final Point TopLeftAnchorPoint = new Point(380,290); //Base Picture is 600 x 480 when taken on the robot.
     static final int REGION_WIDTH = 20; //max width: 600
     static final int REGION_HEIGHT = 20; //max height: 240
     static final Point BottomRightAnchorPoint = new Point(TopLeftAnchorPoint.x + REGION_WIDTH,TopLeftAnchorPoint.y + REGION_HEIGHT);

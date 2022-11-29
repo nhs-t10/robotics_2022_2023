@@ -148,6 +148,11 @@ public class CVManager extends FeatureManager {
         }
     }
 
+    public int getColorRaw() {
+        int color = pipeline.getAnalysis();
+        return color;
+    }
+
     public int getCameraId()
     {
         int cameraMonitorViewId = hardwareMap.appContext.getResources().getIdentifier("cameraMonitorViewId", "id", hardwareMap.appContext.getPackageName());
