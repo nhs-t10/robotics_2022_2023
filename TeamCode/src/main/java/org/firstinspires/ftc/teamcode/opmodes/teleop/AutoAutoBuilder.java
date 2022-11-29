@@ -23,6 +23,8 @@ import org.firstinspires.ftc.teamcode.managers.input.InputOverlapResolutionMetho
 import org.firstinspires.ftc.teamcode.managers.input.nodes.ButtonNode;
 import org.firstinspires.ftc.teamcode.managers.input.nodes.JoystickNode;
 import org.firstinspires.ftc.teamcode.managers.input.nodes.MultiInputNode;
+import org.firstinspires.ftc.teamcode.managers.input.nodes.MultiplyNode;
+import org.firstinspires.ftc.teamcode.managers.input.nodes.PlusNode;
 import org.firstinspires.ftc.teamcode.managers.manipulation.ManipulationManager;
 import org.firstinspires.ftc.teamcode.managers.movement.MovementManager;
 import org.firstinspires.ftc.teamcode.managers.sensor.SensorManager;
@@ -51,55 +53,30 @@ public class AutoAutoBuilder extends OpMode {
         DcMotor bl = hardwareMap.get(DcMotor.class, "bl");
         driver = new MovementManager(fl, fr, br, bl);
         input = new InputManager(gamepad1, gamepad2);
-        input.registerInput("drivingControls",
-                    new MultiInputNode(
-                        new JoystickNode("left_stick_y"),
-                        new JoystickNode("left_stick_x"),
-                        new JoystickNode("right_stick_x")
-                    )
-            );
         input.registerInput("distanceTracker",
                 new ButtonNode("leftbumper")
         );
-        input.registerInput("D-Up",
-                new ButtonNode("dpadup")
-                );
-        input.registerInput("D-Left",
-                new ButtonNode("dpadleft")
-        );
-        input.registerInput("D-Right",
-                new ButtonNode("dpadright")
-        );
-        input.registerInput("D-Down",
-                new ButtonNode("dpaddown")
+        //Turns inputs into ints (false is 0 and true is 1) and then multiplies them by 0.5
+        input.registerInput("D-Pad Drive",
+                new MultiInputNode(
+                        new PlusNode(
+                                new MultiplyNode(new ButtonNode("dpadup"), 0.5f),
+                                new MultiplyNode(new ButtonNode("dpaddown"), -0.5f)
+                        ),
+                        new PlusNode(
+                                new MultiplyNode(new ButtonNode("dpadright"), 0.5f),
+                                new MultiplyNode(new ButtonNode("dpadleft"), -0.5f)
+                        )
+                )
         );
         input.setOverlapResolutionMethod(InputOverlapResolutionMethod.MOST_COMPLEX_ARE_THE_FAVOURITE_CHILD);
         telemetry = new MultipleTelemetry(telemetry, FtcDashboard.getInstance().getTelemetry());
-        //dashboard.sendTelemetryPacket(packet);
-        /*
-        TelemetryPacket packet = new TelemetryPacket();
-        packet.put("x", 3.7);
-        packet.put("status", "alive");
-        FtcDashboard dashboard = FtcDashboard.getInstance();
-        double coordx = 0.0;
-        double coordy = 0.0;
-        //Coordinates are measured in a unit that appears to match inches, robot is 17in x 17in
-        double[] pointsX = {coordx, coordx + 17, coordx + 17, coordx, coordx};
-        double[] pointsY = {coordy, coordy, coordy + 17, coordy + 17, coordy};
-        packet.fieldOverlay()
-                .setStroke("blue")
-                .setStrokeWidth(1)
-                .strokePolyline(pointsX, pointsY);
-                */
     }
     public void loop() {
         try {
             input.update();
-            //Turns inputs into ints (false is 0 and true is 1) and then multiplies them by 0.5
-            driver.driveOmni(0.5f * (Boolean.compare(input.getBool("D-Up"),false) - Boolean.compare(input.getBool("D-Down"),false)),
-                    0.5f * (Boolean.compare(input.getBool("D-Right"),false) - Boolean.compare(input.getBool("D-Left"),false)),
-                    0);
-
+            float[] h = input.getFloatArrayOfInput("D-Pad Drive");
+            driver.driveOmni(h[0],h[1],0);
             if (input.getBool("distanceTracker")) {
                 if (!tracking){
                     startPosition = driver.frontLeft.getCurrentPosition();
@@ -112,7 +89,6 @@ public class AutoAutoBuilder extends OpMode {
             else {
                 tracking = false;
             }
-
             telemetry.addData("FL Power", driver.frontLeft.getPower());
             telemetry.addData("FR Power", driver.frontRight.getPower());
             telemetry.addData("BR Power", driver.backLeft.getPower());
