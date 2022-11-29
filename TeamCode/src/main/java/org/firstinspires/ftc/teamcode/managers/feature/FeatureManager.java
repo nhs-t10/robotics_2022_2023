@@ -33,7 +33,7 @@ public class FeatureManager {
                 rotational    (1f, 1f, -1f, -1f),
                 horizontal    (1f,1f,1f,1f)
             ),
-            0.03f, 537.7, 1, 8.9, 1, 3f,
+            0.03f, 537.7, 1, 8.9, 0.89, 3f,
             PIDMAP(
                 PIDC("ClawMotor", 0.05f, 0f, 0f)
             )

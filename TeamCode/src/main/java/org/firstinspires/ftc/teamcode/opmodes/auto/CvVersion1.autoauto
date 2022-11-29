@@ -17,7 +17,7 @@ goto start;
 #process:
     log(color), next;
     driveOmni(0,0.5,0), after 6in next;
-    //goto end;
+    goto end;
     if (color == 1) {
         goto color1;
     }

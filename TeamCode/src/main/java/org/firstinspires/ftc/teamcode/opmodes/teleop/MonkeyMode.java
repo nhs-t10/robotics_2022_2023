@@ -14,6 +14,7 @@ import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
 
+import org.firstinspires.ftc.teamcode.auxilary.PaulMath;
 import org.firstinspires.ftc.teamcode.auxilary.integratedasync.PriorityAsyncOpmodeComponent;
 import org.firstinspires.ftc.teamcode.drive.SampleMecanumDrive;
 import org.firstinspires.ftc.teamcode.managers.bigArm.bigArmManager;
@@ -43,7 +44,7 @@ public class MonkeyMode extends OpMode {
     public bigArmManager monkeyArm;
     private boolean armStatus = false;
     private boolean intakeToggle = false;
-    public int distance;
+    public double distance;
     public int startPosition;
     public int endPosition;
     public boolean tracking;
@@ -154,7 +155,7 @@ public class MonkeyMode extends OpMode {
     public void loop() {
         try {
             input.update();
-            if(drive.notBusy()){
+            if(drive.notBusy() && !input.getBool("armLengthNone")){
                 driver.driveOmni(input.getFloatArrayOfInput("drivingControls"));
             }
             if (input.getBool("handToggle") && !armStatus) {
@@ -193,12 +194,13 @@ public class MonkeyMode extends OpMode {
                     tracking = true;
                 }
                 endPosition = driver.frontLeft.getCurrentPosition();
-                distance = endPosition - startPosition;
+                distance = PaulMath.encoderDistanceCm(endPosition - startPosition);
                 telemetry.addLine("Distance Traveled: " + distance);
             }
             else {
                 tracking = false;
             }
+
             telemetry.addData("FL Power", driver.frontLeft.getPower());
             telemetry.addData("FR Power", driver.frontRight.getPower());
             telemetry.addData("BR Power", driver.backLeft.getPower());
@@ -207,6 +209,7 @@ public class MonkeyMode extends OpMode {
             telemetry.addData("Roadrunner Busy: ", drive.isBusy());
             telemetry.addData("Heading", drive.getLocalizer().getPoseEstimate());
             telemetry.addData("Servo Open",""+intakeToggle);
+            telemetry.addData("Linear slide motor val: ", hands.getMotorPosition("monkeyShoulder"));
             telemetry.addData("Last Error: ", lastError);
             telemetry.update();
         }
