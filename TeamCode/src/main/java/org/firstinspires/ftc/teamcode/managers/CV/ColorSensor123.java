@@ -36,6 +36,37 @@ public class ColorSensor123 extends PipelineThatExposesSomeAnalysis {
         Imgproc.cvtColor(input, YCrCb, Imgproc.COLOR_RGB2YCrCb);
         Core.extractChannel(YCrCb, Cb, 2);
     }
+
+     void gridDraw(int width, int height, Mat input) {
+        int currentWidth = 0;
+        int currentHeight = 0;
+        final Scalar GREEN = new Scalar(0, 255, 0);
+        Point TopLeftThing = new Point(currentWidth,currentHeight); //Base Picture is 600 x 480 when taken on the robot.
+        Point BottomRightThing = new Point(TopLeftThing.x + REGION_WIDTH,TopLeftThing.y + REGION_HEIGHT);
+        while (currentHeight < height)
+        {
+            while (currentWidth < width)
+            {
+                TopLeftThing.x = currentWidth;
+                TopLeftThing.y = currentHeight;
+                BottomRightThing.x = TopLeftThing.x + REGION_WIDTH;
+                BottomRightThing.y = TopLeftThing.y + REGION_HEIGHT;
+
+
+                Imgproc.rectangle(
+                        input, // Buffer to draw on
+                        TopLeftThing, // First point which defines the rectangle
+                        BottomRightThing, // Second point which defines the rectangle
+                        GREEN, // The color the rectangle is drawn in
+                        1); // Thickness of the rectangle lines
+                currentWidth = currentWidth + 20;
+            }
+            currentHeight = currentHeight + 20;
+            currentWidth = 0;
+        }
+    }
+
+
     //todo: fix numbers
     //static final Scalar color1_min = new Scalar(107, 179, 199); //purple min
     static final int color1_min_Cr = 130; //purple min cr
@@ -57,7 +88,7 @@ public class ColorSensor123 extends PipelineThatExposesSomeAnalysis {
     static final int color3_max_Cb = 190; //teal max cb
 
 
-    static final Point TopLeftAnchorPoint = new Point(380,290); //Base Picture is 600 x 480 when taken on the robot.
+    static final Point TopLeftAnchorPoint = new Point(350,290); //Base Picture is 600 x 480 when taken on the robot.
     static final int REGION_WIDTH = 20; //max width: 600
     static final int REGION_HEIGHT = 20; //max height: 240
     static final Point BottomRightAnchorPoint = new Point(TopLeftAnchorPoint.x + REGION_WIDTH,TopLeftAnchorPoint.y + REGION_HEIGHT);
@@ -80,6 +111,8 @@ public class ColorSensor123 extends PipelineThatExposesSomeAnalysis {
         avg_Cr = (int) Core.mean(Region_Cr).val[0];
         avg_Cb = (int) Core.mean(Region_Cb).val[0];
 
+
+        gridDraw(1280,720,input);
         Imgproc.rectangle(
                 input, // Buffer to draw on
                 TopLeftAnchorPoint, // First point which defines the rectangle
