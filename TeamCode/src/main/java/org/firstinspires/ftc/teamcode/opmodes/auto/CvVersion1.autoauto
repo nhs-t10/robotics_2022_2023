@@ -6,7 +6,7 @@ goto start;
 
 #start:
     let distance = 3, let rep_times = 0, next;
-    webcam.startStreaming(1280, 720, OpenCvCameraRotation.UPRIGHT), next; // Standardize window size
+    webcam.startStreaming(1280, 720, OpenCvCameraRotation.UPRIGHT), after 2s next; // Standardize window size
     goto getColor;
 
 #getColor:
@@ -16,8 +16,7 @@ goto start;
 
 #process:
     log(color), next;
-    driveOmni(0,0.5,0), after 6in next;
-    goto end;
+    driveOmni(0,0.5,0), after 12.4cm next;
     if (color == 1) {
         goto color1;
     }
@@ -32,28 +31,29 @@ goto start;
     }
 
 #color1:
-    driveOmni(0,1,0), after 2ft next;
-    driveOmni(1,0,0), after 3ft next;
+    driveOmni(0,-1,0), after 68cm next;
     next;//go left one tile, go forward 1.5 tiles
     goto end;
 
 #color2:
-    driveOmni(1,0,0), after 3ft next;
     next;//go forward 1.5 tiles
     goto end;
 
 #color3:
-    driveOmni(0,1,0), after 2ft next;
-    driveOmni(1,0,0), after 3ft next;
+    driveOmni(0,1,0), after 68cm next;
     next;//go right one tile, go forward 1.5 tiles
     goto end;
 
 #error:
-    log("color problem"), next;
+//this is a stupid hack
+    goto color1;
+/*    log("color problem"), next;
     let rep_times = rep_times + 1, next;
     goto end;
+*/
 
 #end:
+    driveOmni(-1,0,0), after 95cm next;
     stopDrive(), next;
     log("i got to the end!");
 

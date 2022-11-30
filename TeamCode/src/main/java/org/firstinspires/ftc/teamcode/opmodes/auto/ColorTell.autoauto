@@ -9,6 +9,7 @@ goto start;
     goto process;
 
 #process:
+//    log(getColorRaw()), next;
     log(getColor()), next;
     after 1s goto process;
 
