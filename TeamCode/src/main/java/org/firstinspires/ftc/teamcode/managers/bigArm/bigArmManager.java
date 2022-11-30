@@ -15,11 +15,11 @@ public class bigArmManager extends FeatureManager {
     }
 
     public void extendArm(){
-        hands.setMotorPower("monkeyShoulder", 0.5);
+        hands.setMotorPower("monkeyShoulder", 1);
     }
 
     public void retractArm(){
-        hands.setMotorPower("monkeyShoulder", -0.5);
+        hands.setMotorPower("monkeyShoulder", -1);
     }
     public void stopArm(){hands.setMotorPower("monkeyShoulder",0);}
     public void openArm(){
