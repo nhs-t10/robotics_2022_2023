@@ -76,9 +76,9 @@ public class MonkeyMode extends OpMode {
         input = new InputManager(gamepad1, gamepad2);
         input.registerInput("drivingControls",
                     new MultiInputNode(
-                        new JoystickNode("left_stick_y"),
-                        new JoystickNode("left_stick_x"),
-                        new JoystickNode("right_stick_x")
+                            new MultiplyNode(new JoystickNode("left_stick_y"), -1f),
+                            new MultiplyNode(new JoystickNode("left_stick_x"), -1f),
+                            new JoystickNode("right_stick_x")
                     )
             );
         input.registerInput("handToggle",
@@ -135,22 +135,6 @@ public class MonkeyMode extends OpMode {
         });
         drive.getLocalizer().update();
         telemetry = new MultipleTelemetry(telemetry, FtcDashboard.getInstance().getTelemetry());
-        //dashboard.sendTelemetryPacket(packet);
-        /*
-        TelemetryPacket packet = new TelemetryPacket();
-        packet.put("x", 3.7);
-        packet.put("status", "alive");
-        FtcDashboard dashboard = FtcDashboard.getInstance();
-        double coordx = 0.0;
-        double coordy = 0.0;
-        //Coordinates are measured in a unit that appears to match inches, robot is 17in x 17in
-        double[] pointsX = {coordx, coordx + 17, coordx + 17, coordx, coordx};
-        double[] pointsY = {coordy, coordy, coordy + 17, coordy + 17, coordy};
-        packet.fieldOverlay()
-                .setStroke("blue")
-                .setStrokeWidth(1)
-                .strokePolyline(pointsX, pointsY);
-                */
     }
     public void loop() {
         try {
@@ -188,24 +172,11 @@ public class MonkeyMode extends OpMode {
             if (input.getBool("armLengthTall")) {
                 monkeyArm.setPositionHighLocation();
             }
-            if (input.getBool("distanceTracker")) {
-                if (!tracking){
-                    startPosition = driver.frontLeft.getCurrentPosition();
-                    tracking = true;
-                }
-                endPosition = driver.frontLeft.getCurrentPosition();
-                distance = PaulMath.encoderDistanceCm(endPosition - startPosition);
-                telemetry.addLine("Distance Traveled: " + distance);
-            }
-            else {
-                tracking = false;
-            }
 
             telemetry.addData("FL Power", driver.frontLeft.getPower());
             telemetry.addData("FR Power", driver.frontRight.getPower());
             telemetry.addData("BR Power", driver.backLeft.getPower());
             telemetry.addData("BL Power", driver.backRight.getPower());
-            telemetry.addData("Distance Traveled", distance);
             telemetry.addData("Roadrunner Busy: ", drive.isBusy());
             telemetry.addData("Heading", drive.getLocalizer().getPoseEstimate());
             telemetry.addData("Servo Open",""+intakeToggle);

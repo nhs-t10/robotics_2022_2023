@@ -40,6 +40,7 @@ public class AutoAutoBuilder extends OpMode {
     public int startPosition;
     public int endPosition;
     public boolean tracking;
+    public int trackNumber;
     @Override
     public void init() {
         FeatureManager.setIsOpModeRunning(true);
@@ -84,9 +85,11 @@ public class AutoAutoBuilder extends OpMode {
                 }
                 endPosition = driver.frontLeft.getCurrentPosition();
                 distance = PaulMath.encoderDistanceCm(endPosition - startPosition);
-                telemetry.addLine("Distance Traveled: " + distance);
             }
             else {
+                if (tracking){
+                    telemetry.addLine("Movement Number " + trackNumber + ":  " + distance);
+                }
                 tracking = false;
             }
             telemetry.addData("FL Power", driver.frontLeft.getPower());
