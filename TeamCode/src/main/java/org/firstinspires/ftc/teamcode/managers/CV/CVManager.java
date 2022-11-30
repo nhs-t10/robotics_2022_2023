@@ -170,12 +170,11 @@ public class CVManager extends FeatureManager {
 
 
     //gridDraw can only be used inside a pipeline, but it's so useful I had to put it here. It makes a green grid on your image.
-    public void gridDraw(int width, int height, Mat input) {
+/*    public void gridDraw(int width, int height, Mat input) {
         int currentWidth = 0;
         int currentHeight = 0;
-        int REGION_WIDTH = 20;
-        int REGION_HEIGHT = 20;
         final Scalar GREEN = new Scalar(0, 255, 0);
+        final Scalar RED = new Scalar(255, 0, 0);
         Point TopLeftThing = new Point(currentWidth,currentHeight); //Base Picture is 600 x 480 when taken on the robot.
         Point BottomRightThing = new Point(TopLeftThing.x + REGION_WIDTH,TopLeftThing.y + REGION_HEIGHT);
         while (currentHeight < height)
@@ -198,6 +197,64 @@ public class CVManager extends FeatureManager {
             }
             currentHeight = currentHeight + 20;
             currentWidth = 0;
+        }
+    }
+*/
+    public void gridDraw(int width, int height, Mat input) {
+        int REGION_WIDTH = 20;
+        int REGION_HEIGHT = 20;
+        final Scalar GREEN = new Scalar(0, 255, 0);
+        final Scalar RED = new Scalar(0,255,0);
+        Scalar COLOR = GREEN;
+        Point TopLeftThing = new Point(0,0);
+        Point BottomRightThing = new Point(width,0);
+        for (int currentHeight = 0; currentHeight < height; currentHeight = currentHeight + 20)
+        {
+            TopLeftThing.y = currentHeight;
+            BottomRightThing.y = currentHeight;
+
+            if (currentHeight % 5 == 0)
+            {
+                COLOR = RED;
+            }
+            else
+            {
+                COLOR = GREEN;
+            }
+
+            Imgproc.rectangle(
+                    input, // Buffer to draw on
+                    TopLeftThing, // First point which defines the rectangle
+                    BottomRightThing, // Second point which defines the rectangle
+                    COLOR, // The color the rectangle is drawn in
+                    1); // Thickness of the rectangle lines
+
+        }
+        TopLeftThing.x = 0;
+        TopLeftThing.y = 0;
+        BottomRightThing.x = 0;
+        BottomRightThing.y = height;
+        for (int currentWidth = 0; currentWidth < width; currentWidth = currentWidth + 20)
+        {
+            TopLeftThing.x = currentWidth;
+            BottomRightThing.x = currentWidth;
+
+            if (currentWidth % 5 == 0)
+            {
+                COLOR = RED;
+            }
+            else
+            {
+                COLOR = GREEN;
+            }
+
+            Imgproc.rectangle(
+                    input, // Buffer to draw on
+                    TopLeftThing, // First point which defines the rectangle
+                    BottomRightThing, // Second point which defines the rectangle
+                    COLOR, // The color the rectangle is drawn in
+                    1); // Thickness of the rectangle lines
+
         }
     }
 

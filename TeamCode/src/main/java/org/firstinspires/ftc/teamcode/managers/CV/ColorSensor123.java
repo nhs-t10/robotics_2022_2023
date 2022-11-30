@@ -38,36 +38,64 @@ public class ColorSensor123 extends PipelineThatExposesSomeAnalysis {
     }
 
      void gridDraw(int width, int height, Mat input) {
-        int currentWidth = 0;
-        int currentHeight = 0;
+        int REGION_WIDTH = 20;
+        int REGION_HEIGHT = 20;
         final Scalar GREEN = new Scalar(0, 255, 0);
-        Point TopLeftThing = new Point(currentWidth,currentHeight); //Base Picture is 600 x 480 when taken on the robot.
-        Point BottomRightThing = new Point(TopLeftThing.x + REGION_WIDTH,TopLeftThing.y + REGION_HEIGHT);
-        while (currentHeight < height)
+        final Scalar RED = new Scalar(0,255,0);
+        Scalar COLOR = GREEN;
+        Point TopLeftThing = new Point(0,0);
+        Point BottomRightThing = new Point(width,0);
+        for (int currentHeight = 0; currentHeight < height; currentHeight = currentHeight + 20)
         {
-            while (currentWidth < width)
+            TopLeftThing.y = currentHeight;
+            BottomRightThing.y = currentHeight;
+
+            if (currentHeight % 5 == 0)
             {
-                TopLeftThing.x = currentWidth;
-                TopLeftThing.y = currentHeight;
-                BottomRightThing.x = TopLeftThing.x + REGION_WIDTH;
-                BottomRightThing.y = TopLeftThing.y + REGION_HEIGHT;
-
-
-                Imgproc.rectangle(
-                        input, // Buffer to draw on
-                        TopLeftThing, // First point which defines the rectangle
-                        BottomRightThing, // Second point which defines the rectangle
-                        GREEN, // The color the rectangle is drawn in
-                        1); // Thickness of the rectangle lines
-                currentWidth = currentWidth + 20;
+                COLOR = RED;
             }
-            currentHeight = currentHeight + 20;
-            currentWidth = 0;
+            else
+            {
+                COLOR = GREEN;
+            }
+
+            Imgproc.rectangle(
+                    input, // Buffer to draw on
+                    TopLeftThing, // First point which defines the rectangle
+                    BottomRightThing, // Second point which defines the rectangle
+                    COLOR, // The color the rectangle is drawn in
+                    1); // Thickness of the rectangle lines
+
+        }
+        TopLeftThing.x = 0;
+        TopLeftThing.y = 0;
+        BottomRightThing.x = 0;
+        BottomRightThing.y = height;
+        for (int currentWidth = 0; currentWidth < width; currentWidth = currentWidth + 20)
+        {
+            TopLeftThing.x = currentWidth;
+            BottomRightThing.x = currentWidth;
+
+            if (currentWidth % 5 == 0)
+            {
+                COLOR = RED;
+            }
+            else
+            {
+                COLOR = GREEN;
+            }
+
+            Imgproc.rectangle(
+                    input, // Buffer to draw on
+                    TopLeftThing, // First point which defines the rectangle
+                    BottomRightThing, // Second point which defines the rectangle
+                    COLOR, // The color the rectangle is drawn in
+                    1); // Thickness of the rectangle lines
+
         }
     }
 
 
-    //todo: fix numbers
     //static final Scalar color1_min = new Scalar(107, 179, 199); //purple min
     static final int color1_min_Cr = 130; //purple min cr
     static final int color1_min_Cb = 160; //purple min cb
