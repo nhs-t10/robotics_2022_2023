@@ -1,5 +1,6 @@
 package org.firstinspires.ftc.teamcode.managers.CV;
 
+import static org.firstinspires.ftc.robotcore.external.BlocksOpModeCompanion.telemetry;
 import static org.firstinspires.ftc.teamcode.managers.CV.RegionBasedAveragesPipeline.BLUE;
 
 import org.firstinspires.ftc.teamcode.auxilary.clocktower.Clocktower;
@@ -38,19 +39,17 @@ public class ColorSensor123 extends PipelineThatExposesSomeAnalysis {
     }
 
      void gridDraw(int width, int height, Mat input) {
-        int REGION_WIDTH = 20;
-        int REGION_HEIGHT = 20;
         final Scalar GREEN = new Scalar(0, 255, 0);
         final Scalar RED = new Scalar(0,255,0);
         Scalar COLOR = GREEN;
         Point TopLeftThing = new Point(0,0);
         Point BottomRightThing = new Point(width,0);
-        for (int currentHeight = 0; currentHeight < height; currentHeight = currentHeight + 20)
+        for (int currentHeight = 0; currentHeight < height; currentHeight += 20)
         {
             TopLeftThing.y = currentHeight;
             BottomRightThing.y = currentHeight;
-
-            if (currentHeight % 5 == 0)
+            telemetry.addData("currentHeight",currentHeight);
+            if (currentHeight % 100 == 0)
             {
                 COLOR = RED;
             }
@@ -71,12 +70,12 @@ public class ColorSensor123 extends PipelineThatExposesSomeAnalysis {
         TopLeftThing.y = 0;
         BottomRightThing.x = 0;
         BottomRightThing.y = height;
-        for (int currentWidth = 0; currentWidth < width; currentWidth = currentWidth + 20)
+        for (int currentWidth = 0; currentWidth < width; currentWidth += 20)
         {
             TopLeftThing.x = currentWidth;
             BottomRightThing.x = currentWidth;
 
-            if (currentWidth % 5 == 0)
+            if (currentWidth % 100 == 0)
             {
                 COLOR = RED;
             }
