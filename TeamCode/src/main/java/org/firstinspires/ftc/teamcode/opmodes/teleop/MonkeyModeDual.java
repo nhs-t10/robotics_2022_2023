@@ -6,7 +6,6 @@ import static org.firstinspires.ftc.teamcode.managers.manipulation.ManipulationM
 
 import com.acmerobotics.dashboard.FtcDashboard;
 import com.acmerobotics.dashboard.telemetry.MultipleTelemetry;
-import com.acmerobotics.dashboard.telemetry.TelemetryPacket;
 import com.acmerobotics.roadrunner.geometry.Pose2d;
 import com.acmerobotics.roadrunner.geometry.Vector2d;
 import com.acmerobotics.roadrunner.trajectory.TrajectoryBuilder;
@@ -14,27 +13,25 @@ import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
 
-import org.firstinspires.ftc.teamcode.auxilary.PaulMath;
 import org.firstinspires.ftc.teamcode.auxilary.integratedasync.PriorityAsyncOpmodeComponent;
 import org.firstinspires.ftc.teamcode.drive.SampleMecanumDrive;
 import org.firstinspires.ftc.teamcode.managers.bigArm.bigArmManager;
 import org.firstinspires.ftc.teamcode.managers.feature.FeatureManager;
 import org.firstinspires.ftc.teamcode.managers.input.InputManager;
 import org.firstinspires.ftc.teamcode.managers.input.InputOverlapResolutionMethod;
+import org.firstinspires.ftc.teamcode.managers.input.nodes.AnyNode;
 import org.firstinspires.ftc.teamcode.managers.input.nodes.ButtonNode;
-import org.firstinspires.ftc.teamcode.managers.input.nodes.IfNode;
 import org.firstinspires.ftc.teamcode.managers.input.nodes.JoystickNode;
 import org.firstinspires.ftc.teamcode.managers.input.nodes.MultiInputNode;
 import org.firstinspires.ftc.teamcode.managers.input.nodes.MultiplyNode;
-import org.firstinspires.ftc.teamcode.managers.input.nodes.StaticValueNode;
-import org.firstinspires.ftc.teamcode.managers.input.nodes.ToggleNode;
+import org.firstinspires.ftc.teamcode.managers.input.nodes.PlusNode;
 import org.firstinspires.ftc.teamcode.managers.manipulation.ManipulationManager;
 import org.firstinspires.ftc.teamcode.managers.movement.MovementManager;
 import org.firstinspires.ftc.teamcode.managers.sensor.SensorManager;
 import org.firstinspires.ftc.teamcode.managers.telemetry.TelemetryManager;
 
 @TeleOp
-public class MonkeyMode extends OpMode {
+public class MonkeyModeDual extends OpMode {
     public MovementManager driver;
     public ManipulationManager hands;
     public InputManager input;
@@ -75,35 +72,43 @@ public class MonkeyMode extends OpMode {
         monkeyArm = new bigArmManager(hands);
         input = new InputManager(gamepad1, gamepad2);
         input.registerInput("drivingControls",
-                    new MultiInputNode(
-                            new MultiplyNode(new JoystickNode("left_stick_y"), -1f),
-                            new MultiplyNode(new JoystickNode("left_stick_x"), -1f),
-                            new JoystickNode("right_stick_x")
+                    new PlusNode(
+                            new MultiInputNode(
+                                    new MultiplyNode(new JoystickNode("left_stick_y"), -1f),
+                                    new MultiplyNode(new JoystickNode("left_stick_x"), -1f),
+                                    new JoystickNode("right_stick_x")
+                            ),
+                            new MultiInputNode(
+                                    new MultiplyNode(new JoystickNode("gamepad2left_stick_y"), -0.5f),
+                                    new MultiplyNode(new JoystickNode("gamepad2left_stick_x"), -0.5f),
+                                    new MultiplyNode(new JoystickNode("gamepad2right_stick_x"), 0.5f)
+                            )
                     )
-            );
+        );
         input.registerInput("handToggle",
-                new ButtonNode("rightbumper")
+                new AnyNode(
+                        new ButtonNode("rightbumper"),
+                        new ButtonNode("gamepad2rightbumper")
+                )
         );
         input.registerInput("extendArm",
-                new ButtonNode("righttrigger")
+                new ButtonNode("gamepad2righttrigger")
         );
         input.registerInput("retractArm",
-                new ButtonNode("lefttrigger")
+                new ButtonNode("gamepad2lefttrigger")
         );
+        /*
         input.registerInput("armLengthSmall",
-                new ButtonNode("a")
+                new ButtonNode("gamepad2a")
         );
         input.registerInput("armLengthMedium",
-                new ButtonNode("x")
+                new ButtonNode("gamepad2x")
         );
         input.registerInput("armLengthTall",
-                new ButtonNode("y")
+                new ButtonNode("gamepad2y")
         );
         input.registerInput("armLengthNone",
-                new ButtonNode("b")
-        );
-        input.registerInput("distanceTracker",
-                new ButtonNode("leftbumper")
+                new ButtonNode("gamepad2b")
         );
         input.registerInput("D-Up",
                 new ButtonNode("dpadup")
@@ -117,8 +122,10 @@ public class MonkeyMode extends OpMode {
         input.registerInput("D-Down",
                 new ButtonNode("dpaddown")
         );
+        */
         input.setOverlapResolutionMethod(InputOverlapResolutionMethod.MOST_COMPLEX_ARE_THE_FAVOURITE_CHILD);
         PriorityAsyncOpmodeComponent.start(() -> {
+            /*
             if(input.getBool("D-Up") && drive.notBusy()){
                 drive.followTrajectory(trajBuild.splineToLinearHeading(new Pose2d(-24, 12), Math.toRadians(90)).build());
             }
@@ -132,6 +139,7 @@ public class MonkeyMode extends OpMode {
                 drive.waitForIdle();
                 lastError = drive.getLastError();
             }
+             */
         });
         drive.getLocalizer().update();
         telemetry = new MultipleTelemetry(telemetry, FtcDashboard.getInstance().getTelemetry());
@@ -139,7 +147,8 @@ public class MonkeyMode extends OpMode {
     public void loop() {
         try {
             input.update();
-            if(drive.notBusy() && !input.getBool("armLengthNone")){
+            if(drive.notBusy()){
+                //Meant to be if this && !input.getBool("armLengthNone");
                 driver.driveOmni(input.getFloatArrayOfInput("drivingControls"));
             }
             if (input.getBool("handToggle") && !armStatus) {
@@ -160,6 +169,7 @@ public class MonkeyMode extends OpMode {
             } else {
                 monkeyArm.stopArm();
             }
+            /*
             if (input.getBool("armLengthNone")) {
                 monkeyArm.setPositionFloorLocation();
             }
@@ -172,7 +182,7 @@ public class MonkeyMode extends OpMode {
             if (input.getBool("armLengthTall")) {
                 monkeyArm.setPositionHighLocation();
             }
-
+            */
             telemetry.addData("FL Power", driver.frontLeft.getPower());
             telemetry.addData("FR Power", driver.frontRight.getPower());
             telemetry.addData("BR Power", driver.backLeft.getPower());
@@ -181,7 +191,7 @@ public class MonkeyMode extends OpMode {
             telemetry.addData("Heading", drive.getLocalizer().getPoseEstimate());
             telemetry.addData("Servo Open",""+intakeToggle);
             telemetry.addData("Tower Power", hands.getMotorPower("monkeyShoulder"));
-            telemetry.addData("Linear slide motor val: ", hands.getMotorPosition("monkeyShoulder"));
+            telemetry.addData("Tower Position: ", hands.getMotorPosition("monkeyShoulder"));
             telemetry.addData("Last Error: ", lastError);
             telemetry.update();
         }

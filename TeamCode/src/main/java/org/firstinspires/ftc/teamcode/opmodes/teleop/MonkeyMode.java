@@ -82,7 +82,7 @@ public class MonkeyMode extends OpMode {
                     )
             );
         input.registerInput("handToggle",
-                new ButtonNode("a")
+                new ButtonNode("rightbumper")
         );
         input.registerInput("extendArm",
                 new ButtonNode("righttrigger")
@@ -91,7 +91,7 @@ public class MonkeyMode extends OpMode {
                 new ButtonNode("lefttrigger")
         );
         input.registerInput("armLengthSmall",
-                new ButtonNode("rightbumper")
+                new ButtonNode("a")
         );
         input.registerInput("armLengthMedium",
                 new ButtonNode("x")
@@ -180,6 +180,7 @@ public class MonkeyMode extends OpMode {
             telemetry.addData("Roadrunner Busy: ", drive.isBusy());
             telemetry.addData("Heading", drive.getLocalizer().getPoseEstimate());
             telemetry.addData("Servo Open",""+intakeToggle);
+            telemetry.addData("Tower Power", hands.getMotorPower("monkeyShoulder"));
             telemetry.addData("Linear slide motor val: ", hands.getMotorPosition("monkeyShoulder"));
             telemetry.addData("Last Error: ", lastError);
             telemetry.update();
