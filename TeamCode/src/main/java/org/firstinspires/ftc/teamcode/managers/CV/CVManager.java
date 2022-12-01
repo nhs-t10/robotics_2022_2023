@@ -170,36 +170,7 @@ public class CVManager extends FeatureManager {
 
 
     //gridDraw can only be used inside a pipeline, but it's so useful I had to put it here. It makes a green grid on your image.
-/*    public void gridDraw(int width, int height, Mat input) {
-        int currentWidth = 0;
-        int currentHeight = 0;
-        final Scalar GREEN = new Scalar(0, 255, 0);
-        final Scalar RED = new Scalar(255, 0, 0);
-        Point TopLeftThing = new Point(currentWidth,currentHeight); //Base Picture is 600 x 480 when taken on the robot.
-        Point BottomRightThing = new Point(TopLeftThing.x + REGION_WIDTH,TopLeftThing.y + REGION_HEIGHT);
-        while (currentHeight < height)
-        {
-            while (currentWidth < width)
-            {
-                TopLeftThing.x = currentWidth;
-                TopLeftThing.y = currentHeight;
-                BottomRightThing.x = TopLeftThing.x + REGION_WIDTH;
-                BottomRightThing.y = TopLeftThing.y + REGION_HEIGHT;
-
-
-                Imgproc.rectangle(
-                        input, // Buffer to draw on
-                        TopLeftThing, // First point which defines the rectangle
-                        BottomRightThing, // Second point which defines the rectangle
-                        GREEN, // The color the rectangle is drawn in
-                        1); // Thickness of the rectangle lines
-                currentWidth = currentWidth + 20;
-            }
-            currentHeight = currentHeight + 20;
-            currentWidth = 0;
-        }
-    }
-*/
+/*
     public void gridDraw(int width, int height, Mat input) {
         int REGION_WIDTH = 20;
         int REGION_HEIGHT = 20;
@@ -257,7 +228,7 @@ public class CVManager extends FeatureManager {
 
         }
     }
-
+*/
 
     public void stopWebcam() {
         /*
