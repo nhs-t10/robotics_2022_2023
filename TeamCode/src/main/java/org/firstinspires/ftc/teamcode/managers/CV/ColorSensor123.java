@@ -40,7 +40,7 @@ public class ColorSensor123 extends PipelineThatExposesSomeAnalysis {
 
      void gridDraw(int width, int height, Mat input) {
         final Scalar GREEN = new Scalar(0, 255, 0);
-        final Scalar RED = new Scalar(0,255,0);
+        final Scalar RED = new Scalar(255,0,0);
         Scalar COLOR = GREEN;
         Point TopLeftThing = new Point(0,0);
         Point BottomRightThing = new Point(width,0);
@@ -48,7 +48,6 @@ public class ColorSensor123 extends PipelineThatExposesSomeAnalysis {
         {
             TopLeftThing.y = currentHeight;
             BottomRightThing.y = currentHeight;
-            telemetry.addData("currentHeight",currentHeight);
             if (currentHeight % 100 == 0)
             {
                 COLOR = RED;
