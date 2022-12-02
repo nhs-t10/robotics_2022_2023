@@ -27,6 +27,7 @@ import org.firstinspires.ftc.teamcode.managers.input.nodes.MultiplyNode;
 import org.firstinspires.ftc.teamcode.managers.input.nodes.PlusNode;
 import org.firstinspires.ftc.teamcode.managers.manipulation.ManipulationManager;
 import org.firstinspires.ftc.teamcode.managers.movement.MovementManager;
+import org.firstinspires.ftc.teamcode.managers.roadrunner.RRManager;
 import org.firstinspires.ftc.teamcode.managers.sensor.SensorManager;
 import org.firstinspires.ftc.teamcode.managers.telemetry.TelemetryManager;
 
@@ -48,6 +49,7 @@ public class MonkeyModeDual extends OpMode {
     public Pose2d lastError;
     private boolean looping = false;
     private boolean shouldActuallyDoThings = true;
+    private RRManager rr;
     @Override
     public void init() {
         // Phone is labelled as T-10 Melman
@@ -56,8 +58,7 @@ public class MonkeyModeDual extends OpMode {
         TelemetryManager telemetryManager = new TelemetryManager(telemetry, this, TelemetryManager.BITMASKS.NONE);
         telemetry = telemetryManager;
         FeatureManager.logger.setBackend(telemetry.log());
-        drive = new SampleMecanumDrive(hardwareMap); //Necessary Component for RoadRunner!
-        trajBuild = drive.trajectoryBuilder(new Pose2d());
+        rr = new RRManager(hardwareMap, new Pose2d(0, 0), telemetryManager);
         DcMotor fl = hardwareMap.get(DcMotor.class, "fl");
         DcMotor fr = hardwareMap.get(DcMotor.class, "fr");
         DcMotor br = hardwareMap.get(DcMotor.class, "br");
@@ -125,21 +126,20 @@ public class MonkeyModeDual extends OpMode {
         */
         input.setOverlapResolutionMethod(InputOverlapResolutionMethod.MOST_COMPLEX_ARE_THE_FAVOURITE_CHILD);
         PriorityAsyncOpmodeComponent.start(() -> {
-            /*
-            if(input.getBool("D-Up") && drive.notBusy()){
-                drive.followTrajectory(trajBuild.splineToLinearHeading(new Pose2d(-24, 12), Math.toRadians(90)).build());
+
+            if(input.getBool("D-Up") && rr.notBusy()){
+                rr.moveToPosWithID(2);
             }
-            if(input.getBool("D-Down") && drive.notBusy()){
-                drive.followTrajectory(trajBuild.splineToSplineHeading(new Pose2d(0, 72), Math.toRadians(drive.getExternalHeading())).build());
+            if(input.getBool("D-Down") && rr.notBusy()){
+                rr.moveToPosWithID(3);
             }
-            if(input.getBool("D-Right") && drive.notBusy()){
-                trajBuild.addDisplacementMarker(drive.getLocalizer().getPoseEstimate().vec().distTo(new Vector2d(0, 0)), () -> {});
+            if(input.getBool("D-Right") && rr.notBusy()){
+                rr.calibrateDriveToZero();
             }
             if(input.getBool("D-Left")){
-                drive.waitForIdle();
-                lastError = drive.getLastError();
+                rr.moveToPosWithID(1);
             }
-             */
+
         });
         drive.getLocalizer().update();
         telemetry = new MultipleTelemetry(telemetry, FtcDashboard.getInstance().getTelemetry());
