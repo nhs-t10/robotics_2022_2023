@@ -119,15 +119,31 @@ public class RRManager extends FeatureManager {
             driveRR.followTrajectory(trajBuildRR.splineToLinearHeading(pose, Math.toRadians(rotation)).build());
             telemetry.addLine("WARNING! Using this movement will likely result in a PathContinuityError!");
         }
+        getLocalizer().update();
     }
-    public void customMoveSequenceWithPose(@NotNull Pose2d[] poseArr, @NotNull String[] typeArr, @NotNull double[] rotationArr) throws Exception {
+
+    /**
+     * Creates a simple Trajectory Sequence for the robot to follow made ot of arrays
+     * @param poseArr The array of positions to go to
+     * @param typeArr The array of the types of movement the correspond to the positions
+     * @param rotationArr The array of the different rotations that correspond with the positions and types of movement
+     * @throws Exception
+     */
+    public void customMoveSequenceWithPose(@NotNull Pose2d[] poseArr, @NotNull String[] typeArr, @NotNull double[] rotationArr) throws SequenceInitException, Exception {
         if(poseArr.length != typeArr.length || typeArr.length != rotationArr.length || poseArr.length != rotationArr.length){
-            throw new Exception("Array Lengths for sequence do not match!");
+            throw new SequenceInitException("Array Lengths for sequence do not match! "+poseArr.length+" does not equal "+typeArr.length+" or does not equal "+rotationArr.length);
         }
         for(int i = 0; i<poseArr.length; i++) {
             Pose2d pose = poseArr[i];
             String type = typeArr[i];
             double rotation = rotationArr[i];
+            for(Pose2d poses: nonono){
+                if(pose.equals(poses)){
+                    return;
+                }else{
+                    telemetry.log().add("Path Accepted");
+                }
+            }
             if (type.equals("strafe")) {
                 driveRR.followTrajectory(trajBuildRR.strafeTo(pose.vec()).build());
             } else if (type.equals("line")) {
@@ -140,6 +156,7 @@ public class RRManager extends FeatureManager {
                 driveRR.followTrajectory(trajBuildRR.splineToLinearHeading(pose, Math.toRadians(rotation)).build());
                 telemetry.addLine("WARNING! Using this movement will likely result in a PathContinuityError!");
             }
+            getLocalizer().update();
             driveRR.waitForIdle();
         }
     }
@@ -152,10 +169,12 @@ public class RRManager extends FeatureManager {
     }
     public Localizer getLocalizer(){
         return driveRR.getLocalizer();
-    }
 
+    }
     @Override
     public String toString(){
         return "Road Runner with position of "+getPose().toString();
     }
+
+
 }
