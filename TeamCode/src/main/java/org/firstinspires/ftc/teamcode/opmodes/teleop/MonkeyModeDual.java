@@ -31,6 +31,8 @@ import org.firstinspires.ftc.teamcode.managers.roadrunner.RRManager;
 import org.firstinspires.ftc.teamcode.managers.sensor.SensorManager;
 import org.firstinspires.ftc.teamcode.managers.telemetry.TelemetryManager;
 
+import java.util.Arrays;
+
 @TeleOp
 public class MonkeyModeDual extends OpMode {
     public MovementManager driver;
@@ -141,13 +143,13 @@ public class MonkeyModeDual extends OpMode {
             }
 
         });
-        drive.getLocalizer().update();
+        rr.updateLocalizer();
         telemetry = new MultipleTelemetry(telemetry, FtcDashboard.getInstance().getTelemetry());
     }
     public void loop() {
         try {
             input.update();
-            if(drive.notBusy()){
+            if(rr.notBusy()){
                 //Meant to be if this && !input.getBool("armLengthNone");
                 driver.driveOmni(input.getFloatArrayOfInput("drivingControls"));
             }
@@ -183,15 +185,18 @@ public class MonkeyModeDual extends OpMode {
                 monkeyArm.setPositionHighLocation();
             }
             */
+
+
             telemetry.addData("FL Power", driver.frontLeft.getPower());
             telemetry.addData("FR Power", driver.frontRight.getPower());
             telemetry.addData("BR Power", driver.backLeft.getPower());
             telemetry.addData("BL Power", driver.backRight.getPower());
-            telemetry.addData("Roadrunner Busy: ", drive.isBusy());
-            telemetry.addData("Heading", drive.getLocalizer().getPoseEstimate());
+            telemetry.addData("Roadrunner Not Busy: ", rr.notBusy());
+            telemetry.addData("Heading", rr.getLocalizer().getPoseEstimate());
             telemetry.addData("Servo Open",""+intakeToggle);
             telemetry.addData("Tower Power", hands.getMotorPower("monkeyShoulder"));
-            telemetry.addData("Tower Position: ", hands.getMotorPosition("monkeyShoulder"));
+            telemetry.addData("Tower Position: ", (int)hands.getMotorPosition("monkeyShoulder"));
+            telemetry.addData("FL Position: ", driver.frontLeft.getCurrentPosition());
             telemetry.addData("Last Error: ", lastError);
             telemetry.update();
         }

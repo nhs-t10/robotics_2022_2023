@@ -1,7 +1,7 @@
 $
     ignorewarning_american_m_unit: true
 $
-
+#init:
 goto start;
 
 #start:
@@ -11,11 +11,12 @@ goto start;
 
 #getColor:
     let color = getAnalysis(), next;
+    log(color), next;
     stopWebcam(), next;
     goto process;
 
 #process:
-    log(color), next;
+
     driveOmni(0,0.5,0), after 12.4cm next;
     if (color == 1) {
         goto color1;
@@ -33,15 +34,16 @@ goto start;
 #color1:
     driveOmni(0,-1,0), after 68cm next;
     next;//go left one tile, go forward 1.5 tiles
+    driveOmni(-1,0,0), after 95cm next;
     goto end;
 
 #color2:
-    next;//go forward 1.5 tiles
-    goto end;
+    driveOmni(-1,0,0), after 95cm next; //go forward 1.5 tiles    goto end;
 
 #color3:
     driveOmni(0,1,0), after 68cm next;
     next;//go right one tile, go forward 1.5 tiles
+    driveOmni(-1,0,0), after 95cm next;
     goto end;
 
 #error:
@@ -51,9 +53,9 @@ goto start;
     let rep_times = rep_times + 1, next;
     goto end;
 */
-
+//this didn't work
 #end:
-    driveOmni(-1,0,0), after 95cm next;
-    stopDrive(), next;
-    log("i got to the end!");
+// Putting the forward driveOmni here doesn't work for whatever reason, don't try it lol.
+    driveOmni(0, 0, 0), next;
+    log("I go tto the end!");
 

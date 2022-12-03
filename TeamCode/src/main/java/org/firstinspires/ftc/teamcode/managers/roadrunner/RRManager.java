@@ -1,8 +1,8 @@
 package org.firstinspires.ftc.teamcode.managers.roadrunner;
 
-import com.acmerobotics.roadrunner.drive.MecanumDrive;
 import com.acmerobotics.roadrunner.geometry.Pose2d;
 import com.acmerobotics.roadrunner.geometry.Vector2d;
+import com.acmerobotics.roadrunner.localization.Localizer;
 import com.acmerobotics.roadrunner.trajectory.TrajectoryBuilder;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 
@@ -15,8 +15,8 @@ import org.jetbrains.annotations.*;
 public class RRManager extends FeatureManager {
     private SampleMecanumDrive driveRR;
     private TrajectoryBuilder trajBuildRR;
-    private TelemetryManager t;
-
+    private TelemetryManager telemetry;
+    private Pose2d[] nonono = {new Pose2d(-120, 48), new Pose2d(-72, 48), new Pose2d(-24, 48), new Pose2d(-24, 0), new Pose2d(-120, 0), new Pose2d(-72, 0), new Pose2d(-24, -48), new Pose2d(-120, -48), new Pose2d(-72, -48)};
     /**
      * Initializes the Road Runner Manager
      * @param hardwareMap The hardwareMap for Roadrunner to access for the drive motors
@@ -26,9 +26,9 @@ public class RRManager extends FeatureManager {
     public RRManager(@NotNull HardwareMap hardwareMap, @NotNull Pose2d start, @NotNull TelemetryManager telemetryManager){
         driveRR = new SampleMecanumDrive(hardwareMap); //Necessary Component for RoadRunner!
         trajBuildRR = driveRR.trajectoryBuilder(start);
-        this.t = telemetryManager;
+        this.telemetry = telemetryManager;
         calibrateDriveToZero();
-        t.addLine("Go to 192.168.43.1:8080/dash for the FTC Dashboard! Unless this is the competition, for which, in that case, never mind...");
+        telemetry.addLine("Go to 192.168.43.1:8080/dash for the FTC Dashboard! Unless this is the competition, for which, in that case, never mind...");
     }
 
     /**
@@ -36,7 +36,7 @@ public class RRManager extends FeatureManager {
      * @param id The id for the specified movement: 1 = Center, 2 = Top Corner, 3 = Bottom Corner
      */
     public void moveToPosWithID(int id){
-        if(id==1){driveRR.followTrajectory(trajBuildRR.splineToLinearHeading(new Pose2d(-24, 12), Math.toRadians(90)).build());}
+        if(id==1){driveRR.followTrajectory(trajBuildRR.splineToSplineHeading(new Pose2d(-24, 12), Math.toRadians(90)).build());}
         else if(id==2){driveRR.followTrajectory(trajBuildRR.splineToSplineHeading(new Pose2d(0, 72), Math.toRadians(driveRR.getExternalHeading())).build());}
         else if(id==3){driveRR.followTrajectory(trajBuildRR.splineToSplineHeading(new Pose2d(0, -72), Math.toRadians(driveRR.getExternalHeading())).build());}
         driveRR.update();
@@ -77,7 +77,7 @@ public class RRManager extends FeatureManager {
     public void calibrateDriveToZero(){
         driveRR.setPoseEstimate(new Pose2d(0, 0));
 
-        t.addLine("RoadRunner Drive Recalibrated");
+        telemetry.addLine("RoadRunner Drive Recalibrated");
     }
 
     /**
@@ -86,7 +86,7 @@ public class RRManager extends FeatureManager {
 
     @TestOnly public void calibrateTrajectoryBuilderToZero(){
         trajBuildRR = driveRR.trajectoryBuilder(new Pose2d(0, 0));
-        t.addLine("RoadRunner Drive Recalibrated");
+        telemetry.addLine("RoadRunner Drive Recalibrated");
     }
 
     /**
@@ -95,8 +95,14 @@ public class RRManager extends FeatureManager {
      * @param type The type of movement the robot is to perform
      * @param rotation The end rotation, if needed, for the movement
      */
-    public void customMoveWithPose(@NotNull Pose2d pose, @NotNull String type, double rotation){
-
+    public void customMoveWithPose(@NotNull Pose2d pose, @NotNull String type, @Nullable double rotation){
+        for(Pose2d poses: nonono){
+            if(pose.equals(poses)){
+                return;
+            }else{
+                telemetry.log().add("Path Accepted");
+            }
+        }
         if(type.equals("strafe")){
             driveRR.followTrajectory(trajBuildRR.strafeTo(pose.vec()).build());
         }
@@ -111,7 +117,7 @@ public class RRManager extends FeatureManager {
         }
         else if(type.equals("splineline")){
             driveRR.followTrajectory(trajBuildRR.splineToLinearHeading(pose, Math.toRadians(rotation)).build());
-            t.addLine("WARNING! Using this movement will likely result in a PathContinuityError!");
+            telemetry.addLine("WARNING! Using this movement will likely result in a PathContinuityError!");
         }
     }
     public void customMoveSequenceWithPose(@NotNull Pose2d[] poseArr, @NotNull String[] typeArr, @NotNull double[] rotationArr) throws Exception {
@@ -132,7 +138,7 @@ public class RRManager extends FeatureManager {
                 driveRR.followTrajectory(trajBuildRR.splineToSplineHeading(pose, Math.toRadians(rotation)).build());
             } else if (type.equals("splineline")) {
                 driveRR.followTrajectory(trajBuildRR.splineToLinearHeading(pose, Math.toRadians(rotation)).build());
-                t.addLine("WARNING! Using this movement will likely result in a PathContinuityError!");
+                telemetry.addLine("WARNING! Using this movement will likely result in a PathContinuityError!");
             }
             driveRR.waitForIdle();
         }
@@ -141,6 +147,13 @@ public class RRManager extends FeatureManager {
     public boolean notBusy(){
         return driveRR.notBusy();
     }
+    public void updateLocalizer(){
+        driveRR.getLocalizer().update();
+    }
+    public Localizer getLocalizer(){
+        return driveRR.getLocalizer();
+    }
+
     @Override
     public String toString(){
         return "Road Runner with position of "+getPose().toString();
