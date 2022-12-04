@@ -9,12 +9,18 @@ import com.qualcomm.robotcore.hardware.HardwareMap;
 import org.firstinspires.ftc.teamcode.drive.SampleMecanumDrive;
 import org.firstinspires.ftc.teamcode.managers.feature.FeatureManager;
 import org.firstinspires.ftc.teamcode.managers.telemetry.TelemetryManager;
+import org.firstinspires.ftc.teamcode.trajectorysequence.TrajectorySequenceBuilder;
+import org.firstinspires.ftc.teamcode.trajectorysequence.TrajectorySequenceRunner;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.*;
 
+/**
+ * Manager for Pathing and Dead Reckoning... Makes Road runner much easier to use ith a set of complex methods for making precise paths. created by ACHYUT SHASTRI
+ */
 public class RRManager extends FeatureManager {
     private SampleMecanumDrive driveRR;
     private TrajectoryBuilder trajBuildRR;
+    private TrajectorySequenceBuilder tsb;
     private TelemetryManager telemetry;
     private Pose2d[] nonono = {new Pose2d(-120, 48), new Pose2d(-72, 48), new Pose2d(-24, 48), new Pose2d(-24, 0), new Pose2d(-120, 0), new Pose2d(-72, 0), new Pose2d(-24, -48), new Pose2d(-120, -48), new Pose2d(-72, -48)};
     /**
@@ -26,9 +32,11 @@ public class RRManager extends FeatureManager {
     public RRManager(@NotNull HardwareMap hardwareMap, @NotNull Pose2d start, @NotNull TelemetryManager telemetryManager){
         driveRR = new SampleMecanumDrive(hardwareMap); //Necessary Component for RoadRunner!
         trajBuildRR = driveRR.trajectoryBuilder(start);
+
         this.telemetry = telemetryManager;
         calibrateDriveToZero();
         telemetry.addLine("Go to 192.168.43.1:8080/dash for the FTC Dashboard! Unless this is the competition, for which, in that case, never mind...");
+
     }
 
     /**
@@ -100,9 +108,10 @@ public class RRManager extends FeatureManager {
             if(pose.equals(poses)){
                 return;
             }else{
-                telemetry.log().add("Path Accepted");
+
             }
         }
+        telemetry.log().add("Path Accepted");
         if(type.equals("strafe")){
             driveRR.followTrajectory(trajBuildRR.strafeTo(pose.vec()).build());
         }
@@ -119,7 +128,7 @@ public class RRManager extends FeatureManager {
             driveRR.followTrajectory(trajBuildRR.splineToLinearHeading(pose, Math.toRadians(rotation)).build());
             telemetry.addLine("WARNING! Using this movement will likely result in a PathContinuityError!");
         }
-        getLocalizer().update();
+        updateLocalizer();
     }
 
     /**
@@ -127,13 +136,15 @@ public class RRManager extends FeatureManager {
      * @param poseArr The array of positions to go to
      * @param typeArr The array of the types of movement the correspond to the positions
      * @param rotationArr The array of the different rotations that correspond with the positions and types of movement
-     * @throws Exception
+     * @throws SequenceInitException The exception that tells you a sequence calculation has filed on init
+     * @throws Exception The regular exception that SequenceInit Exception uses
      */
     public void customMoveSequenceWithPose(@NotNull Pose2d[] poseArr, @NotNull String[] typeArr, @NotNull double[] rotationArr) throws SequenceInitException, Exception {
         if(poseArr.length != typeArr.length || typeArr.length != rotationArr.length || poseArr.length != rotationArr.length){
             throw new SequenceInitException("Array Lengths for sequence do not match! "+poseArr.length+" does not equal "+typeArr.length+" or does not equal "+rotationArr.length);
         }
         for(int i = 0; i<poseArr.length; i++) {
+            updateLocalizer();
             Pose2d pose = poseArr[i];
             String type = typeArr[i];
             double rotation = rotationArr[i];
@@ -141,9 +152,10 @@ public class RRManager extends FeatureManager {
                 if(pose.equals(poses)){
                     return;
                 }else{
-                    telemetry.log().add("Path Accepted");
+
                 }
             }
+            telemetry.log().add("Path Accepted");
             if (type.equals("strafe")) {
                 driveRR.followTrajectory(trajBuildRR.strafeTo(pose.vec()).build());
             } else if (type.equals("line")) {
@@ -156,25 +168,103 @@ public class RRManager extends FeatureManager {
                 driveRR.followTrajectory(trajBuildRR.splineToLinearHeading(pose, Math.toRadians(rotation)).build());
                 telemetry.addLine("WARNING! Using this movement will likely result in a PathContinuityError!");
             }
-            getLocalizer().update();
+
             driveRR.waitForIdle();
+            updateLocalizer();
         }
     }
 
+    /**
+     * Creates a Roadrunner Trajectory Sequence using a different method that the robot will follow seamlessly: In development
+     * @param poseArr Poses to follow
+     * @param typeArr Types of movement to follow
+     * @param rotationArr Rotations to follow
+     * @throws SequenceInitException The exception that tells you a sequence calculation has filed on init
+     * @throws Exception The regular exception that SequenceInit Exception uses
+     */
+    public void customMoveSequenceWithPoseTrajSequence(@NotNull Pose2d[] poseArr, @NotNull String[] typeArr, @NotNull double[] rotationArr) throws SequenceInitException, Exception {
+        if(poseArr.length != typeArr.length || typeArr.length != rotationArr.length || poseArr.length != rotationArr.length){
+            throw new SequenceInitException("Array Lengths for sequence do not match! "+poseArr.length+" does not equal "+typeArr.length+" or does not equal "+rotationArr.length);
+        }
+        tsb = driveRR.trajectorySequenceBuilder(driveRR.getPoseEstimate());
+        for(int i = 0; i<poseArr.length; i++) {
+            updateLocalizer();
+            Pose2d pose = poseArr[i];
+            String type = typeArr[i];
+            double rotation = rotationArr[i];
+            for(Pose2d poses: nonono){
+                if(pose.equals(poses)){
+                    return;
+                }else{
+
+                }
+            }
+            telemetry.log().add("Path Accepted");
+            if (type.equals("strafe")) {
+                tsb = tsb.strafeTo(pose.vec());
+            } else if (type.equals("line")) {
+                tsb = tsb.lineTo(pose.vec());
+            } else if (type.equals("spline")) {
+                tsb = tsb.splineTo(pose.vec(), Math.toRadians(rotation));
+            } else if (type.equals("splinespline")) {
+                tsb = tsb.splineToSplineHeading(pose, Math.toRadians(rotation));
+            } else if (type.equals("splineline")) {
+                tsb = tsb.splineToLinearHeading(pose, Math.toRadians(rotation));
+                telemetry.addLine("WARNING! Using this movement will likely result in a PathContinuityError!");
+            }
+            driveRR.followTrajectorySequence(tsb.build());
+            driveRR.waitForIdle();
+            updateLocalizer();
+        }
+    }
+
+    /**
+     * Gets whether roadrunner is currently busy
+     * @return Boolean result
+     */
     public boolean notBusy(){
         return driveRR.notBusy();
     }
+
+    /**
+     * Updates the Localizer, allowing it to refresh its position
+     */
     public void updateLocalizer(){
         driveRR.getLocalizer().update();
     }
+
+    /**
+     * Gets the localizer of the drive object
+     * @return Localizer of RoadRunner
+     */
     public Localizer getLocalizer(){
         return driveRR.getLocalizer();
 
     }
+
+    /**
+     * Returns teh overview of Roadrunner's status
+     * @return String of status
+     */
     @Override
     public String toString(){
         return "Road Runner with position of "+getPose().toString();
     }
 
+    /**
+     * Determines whether a pose is viable for te robot to go to
+     * @param pose2d The pose to test
+     * @return Boolean on whether the pose is viable
+     */
+    public boolean isPoseViable(Pose2d pose2d){
+        for(Pose2d poses: nonono){
+            if(pose2d.equals(poses)){
+                return false;
+            }else{
 
+            }
+        }
+        telemetry.log().add("Path Accepted");
+        return true;
+    }
 }
