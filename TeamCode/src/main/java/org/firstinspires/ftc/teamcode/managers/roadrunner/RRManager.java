@@ -6,6 +6,7 @@ import com.acmerobotics.roadrunner.localization.Localizer;
 import com.acmerobotics.roadrunner.trajectory.TrajectoryBuilder;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 
+import org.checkerframework.framework.qual.Unused;
 import org.firstinspires.ftc.teamcode.drive.SampleMecanumDrive;
 import org.firstinspires.ftc.teamcode.managers.feature.FeatureManager;
 import org.firstinspires.ftc.teamcode.managers.telemetry.TelemetryManager;
@@ -182,6 +183,7 @@ public class RRManager extends FeatureManager {
      * @throws SequenceInitException The exception that tells you a sequence calculation has filed on init
      * @throws Exception The regular exception that SequenceInit Exception uses
      */
+
     public void customMoveSequenceWithPoseTrajSequence(@NotNull Pose2d[] poseArr, @NotNull String[] typeArr, @NotNull double[] rotationArr) throws SequenceInitException, Exception {
         if(poseArr.length != typeArr.length || typeArr.length != rotationArr.length || poseArr.length != rotationArr.length){
             throw new SequenceInitException("Array Lengths for sequence do not match! "+poseArr.length+" does not equal "+typeArr.length+" or does not equal "+rotationArr.length);
@@ -256,6 +258,7 @@ public class RRManager extends FeatureManager {
      * @param pose2d The pose to test
      * @return Boolean on whether the pose is viable
      */
+    @Deprecated
     public boolean isPoseViable(Pose2d pose2d){
         for(Pose2d poses: nonono){
             if(pose2d.equals(poses)){

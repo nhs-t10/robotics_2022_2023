@@ -193,7 +193,7 @@ public class MonkeyModeDual extends OpMode {
             telemetry.addData("BR Power", driver.backLeft.getPower());
             telemetry.addData("BL Power", driver.backRight.getPower());
             telemetry.addData("Roadrunner Not Busy: ", rr.notBusy());
-            telemetry.addData("Heading", rr.getLocalizer().getPoseEstimate());
+            telemetry.addData("Heading", rr.getDrive().getExternalHeading());
             telemetry.addData("Servo Open",""+intakeToggle);
             telemetry.addData("Tower Power", hands.getMotorPower("monkeyShoulder"));
             telemetry.addData("Tower Position: ", towerPos);
