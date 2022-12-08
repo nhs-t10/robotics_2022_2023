@@ -1,3 +1,5 @@
+"use strict";
+
 var fakeDom = require("./fake-dom");
 var fs = require("fs");
 var colors = require("./colors");

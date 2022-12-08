@@ -1,5 +1,3 @@
-
-log(3s), next;
 after 3s next;
-log("3s!"), next;
-pass
+if(delegate("./helpers/pid-turn.autoauto", 90) < 5) next;
+log("haha!");

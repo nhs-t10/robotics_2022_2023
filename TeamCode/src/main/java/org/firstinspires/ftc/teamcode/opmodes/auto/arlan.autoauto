@@ -1,0 +1,22 @@
+$
+    ignorewarning_american_m_unit: true
+$
+
+goto start;
+
+#start:
+    startWebcam(), next;
+    log(colorFind(0)), next;
+    log(colorFind(1)), after 10s next;
+    log(colorFind(0)), next;
+    log(colorFind(1)), after 10s next;
+    log(colorFind(0)), next;
+    log(colorFind(1)), after 10s next;
+    goto end;
+
+
+
+
+#end:
+    stopWebcam();
+    log("i got to the end!");

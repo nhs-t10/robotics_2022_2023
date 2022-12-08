@@ -1,3 +1,5 @@
+"use strict";
+
 module.exports = function recursiveDescentGrabAllOfType(ast, type) {
     var children = getAstChildren(ast);
 

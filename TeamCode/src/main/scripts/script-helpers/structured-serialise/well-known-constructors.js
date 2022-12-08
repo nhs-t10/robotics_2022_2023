@@ -1,3 +1,5 @@
+"use strict";
+
 var deprecatedGlobalKeys = ["GLOBAL", "root"];
 
 var wkc = Object.getOwnPropertyNames(globalThis)
@@ -8,7 +10,7 @@ var wkc = Object.getOwnPropertyNames(globalThis)
 var constructors = Object.fromEntries(wkc);
 
 module.exports = {
-    getName: function(obj) {
+    getConstructorName: function(obj) {
         if(obj === undefined) return undefined;
         if(typeof obj.constructor !== "function") return undefined;
         if(obj.constructor === Object) return undefined;
@@ -19,7 +21,7 @@ module.exports = {
         return constructors[name];
     },
     isWellKnownObject: function(obj) {
-        return this.getName(obj) !== undefined;
+        return this.getConstructorName(obj) !== undefined;
     }
 }
 

@@ -21,10 +21,12 @@
 
 package org.firstinspires.ftc.teamcode.managers.CV;
 
+import static org.firstinspires.ftc.robotcore.external.BlocksOpModeCompanion.hardwareMap;
+import static org.firstinspires.ftc.teamcode.managers.CV.RegionBasedAveragesPipeline.BLUE;
+
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.HardwareMap;
-import com.qualcomm.robotcore.util.Hardware;
 
 import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
 import org.firstinspires.ftc.teamcode.managers.feature.FeatureManager;
@@ -37,19 +39,20 @@ import org.opencv.imgproc.Imgproc;
 import org.openftc.easyopencv.OpenCvCamera;
 import org.openftc.easyopencv.OpenCvCameraFactory;
 import org.openftc.easyopencv.OpenCvCameraRotation;
+import org.openftc.easyopencv.OpenCvInternalCamera;
 import org.openftc.easyopencv.OpenCvPipeline;
 import org.openftc.easyopencv.OpenCvWebcam;
 
-public class CVManager extends FeatureManager
-{
+public class CVManager extends FeatureManager {
     OpenCvWebcam webcam;
     PipelineThatExposesSomeAnalysis pipeline;
 
-    public CVManager (HardwareMap hardwareMap) {
+
+    public CVManager(HardwareMap hardwareMap) {
         //only initialize the webcam if we're NOT unit-testing.
         //Trying to test cv on a laptop doesn't work :'(
-        if(hardwareMap.appContext != null) {
-            this.pipeline = new FancyPantsEdgeDetectionPipeline();
+        if (hardwareMap.appContext != null) {
+            this.pipeline = new ColorSensor123();
             /*
              * Instantiate an OpenCvCamera object for the camera we'll be using.
              * In this sample, we're using a webcam. Note that you will need to
@@ -88,7 +91,7 @@ public class CVManager extends FeatureManager
                 public void onOpened() {
                     /*
                      * Tell the webcam to start streaming images to us! Note that you must make sure
-                     * the resolution you specify is supported by the camera. If it is not, an exception
+                     * the resolution you specify is supported by tpubliche camera. If it is not, an exception
                      * will be thrown.
                      *
                      * Keep in mind that the SDK's UVC driver (what OpenCvWebcam uses under the hood) only
@@ -116,12 +119,12 @@ public class CVManager extends FeatureManager
     }
 
     public int getCVPositionNumberWhereZeroIsLeftOneIsMiddleAndTwoIsRight() {
-        if(pipeline == null) return 0;
+        if (pipeline == null) return 0;
         else return pipeline.getAnalysis();
     }
 
     public double getCVPrecisePosition() {
-        if(pipeline == null) return 0;
+        if (pipeline == null) return 0;
         else return pipeline.getAnalysisPrecise();
     }
 
@@ -129,29 +132,126 @@ public class CVManager extends FeatureManager
         return Math.floor(Math.min(0.9, pipeline.getAnalysisPrecise() * 2.0) * 3);
     }
 
+    public int getCVNumberForTesting() {
+        return 0;
+    }
+
+
+    public String getColor() {
+        int color = pipeline.getAnalysis();
+        if (color == 1) {
+            return "Pink";
+        } else if (color == 2) {
+            return "Green";
+        } else if (color == 3) {
+            return "Blue";
+        } else {
+            return "Error";
+        }
+    }
+
+    public int getColorRaw() {
+        int color = pipeline.getAnalysis();
+        return color;
+    }
+
+    public int getCameraId()
+    {
+        int cameraMonitorViewId = hardwareMap.appContext.getResources().getIdentifier("cameraMonitorViewId", "id", hardwareMap.appContext.getPackageName());
+        OpenCvCamera camera = OpenCvCameraFactory.getInstance().createInternalCamera(OpenCvInternalCamera.CameraDirection.BACK, cameraMonitorViewId);
+
+        return cameraMonitorViewId;
+    }
+
+    public int getAnalysis()
+    {
+        return pipeline.getAnalysis();
+    }
+
+
+    //gridDraw can only be used inside a pipeline, but it's so useful I had to put it here. It makes a green grid on your image.
+/*
+    public void gridDraw(int width, int height, Mat input) {
+        int REGION_WIDTH = 20;
+        int REGION_HEIGHT = 20;
+        final Scalar GREEN = new Scalar(0, 255, 0);
+        final Scalar RED = new Scalar(0,255,0);
+        Scalar COLOR = GREEN;
+        Point TopLeftThing = new Point(0,0);
+        Point BottomRightThing = new Point(width,0);
+        for (int currentHeight = 0; currentHeight < height; currentHeight = currentHeight + 20)
+        {
+            TopLeftThing.y = currentHeight;
+            BottomRightThing.y = currentHeight;
+
+            if (currentHeight % 5 == 0)
+            {
+                COLOR = RED;
+            }
+            else
+            {
+                COLOR = GREEN;
+            }
+
+            Imgproc.rectangle(
+                    input, // Buffer to draw on
+                    TopLeftThing, // First point which defines the rectangle
+                    BottomRightThing, // Second point which defines the rectangle
+                    COLOR, // The color the rectangle is drawn in
+                    1); // Thickness of the rectangle lines
+
+        }
+        TopLeftThing.x = 0;
+        TopLeftThing.y = 0;
+        BottomRightThing.x = 0;
+        BottomRightThing.y = height;
+        for (int currentWidth = 0; currentWidth < width; currentWidth = currentWidth + 20)
+        {
+            TopLeftThing.x = currentWidth;
+            BottomRightThing.x = currentWidth;
+
+            if (currentWidth % 5 == 0)
+            {
+                COLOR = RED;
+            }
+            else
+            {
+                COLOR = GREEN;
+            }
+
+            Imgproc.rectangle(
+                    input, // Buffer to draw on
+                    TopLeftThing, // First point which defines the rectangle
+                    BottomRightThing, // Second point which defines the rectangle
+                    COLOR, // The color the rectangle is drawn in
+                    1); // Thickness of the rectangle lines
+
+        }
+    }
+*/
 
     public void stopWebcam() {
-            /*
-             * IMPORTANT NOTE: calling stopStreaming() will indeed stop the stream of images
-             * from the camera (and, by extension, stop calling your vision pipeline). HOWEVER,
-             * if the reason you wish to stop the stream early is to switch use of the camera
-             * over to, say, Vuforia or TFOD, you will also need to call closeCameraDevice()
-             * (commented out below), because according to the Android Camera API documentation:
-             *         "Your application should only have one Camera object active at a time for
-             *          a particular hardware camera."
-             *
-             * NB: calling closeCameraDevice() will internally call stopStreaming() if applicable,
-             * but it doesn't hurt to call it anyway, if for no other reason than clarity.
-             *
-             * NB2: if you are stopping the camera stream to simply save some processing power
-             * (or battery power) for a short while when you do not need your vision pipeline,
-             * it is recommended to NOT call closeCameraDevice() as you will then need to re-open
-             * it the next time you wish to activate your vision pipeline, which can take a bit of
-             * time. Of course, this comment is irrelevant in light of the use case described in
-             * the above "important note".
-             */
-            webcam.stopStreaming();
-            //webcam.closeCameraDevice();
+        /*
+         * IMPORTANT NOTE: calling stopStreaming() will indeed stop the stream of images
+         * from the camera (and, by extension, stop calling your vision pipeline). HOWEVER,
+         * if the reason you wish to stop the stream early is to switch use of the camera
+         * over to, say, Vuforia or TFOD, you will also need to call closeCameraDevice()
+         * (commented out below), because according to the Android Camera API documentation:
+         *         "Your application should only have one Camera object active at a time for
+         *          a particular hardware camera."
+         *
+         * NB: calling closeCameraDevice() will internally call stopStreaming() if applicable,
+         * but it doesn't hurt to call it anyway, if for no other reason than clarity.
+         *
+         * NB2: if you are stopping the camera stream to simply save some processing power
+         * (or battery power) for a short while when you do not need your vision pipeline,
+         * it is recommended to NOT call closeCameraDevice() as you will then need to re-open
+         * it the next time you wish to activate your vision pipeline, which can take a bit of
+         * time. Of course, this comment is irrelevant in light of the use case described in
+         * the above "important note".
+         */
+        webcam.stopStreaming();
+        //webcam.closeCameraDevice();
 
         /*
          * For the purposes of this sample, throttle ourselves to 10Hz loop to avoid burning

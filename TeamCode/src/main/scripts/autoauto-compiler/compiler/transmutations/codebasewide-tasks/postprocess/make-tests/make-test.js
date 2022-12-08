@@ -1,3 +1,5 @@
+"use strict";
+
 var path = require("path");
 var safeFsUtils = require("../../../../../../script-helpers/safe-fs-utils");
 
@@ -8,7 +10,7 @@ var template = safeFsUtils.safeReadFile(__dirname + "/test.notjava").toString();
  * @typedef {object} TestRecord
  * @property {string} className
  * @property {string} package
- * @property {object} frontMatter
+ * @property {object} frontmatter
  */
 
 /**
@@ -27,7 +29,7 @@ module.exports = function(testRecords, testsDir) {
     public void runTest${i}_${x.className}() {
         FeatureManager.logger.setRecordLogHistory(true);
         assertTrue(OpmodeTester.runTestOn(new ${x.package}.${x.className}()));
-        ${makeAssert(x.frontMatter)}
+        ${makeAssert(x.frontmatter)}
         FeatureManager.logger.setRecordLogHistory(false);
     }
     `).join("");
@@ -42,7 +44,7 @@ module.exports = function(testRecords, testsDir) {
     return resultFile;
 }
 
-function makeAssert(frontMatter) {
-    if(frontMatter.expectedTestOutput === undefined) return "";
-    else return `assertThat("Log printed correctly", FeatureManager.logger.getLogHistory(), containsString(${JSON.stringify(frontMatter.expectedTestOutput)}));`; 
+function makeAssert(frontmatter) {
+    if (frontmatter.expectedTestOutput === undefined) return "";
+    else return `assertThat("Log printed correctly", FeatureManager.logger.getLogHistory(), containsString(${JSON.stringify(frontmatter.expectedTestOutput)}));`;
 }

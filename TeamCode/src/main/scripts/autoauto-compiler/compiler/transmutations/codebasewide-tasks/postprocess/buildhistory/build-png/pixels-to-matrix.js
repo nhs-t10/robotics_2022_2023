@@ -1,3 +1,5 @@
+"use strict";
+
 var strategies = [
     pixelsToMatrix,
     geometryGrapher((x,y) => x + y),

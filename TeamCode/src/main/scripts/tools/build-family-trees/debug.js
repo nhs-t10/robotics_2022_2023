@@ -1,3 +1,5 @@
+"use strict";
+
 var fs = require("fs");
 
 var structuredSerialize = require("../../script-helpers/structured-serialise");

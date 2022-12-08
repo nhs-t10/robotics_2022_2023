@@ -10,6 +10,7 @@ import com.qualcomm.robotcore.hardware.DcMotor;
 
 import org.firstinspires.ftc.teamcode.auxilary.buildhistory.BuildHistory;
 import org.firstinspires.ftc.teamcode.auxilary.integratedasync.PriorityAsyncOpmodeComponent;
+import org.firstinspires.ftc.teamcode.managers.CV.CVManager;
 import org.firstinspires.ftc.teamcode.managers.feature.FeatureManager;
 import org.firstinspires.ftc.teamcode.managers.input.InputManager;
 import org.firstinspires.ftc.teamcode.managers.input.InputOverlapResolutionMethod;
@@ -42,6 +43,7 @@ public class PrestonIsAGiraffeBoyTeleop extends OpMode {
     public SensorManager sensor;
     public GiraffeManager giraffeNeck;
     public NateManager clawPosition;
+    public CVManager cv;
 
     private boolean precision = false;
     private boolean dashing = false;
@@ -52,6 +54,7 @@ public class PrestonIsAGiraffeBoyTeleop extends OpMode {
         // Phone is labelled as Not Ready For Use
         FeatureManager.setIsOpModeRunning(true);
         FeatureManager.reconfigureForTeleop();
+        cv = new CVManager(hardwareMap);
 
 
         TelemetryManager telemetryManager = new TelemetryManager(telemetry, this, TelemetryManager.BITMASKS.NONE);
@@ -81,9 +84,9 @@ public class PrestonIsAGiraffeBoyTeleop extends OpMode {
                                         new ScaleNode(new JoystickNode("left_stick_x"), 1)
                     ),
                                 new MultiInputNode(
-                                new ScaleNode(new JoystickNode("gamepad2left_stick_y"), 0.4f),
-                                new ScaleNode(new JoystickNode("gamepad2right_stick_x"), 0.6f),
-                                new ScaleNode(new JoystickNode("gamepad2left_stick_x"), 0.7f)
+                                        new ScaleNode(new JoystickNode("gamepad2left_stick_y"), 0.4f),
+                                        new ScaleNode(new JoystickNode("gamepad2right_stick_x"), 0.6f),
+                                        new ScaleNode(new JoystickNode("gamepad2left_stick_x"), 0.7f)
                             )
                         )
                 )

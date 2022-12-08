@@ -1,3 +1,5 @@
+"use strict";
+
 module.exports = function run(context) {
     var bcBlocks = context.inputs["syntax-tree-to-bytecode"].blocks;
 
@@ -17,7 +19,10 @@ module.exports = function run(context) {
 
 function modifyBcCondenseConstants(code) {
     code.forEach(x => {
-        if (!x.args) x.args.map(x => x);
+        if (!x.args) {
+            console.error(x);
+            throw new Error("Malformed bytecode");
+        }
         modifyBcCondenseConstants(x.args);
         condenseConstantOps(x);
     });

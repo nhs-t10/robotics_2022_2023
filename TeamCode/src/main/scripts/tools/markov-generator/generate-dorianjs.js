@@ -1,3 +1,5 @@
+"use strict";
+
 var characterNames = ["Dorian", "Gray", "Basil", "Hallward", "Lord", "Henry", "Harry", "Wotton", 
                 "Sibyl", "Vane", "James", "Vane", 
                 "Alan", "Campbell", "Lord", "Fermor", "Adrian", "Singleton"];
@@ -66,5 +68,4 @@ function randomFrom(arr) {
 }
 function startsWithCapital(str) {
     return str.charCodeAt(0) >= 65 && str.charCodeAt(0) <= 90;
-}
-`);
+}`);

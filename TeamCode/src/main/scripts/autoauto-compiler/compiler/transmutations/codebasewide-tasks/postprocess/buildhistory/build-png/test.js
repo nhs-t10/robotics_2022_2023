@@ -1,3 +1,5 @@
+"use strict";
+
 
 
 var makePhoto = require("./create-png-from-hash.js");

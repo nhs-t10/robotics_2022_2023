@@ -1,3 +1,5 @@
+"use strict";
+
 const deleteOldVersions = require("./delete-old-versions");
 const pruneToSize = require("./prune-to-size");
 const worker_threads = require("worker_threads");

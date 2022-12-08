@@ -1,3 +1,5 @@
+"use strict";
+
 var path = require("path");
 
 var unicode = require("../../../../script-helpers/unicode");

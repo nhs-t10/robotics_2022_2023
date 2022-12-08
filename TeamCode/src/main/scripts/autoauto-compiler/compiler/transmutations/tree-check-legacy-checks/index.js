@@ -1,3 +1,5 @@
+"use strict";
+
 const checks = require("./checks/run-checks");
 const getAllChecks = require("./checks/load-all")
 

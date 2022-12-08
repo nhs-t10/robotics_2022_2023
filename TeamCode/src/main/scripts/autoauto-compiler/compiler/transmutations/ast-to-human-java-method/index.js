@@ -1,3 +1,5 @@
+"use strict";
+
 var makeJava = require("./make-java");
 var functionLookup = require("./function-lookup");
 

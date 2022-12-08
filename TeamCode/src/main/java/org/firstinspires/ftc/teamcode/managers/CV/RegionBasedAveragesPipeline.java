@@ -6,7 +6,6 @@ import org.opencv.core.Point;
 import org.opencv.core.Rect;
 import org.opencv.core.Scalar;
 import org.opencv.imgproc.Imgproc;
-import org.openftc.easyopencv.OpenCvPipeline;
 
 /*
  * An example image processing pipeline to be run upon receipt of each frame from the camera.
@@ -100,7 +99,7 @@ public class RegionBasedAveragesPipeline extends PipelineThatExposesSomeAnalysis
      * This function takes the RGB frame, converts to YCrCb,
      * and extracts the Cb channel to the 'Cb' variable
      */
-    void inputToCr(Mat input)
+    void inputToCb(Mat input)
     {
         Imgproc.cvtColor(input, YCrCb, Imgproc.COLOR_RGB2YCrCb);
         Core.extractChannel(YCrCb, Cr, 1);
@@ -118,7 +117,7 @@ public class RegionBasedAveragesPipeline extends PipelineThatExposesSomeAnalysis
          * buffer would be re-allocated the first time a real frame
          * was crunched)
          */
-        inputToCr(firstFrame);
+        inputToCb(firstFrame);
 
         /*
          * Submats are a persistent reference to a region of the parent
@@ -171,7 +170,7 @@ public class RegionBasedAveragesPipeline extends PipelineThatExposesSomeAnalysis
         /*
          * Get the Cb channel of the input frame after conversion to YCrCb
          */
-        inputToCr(input);
+        inputToCb(input);
 
         /*
          * Compute the average pixel value of each submat region. We're

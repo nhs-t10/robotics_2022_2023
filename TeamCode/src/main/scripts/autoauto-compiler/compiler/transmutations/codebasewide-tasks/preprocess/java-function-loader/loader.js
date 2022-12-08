@@ -1,10 +1,12 @@
+"use strict";
+
 var path = require("path");
 var fs = require("fs");
 var crypto = require("crypto");
 
 var directory = __dirname.split(path.sep);
 var rootDirectory = directory.slice(0, directory.indexOf("TeamCode")).join(path.sep);
-var managersDir = path.join(rootDirectory, "TeamCode/src/main/java/org/firstinspires/ftc/teamcode/managers");
+
 
 var cache = require("../../../../../../cache");
 
@@ -16,6 +18,10 @@ var generateAaMethods = require("./parse-and-generate-aa-methods.js");
 const safeFsUtils = require("../../../../../../script-helpers/safe-fs-utils");
 const folderScanner = require("../../../../folder-scanner");
 const commandLineInterface = require("../../../../../../command-line-interface");
+const { safeWriteFile } = require("../../../../../../script-helpers/safe-fs-utils");
+
+const managersDir = commandLineInterface["java-functions-dir"];
+const robotFunctionLoaderAddress = path.join(commandLineInterface.out, "dev/autoauto/runtime/RobotFunctionLoader.java");
 
 if (!fs.existsSync(managersDir)) throw "Managers directory `" + managersDir + "` doesn't exist";
 
@@ -37,7 +43,7 @@ module.exports = async function(writtenFiles) {
         } else {
             var preexistingNames = methods.map(x => x.shimClassFunction.nameToUseInAutoauto).flat();
 
-            var generated = generateAaMethods(fileContent, preexistingNames);
+            var generated = generateAaMethods(fileContent, preexistingNames, writtenFiles);
 
             cacheManagers.managers[manager] = {
                 methods: generated || [],
@@ -46,8 +52,6 @@ module.exports = async function(writtenFiles) {
             methods = methods.concat(cacheManagers.managers[manager].methods);
         }
     }
-
-    var robotFunctionLoaderAddress = path.join(rootDirectory, "TeamCode/gen/org/firstinspires/ftc/teamcode/auxilary/dsls/autoauto/runtime/RobotFunctionLoader.java");
 
     var robotFunctionsTemplate = require("./make-robotfunctionloader.js");
     var robotFunctionLoader = robotFunctionsTemplate(
@@ -61,11 +65,12 @@ module.exports = async function(writtenFiles) {
             ),
         Object.entries(managerArgs),
     );
-    writtenFiles[robotFunctionLoaderAddress] = robotFunctionLoader;
+    writtenFiles[robotFunctionLoaderAddress] = true;
+    safeWriteFile(robotFunctionLoaderAddress, robotFunctionLoader);
     
     addAllRobotfunctionFilesToWrittenFiles(writtenFiles, methods);
 
-    cache.save("autoauto-managers", cacheManagers);
+    cache.save(functionLoaderConfig.CACHE_KEY, cacheManagers);
     return cacheManagers.managers;
 };
 
@@ -104,7 +109,7 @@ function makeManagerName(name) {
 async function loadManagersFromFolder(folder) {
     let results = [];
     
-    const sc = folderScanner(folder, x=>(x.endsWith("Manager.java") || x == "PaulMath.java"));
+    const sc = folderScanner(folder, x=>(x.endsWith( commandLineInterface["java-class-suffix"] + ".java" )));
     
     while(true) {
         const file = await sc.next();

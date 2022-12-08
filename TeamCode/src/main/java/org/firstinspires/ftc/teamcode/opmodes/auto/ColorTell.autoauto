@@ -1,0 +1,22 @@
+$
+    ignorewarning_american_m_unit: true
+$
+
+goto start;
+
+#start:
+    webcam.startStreaming(1280, 720, OpenCvCameraRotation.UPRIGHT), next;
+    goto process;
+
+#process:
+//    log(getColorRaw()), next;
+    log(getColor()), next;
+    after 1s goto process;
+
+
+
+
+#end:
+    stopWebcam();
+    log("i got to the end!");
+

@@ -1,9 +1,6 @@
-var path = require("path");
-var fs = require("fs");
+"use strict";
 
-var directory = __dirname.split(path.sep);
-var rootDirectory = directory.slice(0, directory.indexOf("TeamCode")).join(path.sep);
-var robotFunctionsDirectory = path.join(rootDirectory, "TeamCode/gen/org/firstinspires/ftc/teamcode/auxilary/dsls/autoauto/runtime/robotfunctions");
+var path = require("path");
 
 var parser = require("../../../../../../script-helpers/javaparser/parser.js");
 
@@ -14,8 +11,11 @@ var processTemplate = require("./make-robotfunction-class.js");
 var parserTools = require("../../../../../../script-helpers/parser-tools");
 const safeFsUtils = require("../../../../../../script-helpers/safe-fs-utils.js");
 const androidStudioLogging = require("../../../../../../script-helpers/android-studio-logging.js");
+const commandLineInterface = require("../../../../../../command-line-interface/index.js");
 
-module.exports = function(javaSource, preexistingNames) {
+const robotFunctionsDirectory = path.join(commandLineInterface.out, "dev/autoauto/runtime/robotfunctions");
+
+module.exports = function (javaSource, preexistingNames, writtenFiles) {
     try {
         var sourceWithoutComments = parserTools.stripComments(javaSource);
         var ast = parser.parse(sourceWithoutComments);
@@ -38,7 +38,7 @@ module.exports = function(javaSource, preexistingNames) {
     var methods = findShimableMethods(primaryType);
     var overloads = groupMethodsIntoOverloads(methods);
 
-    var processedMethodClassLocs = overloads.map(x=>generateRobotFunction(x, fullClassName, preexistingNames));
+    var processedMethodClassLocs = overloads.map(x=>generateRobotFunction(x, fullClassName, preexistingNames, writtenFiles));
     return processedMethodClassLocs;
 }
 
@@ -47,7 +47,7 @@ function packageNameToString(packageName) {
     else return packageNameToString(packageName.qualifier) + "." + packageName.name.identifier;
 }
 
-function generateRobotFunction(overload, definedClass, preexistingNames) {
+function generateRobotFunction(overload, definedClass, preexistingNames, writtenFiles) {
     var name = overload.name;
     
     var noConflictName = name;
@@ -95,7 +95,7 @@ function generateRobotFunction(overload, definedClass, preexistingNames) {
         callMethodSource += `}`;
     }
     callMethodSource += `
-    throw new org.firstinspires.ftc.teamcode.auxilary.dsls.autoauto.runtime.errors.AutoautoNoNativeMethodOverloadException("No ${noConflictName} with " + args.length + " args");
+    throw new RuntimeException("No ${noConflictName} with " + args.length + " args");
     `;
 
     noConflictName = replaceNumbers(noConflictName);
@@ -107,6 +107,7 @@ function generateRobotFunction(overload, definedClass, preexistingNames) {
     var ourPath = path.join(robotFunctionsDirectory, classname + ".java");
     
     safeFsUtils.safeWriteFile(ourPath, template);
+    writtenFiles[ourPath] = true;
 
     return {
         shimClassFunction: { nameToUseInAutoauto: noConflictName, javaImplementationClass: classname, javaImplementationFile: ourPath},
@@ -168,8 +169,8 @@ function caster(type) {
         "short": "(short)",
         "int": "(int)",
         "long": "(long)",
-        "float": "",
-        "double": "(double)",
+        "float": "(float)",
+        "double": "",
         "boolean": "",
         "char": "",
         "String": ""
@@ -178,12 +179,12 @@ function caster(type) {
 
 function rawValueGetter(type) {
     return  ({
-        "byte": "castToNumber().getFloat()",
-        "short": "castToNumber().getFloat()",
-        "int": "castToNumber().getFloat()",
-        "long": "castToNumber().getFloat()",
-        "float": "castToNumber().getFloat()",
-        "double": "castToNumber().getFloat()",
+        "byte": "castToNumber().getDouble()",
+        "short": "castToNumber().getDouble()",
+        "int": "castToNumber().getDouble()",
+        "long": "castToNumber().getDouble()",
+        "float": "castToNumber().getDouble()",
+        "double": "castToNumber().getDouble()",
         "boolean": "castToBoolean().getBoolean()",
         "char": "getString().charAt(0)",
         "String": "getString()"

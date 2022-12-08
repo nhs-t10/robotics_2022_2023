@@ -1,3 +1,5 @@
+"use strict";
+
 module.exports = flCacheToTypes;
 
 function flCacheToTypes(flCache) {

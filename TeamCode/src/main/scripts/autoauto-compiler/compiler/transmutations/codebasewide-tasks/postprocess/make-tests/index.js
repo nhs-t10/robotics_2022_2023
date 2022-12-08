@@ -1,19 +1,27 @@
+"use strict";
+
 var path = require("path");
+const commandLineInterface = require("../../../../../../command-line-interface");
 
 var maketest = require("./make-test");
 
 /**
- * 
- * @param {*} context 
- * @param {(import("../../../index").TransmutateContext)[]} contexts
+ * @type {import("../../..").CodebaseTransmutateFunction}
  */
 module.exports = function(context, contexts) {
-    var testDir = path.join(contexts[0].resultRoot, "org/firstinspires/ftc/teamcode/unitTests");
     
+    if(commandLineInterface["make-tests"] == false) return;
+    
+    
+    var testDir = path.join(context.testRoot, "org/firstinspires/ftc/teamcode/unitTests/__testedautoautos");
+    
+
     var testRecords = contexts
-    .filter(x=>x.status == "pass")
+    .filter(x=>x.success == "SUCCESS")
+    .map(x=>x.fileContext)
+    .filter(x=> "write-to-output-file" in x.inputs)
     .map(x=>({
-        frontMatter: x.fileFrontmatter,
+        frontmatter: x.fileFrontmatter,
         className: x.resultBaseFileName.split(".")[0],
         package: x.inputs["get-result-package"]
     }));
@@ -22,3 +30,4 @@ module.exports = function(context, contexts) {
     
     context.writtenFiles[fileWrittenIn] = true;
 }
+

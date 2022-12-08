@@ -1,3 +1,5 @@
+"use strict";
+
 module.exports = {
     STATEPATH_NAME: "--statepathName",
     STATE_NUMBER: "--stateNumber",
@@ -5,6 +7,7 @@ module.exports = {
     RETURNED_VALUE: "\t@returned",
     FUNCTION_ARGUMENTS_NAME: "arguments",
     EXPORTS: "\t@exported",
+    COROUTINE_CONTINUATION_PREFIX: "\tcontinuation@",
     MODULE_ARGS: "module_args",
     THIS: "this",
     COMPATFLAG_AFTER_TIMESTART_AT_START_OF_STATE: "\t@compatflag_afterStartAtState",

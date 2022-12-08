@@ -1,17 +1,21 @@
-var PRIMITIVES_PACKAGE = `org.firstinspires.ftc.teamcode.auxilary.dsls.autoauto.model.values.primitives`;
+"use strict";
 
-module.exports = function(package, className, javaParts) {
-    return template(package, className, javaParts);
+var PRIMITIVES_PACKAGE = `dev.autoauto.runtime.values`;
+
+module.exports = function(packge, className, javaParts) {
+    return template(packge, className, javaParts);
 }
 
-function template(package, className, javaParts) {
-    return `package ${package};
+function template(packge, className, javaParts) {
+    return `package ${packge};
     import ${PRIMITIVES_PACKAGE}.*;
     public class ${className} extends ${javaParts.fullExtendsName} {
-        private static ${javaParts.constants}
+        private final static ${javaParts.constants}
+
+        private final static ${javaParts.bytecodes}
 
         public ${className}() {
-            super(${javaParts.instructions}, ${javaParts.bytecodes});
+            super(${javaParts.instructions});
         }
         
         public static void main(String[] args) {
