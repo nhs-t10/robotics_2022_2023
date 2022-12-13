@@ -61,7 +61,7 @@ public class MonkeyModeDual extends OpMode {
         TelemetryManager telemetryManager = new TelemetryManager(telemetry, this, TelemetryManager.BITMASKS.NONE);
         telemetry = telemetryManager;
         FeatureManager.logger.setBackend(telemetry.log());
-        rr = new RRManager(hardwareMap, new Pose2d(0, 0), telemetryManager);
+        rr = new RRManager(hardwareMap, new Pose2d(0, 0), telemetryManager, this);
         DcMotor fl = hardwareMap.get(DcMotor.class, "fl");
         DcMotor fr = hardwareMap.get(DcMotor.class, "fr");
         DcMotor br = hardwareMap.get(DcMotor.class, "br");
@@ -114,6 +114,7 @@ public class MonkeyModeDual extends OpMode {
         input.registerInput("armLengthNone",
                 new ButtonNode("gamepad2b")
         );
+        */
         input.registerInput("D-Up",
                 new ButtonNode("dpadup")
                 );
@@ -126,7 +127,7 @@ public class MonkeyModeDual extends OpMode {
         input.registerInput("D-Down",
                 new ButtonNode("dpaddown")
         );
-        */
+
         input.setOverlapResolutionMethod(InputOverlapResolutionMethod.MOST_COMPLEX_ARE_THE_FAVOURITE_CHILD);
         PriorityAsyncOpmodeComponent.start(() -> {
 
