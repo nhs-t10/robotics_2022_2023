@@ -83,9 +83,9 @@ public class MonkeyModeDual extends OpMode {
                                     new JoystickNode("right_stick_x")
                             ),
                             new MultiInputNode(
-                                    new MultiplyNode(new JoystickNode("gamepad2left_stick_y"), -0.5f),
-                                    new MultiplyNode(new JoystickNode("gamepad2left_stick_x"), -0.5f),
-                                    new MultiplyNode(new JoystickNode("gamepad2right_stick_x"), 0.5f)
+                                    new MultiplyNode(new JoystickNode("gamepad2left_stick_y"), -0.25f),
+                                    new MultiplyNode(new JoystickNode("gamepad2left_stick_x"), -0.25f),
+                                    new MultiplyNode(new JoystickNode("gamepad2right_stick_x"), 0.25f)
                             )
                     )
         );
