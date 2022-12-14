@@ -4,6 +4,7 @@ import com.acmerobotics.roadrunner.geometry.Pose2d;
 import com.acmerobotics.roadrunner.geometry.Vector2d;
 import com.acmerobotics.roadrunner.localization.Localizer;
 import com.acmerobotics.roadrunner.trajectory.TrajectoryBuilder;
+import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 
 import org.checkerframework.framework.qual.Unused;
@@ -26,7 +27,9 @@ public class RRManager extends FeatureManager {
     private TrajectoryBuilder trajBuildRR;
     private TrajectorySequenceBuilder tsb;
     private TelemetryManager telemetry;
-    private Pose2d[] nonono = {new Pose2d(-120, 48), new Pose2d(-72, 48), new Pose2d(-24, 48), new Pose2d(-24, 0), new Pose2d(-120, 0), new Pose2d(-72, 0), new Pose2d(-24, -48), new Pose2d(-120, -48), new Pose2d(-72, -48)};
+    private OpMode opMode;
+    private static final Pose2d[] nonono = {new Pose2d(-120, 48), new Pose2d(-72, 48), new Pose2d(-24, 48), new Pose2d(-24, 0), new Pose2d(-120, 0), new Pose2d(-72, 0), new Pose2d(-24, -48), new Pose2d(-120, -48), new Pose2d(-72, -48)};
+
     /**
      * Initializes the Road Runner Manager
      * @param hardwareMap The hardwareMap for Roadrunner to access for the drive motors
@@ -35,14 +38,13 @@ public class RRManager extends FeatureManager {
      * {@link #telemetry}
      *
      */
-    public RRManager(@NotNull HardwareMap hardwareMap, @NotNull Pose2d start, @NotNull TelemetryManager telemetryManager){
+    public RRManager(@NotNull HardwareMap hardwareMap, @NotNull Pose2d start, @NotNull TelemetryManager telemetryManager, @NotNull OpMode opMode){
         driveRR = new SampleMecanumDrive(hardwareMap); //Necessary Component for RoadRunner!
         trajBuildRR = driveRR.trajectoryBuilder(start);
-
+        this.opMode = opMode;
         this.telemetry = telemetryManager;
         calibrateDriveToZero();
         telemetry.log().add("Go to 192.168.43.1:8080/dash for the FTC Dashboard! Unless this is the competition, for which, in that case, never mind, don't use FTC Dashboard...");
-
     }
 
     /**
@@ -283,6 +285,7 @@ public class RRManager extends FeatureManager {
                 ", tsb=" + tsb +
                 ", telemetry=" + telemetry +
                 ", nonono=" + Arrays.toString(nonono) +
-                '}';
+                "} For OpMode "+opMode.toString();
     }
+
 }
