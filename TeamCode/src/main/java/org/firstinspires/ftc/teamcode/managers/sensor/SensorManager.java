@@ -35,9 +35,9 @@ public class SensorManager extends FeatureManager {
     public SensorManager(HardwareMap _hardwareMap, Map.Entry<String, String[]>... args) {
         String[] _colorSensor = new String[0], _touchSensor = new String[0], _distanceSensor = new String[0];
         for (Map.Entry<String, String[]> a : args) {
-            if (a.getKey().equals("crservo")) _colorSensor = a.getValue();
-            else if (a.getKey().equals("servo")) _touchSensor = a.getValue();
-            else if (a.getKey().equals("motor")) _distanceSensor = a.getValue();
+            if (a.getKey().equals("colorSensor")) _colorSensor = a.getValue();
+            else if (a.getKey().equals("touchSensor")) _touchSensor = a.getValue();
+            else if (a.getKey().equals("distanceSensor")) _distanceSensor = a.getValue();
         }
         sensors = new Sensor[_colorSensor.length + _touchSensor.length + _distanceSensor.length];
         sensorNames = PaulMath.concatArrays(_colorSensor, _touchSensor, _distanceSensor);
