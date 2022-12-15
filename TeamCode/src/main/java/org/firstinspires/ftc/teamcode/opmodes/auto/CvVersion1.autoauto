@@ -16,7 +16,6 @@ goto start;
     goto process;
 
 #process:
-
     driveOmni(0,0.5,0), after 12.4cm next;
     if (color == 1) {
         goto color1;

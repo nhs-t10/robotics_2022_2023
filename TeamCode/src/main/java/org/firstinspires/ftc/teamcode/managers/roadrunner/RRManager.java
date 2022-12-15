@@ -57,6 +57,9 @@ public class RRManager extends FeatureManager {
         else if(id==3){driveRR.followTrajectory(trajBuildRR.splineToSplineHeading(new Pose2d(0, -72), Math.toRadians(driveRR.getExternalHeading())).build());}
         driveRR.update();
     }
+    public void setBusy(){
+        driveRR.isBusy();
+    }
 
     /**
      * Marks the displacement from (0, 0) on the FTC Dashboard's field display

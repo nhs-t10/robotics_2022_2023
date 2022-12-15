@@ -27,7 +27,6 @@ public class ColorSensor extends Sensor {
 
     public boolean isSpecial() {
         return Color.alpha(this.colorReturned) >= 200;
-
     }
 
     @Override

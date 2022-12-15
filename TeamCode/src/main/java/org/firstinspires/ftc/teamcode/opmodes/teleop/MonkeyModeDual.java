@@ -25,11 +25,14 @@ import org.firstinspires.ftc.teamcode.managers.input.nodes.JoystickNode;
 import org.firstinspires.ftc.teamcode.managers.input.nodes.MultiInputNode;
 import org.firstinspires.ftc.teamcode.managers.input.nodes.MultiplyNode;
 import org.firstinspires.ftc.teamcode.managers.input.nodes.PlusNode;
+import org.firstinspires.ftc.teamcode.managers.input.nodes.ToggleNode;
 import org.firstinspires.ftc.teamcode.managers.manipulation.ManipulationManager;
 import org.firstinspires.ftc.teamcode.managers.movement.MovementManager;
 import org.firstinspires.ftc.teamcode.managers.roadrunner.RRManager;
+import org.firstinspires.ftc.teamcode.managers.sensor.ColorSensor;
 import org.firstinspires.ftc.teamcode.managers.sensor.SensorManager;
 import org.firstinspires.ftc.teamcode.managers.telemetry.TelemetryManager;
+import org.firstinspires.ftc.teamcode.opmodes.auto.S;
 
 import java.util.Arrays;
 
@@ -42,13 +45,13 @@ public class MonkeyModeDual extends OpMode {
     public SampleMecanumDrive drive;
     public TrajectoryBuilder trajBuild;
     public bigArmManager monkeyArm;
+    public SensorManager sensing;
     private boolean armStatus = false;
     private boolean intakeToggle = false;
     public double distance;
-    public int startPosition;
-    public int endPosition;
     int towerPos = 0;
-    public boolean tracking;
+    int currentColor = 0;
+    int currentColor1 = 0;
     public Pose2d lastError;
     private boolean looping = false;
     private boolean shouldActuallyDoThings = true;
@@ -72,6 +75,12 @@ public class MonkeyModeDual extends OpMode {
                 crservo         (),
                 servo           ("monkeyHand"),
                 motor           ("monkeyShoulder")
+        );
+        sensing = new SensorManager(
+                hardwareMap,
+                SensorManager.colorSensor("rainbowSense", "rainbowSense1"),
+                SensorManager.touchSensor(),
+                SensorManager.distanceSensor()
         );
         monkeyArm = new bigArmManager(hands);
         input = new InputManager(gamepad1, gamepad2);
@@ -101,7 +110,9 @@ public class MonkeyModeDual extends OpMode {
         input.registerInput("retractArm",
                 new ButtonNode("gamepad2lefttrigger")
         );
-        /*
+        input.registerInput("colorNYOOM",
+                new ToggleNode(new ButtonNode("righttrigger"))
+        );
         input.registerInput("armLengthSmall",
                 new ButtonNode("gamepad2a")
         );
@@ -114,7 +125,6 @@ public class MonkeyModeDual extends OpMode {
         input.registerInput("armLengthNone",
                 new ButtonNode("gamepad2b")
         );
-        */
         input.registerInput("D-Up",
                 new ButtonNode("dpadup")
                 );
@@ -127,7 +137,6 @@ public class MonkeyModeDual extends OpMode {
         input.registerInput("D-Down",
                 new ButtonNode("dpaddown")
         );
-
         input.setOverlapResolutionMethod(InputOverlapResolutionMethod.MOST_COMPLEX_ARE_THE_FAVOURITE_CHILD);
         PriorityAsyncOpmodeComponent.start(() -> {
 
@@ -173,7 +182,16 @@ public class MonkeyModeDual extends OpMode {
             } else {
                 monkeyArm.stopArm();
             }
-            /*
+            if (input.getBool("colorNYOOM")) {
+                rr.setBusy();
+                driver.driveOmni(1,0,0);
+                if (currentColor > 100 && currentColor < 200){
+                    rr.notBusy();
+                    driver.driveOmni(0,0,0);
+                }
+            }
+            currentColor = sensing.getColorInteger("rainbowSense");
+            currentColor1 = sensing.getColorInteger("rainbowSense1");
             if (input.getBool("armLengthNone")) {
                 monkeyArm.setPositionFloorLocation();
             }
@@ -186,8 +204,6 @@ public class MonkeyModeDual extends OpMode {
             if (input.getBool("armLengthTall")) {
                 monkeyArm.setPositionHighLocation();
             }
-            */
-
             towerPos += (-(int)hands.getMotorPosition("monkeyShoulder"));
             telemetry.addData("FL Power", driver.frontLeft.getPower());
             telemetry.addData("FR Power", driver.frontRight.getPower());
@@ -200,6 +216,8 @@ public class MonkeyModeDual extends OpMode {
             telemetry.addData("Tower Position: ", towerPos);
             telemetry.addData("FL Position: ", driver.frontLeft.getCurrentPosition());
             telemetry.addData("Last Error: ", lastError);
+            telemetry.addData("Current Color: ", currentColor);
+            telemetry.addData("Current Color: ", currentColor1);
             telemetry.update();
         }
         catch (Throwable t) {
