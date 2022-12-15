@@ -169,22 +169,25 @@ public class CVManager extends FeatureManager {
     }
 
 
-    //gridDraw can only be used inside a pipeline, but it's so useful I had to put it here. It makes a green grid on your image.
-/*
-    public void gridDraw(int width, int height, Mat input) {
-        int REGION_WIDTH = 20;
-        int REGION_HEIGHT = 20;
+    /**
+     * gridDraw can only be used inside a pipeline, but it's so useful I had to put it here. To use it, copy it into the pipeline of your choice <br>
+     * It makes a green/red grid on your image. As written here, the red lines will appear every 20 pixels. <br>
+     * I recommend using it in conjunction with a blue viewbox to calibrate the CV detection window
+     * @param width - the horizontal resolution of your image in pixels
+     * @param height - the vertical resolution of your image in pixels
+     * @param input - the image the grid is drawn on
+     */
+    void gridDraw(int width, int height, Mat input) {
         final Scalar GREEN = new Scalar(0, 255, 0);
-        final Scalar RED = new Scalar(0,255,0);
+        final Scalar RED = new Scalar(255,0,0);
         Scalar COLOR = GREEN;
         Point TopLeftThing = new Point(0,0);
         Point BottomRightThing = new Point(width,0);
-        for (int currentHeight = 0; currentHeight < height; currentHeight = currentHeight + 20)
+        for (int currentHeight = 0; currentHeight < height; currentHeight += 20)
         {
             TopLeftThing.y = currentHeight;
             BottomRightThing.y = currentHeight;
-
-            if (currentHeight % 5 == 0)
+            if (currentHeight % 100 == 0)
             {
                 COLOR = RED;
             }
@@ -205,12 +208,12 @@ public class CVManager extends FeatureManager {
         TopLeftThing.y = 0;
         BottomRightThing.x = 0;
         BottomRightThing.y = height;
-        for (int currentWidth = 0; currentWidth < width; currentWidth = currentWidth + 20)
+        for (int currentWidth = 0; currentWidth < width; currentWidth += 20)
         {
             TopLeftThing.x = currentWidth;
             BottomRightThing.x = currentWidth;
 
-            if (currentWidth % 5 == 0)
+            if (currentWidth % 100 == 0)
             {
                 COLOR = RED;
             }
@@ -228,7 +231,7 @@ public class CVManager extends FeatureManager {
 
         }
     }
-*/
+
 
     public void stopWebcam() {
         /*
