@@ -125,6 +125,12 @@ public class SensorManager extends FeatureManager {
     public boolean isSpecial(String name) {
         return sensors[indexOf(name)].isSpecial();
     }
-
+    public String getColor(String name){
+        ColorSensor sensor = (ColorSensor) sensors[indexOf(name)];
+        if(sensor.getNumberValue() == sensor.colorSensor.getNormalizedColors().red){
+            return "red";
+        }
+        return null;
+    }
 
 }
