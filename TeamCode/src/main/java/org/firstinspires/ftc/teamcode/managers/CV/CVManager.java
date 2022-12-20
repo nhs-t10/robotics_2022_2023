@@ -46,13 +46,14 @@ import org.openftc.easyopencv.OpenCvWebcam;
 public class CVManager extends FeatureManager {
     OpenCvWebcam webcam;
     PipelineThatExposesSomeAnalysis pipeline;
-
+    PipelineThatExposesSomeAnalysis pipeline_Secondary;
 
     public CVManager(HardwareMap hardwareMap) {
         //only initialize the webcam if we're NOT unit-testing.
         //Trying to test cv on a laptop doesn't work :'(
         if (hardwareMap.appContext != null) {
             this.pipeline = new ColorSensor123();
+            this.pipeline = new FancyPantsEdgeDetectionPipelineRemastered();
             /*
              * Instantiate an OpenCvCamera object for the camera we'll be using.
              * In this sample, we're using a webcam. Note that you will need to
@@ -167,6 +168,10 @@ public class CVManager extends FeatureManager {
     {
         return pipeline.getAnalysis();
     }
+
+    public int getAnalysisSecondary() {return pipeline_Secondary.getAnalysis();}
+
+    public double getAnalysisPreciseSecondary() {return pipeline_Secondary.getAnalysisPrecise();}
 
 
     /**
