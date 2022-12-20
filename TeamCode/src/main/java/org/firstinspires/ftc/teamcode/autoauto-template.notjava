@@ -26,7 +26,13 @@ import org.firstinspires.ftc.teamcode.managers.roadrunner.RRManager;
 import dev.autoauto.model.AutoautoProgram;
 import dev.autoauto.runtime.AutoautoRuntime;
 import org.firstinspires.ftc.teamcode.auxilary.buildhistory.BuildHistory;//reconfigureForAuto
-import com.acmerobotics.roadrunner.*;
+//import com.acmerobotics.roadrunner.*; <-- This doesn't work
+import com.acmerobotics.roadrunner.geometry.Pose2d;
+import com.acmerobotics.roadrunner.geometry.Vector2d;
+import com.acmerobotics.roadrunner.localization.Localizer;
+import com.acmerobotics.roadrunner.trajectory.TrajectoryBuilder;
+import com.qualcomm.robotcore.eventloop.opmode.OpMode;
+import com.qualcomm.robotcore.hardware.HardwareMap;
 
 
 @Autonomous(name = "/*NO_CONFLICT_NAME*/")
