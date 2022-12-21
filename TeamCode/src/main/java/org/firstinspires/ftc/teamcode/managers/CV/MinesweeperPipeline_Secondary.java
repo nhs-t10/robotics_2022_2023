@@ -12,7 +12,7 @@ import org.opencv.imgproc.Imgproc;
 
 import java.util.ArrayList;
 
-public class MinesweeperPipeline extends PipelineThatExposesSomeAnalysis {
+public class MinesweeperPipeline_Secondary extends PipelineThatExposesSomeSecondaryAnalysis {
 
 
     /*r

@@ -9,7 +9,7 @@ import org.opencv.core.Rect;
 import org.opencv.core.Scalar;
 import org.opencv.imgproc.Imgproc;
 
-public class ColorSensor123_TEST extends PipelineThatExposesSomeAnalysis {
+public class ColorSensor123_TEST extends PipelineThatExposesSomeTestingAnalysis {
 
 
 
