@@ -6,12 +6,7 @@ goto start;
 
 #start:
     startWebcam(), next;
-    log(colorFind(0)), next;
-    log(colorFind(1)), after 10s next;
-    log(colorFind(0)), next;
-    log(colorFind(1)), after 10s next;
-    log(colorFind(0)), next;
-    log(colorFind(1)), after 10s next;
+    log(getAnalysisTest()), after 30s next;
     goto end;
 
 
@@ -19,4 +14,3 @@ goto start;
 
 #end:
     stopWebcam();
-    log("i got to the end!");

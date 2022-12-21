@@ -22,38 +22,34 @@
 package org.firstinspires.ftc.teamcode.managers.CV;
 
 import static org.firstinspires.ftc.robotcore.external.BlocksOpModeCompanion.hardwareMap;
-import static org.firstinspires.ftc.teamcode.managers.CV.RegionBasedAveragesPipeline.BLUE;
 
-import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
-import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 
 import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
 import org.firstinspires.ftc.teamcode.managers.feature.FeatureManager;
-import org.opencv.core.Core;
 import org.opencv.core.Mat;
 import org.opencv.core.Point;
-import org.opencv.core.Rect;
 import org.opencv.core.Scalar;
 import org.opencv.imgproc.Imgproc;
 import org.openftc.easyopencv.OpenCvCamera;
 import org.openftc.easyopencv.OpenCvCameraFactory;
 import org.openftc.easyopencv.OpenCvCameraRotation;
 import org.openftc.easyopencv.OpenCvInternalCamera;
-import org.openftc.easyopencv.OpenCvPipeline;
 import org.openftc.easyopencv.OpenCvWebcam;
 
 public class CVManager extends FeatureManager {
     OpenCvWebcam webcam;
     PipelineThatExposesSomeAnalysis pipeline;
     PipelineThatExposesSomeAnalysis pipeline_Secondary;
+    PipelineThatExposesSomeAnalysis pipeline_Testing;
 
     public CVManager(HardwareMap hardwareMap) {
         //only initialize the webcam if we're NOT unit-testing.
         //Trying to test cv on a laptop doesn't work :'(
         if (hardwareMap.appContext != null) {
             this.pipeline = new ColorSensor123();
-            this.pipeline = new FancyPantsEdgeDetectionPipelineRemastered();
+            this.pipeline = new MinesweeperPipeline();
+            this.pipeline = new ColorSensor123_TEST();
             /*
              * Instantiate an OpenCvCamera object for the camera we'll be using.
              * In this sample, we're using a webcam. Note that you will need to
@@ -172,6 +168,10 @@ public class CVManager extends FeatureManager {
     public int getAnalysisSecondary() {return pipeline_Secondary.getAnalysis();}
 
     public double getAnalysisPreciseSecondary() {return pipeline_Secondary.getAnalysisPrecise();}
+
+    public int getAnalysisTest() {return pipeline_Testing.getAnalysis();}
+
+    public double getAnalysisPreciseTest() {return pipeline_Testing.getAnalysisPrecise();}
 
 
     /**

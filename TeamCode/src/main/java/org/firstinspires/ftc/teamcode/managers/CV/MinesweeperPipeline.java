@@ -12,7 +12,7 @@ import org.opencv.imgproc.Imgproc;
 
 import java.util.ArrayList;
 
-public class FancyPantsEdgeDetectionPipelineRemastered extends PipelineThatExposesSomeAnalysis {
+public class MinesweeperPipeline extends PipelineThatExposesSomeAnalysis {
 
 
     /*r
