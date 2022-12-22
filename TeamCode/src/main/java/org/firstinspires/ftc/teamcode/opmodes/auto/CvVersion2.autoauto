@@ -16,14 +16,15 @@ goto start;
     goto process;
 
 #process:
-    driveOmni(0,0.5,0), after 12.4cm next;
-    driveOmni(-1,0,0), after 193cm next;
-    driveOmni(0,-0.5,0), after 31.7cm next;
+    driveOmni(0,0.5,0), after 10cm next;
+    driveOmni(-1,0,0), after 120cm next;
+    driveOmni(0,0,1), after 150degs next;
+    driveOmni(0,-0.5,0), after 28.5cm next;
     //setPositionHighLocation();
     //openArm();
-    driveOmni(0,0.5,0), after 31.7cm next;
+    driveOmni(0,0.5,0), after 28.5cm next;
     //closeArm();
-    driveOmni(1,0,0), after 193cm next;
+    driveOmni(-1,0,0), after 120cm next;
     if (color == 1) {
         goto color1;
     }
@@ -40,16 +41,16 @@ goto start;
 #color1:
     driveOmni(0,-1,0), after 68cm next;
     next;//go left one tile, go forward 1.5 tiles
-    driveOmni(-1,0,0), after 95cm next;
+    driveOmni(1,0,0), after 95cm next;
     goto end;
 
 #color2:
-    driveOmni(-1,0,0), after 95cm next; //go forward 1.5 tiles    goto end;
+    driveOmni(1,0,0), after 95cm next; //go forward 1.5 tiles    goto end;
 
 #color3:
     driveOmni(0,1,0), after 68cm next;
     next;//go right one tile, go forward 1.5 tiles
-    driveOmni(-1,0,0), after 95cm next;
+    driveOmni(1,0,0), after 95cm next;
     goto end;
 
 #error:

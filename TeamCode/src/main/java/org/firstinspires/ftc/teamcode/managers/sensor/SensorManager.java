@@ -125,12 +125,30 @@ public class SensorManager extends FeatureManager {
     public boolean isSpecial(String name) {
         return sensors[indexOf(name)].isSpecial();
     }
-    public String getColor(String name){
+
+    public int getColor(String name){
         ColorSensor sensor = (ColorSensor) sensors[indexOf(name)];
-        if(sensor.getNumberValue() == sensor.colorSensor.getNormalizedColors().red){
-            return "red";
+        if(sensor.colorSensor.getNormalizedColors().red > 0.00125){
+            return 1;
         }
-        return null;
+        else if(sensor.colorSensor.getNormalizedColors().blue > 0.0016){
+            return 2;
+        }
+        else {
+            return 0;
+        }
+    }
+    public float getRed(String name){
+        ColorSensor sensor = (ColorSensor) sensors[indexOf(name)];
+        return sensor.colorSensor.getNormalizedColors().red;
+    }
+    public float getBlue(String name){
+        ColorSensor sensor = (ColorSensor) sensors[indexOf(name)];
+        return sensor.colorSensor.getNormalizedColors().blue;
+    }
+    public float getGreen(String name){
+        ColorSensor sensor = (ColorSensor) sensors[indexOf(name)];
+        return sensor.colorSensor.getNormalizedColors().green;
     }
 
 }

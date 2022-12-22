@@ -7,7 +7,6 @@ import static org.firstinspires.ftc.teamcode.managers.manipulation.ManipulationM
 import com.acmerobotics.dashboard.FtcDashboard;
 import com.acmerobotics.dashboard.telemetry.MultipleTelemetry;
 import com.acmerobotics.roadrunner.geometry.Pose2d;
-import com.acmerobotics.roadrunner.geometry.Vector2d;
 import com.acmerobotics.roadrunner.trajectory.TrajectoryBuilder;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
@@ -29,12 +28,8 @@ import org.firstinspires.ftc.teamcode.managers.input.nodes.ToggleNode;
 import org.firstinspires.ftc.teamcode.managers.manipulation.ManipulationManager;
 import org.firstinspires.ftc.teamcode.managers.movement.MovementManager;
 import org.firstinspires.ftc.teamcode.managers.roadrunner.RRManager;
-import org.firstinspires.ftc.teamcode.managers.sensor.ColorSensor;
 import org.firstinspires.ftc.teamcode.managers.sensor.SensorManager;
 import org.firstinspires.ftc.teamcode.managers.telemetry.TelemetryManager;
-import org.firstinspires.ftc.teamcode.opmodes.auto.S;
-
-import java.util.Arrays;
 
 @TeleOp
 public class MonkeyModeDual extends OpMode {
@@ -46,12 +41,15 @@ public class MonkeyModeDual extends OpMode {
     public TrajectoryBuilder trajBuild;
     public bigArmManager monkeyArm;
     public SensorManager sensing;
-    private boolean armStatus = false;
+    private boolean handStatus = false;
     private boolean intakeToggle = false;
+    public boolean nyooming = false;
     public double distance;
     int towerPos = 0;
     int currentColor = 0;
     int currentColor1 = 0;
+    float rainbowSenseRed = 0;
+    float rainbowSenseBlue = 0;
     public Pose2d lastError;
     private boolean looping = false;
     private boolean shouldActuallyDoThings = true;
@@ -111,7 +109,7 @@ public class MonkeyModeDual extends OpMode {
                 new ButtonNode("gamepad2lefttrigger")
         );
         input.registerInput("colorNYOOM",
-                new ToggleNode(new ButtonNode("righttrigger"))
+               new ButtonNode("righttrigger")
         );
         input.registerInput("armLengthSmall",
                 new ButtonNode("gamepad2a")
@@ -164,16 +162,16 @@ public class MonkeyModeDual extends OpMode {
                 //Meant to be if this && !input.getBool("armLengthNone");
                 driver.driveOmni(input.getFloatArrayOfInput("drivingControls"));
             }
-            if (input.getBool("handToggle") && !armStatus) {
+            if (input.getBool("handToggle") && !handStatus) {
                 intakeToggle=!intakeToggle;
-                armStatus = true;
-            } else if (!input.getBool("handToggle") && armStatus){
-                    armStatus = false;
+                handStatus = true;
+            } else if (!input.getBool("handToggle") && handStatus){
+                    handStatus = false;
             }
             if (intakeToggle){
-                monkeyArm.openArm();
+                monkeyArm.openHand();
             } else {
-                monkeyArm.closeArm();
+                monkeyArm.closeHand();
             }
             if (input.getBool("extendArm")) {
                 monkeyArm.extendArm();
@@ -182,16 +180,20 @@ public class MonkeyModeDual extends OpMode {
             } else {
                 monkeyArm.stopArm();
             }
-            if (input.getBool("colorNYOOM")) {
+            if (input.getBool("colorNYOOM") || nyooming == true) {
+                nyooming = true;
                 rr.setBusy();
-                driver.driveOmni(1,0,0);
-                if (currentColor > 100 && currentColor < 200){
-                    rr.notBusy();
-                    driver.driveOmni(0,0,0);
+                while (currentColor == 0 && currentColor1 == 0) {
+                    driver.driveOmni(0.5f, 0, 0);
                 }
+                rr.notBusy();
+                driver.driveOmni(0,0,0);
+                nyooming = false;
             }
-            currentColor = sensing.getColorInteger("rainbowSense");
-            currentColor1 = sensing.getColorInteger("rainbowSense1");
+            currentColor = sensing.getColor("rainbowSense");
+            currentColor1 = sensing.getColor("rainbowSense1");
+            rainbowSenseRed = sensing.getRed("rainbowSense");
+            rainbowSenseBlue = sensing.getBlue("rainbowSense");
             if (input.getBool("armLengthNone")) {
                 monkeyArm.setPositionFloorLocation();
             }
@@ -216,8 +218,10 @@ public class MonkeyModeDual extends OpMode {
             telemetry.addData("Tower Position: ", towerPos);
             telemetry.addData("FL Position: ", driver.frontLeft.getCurrentPosition());
             telemetry.addData("Last Error: ", lastError);
-            telemetry.addData("Current Color: ", currentColor);
-            telemetry.addData("Current Color: ", currentColor1);
+            telemetry.addData("RainbowSenseRed: ", rainbowSenseRed);
+            telemetry.addData("RainbowSenseBlue: ", rainbowSenseBlue);
+            telemetry.addData("CurrentColor", currentColor);
+            telemetry.addData("CurrentColor1", currentColor1);
             telemetry.update();
         }
         catch (Throwable t) {
