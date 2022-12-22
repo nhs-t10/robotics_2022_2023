@@ -25,6 +25,15 @@ goto start;
     driveOmni(0,0.5,0), after 28.5cm next;
     //closeArm();
     driveOmni(-1,0,0), after 120cm next;
+    driveOmni(0,-0.5,0), after 55cm next;
+    driveOmni(-1,0,0), after 165cm next;
+    driveOmni(0,0.5,0), after 50cm next;
+    //setPositionHighLocation();
+    //openArm();
+    driveOmni(0,-0.5,0), after 50cm next;
+    //closeArm();
+    driveOmni(1,0,0), after 165cm next;
+    driveOmni(0,0.5,0), after 55cm next;
     if (color == 1) {
         goto color1;
     }
