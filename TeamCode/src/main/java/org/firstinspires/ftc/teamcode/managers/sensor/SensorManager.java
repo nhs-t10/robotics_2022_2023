@@ -127,8 +127,10 @@ public class SensorManager extends FeatureManager {
     }
     public String getColor(String name){
         ColorSensor sensor = (ColorSensor) sensors[indexOf(name)];
-        if(sensor.getNumberValue() == sensor.colorSensor.getNormalizedColors().red){
+        if(sensor.getFloatArray()[0] >= 0.7f){
             return "red";
+        }else if(sensor.getFloatArray()[2] >= 0.7f){
+            return "blue";
         }
         return null;
     }
