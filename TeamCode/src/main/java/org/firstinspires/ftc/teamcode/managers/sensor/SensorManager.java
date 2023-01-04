@@ -150,5 +150,4 @@ public class SensorManager extends FeatureManager {
         ColorSensor sensor = (ColorSensor) sensors[indexOf(name)];
         return sensor.colorSensor.getNormalizedColors().green;
     }
-
 }
