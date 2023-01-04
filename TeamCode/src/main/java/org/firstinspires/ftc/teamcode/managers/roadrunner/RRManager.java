@@ -23,6 +23,7 @@ import java.util.Arrays;
  * Manager for Pathing and Dead Reckoning... Makes Road runner much easier to use with a set of complex methods for making precise paths. created by ACHYUT SHASTRI
  */
 public class RRManager extends FeatureManager {
+    public static Pose2d currentPose = new Pose2d();
     private SampleMecanumDrive driveRR;
     private TrajectoryBuilder trajBuildRR;
     private TrajectorySequenceBuilder tsb;
@@ -68,6 +69,9 @@ public class RRManager extends FeatureManager {
         trajBuildRR.addDisplacementMarker(driveRR.getLocalizer().getPoseEstimate().vec().distTo(new Vector2d(0, 0)), () -> {});
     }
 
+    public void setAutoAutoPosition(){
+        RRManager.currentPose = driveRR.getPoseEstimate();
+    }
     /**
      * Returns the drive object element from the class FOR TESTING ONLY
      * @return The drive object of the class
@@ -96,7 +100,11 @@ public class RRManager extends FeatureManager {
     public void calibrateDriveToZero(){
         driveRR.setPoseEstimate(new Pose2d(0, 0, Math.toRadians(0)));
 
-        telemetry.log().add("RoadRunner Drive Recalibrated");
+        telemetry.log().add("RoadRunner Drive Calibrated to 0,0");
+    }
+    public void calibrateDriveToAutoPosition(){
+        driveRR.setPoseEstimate(currentPose);
+        telemetry.log().add("RoadRunner Drive Calibrated to Auto Position");
     }
 
     /**

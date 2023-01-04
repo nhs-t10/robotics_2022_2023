@@ -138,8 +138,8 @@ public class MonkeyModeDual extends OpMode {
                 new ButtonNode("a")
         );
         input.setOverlapResolutionMethod(InputOverlapResolutionMethod.MOST_COMPLEX_ARE_THE_FAVOURITE_CHILD);
+        rr.calibrateDriveToAutoPosition();
         PriorityAsyncOpmodeComponent.start(() -> {
-
             if(input.getBool("RR1") && rr.notBusy()) {
                 rr.moveToPosWithID(2);
                 if (input.getBool("D-Up") && rr.notBusy()) {
