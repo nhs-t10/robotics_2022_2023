@@ -20,6 +20,7 @@ import org.firstinspires.ftc.teamcode.managers.input.InputManager;
 import org.firstinspires.ftc.teamcode.managers.input.InputOverlapResolutionMethod;
 import org.firstinspires.ftc.teamcode.managers.input.nodes.AnyNode;
 import org.firstinspires.ftc.teamcode.managers.input.nodes.ButtonNode;
+import org.firstinspires.ftc.teamcode.managers.input.nodes.GradualStickNode;
 import org.firstinspires.ftc.teamcode.managers.input.nodes.JoystickNode;
 import org.firstinspires.ftc.teamcode.managers.input.nodes.MultiInputNode;
 import org.firstinspires.ftc.teamcode.managers.input.nodes.MultiplyNode;
@@ -85,9 +86,9 @@ public class MonkeyModeDual extends OpMode {
         input.registerInput("drivingControls",
                     new PlusNode(
                             new MultiInputNode(
-                                    new MultiplyNode(new JoystickNode("left_stick_y"), -1f),
-                                    new MultiplyNode(new JoystickNode("left_stick_x"), -1f),
-                                    new JoystickNode("right_stick_x")
+                                    new MultiplyNode(new GradualStickNode(new JoystickNode("left_stick_y"), 0.25f, 300f), -1f),
+                                    new MultiplyNode(new GradualStickNode(new JoystickNode("left_stick_x"), 0.25f, 300f), -1f),
+                                    new GradualStickNode(new JoystickNode("right_stick_x"), 0.25f, 300f)
                             ),
                             new MultiInputNode(
                                     new MultiplyNode(new JoystickNode("gamepad2left_stick_y"), -0.25f),
@@ -123,33 +124,34 @@ public class MonkeyModeDual extends OpMode {
         input.registerInput("armLengthNone",
                 new ButtonNode("gamepad2b")
         );
-        input.registerInput("D-Up",
-                new ButtonNode("dpadup")
+        input.registerInput("RR1",
+                new ButtonNode("y")
                 );
-        input.registerInput("D-Left",
-                new ButtonNode("dpadleft")
+        input.registerInput("RR2",
+                new ButtonNode("x")
         );
-        input.registerInput("D-Right",
-                new ButtonNode("dpadright")
+        input.registerInput("RR3",
+                new ButtonNode("b")
         );
-        input.registerInput("D-Down",
-                new ButtonNode("dpaddown")
+        input.registerInput("RR4",
+                new ButtonNode("a")
         );
         input.setOverlapResolutionMethod(InputOverlapResolutionMethod.MOST_COMPLEX_ARE_THE_FAVOURITE_CHILD);
         PriorityAsyncOpmodeComponent.start(() -> {
 
-            if(input.getBool("D-Up") && rr.notBusy()){
+            if(input.getBool("RR1") && rr.notBusy()){
                 rr.moveToPosWithID(2);
             }
-            if(input.getBool("D-Down") && rr.notBusy()){
-                rr.moveToPosWithID(3);
-            }
-            if(input.getBool("D-Right") && rr.notBusy()){
-                rr.calibrateDriveToZero();
-            }
-            if(input.getBool("D-Left")){
+            if(input.getBool("RR2")){
                 rr.moveToPosWithID(1);
             }
+            if(input.getBool("RR3") && rr.notBusy()){
+                rr.calibrateDriveToZero();
+            }
+            if(input.getBool("RR4") && rr.notBusy()){
+                rr.moveToPosWithID(3);
+            }
+
 
         });
         rr.updateLocalizer();
@@ -192,8 +194,6 @@ public class MonkeyModeDual extends OpMode {
             }
             currentColor = sensing.getColor("rainbowSense");
             currentColor1 = sensing.getColor("rainbowSense1");
-            rainbowSenseRed = sensing.getRed("rainbowSense");
-            rainbowSenseBlue = sensing.getBlue("rainbowSense");
             if (input.getBool("armLengthNone")) {
                 monkeyArm.setPositionFloorLocation();
             }
@@ -218,8 +218,6 @@ public class MonkeyModeDual extends OpMode {
             telemetry.addData("Tower Position: ", towerPos);
             telemetry.addData("FL Position: ", driver.frontLeft.getCurrentPosition());
             telemetry.addData("Last Error: ", lastError);
-            telemetry.addData("RainbowSenseRed: ", rainbowSenseRed);
-            telemetry.addData("RainbowSenseBlue: ", rainbowSenseBlue);
             telemetry.addData("CurrentColor", currentColor);
             telemetry.addData("CurrentColor1", currentColor1);
             telemetry.update();
