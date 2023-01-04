@@ -148,7 +148,7 @@ public class CVManager extends FeatureManager {
     }
 
     public int getColorRaw() {
-        int color = pipeline.getAnalysis();
+        int color = pipeline_Testing.getAnalysis();
         return color;
     }
 

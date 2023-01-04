@@ -1,0 +1,19 @@
+goto Start;
+
+#Start:
+goto pos2;
+
+#pos1:
+    log("starting"), next;
+    moveToPosWithID(1), next;
+    log("finished position 1")
+
+#pos2:
+    log("starting"), next;
+    moveToPosWithID(2), next;
+    log("finished position 2")
+
+#pos3:
+    log("starting"), next;
+    moveToPosWithID(3), next;
+    log("finished position 3")

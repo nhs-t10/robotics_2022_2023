@@ -71,7 +71,7 @@ public class template extends OpMode {
        neck = new GiraffeManager(clawPosition);
 
         cv = new CVManager(hardwareMap);
-        //rr = new RRManager(hardwareMap, new Pose2d(0, 0), telemetryManager, this);
+        rr = new RRManager(hardwareMap, new Pose2d(0, 0), telemetryManager, this);
         imu = new ImuManager(hardwareMap.get(com.qualcomm.hardware.bosch.BNO055IMU.class, "imu"));
 
         arm = new bigArmManager(limbs);

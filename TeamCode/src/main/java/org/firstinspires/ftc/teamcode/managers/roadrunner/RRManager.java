@@ -40,7 +40,7 @@ public class RRManager extends FeatureManager {
      */
     public RRManager(@NotNull HardwareMap hardwareMap, @NotNull Pose2d start, @NotNull TelemetryManager telemetryManager, @NotNull OpMode opMode){
         driveRR = new SampleMecanumDrive(hardwareMap); //Necessary Component for RoadRunner!
-        trajBuildRR = driveRR.trajectoryBuilder(start);
+        trajBuildRR = driveRR.trajectoryBuilder(start, true);
         this.opMode = opMode;
         this.telemetry = telemetryManager;
         calibrateDriveToZero();
@@ -94,7 +94,7 @@ public class RRManager extends FeatureManager {
      * Calibrates the robot back to its "Home" Position
      */
     public void calibrateDriveToZero(){
-        driveRR.setPoseEstimate(new Pose2d(0, 0));
+        driveRR.setPoseEstimate(new Pose2d(0, 0, Math.toRadians(0)));
 
         telemetry.log().add("RoadRunner Drive Recalibrated");
     }
@@ -135,9 +135,11 @@ public class RRManager extends FeatureManager {
         else if(type.equals("splinespline")){
             driveRR.followTrajectory(trajBuildRR.splineToSplineHeading(pose, Math.toRadians(rotation)).build());
         }
-        else if(type.equals("splineline")){
+        else if(type.equals("splineline")) {
             driveRR.followTrajectory(trajBuildRR.splineToLinearHeading(pose, Math.toRadians(rotation)).build());
             telemetry.log().add("WARNING! Using this movement will likely result in a PathContinuityError!");
+        } else if (type.equals("turn")) {
+            driveRR.turn(rotation);
         }
         updateLocalizer();
     }
@@ -178,6 +180,8 @@ public class RRManager extends FeatureManager {
             } else if (type.equals("splineline")) {
                 driveRR.followTrajectory(trajBuildRR.splineToLinearHeading(pose, Math.toRadians(rotation)).build());
                 telemetry.log().add("WARNING! Using this movement will likely result in a PathContinuityError!");
+            } else if (type.equals("turn")) {
+                driveRR.turn(rotation);
             }
 
             driveRR.waitForIdle();

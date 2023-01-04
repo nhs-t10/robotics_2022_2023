@@ -29,6 +29,7 @@ import org.firstinspires.ftc.teamcode.managers.input.nodes.ToggleNode;
 import org.firstinspires.ftc.teamcode.managers.manipulation.ManipulationManager;
 import org.firstinspires.ftc.teamcode.managers.movement.MovementManager;
 import org.firstinspires.ftc.teamcode.managers.roadrunner.RRManager;
+import org.firstinspires.ftc.teamcode.managers.roadrunner.SequenceInitException;
 import org.firstinspires.ftc.teamcode.managers.sensor.SensorManager;
 import org.firstinspires.ftc.teamcode.managers.telemetry.TelemetryManager;
 
@@ -63,7 +64,7 @@ public class MonkeyModeDual extends OpMode {
         TelemetryManager telemetryManager = new TelemetryManager(telemetry, this, TelemetryManager.BITMASKS.NONE);
         telemetry = telemetryManager;
         FeatureManager.logger.setBackend(telemetry.log());
-        rr = new RRManager(hardwareMap, new Pose2d(0, 0), telemetryManager, this);
+        rr = new RRManager(hardwareMap, new Pose2d(0, 0, Math.toRadians(0)), telemetryManager, this);
         DcMotor fl = hardwareMap.get(DcMotor.class, "fl");
         DcMotor fr = hardwareMap.get(DcMotor.class, "fr");
         DcMotor br = hardwareMap.get(DcMotor.class, "br");
@@ -139,20 +140,28 @@ public class MonkeyModeDual extends OpMode {
         input.setOverlapResolutionMethod(InputOverlapResolutionMethod.MOST_COMPLEX_ARE_THE_FAVOURITE_CHILD);
         PriorityAsyncOpmodeComponent.start(() -> {
 
-            if(input.getBool("RR1") && rr.notBusy()){
+            if(input.getBool("RR1") && rr.notBusy()) {
                 rr.moveToPosWithID(2);
+                if (input.getBool("D-Up") && rr.notBusy()) {
+                    //rr.moveToPosWithID(2);
+                    try {
+                        rr.customMoveSequenceWithPoseTrajSequence(new Pose2d[]{new Pose2d(0, 15), new Pose2d(0, 15), new Pose2d(15, 15)}, new String[]{"strafe", "turn", "strafe"}, new double[]{0, 90, 0});
+                    } catch (SequenceInitException e) {
+                        e.printStackTrace();
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                    }
+                }
+                if (input.getBool("RR2")) {
+                    rr.moveToPosWithID(1);
+                }
+                if (input.getBool("RR3") && rr.notBusy()) {
+                    rr.calibrateDriveToZero();
+                }
+                if (input.getBool("RR4") && rr.notBusy()) {
+                    rr.moveToPosWithID(3);
+                }
             }
-            if(input.getBool("RR2")){
-                rr.moveToPosWithID(1);
-            }
-            if(input.getBool("RR3") && rr.notBusy()){
-                rr.calibrateDriveToZero();
-            }
-            if(input.getBool("RR4") && rr.notBusy()){
-                rr.moveToPosWithID(3);
-            }
-
-
         });
         rr.updateLocalizer();
         telemetry = new MultipleTelemetry(telemetry, FtcDashboard.getInstance().getTelemetry());
