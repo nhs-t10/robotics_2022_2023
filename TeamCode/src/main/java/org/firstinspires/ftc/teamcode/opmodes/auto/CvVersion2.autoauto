@@ -12,6 +12,7 @@ goto start;
 #getColor:
     let color = getAnalysis(), next;
     log(color), next;
+    log(getAnalysisTest()), next;
     stopWebcam(), next;
     goto process;
 
