@@ -20,13 +20,16 @@ public class MinesweeperPipeline_Secondary extends PipelineThatExposesSomeSecond
      */
     public enum StickPosition
     {
-        LEFT,
-        CENTER,
-        RIGHT
+        OFFSCREEN,
+        Leftmost,
+        Leftish,
+        Center,
+        Rightish,
+        Rightmost
     }
 
     /*
-     * Some color constants
+     * Some color constants todo: fix
      */
     static final Scalar YCRCB_MIN = new Scalar(0, 95, 190);
     static final Scalar YCRCB_MAX = new Scalar(125, 105, 250);
@@ -45,7 +48,7 @@ public class MinesweeperPipeline_Secondary extends PipelineThatExposesSomeSecond
     int largeBlobCenterX, inputWidth;
 
     // Volatile since accessed by OpMode thread w/o synchronization
-    private volatile StickPosition position = StickPosition.LEFT;
+    private volatile StickPosition position = StickPosition.OFFSCREEN;
 
     @Override
     public void init(Mat firstFrame) {
@@ -72,7 +75,7 @@ public class MinesweeperPipeline_Secondary extends PipelineThatExposesSomeSecond
         //only bother continuing if there were any contours found
         if(contours.size() == 0) return input;
 
-        double biggestArea = -1;
+        double biggestArea = -1; //todo: find sizing
         //look through the list and find the biggest contour
         for(MatOfPoint contour : contours) {
             double area = Imgproc.boundingRect(contour).area();
@@ -96,12 +99,19 @@ public class MinesweeperPipeline_Secondary extends PipelineThatExposesSomeSecond
         inputWidth = input.width();
 
         //depending on which third the blob's center falls into, report the result position.
-        if(largeBlobCenterX < inputWidth / 3) {
-            position = StickPosition.LEFT;
-        } else if(largeBlobCenterX < (inputWidth * 2) / 3) {
-            position = StickPosition.CENTER;
-        } else {
-            position = StickPosition.RIGHT;
+        if(largeBlobCenterX < (inputWidth * 1) / 5) {
+            position = StickPosition.Leftmost;
+        } else if(largeBlobCenterX < (inputWidth * 2) / 5) {
+            position = StickPosition.Leftish;
+        } else if(largeBlobCenterX < (inputWidth * 3) / 5) {
+            position = StickPosition.Center;
+        } else if(largeBlobCenterX < (inputWidth * 4) / 5) {
+            position = StickPosition.Rightish;
+        } else if(largeBlobCenterX < (inputWidth * 5) / 5) {
+            position = StickPosition.Rightish;
+        }
+        else {
+            position = StickPosition.OFFSCREEN;
         }
 
         return input;
@@ -113,6 +123,6 @@ public class MinesweeperPipeline_Secondary extends PipelineThatExposesSomeSecond
         //avoid divide-by-0 error
         if(inputWidth == 0) return 0;
 
-        return largeBlobCenterX / (double)inputWidth;
+        return (((double)inputWidth / 2) - largeBlobCenterX) / (double)inputWidth;
     }
 }

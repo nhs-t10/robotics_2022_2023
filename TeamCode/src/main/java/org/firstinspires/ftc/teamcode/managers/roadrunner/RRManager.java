@@ -13,6 +13,7 @@ import org.firstinspires.ftc.teamcode.managers.feature.FeatureManager;
 import org.firstinspires.ftc.teamcode.managers.telemetry.TelemetryManager;
 import org.firstinspires.ftc.teamcode.trajectorysequence.TrajectorySequenceBuilder;
 import org.firstinspires.ftc.teamcode.trajectorysequence.TrajectorySequenceRunner;
+import org.firstinspires.ftc.teamcode.util.AssetsTrajectoryManager;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.*;
 import org.junit.Test;
@@ -43,6 +44,7 @@ public class RRManager extends FeatureManager {
         driveRR = new SampleMecanumDrive(hardwareMap); //Necessary Component for RoadRunner!
         trajBuildRR = driveRR.trajectoryBuilder(start, true);
         this.opMode = opMode;
+
         this.telemetry = telemetryManager;
         calibrateDriveToZero();
         telemetry.log().add("Go to 192.168.43.1:8080/dash for the FTC Dashboard! Unless this is the competition, for which, in that case, never mind, don't use FTC Dashboard...");
@@ -53,9 +55,10 @@ public class RRManager extends FeatureManager {
      * @param id The id for the specified movement: 1 = Center, 2 = Top Corner, 3 = Bottom Corner
      */
     public void moveToPosWithID(int id){
+
         if(id==1){driveRR.followTrajectory(trajBuildRR.splineToSplineHeading(new Pose2d(-24, 12), Math.toRadians(90)).build());}
         else if(id==2){driveRR.followTrajectory(trajBuildRR.splineToSplineHeading(new Pose2d(0, 72), Math.toRadians(driveRR.getExternalHeading())).build());}
-        else if(id==3){driveRR.followTrajectory(trajBuildRR.splineToSplineHeading(new Pose2d(0, -72), Math.toRadians(driveRR.getExternalHeading())).build());}
+        else if(id==3){driveRR.followTrajectory(AssetsTrajectoryManager.load("path1"));}
         driveRR.update();
     }
     public void setBusy(){
