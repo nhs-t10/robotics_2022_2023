@@ -41,6 +41,8 @@ public class FeatureManager {
 
     public static void reconfigureForTeleop() {
         FeatureManager.logger.log("I am teleop");
+
+        
         getRobotConfiguration().motorCoefficients = getRobotConfiguration().teleOpMotorCoefficients;
     }
     public static void reconfigureForAuto() {
