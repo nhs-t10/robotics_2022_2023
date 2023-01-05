@@ -259,6 +259,7 @@ public class MonkeyModeEye extends OpMode {
             if (input.getBool("TowerFinder") && rr.notBusy()) {
                 int position = cv.getAnalysisSecondary();
                 StickSense(position);
+
             }
             towerPos += (-(int)hands.getMotorPosition("monkeyShoulder"));
             telemetry.addData("FL Power", driver.frontLeft.getPower());
