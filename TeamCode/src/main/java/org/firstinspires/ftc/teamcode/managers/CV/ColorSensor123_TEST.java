@@ -12,7 +12,6 @@ import org.opencv.imgproc.Imgproc;
 public class ColorSensor123_TEST extends PipelineThatExposesSomeTestingAnalysis {
 
 
-
     // Working variables. Because of memory concerns, we're not allowed to make ANY non-primitive variables within the `processFrame` method.
 
     //Mat is what you see
@@ -21,39 +20,31 @@ public class ColorSensor123_TEST extends PipelineThatExposesSomeTestingAnalysis 
     Mat Cb = new Mat();
     int avg_Cr, avg_Cb, color;
 
-    void inputToCr(Mat input)
-    {
+    void inputToCr(Mat input) {
         Imgproc.cvtColor(input, YCrCb, Imgproc.COLOR_RGB2YCrCb);
         Core.extractChannel(YCrCb, Cr, 1);
     }
-    void inputToCb(Mat input)
-    {
+
+    void inputToCb(Mat input) {
         Imgproc.cvtColor(input, YCrCb, Imgproc.COLOR_RGB2YCrCb);
         Core.extractChannel(YCrCb, Cb, 2);
     }
-    int colorFind(int number)
-    {
-        if (number == 0)
-        {
+
+    int colorFind(int number) {
+        if (number == 0) {
             return avg_Cb;
-        }
-        else if (number == 1)
-        {
+        } else if (number == 1) {
             return avg_Cr;
-        }
-        else
-        {
+        } else {
             return -5;
         }
     }
 
 
-
-    static final Point TopLeftAnchorPoint = new Point(380,290); //Base Picture is 1280 x 720 when taken on my computer. Should be adjusted for the robot if needed, as current numbers are for that measurement.
+    static final Point TopLeftAnchorPoint = new Point(380, 290); //Base Picture is 1280 x 720 when taken on my computer. Should be adjusted for the robot if needed, as current numbers are for that measurement.
     static final int REGION_WIDTH = 20; //1cm
     static final int REGION_HEIGHT = 20; //1cm
-    static final Point BottomRightAnchorPoint = new Point(TopLeftAnchorPoint.x + REGION_WIDTH,TopLeftAnchorPoint.y + REGION_HEIGHT);
-
+    static final Point BottomRightAnchorPoint = new Point(TopLeftAnchorPoint.x + REGION_WIDTH, TopLeftAnchorPoint.y + REGION_HEIGHT);
 
 
     @Override
@@ -65,8 +56,7 @@ public class ColorSensor123_TEST extends PipelineThatExposesSomeTestingAnalysis 
     }
 
     @Override
-    public Mat processFrame(Mat input)
-    {
+    public Mat processFrame(Mat input) {
         inputToCr(input);
         inputToCb(input);
         avg_Cr = (int) Core.mean(Region_Cr).val[0];
@@ -84,8 +74,12 @@ public class ColorSensor123_TEST extends PipelineThatExposesSomeTestingAnalysis 
         return input;
     }
 
-    @Override
-    int getAnalysis() {
+
+    public int getAnalysis() {
         return colorFind(1);
+    }
+
+    public double getAnalysisPrecise() {
+        return colorFind(0);
     }
 }
