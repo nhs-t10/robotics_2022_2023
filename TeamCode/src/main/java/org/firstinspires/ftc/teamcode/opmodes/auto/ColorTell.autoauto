@@ -9,8 +9,8 @@ goto start;
     goto process;
 
 #process:
-    log(getColorRaw()), next;
-    log(getColor()), next;
+    log("cr: ",getAnalysisTest()), next;
+    log("cb: ", getAnalysisPreciseTest()), next;
     after 1s goto process;
 
 
