@@ -5,6 +5,7 @@ import com.acmerobotics.roadrunner.geometry.Vector2d;
 import com.acmerobotics.roadrunner.localization.Localizer;
 import com.acmerobotics.roadrunner.trajectory.TrajectoryBuilder;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
+import com.qualcomm.robotcore.hardware.Gamepad;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 
 import org.checkerframework.framework.qual.Unused;
@@ -48,6 +49,7 @@ public class RRManager extends FeatureManager {
         this.telemetry = telemetryManager;
         calibrateDriveToZero();
         telemetry.log().add("Go to 192.168.43.1:8080/dash for the FTC Dashboard! Unless this is the competition, for which, in that case, never mind, don't use FTC Dashboard...");
+
     }
 
     /**
@@ -301,6 +303,47 @@ public class RRManager extends FeatureManager {
                 ", telemetry=" + telemetry +
                 ", nonono=" + Arrays.toString(nonono) +
                 "} For OpMode "+opMode.toString();
+    }
+    public void doOmniDisplace(Gamepad gamepad1, Gamepad gamepad2){
+        Pose2d poseEstimate = driveRR.getPoseEstimate();
+
+        // Create a vector from the gamepad x/y inputs
+        // Then, rotate that vector by the inverse of that heading
+        Vector2d input = new Vector2d(
+                -gamepad1.left_stick_y,
+                -gamepad1.left_stick_x
+        ).rotated(-poseEstimate.getHeading());
+
+        // Pass in the rotated input + right stick value for rotation
+        // Rotation is not part of the rotated input thus must be passed in separately
+        driveRR.setWeightedDrivePower(
+                new Pose2d(
+                        input.getX(),
+                        input.getY(),
+                        gamepad1.right_stick_x
+                )
+        );
+        driveRR.update();
+        Vector2d input2 = new Vector2d(
+                -gamepad2.left_stick_y*0.25,
+                -gamepad2.left_stick_x*0.25
+        ).rotated(-poseEstimate.getHeading());
+
+        // Pass in the rotated input + right stick value for rotation
+        // Rotation is not part of the rotated input thus must be passed in separately
+        driveRR.setWeightedDrivePower(
+                new Pose2d(
+                        input.getX(),
+                        input.getY(),
+                        gamepad2.right_stick_x*0.25
+                )
+        );
+        // Update everything. Odometry. Etc.
+        driveRR.update();
+
+        // Print pose to telemetry
+        telemetry.addData("x", poseEstimate.getX());
+        telemetry.addData("y", poseEstimate.getY());
     }
 
 }

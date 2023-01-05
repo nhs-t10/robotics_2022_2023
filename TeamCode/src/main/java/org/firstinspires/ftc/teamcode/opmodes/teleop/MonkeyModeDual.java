@@ -104,6 +104,9 @@ public class MonkeyModeDual extends OpMode {
                         new ButtonNode("gamepad2rightbumper")
                 )
         );
+        input.registerInput("RRToggle",
+                new ButtonNode("dpadup")
+        );
         input.registerInput("extendArm",
                 new ButtonNode("gamepad2righttrigger")
         );
@@ -140,10 +143,11 @@ public class MonkeyModeDual extends OpMode {
         input.setOverlapResolutionMethod(InputOverlapResolutionMethod.MOST_COMPLEX_ARE_THE_FAVOURITE_CHILD);
         rr.calibrateDriveToAutoPosition();
         PriorityAsyncOpmodeComponent.start(() -> {
-            if(input.getBool("RR1") && rr.notBusy()) {
-                rr.moveToPosWithID(2);
-                if (input.getBool("D-Up") && rr.notBusy()) {
+            if(input.getBool("") && rr.notBusy()) {
+                InputManager.vibrategp();
+                if (input.getBool("RR1") && rr.notBusy()) {
                     //rr.moveToPosWithID(2);
+
                     try {
                         rr.customMoveSequenceWithPoseTrajSequence(new Pose2d[]{new Pose2d(0, 15), new Pose2d(0, 15), new Pose2d(15, 15)}, new String[]{"strafe", "turn", "strafe"}, new double[]{0, 90, 0});
                     } catch (SequenceInitException e) {
@@ -162,8 +166,29 @@ public class MonkeyModeDual extends OpMode {
                     rr.moveToPosWithID(3);
                 }
             }
+            if (input.getBool("RR1") && rr.notBusy()) {
+                //rr.moveToPosWithID(2);
+
+                try {
+                    rr.customMoveSequenceWithPoseTrajSequence(new Pose2d[]{new Pose2d(0, 15), new Pose2d(0, 15), new Pose2d(15, 15)}, new String[]{"strafe", "turn", "strafe"}, new double[]{0, 90, 0});
+                } catch (SequenceInitException e) {
+                    e.printStackTrace();
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+            }
+            if (input.getBool("RR2") && rr.notBusy()) {
+                rr.moveToPosWithID(1);
+            }
+            if (input.getBool("RR3") && rr.notBusy()) {
+                rr.calibrateDriveToZero();
+            }
+            if (input.getBool("RR4") && rr.notBusy()) {
+                rr.moveToPosWithID(3);
+            }
         });
         rr.updateLocalizer();
+        rr.doOmniDisplace(input.gamepad, input.gamepad2);
         telemetry = new MultipleTelemetry(telemetry, FtcDashboard.getInstance().getTelemetry());
     }
     public void loop() {

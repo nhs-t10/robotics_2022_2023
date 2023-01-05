@@ -17,6 +17,7 @@ public class InputManager extends FeatureManager {
     public Gamepad gamepad;
     public Gamepad gamepad2;
 
+    private static Gamepad gp;
     private static Gamepad gp2;
 
     public static void vibrategp2() {
@@ -24,7 +25,11 @@ public class InputManager extends FeatureManager {
             gp2.rumble(100);
         }
     }
-
+    public static void vibrategp() {
+        if(gp != null) {
+            gp.rumble(100);
+        }
+    }
     public InputOverlapResolutionMethod overlapResolutionMethod = InputOverlapResolutionMethod.BOTH_CHILDREN_CAN_SPEAK;
 
     private final HashMap<String, InputManagerInputNode> nodes;
@@ -38,6 +43,7 @@ public class InputManager extends FeatureManager {
     public InputManager(Gamepad _gamepad, Gamepad _gamepad2) {
         this.gamepad = _gamepad;
         this.gamepad2 = _gamepad2;
+        gp = _gamepad;
         gp2 = _gamepad2;
         nodes = new HashMap<>();
         inputVars = new HashMap<>();
