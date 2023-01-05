@@ -18,23 +18,16 @@ goto start;
 
 #process:
     driveOmni(0,0.5,0), after 10cm next;
+    driveOmni(0,1,0), after 55cm next;
     driveOmni(-1,0,0), after 120cm next;
     driveOmni(0,0,1), after 150degs next;
     driveOmni(0,-0.5,0), after 28.5cm next;
     //setPositionHighLocation();
-    //openArm();
+    //openHand();
     driveOmni(0,0.5,0), after 28.5cm next;
-    //closeArm();
+    //closeHand();
     driveOmni(-1,0,0), after 120cm next;
-    driveOmni(0,-0.5,0), after 55cm next;
-    driveOmni(-1,0,0), after 165cm next;
-    driveOmni(0,0.5,0), after 50cm next;
-    //setPositionHighLocation();
-    //openArm();
-    driveOmni(0,-0.5,0), after 50cm next;
-    //closeArm();
-    driveOmni(1,0,0), after 165cm next;
-    driveOmni(0,0.5,0), after 55cm next;
+    driveOmni(0,-1,0), after 55cm next;
     if (color == 1) {
         goto color1;
     }
@@ -75,5 +68,5 @@ goto start;
 // Putting the forward driveOmni here doesn't work for whatever reason, don't try it lol.
     setAutoAutoPosition(), next;
     driveOmni(0, 0, 0), next;
-    log("I go tto the end!");
+    log("I go to the end!");
 
