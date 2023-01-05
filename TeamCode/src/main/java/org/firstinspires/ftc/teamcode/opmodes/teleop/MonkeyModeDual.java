@@ -98,6 +98,13 @@ public class MonkeyModeDual extends OpMode {
                             )
                     )
         );
+        /*input.registerInput("drivingControls",
+                new MultiInputNode(
+                        new MultiplyNode(new JoystickNode("left_stick_y"), -1f),
+                        new MultiplyNode(new JoystickNode("left_stick_x"), -1f),
+                        new JoystickNode("right_stick_x")
+                )
+        );*/
         input.registerInput("handToggle",
                 new AnyNode(
                         new ButtonNode("rightbumper"),
@@ -143,7 +150,7 @@ public class MonkeyModeDual extends OpMode {
         input.setOverlapResolutionMethod(InputOverlapResolutionMethod.MOST_COMPLEX_ARE_THE_FAVOURITE_CHILD);
         rr.calibrateDriveToAutoPosition();
         PriorityAsyncOpmodeComponent.start(() -> {
-            if(input.getBool("") && rr.notBusy()) {
+            if(input.getBool("RRToggle") && rr.notBusy()) {
                 InputManager.vibrategp();
                 if (input.getBool("RR1") && rr.notBusy()) {
                     //rr.moveToPosWithID(2);
@@ -188,7 +195,7 @@ public class MonkeyModeDual extends OpMode {
             }
         });
         rr.updateLocalizer();
-        rr.doOmniDisplace(input.gamepad, input.gamepad2);
+        //rr.doOmniDisplace(input.gamepad, input.gamepad2);
         telemetry = new MultipleTelemetry(telemetry, FtcDashboard.getInstance().getTelemetry());
     }
     public void loop() {
@@ -216,7 +223,7 @@ public class MonkeyModeDual extends OpMode {
             } else {
                 monkeyArm.stopArm();
             }
-            if (input.getBool("colorNYOOM") || nyooming == true) {
+            if (input.getBool("colorNYOOM") || nyooming) {
                 nyooming = true;
                 rr.setBusy();
                 while (currentColor == 0 && currentColor1 == 0) {
