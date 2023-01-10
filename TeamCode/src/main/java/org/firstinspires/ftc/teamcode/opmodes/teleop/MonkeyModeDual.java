@@ -46,6 +46,8 @@ public class MonkeyModeDual extends OpMode {
     private boolean handStatus = false;
     private boolean intakeToggle = false;
     public boolean nyooming = false;
+    public boolean RRToggle = false;
+    public boolean shouldToggle = true;
     public double distance;
     int towerPos = 0;
     int currentColor = 0;
@@ -143,11 +145,10 @@ public class MonkeyModeDual extends OpMode {
         input.setOverlapResolutionMethod(InputOverlapResolutionMethod.MOST_COMPLEX_ARE_THE_FAVOURITE_CHILD);
         rr.calibrateDriveToAutoPosition();
         PriorityAsyncOpmodeComponent.start(() -> {
-            if(input.getBool("") && rr.notBusy()) {
+            if(RRToggle && rr.notBusy()) {
                 InputManager.vibrategp();
                 if (input.getBool("RR1") && rr.notBusy()) {
                     //rr.moveToPosWithID(2);
-
                     try {
                         rr.customMoveSequenceWithPoseTrajSequence(new Pose2d[]{new Pose2d(0, 15), new Pose2d(0, 15), new Pose2d(15, 15)}, new String[]{"strafe", "turn", "strafe"}, new double[]{0, 90, 0});
                     } catch (SequenceInitException e) {
@@ -197,6 +198,12 @@ public class MonkeyModeDual extends OpMode {
             if(rr.notBusy()){
                 //Meant to be if this && !input.getBool("armLengthNone");
                 driver.driveOmni(input.getFloatArrayOfInput("drivingControls"));
+            }
+            if (input.getBool("RRToggle")){
+                if (shouldToggle) {
+                    RRToggle = !RRToggle;
+                    shouldToggle = false;
+                }
             }
             if (input.getBool("handToggle") && !handStatus) {
                 intakeToggle=!intakeToggle;
