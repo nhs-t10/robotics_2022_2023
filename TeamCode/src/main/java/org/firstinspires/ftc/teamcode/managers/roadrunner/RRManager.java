@@ -304,6 +304,12 @@ public class RRManager extends FeatureManager {
                 ", nonono=" + Arrays.toString(nonono) +
                 "} For OpMode "+opMode.toString();
     }
+
+    /**
+     * Get the gamepad inputs and use them to sense where the robot is displaing to
+     * @param gamepad1 Gamepad 1 (Main driver)
+     * @param gamepad2 Gamepad 2 (Micro driver)
+     */
     public void doOmniDisplace(Gamepad gamepad1, Gamepad gamepad2){
         Pose2d poseEstimate = driveRR.getPoseEstimate();
 
