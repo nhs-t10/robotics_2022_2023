@@ -31,18 +31,18 @@ goto start;
     }
 
 #color1:
-    driveOmni(0,-1,0), after 68cm next;
+    driveOmni(0,1,0), after 68cm next;
     next;//go left one tile, go forward 1.5 tiles
-    driveOmni(-1,0,0), after 95cm next;
+    driveOmni(1,0,0), after 95cm next;
     goto end;
 
 #color2:
-    driveOmni(-1,0,0), after 95cm next; //go forward 1.5 tiles    goto end;
+    driveOmni(1,0,0), after 95cm next; //go forward 1.5 tiles    goto end;
 
 #color3:
-    driveOmni(0,1,0), after 68cm next;
+    driveOmni(0,-1,0), after 68cm next;
     next;//go right one tile, go forward 1.5 tiles
-    driveOmni(-1,0,0), after 95cm next;
+    driveOmni(1,0,0), after 95cm next;
     goto end;
 
 #error:
