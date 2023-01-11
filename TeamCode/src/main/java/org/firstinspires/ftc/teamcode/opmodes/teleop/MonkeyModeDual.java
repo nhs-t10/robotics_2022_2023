@@ -33,6 +33,9 @@ import org.firstinspires.ftc.teamcode.managers.roadrunner.SequenceInitException;
 import org.firstinspires.ftc.teamcode.managers.sensor.SensorManager;
 import org.firstinspires.ftc.teamcode.managers.telemetry.TelemetryManager;
 
+import java.sql.Time;
+import java.time.Instant;
+
 @TeleOp
 public class MonkeyModeDual extends OpMode {
     public MovementManager driver;
@@ -46,10 +49,9 @@ public class MonkeyModeDual extends OpMode {
     private boolean handStatus = false;
     private boolean intakeToggle = false;
     public boolean nyooming = false;
-    public boolean RRToggle = false;
-    public boolean shouldToggle = true;
     public double distance;
     int towerPos = 0;
+    boolean rrToggle = false;
     int currentColor = 0;
     int currentColor1 = 0;
     float rainbowSenseRed = 0;
@@ -58,6 +60,9 @@ public class MonkeyModeDual extends OpMode {
     private boolean looping = false;
     private boolean shouldActuallyDoThings = true;
     private RRManager rr;
+    boolean deb = false;
+
+
     @Override
     public void init() {
         // Phone is labelled as T-10 Melman
@@ -74,9 +79,9 @@ public class MonkeyModeDual extends OpMode {
         driver = new MovementManager(fl, fr, br, bl);
         hands = new ManipulationManager(
                 hardwareMap,
-                crservo(),
-                servo("monkeyHand"),
-                motor("monkeyShoulder")
+                crservo         (),
+                servo           ("monkeyHand"),
+                motor           ("monkeyShoulder")
         );
         sensing = new SensorManager(
                 hardwareMap,
@@ -87,18 +92,18 @@ public class MonkeyModeDual extends OpMode {
         monkeyArm = new bigArmManager(hands);
         input = new InputManager(gamepad1, gamepad2);
         input.registerInput("drivingControls",
-                new PlusNode(
-                        new MultiInputNode(
-                                new MultiplyNode(new GradualStickNode(new JoystickNode("left_stick_y"), 0.25f, 300f), -1f),
-                                new MultiplyNode(new GradualStickNode(new JoystickNode("left_stick_x"), 0.25f, 300f), -1f),
-                                new GradualStickNode(new JoystickNode("right_stick_x"), 0.25f, 300f)
-                        ),
-                        new MultiInputNode(
-                                new MultiplyNode(new JoystickNode("gamepad2left_stick_y"), -0.25f),
-                                new MultiplyNode(new JoystickNode("gamepad2left_stick_x"), -0.25f),
-                                new MultiplyNode(new JoystickNode("gamepad2right_stick_x"), 0.25f)
-                        )
-                )
+                    new PlusNode(
+                            new MultiInputNode(
+                                    new MultiplyNode(new GradualStickNode(new JoystickNode("left_stick_y"), 0.25f, 300f), -1f),
+                                    new MultiplyNode(new GradualStickNode(new JoystickNode("left_stick_x"), 0.25f, 300f), -1f),
+                                    new GradualStickNode(new JoystickNode("right_stick_x"), 0.25f, 300f)
+                            ),
+                            new MultiInputNode(
+                                    new MultiplyNode(new JoystickNode("gamepad2left_stick_y"), -0.25f),
+                                    new MultiplyNode(new JoystickNode("gamepad2left_stick_x"), -0.25f),
+                                    new MultiplyNode(new JoystickNode("gamepad2right_stick_x"), 0.25f)
+                            )
+                    )
         );
         /*input.registerInput("drivingControls",
                 new MultiInputNode(
@@ -113,9 +118,7 @@ public class MonkeyModeDual extends OpMode {
                         new ButtonNode("gamepad2rightbumper")
                 )
         );
-        input.registerInput("RRToggle",
-                new ButtonNode("dpadup")
-        );
+
         input.registerInput("extendArm",
                 new ButtonNode("gamepad2righttrigger")
         );
@@ -123,7 +126,7 @@ public class MonkeyModeDual extends OpMode {
                 new ButtonNode("gamepad2lefttrigger")
         );
         input.registerInput("colorNYOOM",
-                new ButtonNode("righttrigger")
+               new ButtonNode("righttrigger")
         );
         input.registerInput("armLengthSmall",
                 new ButtonNode("gamepad2a")
@@ -139,7 +142,7 @@ public class MonkeyModeDual extends OpMode {
         );
         input.registerInput("RR1",
                 new ButtonNode("y")
-        );
+                );
         input.registerInput("RR2",
                 new ButtonNode("x")
         );
@@ -149,32 +152,14 @@ public class MonkeyModeDual extends OpMode {
         input.registerInput("RR4",
                 new ButtonNode("a")
         );
+        input.registerInput("rrTog", new ToggleNode(new ButtonNode("dpadup")));
         input.setOverlapResolutionMethod(InputOverlapResolutionMethod.MOST_COMPLEX_ARE_THE_FAVOURITE_CHILD);
         rr.calibrateDriveToAutoPosition();
+
         PriorityAsyncOpmodeComponent.start(() -> {
-            if (RRToggle && rr.notBusy()) {
-                if (input.getBool("RRToggle") && rr.notBusy()) {
-                    InputManager.vibrategp();
-                    if (input.getBool("RR1") && rr.notBusy()) {
-                        //rr.moveToPosWithID(2);
-                        try {
-                            rr.customMoveSequenceWithPoseTrajSequence(new Pose2d[]{new Pose2d(0, 15), new Pose2d(0, 15), new Pose2d(15, 15)}, new String[]{"strafe", "turn", "strafe"}, new double[]{0, 90, 0});
-                        } catch (SequenceInitException e) {
-                            e.printStackTrace();
-                        } catch (Exception e) {
-                            e.printStackTrace();
-                        }
-                    }
-                    if (input.getBool("RR2")) {
-                        rr.moveToPosWithID(1);
-                    }
-                    if (input.getBool("RR3") && rr.notBusy()) {
-                        rr.calibrateDriveToZero();
-                    }
-                    if (input.getBool("RR4") && rr.notBusy()) {
-                        rr.moveToPosWithID(3);
-                    }
-                }
+
+            if(input.getBool("rrTog") && rr.notBusy()) {
+
                 if (input.getBool("RR1") && rr.notBusy()) {
                     //rr.moveToPosWithID(2);
 
@@ -186,7 +171,7 @@ public class MonkeyModeDual extends OpMode {
                         e.printStackTrace();
                     }
                 }
-                if (input.getBool("RR2") && rr.notBusy()) {
+                if (input.getBool("RR2")) {
                     rr.moveToPosWithID(1);
                 }
                 if (input.getBool("RR3") && rr.notBusy()) {
@@ -196,10 +181,11 @@ public class MonkeyModeDual extends OpMode {
                     rr.moveToPosWithID(3);
                 }
             }
-            rr.updateLocalizer();
-            //rr.doOmniDisplace(input.gamepad, input.gamepad2);
-            telemetry = new MultipleTelemetry(telemetry, FtcDashboard.getInstance().getTelemetry());
+
         });
+        rr.updateLocalizer();
+        //rr.doOmniDisplace(input.gamepad, input.gamepad2);
+        telemetry = new MultipleTelemetry(telemetry, FtcDashboard.getInstance().getTelemetry());
     }
     public void loop() {
         try {
@@ -207,12 +193,6 @@ public class MonkeyModeDual extends OpMode {
             if(rr.notBusy()){
                 //Meant to be if this && !input.getBool("armLengthNone");
                 driver.driveOmni(input.getFloatArrayOfInput("drivingControls"));
-            }
-            if (input.getBool("RRToggle")){
-                if (shouldToggle) {
-                    RRToggle = !RRToggle;
-                    shouldToggle = false;
-                }
             }
             if (input.getBool("handToggle") && !handStatus) {
                 intakeToggle=!intakeToggle;
