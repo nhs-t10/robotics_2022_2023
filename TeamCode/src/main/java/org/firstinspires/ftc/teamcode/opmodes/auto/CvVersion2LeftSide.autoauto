@@ -17,10 +17,10 @@ goto start;
     goto process;
 
 #process:
-    driveOmni(0,0.5,0), after 10cm next;
-    driveOmni(0,1,0), after 55cm next;
-    driveOmni(-1,0,0), after 120cm next;
-    driveOmni(0,0,1), after 150degs next;
+    driveOmni(0,0.5,0), after 10cm next; //todo:fix distance
+    driveOmni(0,-1,0), after 55cm next;
+    driveOmni(1,0,0), after 120cm next;
+    //driveOmni(0,0,1), after 150degs next;
     driveOmni(0,-0.5,0), after 28.5cm next;
     //setPositionHighLocation();
     //openHand();
