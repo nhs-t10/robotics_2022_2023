@@ -33,6 +33,9 @@ import org.firstinspires.ftc.teamcode.managers.roadrunner.SequenceInitException;
 import org.firstinspires.ftc.teamcode.managers.sensor.SensorManager;
 import org.firstinspires.ftc.teamcode.managers.telemetry.TelemetryManager;
 
+import java.sql.Time;
+import java.time.Instant;
+
 @TeleOp
 public class MonkeyModeDual extends OpMode {
     public MovementManager driver;
@@ -48,6 +51,7 @@ public class MonkeyModeDual extends OpMode {
     public boolean nyooming = false;
     public double distance;
     int towerPos = 0;
+    boolean rrToggle = false;
     int currentColor = 0;
     int currentColor1 = 0;
     float rainbowSenseRed = 0;
@@ -56,6 +60,9 @@ public class MonkeyModeDual extends OpMode {
     private boolean looping = false;
     private boolean shouldActuallyDoThings = true;
     private RRManager rr;
+    boolean deb = false;
+
+
     @Override
     public void init() {
         // Phone is labelled as T-10 Melman
@@ -111,9 +118,7 @@ public class MonkeyModeDual extends OpMode {
                         new ButtonNode("gamepad2rightbumper")
                 )
         );
-        input.registerInput("RRToggle",
-                new ButtonNode("dpadup")
-        );
+
         input.registerInput("extendArm",
                 new ButtonNode("gamepad2righttrigger")
         );
@@ -147,11 +152,14 @@ public class MonkeyModeDual extends OpMode {
         input.registerInput("RR4",
                 new ButtonNode("a")
         );
+        input.registerInput("rrTog", new ToggleNode(new ButtonNode("dpadup")));
         input.setOverlapResolutionMethod(InputOverlapResolutionMethod.MOST_COMPLEX_ARE_THE_FAVOURITE_CHILD);
         rr.calibrateDriveToAutoPosition();
+
         PriorityAsyncOpmodeComponent.start(() -> {
-            if(input.getBool("RRToggle") && rr.notBusy()) {
-                InputManager.vibrategp();
+
+            if(input.getBool("rrTog") && rr.notBusy()) {
+
                 if (input.getBool("RR1") && rr.notBusy()) {
                     //rr.moveToPosWithID(2);
 
@@ -173,26 +181,7 @@ public class MonkeyModeDual extends OpMode {
                     rr.moveToPosWithID(3);
                 }
             }
-            if (input.getBool("RR1") && rr.notBusy()) {
-                //rr.moveToPosWithID(2);
 
-                try {
-                    rr.customMoveSequenceWithPoseTrajSequence(new Pose2d[]{new Pose2d(0, 15), new Pose2d(0, 15), new Pose2d(15, 15)}, new String[]{"strafe", "turn", "strafe"}, new double[]{0, 90, 0});
-                } catch (SequenceInitException e) {
-                    e.printStackTrace();
-                } catch (Exception e) {
-                    e.printStackTrace();
-                }
-            }
-            if (input.getBool("RR2") && rr.notBusy()) {
-                rr.moveToPosWithID(1);
-            }
-            if (input.getBool("RR3") && rr.notBusy()) {
-                rr.calibrateDriveToZero();
-            }
-            if (input.getBool("RR4") && rr.notBusy()) {
-                rr.moveToPosWithID(3);
-            }
         });
         rr.updateLocalizer();
         //rr.doOmniDisplace(input.gamepad, input.gamepad2);

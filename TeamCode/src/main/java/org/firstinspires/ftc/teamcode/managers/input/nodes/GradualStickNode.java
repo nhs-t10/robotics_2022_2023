@@ -50,7 +50,7 @@ public class GradualStickNode extends InputManagerInputNode{
     public void update() {
         control.update();
 
-        boolean isActive = control.getResult().getBool();
+        boolean isActive = control.getResult().getFloat() >= startingSpeed;
 
         if(isActive && wasActive == false) {
             accelerationStartTime = RobotTime.currentTimeMillis();
