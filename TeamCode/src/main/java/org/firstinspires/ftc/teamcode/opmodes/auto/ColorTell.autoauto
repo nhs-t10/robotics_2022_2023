@@ -6,17 +6,17 @@ goto start;
 
 #start:
     webcam.startStreaming(1280, 720, OpenCvCameraRotation.UPRIGHT), next;
+    let loopnum = 0, next;
     goto process;
 
 #process:
     log("cr: ",getAnalysisTest()), next;
     log("cb: ", getAnalysisPreciseTest()), next;
+    let loopnum = loopnum + 1, next;
+    if (loopnum == 100) {after 1s { stopWebcam(), goto end }}, next;
     after 1s goto process;
 
 
 
-
 #end:
-    stopWebcam();
-    log("i got to the end!");
-
+    pass
