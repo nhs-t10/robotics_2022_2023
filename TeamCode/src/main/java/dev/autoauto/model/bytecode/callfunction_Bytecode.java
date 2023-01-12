@@ -40,7 +40,7 @@ public class callfunction_Bytecode extends AutoautoBytecode {
             stack.push(fFunc.call(bytecodeEvaluationProgram.lastThisContext, finalArgs));
         } else {
             stack.push(new AutoautoUndefined());
-            FeatureManager.logger.warn("Attempt to call a non-callable in Autoauto");
+            FeatureManager.logger.warn("Attempt to call a non-callable in Autoauto; this value is a '" + func.getString() + "'");
         }
 
         callStack.pop();
