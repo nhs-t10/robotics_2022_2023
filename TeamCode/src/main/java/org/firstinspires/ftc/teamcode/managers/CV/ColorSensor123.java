@@ -114,7 +114,7 @@ public class ColorSensor123 extends PipelineThatExposesSomeAnalysis {
     static final int color3_max_Cb = 190; //teal max cb
 
 
-    static final Point TopLeftAnchorPoint = new Point(300,270); //Base Picture is 600 x 480 when taken on the robot.
+    static final Point TopLeftAnchorPoint = new Point(300,288); //Base Picture is 600 x 480 when taken on the robot.
     static final int REGION_WIDTH = 20; //max width: 600
     static final int REGION_HEIGHT = 20; //max height: 240
     static final Point BottomRightAnchorPoint = new Point(TopLeftAnchorPoint.x + REGION_WIDTH,TopLeftAnchorPoint.y + REGION_HEIGHT);

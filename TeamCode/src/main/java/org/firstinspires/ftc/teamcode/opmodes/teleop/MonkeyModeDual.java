@@ -47,6 +47,7 @@ public class MonkeyModeDual extends OpMode {
     public bigArmManager monkeyArm;
     public SensorManager sensing;
     private boolean handStatus = false;
+    private boolean rrStatus = false;
     private boolean intakeToggle = false;
     public boolean nyooming = false;
     public double distance;
@@ -91,7 +92,7 @@ public class MonkeyModeDual extends OpMode {
         );
         monkeyArm = new bigArmManager(hands);
         input = new InputManager(gamepad1, gamepad2);
-        input.registerInput("drivingControls",
+        /*input.registerInput("drivingControls",
                     new PlusNode(
                             new MultiInputNode(
                                     new MultiplyNode(new GradualStickNode(new JoystickNode("left_stick_y"), 0.25f, 300f), -1f),
@@ -104,14 +105,21 @@ public class MonkeyModeDual extends OpMode {
                                     new MultiplyNode(new JoystickNode("gamepad2right_stick_x"), 0.25f)
                             )
                     )
-        );
-        /*input.registerInput("drivingControls",
-                new MultiInputNode(
-                        new MultiplyNode(new JoystickNode("left_stick_y"), -1f),
-                        new MultiplyNode(new JoystickNode("left_stick_x"), -1f),
-                        new JoystickNode("right_stick_x")
-                )
         );*/
+        input.registerInput("drivingControls",
+                new PlusNode(
+                    new MultiInputNode(
+                            new MultiplyNode(new JoystickNode("left_stick_y"), -1f),
+                            new MultiplyNode(new JoystickNode("left_stick_x"), -1f),
+                            new JoystickNode("right_stick_x")
+                    ),
+                    new MultiInputNode(
+                            new MultiplyNode(new JoystickNode("left_stick_y"), -0.25f),
+                            new MultiplyNode(new JoystickNode("left_stick_x"), -0.25f),
+                            new MultiplyNode(new JoystickNode("right_stick_x"), 0.25f)
+                    )
+                )
+        );
         input.registerInput("handToggle",
                 new AnyNode(
                         new ButtonNode("rightbumper"),
@@ -157,8 +165,13 @@ public class MonkeyModeDual extends OpMode {
         rr.calibrateDriveToAutoPosition();
 
         PriorityAsyncOpmodeComponent.start(() -> {
-
-            if(input.getBool("rrTog") && rr.notBusy()) {
+            if (input.getBool("handToggle") && !rrStatus) {
+                rrToggle=!rrToggle;
+                rrStatus = true;
+            } else if (!input.getBool("handToggle") && rrStatus){
+                rrStatus = false;
+            }
+            if(rrToggle && rr.notBusy()) {
 
                 if (input.getBool("RR1") && rr.notBusy()) {
                     //rr.moveToPosWithID(2);
