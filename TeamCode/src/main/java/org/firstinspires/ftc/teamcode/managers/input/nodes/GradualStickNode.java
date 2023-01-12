@@ -16,9 +16,11 @@ public class GradualStickNode extends InputManagerInputNode{
     private InputManagerInputNode control;
     private float startingSpeed;
     private float endingSpeed;
-    private float movementTime;
+    private float accelerationConstant;
+    private float currentSpeed;
 
-    private boolean wasActive;
+    private boolean wasActive = false;
+    private boolean isActive = false;
     private long accelerationStartTime;
 
     /**
@@ -30,15 +32,15 @@ public class GradualStickNode extends InputManagerInputNode{
      *
      * @param control The input that will be accelerated
      * @param initialSpeed The initial speed of the input
-     * @param moveTime How long it will take to get from the startingSpeed to the speed of the stick.
+     * @param accelConstant How much the speed will increase per frame
      * @see AccelerationNode#AccelerationNode(InputManagerInputNode, InputManagerInputNode, InputManagerInputNode, InputManagerInputNode) AccelerationNode
      * @see DecelerationNode#DecelerationNode(InputManagerInputNode, InputManagerInputNode, InputManagerInputNode, InputManagerInputNode) DecelerationNode
      * @see BothcelerationNode#BothcelerationNode(InputManagerInputNode, InputManagerInputNode, InputManagerInputNode, InputManagerInputNode) BothcelerationNode
      */
-    public GradualStickNode(InputManagerInputNode control, float initialSpeed, float moveTime) {
+    public GradualStickNode(InputManagerInputNode control, float initialSpeed, float accelConstant) {
         this.control = control;
         startingSpeed = initialSpeed;
-        movementTime = moveTime;
+        accelerationConstant = accelConstant;
     }
 
     @Override
@@ -50,24 +52,27 @@ public class GradualStickNode extends InputManagerInputNode{
     public void update() {
         control.update();
         float resultNumber = 0f;
-        boolean isActive = control.getResult().getFloat() >= startingSpeed;
+        isActive = Math.abs(control.getResult().getFloat()) >= startingSpeed;
+        endingSpeed = control.getResult().getFloat();
 
-        if(isActive && wasActive == false) {
-            accelerationStartTime = RobotTime.currentTimeMillis();
-            endingSpeed = control.getResult().getFloat();
-            resultNumber = startingSpeed;
+        if(isActive && !wasActive) {
+            //accelerationStartTime = RobotTime.currentTimeMillis();
+            currentSpeed = startingSpeed;
         }
-
 
         if(isActive) {
-            long timeSinceStart = RobotTime.currentTimeMillis() - accelerationStartTime;
-            float percentageCompleted = Math.min(1, timeSinceStart / movementTime);
-            resultNumber = startingSpeed + percentageCompleted * (endingSpeed - startingSpeed);
+            //Old implementation
+            //long timeSinceStart = RobotTime.currentTimeMillis() - accelerationStartTime;
+            //float percentageCompleted = Math.min(1, timeSinceStart / movementTime);
+            //resultNumber = startingSpeed + percentageCompleted * (endingSpeed - startingSpeed);
+            if ((currentSpeed + accelerationConstant) < endingSpeed) {
+                currentSpeed = currentSpeed + accelerationConstant;
+            } else {
+                currentSpeed = endingSpeed;
+            }
         }
-
         wasActive = isActive;
-
-        result.setFloat(resultNumber);
+        result.setFloat(currentSpeed);
     }
 
     @NonNull
