@@ -25,7 +25,7 @@ import java.util.Arrays;
  * Manager for Pathing and Dead Reckoning... Makes Road runner much easier to use with a set of complex methods for making precise paths. created by ACHYUT SHASTRI
  */
 public class RRManager extends FeatureManager {
-    public static Pose2d currentPose = new Pose2d();
+    public static Pose2d currentPose = new Pose2d(0, 0, Math.toRadians(0));
     private SampleMecanumDrive driveRR;
     private TrajectoryBuilder trajBuildRR;
     private TrajectorySequenceBuilder tsb;
@@ -48,6 +48,7 @@ public class RRManager extends FeatureManager {
 
         this.telemetry = telemetryManager;
         calibrateDriveToZero();
+        calibrateDriveToAutoPosition();
         telemetry.log().add("Go to 192.168.43.1:8080/dash for the FTC Dashboard! Unless this is the competition, for which, in that case, never mind, don't use FTC Dashboard...");
 
     }
@@ -74,8 +75,17 @@ public class RRManager extends FeatureManager {
         trajBuildRR.addDisplacementMarker(driveRR.getLocalizer().getPoseEstimate().vec().distTo(new Vector2d(0, 0)), () -> {});
     }
 
-    public void setAutoAutoPosition(){
-        RRManager.currentPose = driveRR.getPoseEstimate();
+    /**
+     * Allows for the opMode to stop on a critical error if chosen
+     */
+    public void errorInterrupt(){
+        opMode.stop();
+    }
+    /**
+     * Method that sets the current Roadrunner position to what AutoAuto reports
+     */
+    public void setAutoAutoPosition(Pose2d pose){
+        RRManager.currentPose = pose;
     }
     /**
      * Returns the drive object element from the class FOR TESTING ONLY
@@ -153,12 +163,14 @@ public class RRManager extends FeatureManager {
             telemetry.log().add("WARNING! Using this movement will likely result in a PathContinuityError!");
         } else if (type.equals("turn")) {
             driveRR.turn(rotation);
+        } else if (type.equals("forward")) {
+            driveRR.followTrajectory(trajBuildRR.forward(rotation).build());
         }
         updateLocalizer();
     }
 
     /**
-     * Creates a simple Trajectory Sequence for the robot to follow made ot of arrays
+     * Creates a simple Trajectory Sequence for the robot to follow made ot of arrays. PS: If trying t turn in one phase, put an empty Pose2d in that index of poseArr.
      * @param poseArr The array of positions to go to
      * @param typeArr The array of the types of movement the correspond to the positions
      * @param rotationArr The array of the different rotations that correspond with the positions and types of movement
@@ -306,7 +318,7 @@ public class RRManager extends FeatureManager {
     }
 
     /**
-     * Get the gamepad inputs and use them to sense where the robot is displaing to
+     * Get the gamepad inputs and use them to sense where the robot is displacing to...
      * @param gamepad1 Gamepad 1 (Main driver)
      * @param gamepad2 Gamepad 2 (Micro driver)
      */

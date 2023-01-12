@@ -51,7 +51,6 @@ public class GradualStickNode extends InputManagerInputNode{
     @Override
     public void update() {
         control.update();
-        float resultNumber = 0f;
         isActive = Math.abs(control.getResult().getFloat()) >= startingSpeed;
         endingSpeed = control.getResult().getFloat();
 
@@ -59,17 +58,28 @@ public class GradualStickNode extends InputManagerInputNode{
             //accelerationStartTime = RobotTime.currentTimeMillis();
             currentSpeed = startingSpeed;
         }
-
         if(isActive) {
             //Old implementation
             //long timeSinceStart = RobotTime.currentTimeMillis() - accelerationStartTime;
             //float percentageCompleted = Math.min(1, timeSinceStart / movementTime);
             //resultNumber = startingSpeed + percentageCompleted * (endingSpeed - startingSpeed);
-            if ((currentSpeed + accelerationConstant) < endingSpeed) {
-                currentSpeed = currentSpeed + accelerationConstant;
-            } else {
-                currentSpeed = endingSpeed;
+            if (currentSpeed > 0) {
+                if ((currentSpeed + accelerationConstant) < endingSpeed) {
+                    currentSpeed += accelerationConstant;
+                } else {
+                    currentSpeed = endingSpeed;
+                }
             }
+            else {
+                if ((currentSpeed - accelerationConstant) > endingSpeed) {
+                    currentSpeed -= accelerationConstant;
+                } else {
+                    currentSpeed = endingSpeed;
+                }
+            }
+        }
+        else {
+            currentSpeed = 0.0f;
         }
         wasActive = isActive;
         result.setFloat(currentSpeed);
