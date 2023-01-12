@@ -13,7 +13,7 @@ goto start;
     log("cr: ",getAnalysisTest()), next;
     log("cb: ", getAnalysisPreciseTest()), next;
     let loopnum = loopnum + 1, next;
-    if (loopnum == 100) {after 1s { stopWebcam(), goto end }}, next;
+    if (loopnum == 100) { stopWebcam(), goto end }, next;
     after 1s goto process;
 
 
