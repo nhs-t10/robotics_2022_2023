@@ -95,9 +95,9 @@ public class MonkeyModeDual extends OpMode {
         input.registerInput("drivingControls",
                     new PlusNode(
                             new MultiInputNode(
-                                    new MultiplyNode(new GradualStickNode(new JoystickNode("left_stick_y"), 0.25f, 0.005f), -1.667f),
-                                    new MultiplyNode(new GradualStickNode(new JoystickNode("left_stick_x"), 0.25f, 0.005f), -1.667f),
-                                    new MultiplyNode(new GradualStickNode(new JoystickNode("right_stick_x"), 0.25f, 0.005f), 1.667f)
+                                    new MultiplyNode(new GradualStickNode(new JoystickNode("left_stick_y"), 0.1f, 0.002f), -1.5f),
+                                    new MultiplyNode(new GradualStickNode(new JoystickNode("left_stick_x"), 0.1f, 0.002f), -1.5f),
+                                    new MultiplyNode(new GradualStickNode(new JoystickNode("right_stick_x"), 0.1f, 0.002f), 1.5f)
                             ),
                             new MultiInputNode(
                                     new MultiplyNode(new JoystickNode("gamepad2left_stick_y"), -0.25f),
@@ -105,21 +105,7 @@ public class MonkeyModeDual extends OpMode {
                                     new MultiplyNode(new JoystickNode("gamepad2right_stick_x"), 0.25f)
                             )
                     )
-        );/*
-        input.registerInput("drivingControls",
-                new PlusNode(
-                    new MultiInputNode(
-                            new MultiplyNode(new JoystickNode("left_stick_y"), -1f),
-                            new MultiplyNode(new JoystickNode("left_stick_x"), -1f),
-                            new JoystickNode("right_stick_x")
-                    ),
-                    new MultiInputNode(
-                            new MultiplyNode(new JoystickNode("gamepad2left_stick_y"), -0.25f),
-                            new MultiplyNode(new JoystickNode("gamepad2left_stick_x"), -0.25f),
-                            new MultiplyNode(new JoystickNode("gamepad2right_stick_x"), 0.25f)
-                    )
-                )
-        );*/
+        );
         input.registerInput("handToggle",
                 new AnyNode(
                         new ButtonNode("rightbumper"),
