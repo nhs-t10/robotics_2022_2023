@@ -84,6 +84,7 @@ public class MonkeyModeDual extends OpMode {
                 servo           ("monkeyHand"),
                 motor           ("monkeyShoulder")
         );
+        //hands.resetEncoders("monkeyShoulder");
         sensing = new SensorManager(
                 hardwareMap,
                 SensorManager.colorSensor("rainbowSense", "rainbowSense1"),
@@ -236,7 +237,7 @@ public class MonkeyModeDual extends OpMode {
             if (input.getBool("armLengthTall")) {
                 monkeyArm.setPositionHighLocation();
             }
-            towerPos += (-(int)hands.getMotorPosition("monkeyShoulder"));
+            towerPos = (int)hands.getMotorPosition("monkeyShoulder");
             telemetry.addData("FL Power", driver.frontLeft.getPower());
             telemetry.addData("FR Power", driver.frontRight.getPower());
             telemetry.addData("BR Power", driver.backLeft.getPower());

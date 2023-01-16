@@ -16,7 +16,7 @@ public class bigArmManager extends FeatureManager {
     }
 
     public void extendArm(){
-        hands.setMotorPower("monkeyShoulder", 0.75);
+        hands.setMotorPower("monkeyShoulder", 1);
     }
 
     public void retractArm(){
@@ -25,7 +25,7 @@ public class bigArmManager extends FeatureManager {
     }
     public void stopArm(){hands.setMotorPower("monkeyShoulder",0);}
     public void openHand(){
-        hands.setServoPosition("monkeyHand", -1);
+        hands.setServoPosition("monkeyHand", 0.1);
     }
     public void closeHand(){
         hands.setServoPosition("monkeyHand", 0.35);

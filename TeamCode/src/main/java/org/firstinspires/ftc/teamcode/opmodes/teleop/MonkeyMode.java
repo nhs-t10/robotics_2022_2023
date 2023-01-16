@@ -76,7 +76,7 @@ public class MonkeyMode extends OpMode {
                             new JoystickNode("right_stick_x")
                     )
             );
-        input.registerInput("handToggle",
+        input.registerInput("handOpen",
                 new ButtonNode("rightbumper")
         );
         input.registerInput("extendArm",
@@ -97,7 +97,7 @@ public class MonkeyMode extends OpMode {
         input.registerInput("armLengthNone",
                 new ButtonNode("b")
         );
-        input.registerInput("distanceTracker",
+        input.registerInput("handClose",
                 new ButtonNode("leftbumper")
         );
         input.registerInput("D-Up",
@@ -137,15 +137,21 @@ public class MonkeyMode extends OpMode {
             if(drive.notBusy() && !input.getBool("armLengthNone")){
                 driver.driveOmni(input.getFloatArrayOfInput("drivingControls"));
             }
-            if (input.getBool("handToggle") && !armStatus) {
-                intakeToggle=!intakeToggle;
-                armStatus = true;
-            } else if (!input.getBool("handToggle") && armStatus){
-                    armStatus = false;
-            }
-            if (intakeToggle){
+//            if (input.getBool("handToggle") && !armStatus) {
+//                intakeToggle=!intakeToggle;
+//                armStatus = true;
+//            } else if (!input.getBool("handToggle") && armStatus){
+//                    armStatus = false;
+//            }
+//            if (intakeToggle){
+//                monkeyArm.openHand();
+//            } else {
+//                monkeyArm.closeHand();
+//            }
+            if (input.getBool("handOpen")){
                 monkeyArm.openHand();
-            } else {
+            }
+            if (input.getBool("handClose")){
                 monkeyArm.closeHand();
             }
             if (input.getBool("extendArm")) {
