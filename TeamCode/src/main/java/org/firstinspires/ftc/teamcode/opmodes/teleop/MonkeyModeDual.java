@@ -48,6 +48,7 @@ public class MonkeyModeDual extends OpMode {
     public SensorManager sensing;
     private boolean handStatus = false;
     private boolean rrStatus = false;
+    private boolean stopOnce = false;
     private boolean intakeToggle = false;
     public boolean nyooming = false;
     public double distance;
@@ -195,6 +196,7 @@ public class MonkeyModeDual extends OpMode {
                 //Meant to be if this && !input.getBool("armLengthNone");
                 driver.driveOmni(input.getFloatArrayOfInput("drivingControls"));
             }
+
             if (input.getBool("handToggle") && !handStatus) {
                 intakeToggle=!intakeToggle;
                 handStatus = true;
@@ -206,11 +208,12 @@ public class MonkeyModeDual extends OpMode {
             } else {
                 monkeyArm.closeHand();
             }
+
             if (input.getBool("extendArm")) {
                 monkeyArm.extendArm();
             } else if (input.getBool("retractArm")) {
                 monkeyArm.retractArm();
-            } else {
+            } else if (monkeyArm.finishedMoving()){
                 monkeyArm.stopArm();
             }
             /*if (input.getBool("colorNYOOM") && !nyooming) {
