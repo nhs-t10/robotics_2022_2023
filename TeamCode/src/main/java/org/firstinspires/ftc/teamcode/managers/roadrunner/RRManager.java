@@ -5,6 +5,7 @@ import com.acmerobotics.roadrunner.geometry.Vector2d;
 import com.acmerobotics.roadrunner.localization.Localizer;
 import com.acmerobotics.roadrunner.trajectory.TrajectoryBuilder;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
+import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.Gamepad;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 
@@ -52,17 +53,29 @@ public class RRManager extends FeatureManager {
         telemetry.log().add("Go to 192.168.43.1:8080/dash for the FTC Dashboard! Unless this is the competition, for which, in that case, never mind, don't use FTC Dashboard...");
 
     }
-
+    public void reverseMotors(){
+        driveRR.fr.setDirection(DcMotorSimple.Direction.REVERSE);
+        driveRR.br.setDirection(DcMotorSimple.Direction.REVERSE);
+        driveRR.fl.setDirection(DcMotorSimple.Direction.FORWARD);
+        driveRR.bl.setDirection(DcMotorSimple.Direction.FORWARD);
+    }
+    public void resetMotors(){
+        driveRR.fr.setDirection(DcMotorSimple.Direction.FORWARD);
+        driveRR.br.setDirection(DcMotorSimple.Direction.FORWARD);
+        driveRR.fl.setDirection(DcMotorSimple.Direction.FORWARD);
+        driveRR.bl.setDirection(DcMotorSimple.Direction.FORWARD);
+    }
     /**
      * Moves the robot to the given id's position and rotates it to the id's given rotation
      * @param id The id for the specified movement: 1 = Center, 2 = Top Corner, 3 = Bottom Corner
      */
     public void moveToPosWithID(int id){
-
+        reverseMotors();
         if(id==1){driveRR.followTrajectory(trajBuildRR.splineToSplineHeading(new Pose2d(-24, 12), Math.toRadians(90)).build());}
         else if(id==2){driveRR.followTrajectory(trajBuildRR.splineToSplineHeading(new Pose2d(0, 72), Math.toRadians(driveRR.getExternalHeading())).build());}
         else if(id==3){driveRR.followTrajectory(AssetsTrajectoryManager.load("path1"));}
         driveRR.update();
+        resetMotors();
     }
     public void setBusy(){
         driveRR.isBusy();
@@ -138,6 +151,7 @@ public class RRManager extends FeatureManager {
      * @param rotation The end rotation, if needed, for the movement
      */
     public void customMoveWithPose(@NotNull Pose2d pose, @NotNull String type, @Nullable double rotation){
+        reverseMotors();
         for(Pose2d poses: nonono){
             if(pose.equals(poses)){
                 return;
@@ -167,6 +181,7 @@ public class RRManager extends FeatureManager {
             driveRR.followTrajectory(trajBuildRR.forward(rotation).build());
         }
         updateLocalizer();
+        resetMotors();
     }
 
     /**
@@ -183,6 +198,7 @@ public class RRManager extends FeatureManager {
         }
         for(int i = 0; i<poseArr.length; i++) {
             updateLocalizer();
+            reverseMotors();
             Pose2d pose = poseArr[i];
             String type = typeArr[i];
             double rotation = rotationArr[i];
@@ -211,6 +227,7 @@ public class RRManager extends FeatureManager {
 
             driveRR.waitForIdle();
             updateLocalizer();
+            resetMotors();
         }
     }
 
@@ -224,6 +241,7 @@ public class RRManager extends FeatureManager {
      */
     @Test
     public void customMoveSequenceWithPoseTrajSequence(@NotNull Pose2d[] poseArr, @NotNull String[] typeArr, @NotNull double[] rotationArr) throws SequenceInitException, Exception {
+        reverseMotors();
         if(poseArr.length != typeArr.length || typeArr.length != rotationArr.length || poseArr.length != rotationArr.length){
             throw new SequenceInitException("Array Lengths for sequence do not match! "+poseArr.length+" does not equal "+typeArr.length+" or does not equal "+rotationArr.length);
         }
@@ -256,6 +274,7 @@ public class RRManager extends FeatureManager {
             driveRR.followTrajectorySequence(tsb.build());
             driveRR.waitForIdle();
             updateLocalizer();
+            resetMotors();
         }
     }
 
