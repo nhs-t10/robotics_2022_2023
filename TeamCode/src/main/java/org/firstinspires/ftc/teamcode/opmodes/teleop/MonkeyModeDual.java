@@ -212,7 +212,7 @@ public class MonkeyModeDual extends OpMode {
             if (input.getBool("extendArm")) {
                 monkeyArm.extendArm(input.getFloat("extendArm"));
             } else if (input.getBool("retractArm")) {
-                monkeyArm.retractArm(input.getFloat("extendArm"));
+                monkeyArm.retractArm(input.getFloat("retractArm"));
                 intakeToggle=false;
             } else if (monkeyArm.finishedMoving()){
                 monkeyArm.stopArm();

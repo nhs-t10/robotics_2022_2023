@@ -99,7 +99,7 @@ public class bigArmManager extends FeatureManager {
             hands.encodeMoveToPosition("monkeyShoulder", ((int)hands.getMotorPosition("monkeyShoulder") - LowToMiddle - MiddleToHigh));
         }
         else if (currentPosition == 2) {
-            hands.encodeMoveToPosition("monkeyShoulder", ((int)hands.getMotorPosition("monkeyShoulder")git - MiddleToHigh));
+            hands.encodeMoveToPosition("monkeyShoulder", ((int)hands.getMotorPosition("monkeyShoulder") - MiddleToHigh));
         }
         currentPosition = 3;
     }
