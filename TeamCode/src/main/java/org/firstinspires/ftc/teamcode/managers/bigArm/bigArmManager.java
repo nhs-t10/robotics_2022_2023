@@ -14,12 +14,12 @@ public class bigArmManager extends FeatureManager {
         this.hands = hands;
     }
 
-    public void extendArm(){
-        hands.setMotorPower("monkeyShoulder", 1);
+    public void extendArm(double power){
+        hands.setMotorPower("monkeyShoulder", power);
     }
 
-    public void retractArm(){
-        hands.setMotorPower("monkeyShoulder", -0.75);
+    public void retractArm(double power){
+        hands.setMotorPower("monkeyShoulder", -power*0.75);
         //Done in teleop
         //closeHand();
     }
