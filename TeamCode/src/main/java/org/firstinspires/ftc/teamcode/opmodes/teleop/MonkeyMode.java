@@ -155,9 +155,9 @@ public class MonkeyMode extends OpMode {
                 monkeyArm.closeHand();
             }
             if (input.getBool("extendArm")) {
-                monkeyArm.extendArm();
+                monkeyArm.extendArm(1);
             } else if (input.getBool("retractArm")) {
-                monkeyArm.retractArm();
+                monkeyArm.retractArm(1);
             } else {
                 monkeyArm.stopArm();
             }

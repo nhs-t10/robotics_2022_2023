@@ -171,11 +171,11 @@ public class BasicDriving extends OpMode {
         }
         if (input.getBool("extendArm")){
             //right shoulder
-            monkeyArm.extendArm();
+            monkeyArm.extendArm(1);
         }
         if (input.getBool("retractArm")){
             //left shoulder
-            monkeyArm.retractArm();
+            monkeyArm.retractArm(1);
         }
         telemetry.addData("FL Power", driver.frontLeft.getPower());
         telemetry.addData("FR Power", driver.frontRight.getPower());
