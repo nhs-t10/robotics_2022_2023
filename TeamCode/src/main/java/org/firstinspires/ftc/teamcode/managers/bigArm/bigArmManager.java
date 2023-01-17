@@ -9,7 +9,6 @@ public class bigArmManager extends FeatureManager {
     final int LowToMiddle = 0; //To be filled in later
     final int MiddleToHigh = 0; //To be filled in later
     int currentPosition = 0; //Tracks whether we are floor, low, middle, and high
-    int currentEncoderTicks = 0;
 
     public bigArmManager(ManipulationManager hands){
         this.hands = hands;
@@ -54,55 +53,53 @@ public class bigArmManager extends FeatureManager {
     }
 
     public void setPositionFloorLocation(){
-        currentEncoderTicks = (int)hands.getMotorPosition("monkeyShoulder");
         if (currentPosition == 1){
-            hands.encodeMoveToPosition("monkeyShoulder", (currentEncoderTicks + FloorToLow));
+            hands.encodeMoveToPosition("monkeyShoulder", ((int)hands.getMotorPosition("monkeyShoulder") + FloorToLow));
         }
         else if (currentPosition == 2){
-            hands.encodeMoveToPosition("monkeyShoulder", (currentEncoderTicks + FloorToLow + LowToMiddle));
+            hands.encodeMoveToPosition("monkeyShoulder", ((int)hands.getMotorPosition("monkeyShoulder") + FloorToLow + LowToMiddle));
         }
         else if (currentPosition == 3){
-            hands.encodeMoveToPosition("monkeyShoulder", (currentEncoderTicks + FloorToLow + LowToMiddle + MiddleToHigh));
+            hands.encodeMoveToPosition("monkeyShoulder", ((int)hands.getMotorPosition("monkeyShoulder") + FloorToLow + LowToMiddle + MiddleToHigh));
         }
         currentPosition = 0;
     }
 
     public void setPositionLowLocation(){
-        currentEncoderTicks = (int)hands.getMotorPosition("monkeyShoulder");
         if (currentPosition == 0){
-            hands.encodeMoveToPosition("monkeyShoulder", (currentEncoderTicks - FloorToLow));
+            hands.encodeMoveToPosition("monkeyShoulder", ((int)hands.getMotorPosition("monkeyShoulder") - FloorToLow));
         }
         else if (currentPosition == 2){
-            hands.encodeMoveToPosition("monkeyShoulder", (currentEncoderTicks + LowToMiddle));
+            hands.encodeMoveToPosition("monkeyShoulder", ((int)hands.getMotorPosition("monkeyShoulder") + LowToMiddle));
         }
         else if (currentPosition == 3){
-            hands.encodeMoveToPosition("monkeyShoulder", (currentEncoderTicks + LowToMiddle + MiddleToHigh));
+            hands.encodeMoveToPosition("monkeyShoulder", ((int)hands.getMotorPosition("monkeyShoulder") + LowToMiddle + MiddleToHigh));
         }
         currentPosition = 1;
     }
 
     public void setPositionMiddleLocation(){
         if (currentPosition == 0){
-            hands.encodeMoveToPosition("monkeyShoulder", (currentEncoderTicks - FloorToLow - LowToMiddle));
+            hands.encodeMoveToPosition("monkeyShoulder", ((int)hands.getMotorPosition("monkeyShoulder") - FloorToLow - LowToMiddle));
         }
         else if (currentPosition == 1){
-            hands.encodeMoveToPosition("monkeyShoulder", (currentEncoderTicks - LowToMiddle));
+            hands.encodeMoveToPosition("monkeyShoulder", ((int)hands.getMotorPosition("monkeyShoulder") - LowToMiddle));
         }
         else if (currentPosition == 3){
-            hands.encodeMoveToPosition("monkeyShoulder", (currentEncoderTicks + MiddleToHigh));
+            hands.encodeMoveToPosition("monkeyShoulder", ((int)hands.getMotorPosition("monkeyShoulder") + MiddleToHigh));
         }
         currentPosition = 2;
     }
 
     public void setPositionHighLocation(){
         if (currentPosition == 0){
-            hands.encodeMoveToPosition("monkeyShoulder", (currentEncoderTicks - FloorToLow - LowToMiddle - MiddleToHigh));
+            hands.encodeMoveToPosition("monkeyShoulder", ((int)hands.getMotorPosition("monkeyShoulder") - FloorToLow - LowToMiddle - MiddleToHigh));
         }
         else if (currentPosition == 1){
-            hands.encodeMoveToPosition("monkeyShoulder", (currentEncoderTicks - LowToMiddle - MiddleToHigh));
+            hands.encodeMoveToPosition("monkeyShoulder", ((int)hands.getMotorPosition("monkeyShoulder") - LowToMiddle - MiddleToHigh));
         }
         else if (currentPosition == 2) {
-            hands.encodeMoveToPosition("monkeyShoulder", (currentEncoderTicks - MiddleToHigh));
+            hands.encodeMoveToPosition("monkeyShoulder", ((int)hands.getMotorPosition("monkeyShoulder")git - MiddleToHigh));
         }
         currentPosition = 3;
     }
