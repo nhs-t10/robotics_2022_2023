@@ -241,7 +241,6 @@ public class MonkeyModeDual extends OpMode {
             if (input.getBool("armLengthTall")) {
                 monkeyArm.setPositionHighLocation();
             }
-            towerPos = (int)hands.getMotorPosition("monkeyShoulder");
             telemetry.addData("FL Power", driver.frontLeft.getPower());
             telemetry.addData("FR Power", driver.frontRight.getPower());
             telemetry.addData("BR Power", driver.backLeft.getPower());
@@ -250,7 +249,7 @@ public class MonkeyModeDual extends OpMode {
             telemetry.addData("Heading", rr.getDrive().getExternalHeading());
             telemetry.addData("Servo Open",""+intakeToggle);
             telemetry.addData("Tower Power", hands.getMotorPower("monkeyShoulder"));
-            telemetry.addData("Tower Position: ", towerPos);
+            telemetry.addData("Tower Position: ", (int) hands.getMotorPosition("monkeyShoulder"));
             telemetry.addData("FL Position: ", driver.frontLeft.getCurrentPosition());
             telemetry.addData("Last Error: ", lastError);
             telemetry.addData("CurrentColor", currentColor);
