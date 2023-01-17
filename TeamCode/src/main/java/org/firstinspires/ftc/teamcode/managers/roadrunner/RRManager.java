@@ -180,7 +180,7 @@ public class RRManager extends FeatureManager {
         } else if (type.equals("forward")) {
             driveRR.followTrajectory(trajBuildRR.forward(rotation).build());
         }
-        updateLocalizer();
+        //updateLocalizer();
         resetMotors();
     }
 
