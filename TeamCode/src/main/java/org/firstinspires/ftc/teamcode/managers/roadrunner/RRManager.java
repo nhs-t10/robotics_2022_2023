@@ -162,6 +162,7 @@ public class RRManager extends FeatureManager {
         telemetry.log().add("Path Accepted");
         if(type.equals("strafe")){
             driveRR.followTrajectory(trajBuildRR.strafeTo(pose.vec()).build());
+            telemetry.log().add("RR PATH FINISHED");
         }
         else if(type.equals("line")){
             driveRR.followTrajectory(trajBuildRR.lineTo(pose.vec()).build());
@@ -179,7 +180,9 @@ public class RRManager extends FeatureManager {
             driveRR.turn(rotation);
         } else if (type.equals("forward")) {
             driveRR.followTrajectory(trajBuildRR.forward(rotation).build());
+            telemetry.log().add("Dist: "+rotation);
         }
+        telemetry.log().add("Out of if");
         //updateLocalizer();
         resetMotors();
     }

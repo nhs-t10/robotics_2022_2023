@@ -30,17 +30,22 @@ import org.firstinspires.ftc.teamcode.managers.movement.MovementManager;
 import org.firstinspires.ftc.teamcode.managers.sensor.SensorManager;
 import org.firstinspires.ftc.teamcode.managers.telemetry.TelemetryManager;
 
+import java.util.ArrayList;
+import java.util.Arrays;
+
 @TeleOp
 public class AutoAutoBuilder extends OpMode {
     public MovementManager driver;
     public ManipulationManager hands;
     public InputManager input;
     public SensorManager sensor;
-    public double distance;
+    public float distance;
     public int startPosition;
     public int endPosition;
     public boolean tracking;
-    public int trackNumber;
+    public boolean appending;
+    public int moveNum;
+    //public ArrayList<float[][]> movements;
     @Override
     public void init() {
         FeatureManager.setIsOpModeRunning(true);
@@ -54,10 +59,11 @@ public class AutoAutoBuilder extends OpMode {
         DcMotor bl = hardwareMap.get(DcMotor.class, "bl");
         driver = new MovementManager(fl, fr, br, bl);
         input = new InputManager(gamepad1, gamepad2);
+        /*
         input.registerInput("distanceTracker",
                 new ButtonNode("leftbumper")
         );
-        //Turns inputs into ints (false is 0 and true is 1) and then multiplies them by 0.5
+         */
         input.registerInput("D-Pad Drive",
                 new MultiInputNode(
                         new PlusNode(
@@ -70,33 +76,46 @@ public class AutoAutoBuilder extends OpMode {
                         )
                 )
         );
+        input.registerInput("retraceSteps",
+                new ButtonNode("rightbumper")
+        );
         input.setOverlapResolutionMethod(InputOverlapResolutionMethod.MOST_COMPLEX_ARE_THE_FAVOURITE_CHILD);
         telemetry = new MultipleTelemetry(telemetry, FtcDashboard.getInstance().getTelemetry());
+        tracking = false;
+        appending=false;
+        moveNum=0;
+        //movements=new ArrayList<float[][]>();
     }
     public void loop() {
         try {
             input.update();
             float[] h = input.getFloatArrayOfInput("D-Pad Drive");
             driver.driveOmni(h[0],h[1],0);
-            if (input.getBool("distanceTracker")) {
+            if (h[0]!=0 || h[1]!=0){
+                appending=true;
                 if (!tracking){
                     startPosition = driver.frontLeft.getCurrentPosition();
                     tracking = true;
                 }
                 endPosition = driver.frontLeft.getCurrentPosition();
                 distance = PaulMath.encoderDistanceCm(endPosition - startPosition);
+            } else if (appending) {
+                //float[][] movement = {{h[0],h[1],0},{distance}};
+                //movements.add(movement);
+                moveNum+=1;
+                telemetry.addLine(moveNum+": driveOmni("+h[0]+", "+h[1]+", 0), after "+distance+"cm next;");
+                appending=false;
             }
-            else {
-                if (tracking){
-                    telemetry.addLine("Movement Number " + trackNumber + ":  " + distance);
-                }
-                tracking = false;
-            }
+
+
+
+            /*
             telemetry.addData("FL Power", driver.frontLeft.getPower());
             telemetry.addData("FR Power", driver.frontRight.getPower());
             telemetry.addData("BR Power", driver.backLeft.getPower());
             telemetry.addData("BL Power", driver.backRight.getPower());
             telemetry.addData("Distance Traveled", distance);
+             */
             telemetry.update();
         }
         catch (Throwable t) {

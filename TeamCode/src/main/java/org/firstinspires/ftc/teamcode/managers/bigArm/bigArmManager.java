@@ -7,9 +7,9 @@ import org.firstinspires.ftc.teamcode.managers.manipulation.ManipulationManager;
 
 public class bigArmManager extends FeatureManager {
     ManipulationManager hands;
-    final int FloorToLow = 1234; //The distance from the floor position to the lowest tower's height
-    final int LowToMiddle = 717; //The distance from the lowest tower's height to the middle tower's height
-    final int MiddleToHigh = 1005; //The distance from the middle tower's height to the high tower's height7
+    public final int lowPosition = 100; //The distance from the floor position to the lowest tower's height
+    public final int middlePosition = 1951; //The distance from the floor position to the middle tower's height
+    public final int highPosition = 2956; //The distance from the floor position  to the high tower's height
     int currentPosition = 0; //Tracks whether we are floor, low, middle, and high
 
     public bigArmManager(ManipulationManager hands){
@@ -55,55 +55,18 @@ public class bigArmManager extends FeatureManager {
     }
 
     public void setPositionFloorLocation(){
-        if (currentPosition == 1){
-            hands.encodeMoveToPosition("monkeyShoulder", ((int)hands.getMotorPosition("monkeyShoulder") + FloorToLow));
-            hands.setMotorMode("monkeyShoulder", DcMotor.RunMode.RUN_USING_ENCODER);
-        }
-        else if (currentPosition == 2){
-            hands.encodeMoveToPosition("monkeyShoulder", ((int)hands.getMotorPosition("monkeyShoulder") + FloorToLow + LowToMiddle));
-        }
-        else if (currentPosition == 3){
-            hands.encodeMoveToPosition("monkeyShoulder", ((int)hands.getMotorPosition("monkeyShoulder") + FloorToLow + LowToMiddle + MiddleToHigh));
-        }
-        currentPosition = 0;
+
     }
 
     public void setPositionLowLocation(){
-        if (currentPosition == 0){
-            hands.encodeMoveToPosition("monkeyShoulder", ((int)hands.getMotorPosition("monkeyShoulder") - FloorToLow));
-        }
-        else if (currentPosition == 2){
-            hands.encodeMoveToPosition("monkeyShoulder", ((int)hands.getMotorPosition("monkeyShoulder") + LowToMiddle));
-        }
-        else if (currentPosition == 3){
-            hands.encodeMoveToPosition("monkeyShoulder", ((int)hands.getMotorPosition("monkeyShoulder") + LowToMiddle + MiddleToHigh));
-        }
-        currentPosition = 1;
+
     }
 
     public void setPositionMiddleLocation(){
-        if (currentPosition == 0){
-            hands.encodeMoveToPosition("monkeyShoulder", ((int)hands.getMotorPosition("monkeyShoulder") - FloorToLow - LowToMiddle));
-        }
-        else if (currentPosition == 1){
-            hands.encodeMoveToPosition("monkeyShoulder", ((int)hands.getMotorPosition("monkeyShoulder") - LowToMiddle));
-        }
-        else if (currentPosition == 3){
-            hands.encodeMoveToPosition("monkeyShoulder", ((int)hands.getMotorPosition("monkeyShoulder") + MiddleToHigh));
-        }
-        currentPosition = 2;
+
     }
 
     public void setPositionHighLocation(){
-        if (currentPosition == 0){
-            hands.encodeMoveToPosition("monkeyShoulder", ((int)hands.getMotorPosition("monkeyShoulder") - FloorToLow - LowToMiddle - MiddleToHigh));
-        }
-        else if (currentPosition == 1){
-            hands.encodeMoveToPosition("monkeyShoulder", ((int)hands.getMotorPosition("monkeyShoulder") - LowToMiddle - MiddleToHigh));
-        }
-        else if (currentPosition == 2) {
-            hands.encodeMoveToPosition("monkeyShoulder", ((int)hands.getMotorPosition("monkeyShoulder") - MiddleToHigh));
-        }
-        currentPosition = 3;
+
     }
 }
