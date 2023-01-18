@@ -57,7 +57,6 @@ public class bigArmManager extends FeatureManager {
     public void setPositionFloorLocation(){
         if (currentPosition == 1){
             hands.encodeMoveToPosition("monkeyShoulder", ((int)hands.getMotorPosition("monkeyShoulder") + FloorToLow));
-            hands.setMotorMode("monkeyShoulder", DcMotor.RunMode.RUN_USING_ENCODER);
         }
         else if (currentPosition == 2){
             hands.encodeMoveToPosition("monkeyShoulder", ((int)hands.getMotorPosition("monkeyShoulder") + FloorToLow + LowToMiddle));
