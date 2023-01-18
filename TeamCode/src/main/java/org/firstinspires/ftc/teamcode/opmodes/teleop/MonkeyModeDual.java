@@ -85,7 +85,7 @@ public class MonkeyModeDual extends OpMode {
                 servo           ("monkeyHand"),
                 motor           ("monkeyShoulder")
         );
-        //hands.resetEncoders("monkeyShoulder");
+        hands.setMotorMode("monkeyShoulder", DcMotor.RunMode.RUN_USING_ENCODER);
         sensing = new SensorManager(
                 hardwareMap,
                 SensorManager.colorSensor("rainbowSense", "rainbowSense1"),

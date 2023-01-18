@@ -1,13 +1,15 @@
 package org.firstinspires.ftc.teamcode.managers.bigArm;
 
+import com.qualcomm.robotcore.hardware.DcMotor;
+
 import org.firstinspires.ftc.teamcode.managers.feature.FeatureManager;
 import org.firstinspires.ftc.teamcode.managers.manipulation.ManipulationManager;
 
 public class bigArmManager extends FeatureManager {
     ManipulationManager hands;
-    final int FloorToLow = 0; //To be filled in later
-    final int LowToMiddle = 0; //To be filled in later
-    final int MiddleToHigh = 0; //To be filled in later
+    final int FloorToLow = 1234; //The distance from the floor position to the lowest tower's height
+    final int LowToMiddle = 717; //The distance from the lowest tower's height to the middle tower's height
+    final int MiddleToHigh = 1005; //The distance from the middle tower's height to the high tower's height7
     int currentPosition = 0; //Tracks whether we are floor, low, middle, and high
 
     public bigArmManager(ManipulationManager hands){
@@ -55,6 +57,7 @@ public class bigArmManager extends FeatureManager {
     public void setPositionFloorLocation(){
         if (currentPosition == 1){
             hands.encodeMoveToPosition("monkeyShoulder", ((int)hands.getMotorPosition("monkeyShoulder") + FloorToLow));
+            hands.setMotorMode("monkeyShoulder", DcMotor.RunMode.RUN_USING_ENCODER);
         }
         else if (currentPosition == 2){
             hands.encodeMoveToPosition("monkeyShoulder", ((int)hands.getMotorPosition("monkeyShoulder") + FloorToLow + LowToMiddle));
