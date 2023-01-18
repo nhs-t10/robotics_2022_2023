@@ -57,6 +57,8 @@ public class MonkeyModeDual extends OpMode {
     private boolean movingToHigh = false;
     private boolean movingToFloor = false;
     private boolean doOnce = false;
+    private double sign=1.0;
+    private int startingPos=0;
 
     public boolean nyooming = false;
     public double distance;
@@ -206,6 +208,7 @@ public class MonkeyModeDual extends OpMode {
     public void loop() {
         try {
             input.update();
+            towerPos = (int)hands.getMotorPosition("monkeyShoulder");
 
 
             if(rr.notBusy()){
@@ -231,6 +234,7 @@ public class MonkeyModeDual extends OpMode {
                 movingToMid=false;
                 movingToLow=false;
                 movingToFloor=false;
+                doOnce=false;
             } else if (input.getBool("retractArm")) {
                 monkeyArm.retractArm(input.getFloat("retractArm"));
                 intakeToggle=false;
@@ -238,6 +242,7 @@ public class MonkeyModeDual extends OpMode {
                 movingToMid=false;
                 movingToLow=false;
                 movingToFloor=false;
+                doOnce=false;
             } else if (!movingToFloor && !movingToLow && !movingToMid && !movingToHigh){
                 monkeyArm.stopArm();
             }
@@ -251,23 +256,36 @@ public class MonkeyModeDual extends OpMode {
                 driver.driveOmni(0,0,0);
                 nyooming = false;
             }*/
-            currentColor = sensing.getColor("rainbowSense");
-            currentColor1 = sensing.getColor("rainbowSense1");
-//            if (input.getBool("armLengthNone")) {
-//                monkeyArm.setPositionFloorLocation();
-//            }
+//            currentColor = sensing.getColor("rainbowSense");
+//            currentColor1 = sensing.getColor("rainbowSense1");
             if (input.getBool("armLengthNone")) {
                 movingToFloor=true;
+                movingToLow=false;
+                movingToMid=false;
+                movingToHigh=false;
+                doOnce=false;
             }
 
             if (input.getBool("armLengthSmall")) {
+                movingToFloor=false;
                 movingToLow=true;
+                movingToMid=false;
+                movingToHigh=false;
+                doOnce=false;
             }
             if (input.getBool("armLengthMedium")) {
+                movingToFloor=false;
+                movingToLow=false;
                 movingToMid=true;
+                movingToHigh=false;
+                doOnce=false;
             }
             if (input.getBool("armLengthTall")) {
+                movingToFloor=false;
+                movingToLow=false;
+                movingToMid=false;
                 movingToHigh=true;
+                doOnce=false;
             }
 
             if(movingToHigh){
@@ -277,29 +295,42 @@ public class MonkeyModeDual extends OpMode {
                     movingToHigh=false;
                 }
             } else if (movingToMid){
-                double sign=1.0;
                 if (!doOnce) {
-                    if (hands.getMotorPosition("monkeyShoulder") > monkeyArm.middlePosition) {
-                        sign=-0.75;
+                    startingPos=towerPos;
+                    if (startingPos > monkeyArm.middlePosition) {
+                        sign= -0.75;
                     } else {
                         sign=1;
                     }
                     doOnce=true;
-                } else {
-                    hands.setMotorPower("monkeyShoulder",sign*1);
-                    if(sign>0.0){
+                }
 
-                    } else {
+                hands.setMotorPower("monkeyShoulder",sign);
 
-                    }
-                    if (hands.getMotorPosition("monkeyShoulder")>=monkeyArm.middlePosition-25){
-                        monkeyArm.stopArm();
-                        movingToHigh=false;
-                    }
+                if (Math.abs(hands.getMotorPosition("monkeyShoulder")-startingPos)>=Math.abs(monkeyArm.middlePosition-startingPos)-25){
+                    monkeyArm.stopArm();
+                    movingToMid=false;
+                    doOnce=false;
                 }
 
             } else if (movingToLow){
-                double sign=1.0;
+                if (!doOnce) {
+                    startingPos=towerPos;
+                    if (startingPos > monkeyArm.lowPosition) {
+                        sign= -0.75;
+                    } else {
+                        sign=1;
+                    }
+                    doOnce=true;
+                }
+
+                hands.setMotorPower("monkeyShoulder",sign);
+
+                if (Math.abs(hands.getMotorPosition("monkeyShoulder")-startingPos)>=Math.abs(monkeyArm.lowPosition-startingPos)-25){
+                    monkeyArm.stopArm();
+                    movingToLow=false;
+                    doOnce=false;
+                }
             } else if (movingToFloor){
                 monkeyArm.retractArm(1);
                 if (hands.getMotorPosition("monkeyShoulder")<=monkeyArm.lowPosition+25){
@@ -308,17 +339,8 @@ public class MonkeyModeDual extends OpMode {
                 }
             }
 
-//            if (movingToPos){
-//                monkeyArm.retractArm(1);
-//                if (hands.getMotorPosition("monkeyShoulder") <= 100){
-//                    monkeyArm.stopArm();
-//                    movingToPos=false;
-//                    towerPos=0;
-//                }
-//            }
 
 
-            towerPos = (int)hands.getMotorPosition("monkeyShoulder");
             telemetry.addData("FL Power", driver.frontLeft.getPower());
             telemetry.addData("FR Power", driver.frontRight.getPower());
             telemetry.addData("BR Power", driver.backLeft.getPower());
