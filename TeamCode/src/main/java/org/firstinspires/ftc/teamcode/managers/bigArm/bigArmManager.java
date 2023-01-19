@@ -19,7 +19,7 @@ public class bigArmManager extends FeatureManager {
     }
 
     public void extendArm(double power){
-        hands.setMotorPower("monkeyShoulder", power * 0.75);
+        hands.setMotorPower("monkeyShoulder", power);
     }
 
     public void retractArm(double power){
@@ -56,53 +56,57 @@ public class bigArmManager extends FeatureManager {
         return !hands.hasEncodedMovement("monkeyShoulder");
     }
 
-    public void setPositionFloorLocation(){
+    public boolean setPositionFloorLocation(){
         retractArm(1);
         if (hands.getMotorPosition("monkeyShoulder") <= lowPosition + 25){
             stopArm();
-            MonkeyModeDual.movingToFloor = false;
+            return true;
         }
+        return false;
     }
 
-    public void setPositionLowLocation(){
+    public boolean setPositionLowLocation(){
         towerPos = (int)hands.getMotorPosition("monkeyShoulder");
         if (towerPos > lowPosition) {
             hands.setMotorPower("monkeyShoulder", -0.75);
-            if (Math.abs(hands.getMotorPosition("monkeyShoulder")) <= Math.abs(lowPosition) + 25){
+            if (hands.getMotorPosition("monkeyShoulder") <= lowPosition + 25){
                 stopArm();
-                MonkeyModeDual.movingToLow = false;
+                return true;
             }
         } else {
             hands.setMotorPower("monkeyShoulder", 1);
-            if (Math.abs(hands.getMotorPosition("monkeyShoulder")) >= Math.abs(lowPosition) - 25){
+            if (hands.getMotorPosition("monkeyShoulder") >= lowPosition - 25){
                 stopArm();
-                MonkeyModeDual.movingToLow = false;
+                return true;
             }
         }
+        return false;
     }
 
-    public void setPositionMiddleLocation(){
+    public boolean setPositionMiddleLocation(){
         towerPos = (int)hands.getMotorPosition("monkeyShoulder");
         if (towerPos > middlePosition) {
             hands.setMotorPower("monkeyShoulder", -0.75);
-            if (Math.abs(hands.getMotorPosition("monkeyShoulder")) <= Math.abs(middlePosition) + 25){
+            if (hands.getMotorPosition("monkeyShoulder") <= middlePosition + 25){
                 stopArm();
-                MonkeyModeDual.movingToMid = false;
+                return true;
             }
         } else {
             hands.setMotorPower("monkeyShoulder", 1);
-            if (Math.abs(hands.getMotorPosition("monkeyShoulder")) >= Math.abs(middlePosition) - 25){
+            if (hands.getMotorPosition("monkeyShoulder") >= middlePosition - 25){
                 stopArm();
-                MonkeyModeDual.movingToMid = false;
+                return true;
             }
         }
+        return false;
     }
 
-    public void setPositionHighLocation(){
+    public boolean setPositionHighLocation(){
         extendArm(1);
         if (hands.getMotorPosition("monkeyShoulder") >= highPosition - 25){
             stopArm();
-            MonkeyModeDual.movingToHigh = false;
+            return true;
         }
+        return false;
     }
 }

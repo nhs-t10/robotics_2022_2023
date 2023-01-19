@@ -52,10 +52,10 @@ public class MonkeyModeDual extends OpMode {
     private boolean rrStatus = false;
     boolean rrToggle = false;
 
-    public static boolean movingToLow = false;
-    public static boolean movingToMid = false;
-    public static boolean movingToHigh = false;
-    public static boolean movingToFloor = false;
+    public boolean movingToLow = false;
+    public boolean movingToMid = false;
+    public boolean movingToHigh = false;
+    public boolean movingToFloor = false;
 
     public boolean nyooming = false;
     public double distance;
@@ -225,10 +225,19 @@ public class MonkeyModeDual extends OpMode {
                 monkeyArm.closeHand();
             }
             if (input.getBool("extendArm")) {
-                hands.setMotorPower("monkeyShoulder", (input.getFloat("extendArm") * 0.75));
-            }
-            if (input.getBool("retractArm")) {
-                hands.setMotorPower("monkeyShoulder", (input.getFloat("retractArm") * -0.75));
+                monkeyArm.extendArm(input.getFloat("extendArm"));
+                movingToHigh=false;
+                movingToMid=false;
+                movingToLow=false;
+                movingToFloor=false;
+            } else if (input.getBool("retractArm")) {
+                monkeyArm.retractArm(input.getFloat("retractArm"));
+                movingToHigh=false;
+                movingToMid=false;
+                movingToLow=false;
+                movingToFloor=false;
+            } else if (!movingToFloor && !movingToLow && !movingToMid && !movingToHigh){
+                monkeyArm.stopArm();
             }
             /*if (input.getBool("colorNYOOM") && !nyooming) {
                 nyooming = true;
@@ -242,22 +251,49 @@ public class MonkeyModeDual extends OpMode {
             }*/
 //            currentColor = sensing.getColor("rainbowSense");
 //            currentColor1 = sensing.getColor("rainbowSense1");
-            if (input.getBool("armLengthNone") || movingToFloor) {
-                movingToFloor = true;
-                monkeyArm.setPositionFloorLocation();
+
+            if (input.getBool("armLengthNone")) {
+                movingToFloor=true;
+                movingToLow=false;
+                movingToMid=false;
+                movingToHigh=false;
             }
 
-            if (input.getBool("armLengthSmall") || movingToLow) {
-                movingToLow = true;
-                monkeyArm.setPositionLowLocation();
+            if (input.getBool("armLengthSmall")) {
+                movingToFloor=false;
+                movingToLow=true;
+                movingToMid=false;
+                movingToHigh=false;
             }
-            if (input.getBool("armLengthMedium") || movingToMid) {
-                movingToMid = true;
-                monkeyArm.setPositionMiddleLocation();
+            if (input.getBool("armLengthMedium")) {
+                movingToFloor=false;
+                movingToLow=false;
+                movingToMid=true;
+                movingToHigh=false;
             }
-            if (input.getBool("armLengthTall") || movingToHigh) {
-                movingToHigh = true;
-                monkeyArm.setPositionHighLocation();
+            if (input.getBool("armLengthTall")) {
+                movingToFloor=false;
+                movingToLow=false;
+                movingToMid=false;
+                movingToHigh=true;
+            }
+
+            if (movingToFloor) {
+                 if (monkeyArm.setPositionFloorLocation()){
+                     movingToFloor=false;
+                 }
+            } else if (movingToLow) {
+                if (monkeyArm.setPositionLowLocation()){
+                    movingToLow=false;
+                }
+            } else if (movingToMid) {
+                if (monkeyArm.setPositionMiddleLocation()){
+                    movingToMid=false;
+                }
+            } else if (movingToHigh) {
+                if (monkeyArm.setPositionHighLocation()){
+                    movingToHigh=false;
+                }
             }
 
             telemetry.addData("FL Power", driver.frontLeft.getPower());
