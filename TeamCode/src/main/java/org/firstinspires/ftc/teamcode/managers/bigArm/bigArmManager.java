@@ -60,9 +60,9 @@ public class bigArmManager extends FeatureManager {
         retractArm(1);
         if (hands.getMotorPosition("monkeyShoulder") <= lowPosition + 25){
             stopArm();
-            return true;
+            return false;
         }
-        return false;
+        return true;
     }
 
     public boolean setPositionLowLocation(){
@@ -71,16 +71,16 @@ public class bigArmManager extends FeatureManager {
             hands.setMotorPower("monkeyShoulder", -0.75);
             if (hands.getMotorPosition("monkeyShoulder") <= lowPosition + 25){
                 stopArm();
-                return true;
+                return false;
             }
         } else {
             hands.setMotorPower("monkeyShoulder", 1);
             if (hands.getMotorPosition("monkeyShoulder") >= lowPosition - 25){
                 stopArm();
-                return true;
+                return false;
             }
         }
-        return false;
+        return true;
     }
 
     public boolean setPositionMiddleLocation(){
@@ -89,24 +89,24 @@ public class bigArmManager extends FeatureManager {
             hands.setMotorPower("monkeyShoulder", -0.75);
             if (hands.getMotorPosition("monkeyShoulder") <= middlePosition + 25){
                 stopArm();
-                return true;
+                return false;
             }
         } else {
             hands.setMotorPower("monkeyShoulder", 1);
             if (hands.getMotorPosition("monkeyShoulder") >= middlePosition - 25){
                 stopArm();
-                return true;
+                return false;
             }
         }
-        return false;
+        return true;
     }
 
     public boolean setPositionHighLocation(){
         extendArm(1);
         if (hands.getMotorPosition("monkeyShoulder") >= highPosition - 25){
             stopArm();
-            return true;
+            return false;
         }
-        return false;
+        return true;
     }
 }

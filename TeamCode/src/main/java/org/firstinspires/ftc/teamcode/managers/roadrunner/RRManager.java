@@ -382,8 +382,8 @@ public class RRManager extends FeatureManager {
         driveRR.update();
 
         // Print pose to telemetry
-        telemetry.addData("x", poseEstimate.getX());
-        telemetry.addData("y", poseEstimate.getY());
+        //telemetry.addData("x", poseEstimate.getX());
+        //telemetry.addData("y", poseEstimate.getY());
     }
 
 }

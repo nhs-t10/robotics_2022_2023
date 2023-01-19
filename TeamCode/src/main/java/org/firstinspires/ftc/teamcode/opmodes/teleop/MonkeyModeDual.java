@@ -161,17 +161,15 @@ public class MonkeyModeDual extends OpMode {
         rr.calibrateDriveToAutoPosition();
 
         PriorityAsyncOpmodeComponent.start(() -> {
-            if (input.getBool("rrToggle") && !rrStatus) {
+            /*if (input.getBool("rrToggle") && !rrStatus) {
                 rrToggle=!rrToggle;
                 rrStatus = true;
             } else if (!input.getBool("rrToggle") && rrStatus){
                 rrStatus = false;
-            }
+            }*/
             if(rrToggle && rr.notBusy()) {
-
                 if (input.getBool("RR1") && rr.notBusy()) {
                     //rr.moveToPosWithID(2);
-
                     try {
                         rr.customMoveSequenceWithPoseTrajSequence(new Pose2d[]{new Pose2d(0, 15), new Pose2d(0, 15), new Pose2d(15, 15)}, new String[]{"strafe", "turn", "strafe"}, new double[]{0, 90, 0});
                     } catch (SequenceInitException e) {
@@ -196,9 +194,6 @@ public class MonkeyModeDual extends OpMode {
             rr.updateLocalizer();
             rr.doOmniDisplace(input.gamepad, input.gamepad2);
             telemetry = new MultipleTelemetry(telemetry, FtcDashboard.getInstance().getTelemetry());
-
-
-
         });
 
     }
@@ -206,7 +201,6 @@ public class MonkeyModeDual extends OpMode {
         try {
             input.update();
             towerPos = (int)hands.getMotorPosition("monkeyShoulder");
-
 
             if(rr.notBusy()){
                 //Meant to be if this && !input.getBool("armLengthNone");
@@ -252,6 +246,9 @@ public class MonkeyModeDual extends OpMode {
 //            currentColor = sensing.getColor("rainbowSense");
 //            currentColor1 = sensing.getColor("rainbowSense1");
 
+            /*if ((input.getBool("armLengthNone") || movingToFloor) && !movingToLow && !movingToMid && !movingToHigh) {
+                movingToFloor = monkeyArm.setPositionFloorLocation();
+            } Look into this more later */
             if (input.getBool("armLengthNone")) {
                 movingToFloor=true;
                 movingToLow=false;
@@ -279,21 +276,13 @@ public class MonkeyModeDual extends OpMode {
             }
 
             if (movingToFloor) {
-                 if (monkeyArm.setPositionFloorLocation()){
-                     movingToFloor=false;
-                 }
+                 movingToFloor = monkeyArm.setPositionFloorLocation();
             } else if (movingToLow) {
-                if (monkeyArm.setPositionLowLocation()){
-                    movingToLow=false;
-                }
+                movingToLow = monkeyArm.setPositionLowLocation();
             } else if (movingToMid) {
-                if (monkeyArm.setPositionMiddleLocation()){
-                    movingToMid=false;
-                }
+                movingToMid = monkeyArm.setPositionMiddleLocation();
             } else if (movingToHigh) {
-                if (monkeyArm.setPositionHighLocation()){
-                    movingToHigh=false;
-                }
+                movingToHigh = monkeyArm.setPositionHighLocation();
             }
 
             telemetry.addData("FL Power", driver.frontLeft.getPower());
