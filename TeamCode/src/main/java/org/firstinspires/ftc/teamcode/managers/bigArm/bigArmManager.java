@@ -8,9 +8,12 @@ import org.firstinspires.ftc.teamcode.opmodes.teleop.MonkeyModeDual;
 
 public class bigArmManager extends FeatureManager {
     ManipulationManager hands;
-    public final int lowPosition = 100; //The distance from the floor position to the lowest tower's height
+    public final int floorPosition = 150; //The distance from the floor position to the lowest tower's height
+    public final int lowPosition=1000;
     public final int middlePosition = 1951; //The distance from the floor position to the middle tower's height
     public final int highPosition = 2956; //The distance from the floor position  to the high tower's height
+    public double direction =1.0;
+    public boolean doOnce=false;
     int towerPos = 0;
     int startingPos = 0;
 
@@ -58,45 +61,54 @@ public class bigArmManager extends FeatureManager {
 
     public boolean setPositionFloorLocation(){
         retractArm(1);
-        if (hands.getMotorPosition("monkeyShoulder") <= lowPosition + 25){
+        if (hands.getMotorPosition("monkeyShoulder") <= floorPosition + 25){
             stopArm();
+            towerPos=0;
             return false;
         }
         return true;
     }
-
+    public void resetDoOnce(){
+        doOnce=false;
+    }
     public boolean setPositionLowLocation(){
         towerPos = (int)hands.getMotorPosition("monkeyShoulder");
-        if (towerPos > lowPosition) {
-            hands.setMotorPower("monkeyShoulder", -0.75);
-            if (hands.getMotorPosition("monkeyShoulder") <= lowPosition + 25){
-                stopArm();
-                return false;
+
+        if(!doOnce){
+            startingPos=towerPos;
+            if(towerPos>lowPosition){
+                direction=-0.75;
+            } else {
+                direction=1;
             }
-        } else {
-            hands.setMotorPower("monkeyShoulder", 1);
-            if (hands.getMotorPosition("monkeyShoulder") >= lowPosition - 25){
-                stopArm();
-                return false;
-            }
+            doOnce=true;
+        }
+        hands.setMotorPower("monkeyShoulder",direction);
+        if (Math.abs(hands.getMotorPosition("monkeyShoulder")-startingPos)>=Math.abs(lowPosition-startingPos)-25){
+            stopArm();
+            doOnce=false;
+            return false;
         }
         return true;
     }
 
     public boolean setPositionMiddleLocation(){
         towerPos = (int)hands.getMotorPosition("monkeyShoulder");
-        if (towerPos > middlePosition) {
-            hands.setMotorPower("monkeyShoulder", -0.75);
-            if (hands.getMotorPosition("monkeyShoulder") <= middlePosition + 25){
-                stopArm();
-                return false;
+
+        if(!doOnce){
+            startingPos=towerPos;
+            if(towerPos>middlePosition){
+                direction=-0.75;
+            } else {
+                direction=1;
             }
-        } else {
-            hands.setMotorPower("monkeyShoulder", 1);
-            if (hands.getMotorPosition("monkeyShoulder") >= middlePosition - 25){
-                stopArm();
-                return false;
-            }
+            doOnce=true;
+        }
+        hands.setMotorPower("monkeyShoulder",direction);
+        if (Math.abs(hands.getMotorPosition("monkeyShoulder")-startingPos)>=Math.abs(middlePosition-startingPos)-25){
+            stopArm();
+            doOnce=false;
+            return false;
         }
         return true;
     }
