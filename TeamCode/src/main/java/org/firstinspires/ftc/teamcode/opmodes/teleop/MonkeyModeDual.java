@@ -52,13 +52,10 @@ public class MonkeyModeDual extends OpMode {
     private boolean rrStatus = false;
     boolean rrToggle = false;
 
-    private boolean movingToLow = false;
-    private boolean movingToMid = false;
-    private boolean movingToHigh = false;
-    private boolean movingToFloor = false;
-    private boolean doOnce = false;
-    private double sign=1.0;
-    private int startingPos=0;
+    public static boolean movingToLow = false;
+    public static boolean movingToMid = false;
+    public static boolean movingToHigh = false;
+    public static boolean movingToFloor = false;
 
     public boolean nyooming = false;
     public double distance;
@@ -228,24 +225,9 @@ public class MonkeyModeDual extends OpMode {
                 monkeyArm.closeHand();
             }
 
-            if (input.getBool("extendArm")) {
-                monkeyArm.extendArm(input.getFloat("extendArm"));
-                movingToHigh=false;
-                movingToMid=false;
-                movingToLow=false;
-                movingToFloor=false;
-                doOnce=false;
-            } else if (input.getBool("retractArm")) {
-                monkeyArm.retractArm(input.getFloat("retractArm"));
-                intakeToggle=false;
-                movingToHigh=false;
-                movingToMid=false;
-                movingToLow=false;
-                movingToFloor=false;
-                doOnce=false;
-            } else if (!movingToFloor && !movingToLow && !movingToMid && !movingToHigh){
-                monkeyArm.stopArm();
-            }
+            hands.setMotorPower("monkeyShoulder", (input.getFloat("extendArm") * 0.75));
+            hands.setMotorPower("monkeyShoulder", (input.getFloat("retractArm") * -0.75));
+
             /*if (input.getBool("colorNYOOM") && !nyooming) {
                 nyooming = true;
                 rr.setBusy();
@@ -258,88 +240,23 @@ public class MonkeyModeDual extends OpMode {
             }*/
 //            currentColor = sensing.getColor("rainbowSense");
 //            currentColor1 = sensing.getColor("rainbowSense1");
-            if (input.getBool("armLengthNone")) {
-                movingToFloor=true;
-                movingToLow=false;
-                movingToMid=false;
-                movingToHigh=false;
-                doOnce=false;
+            if (input.getBool("armLengthNone") || movingToFloor) {
+                movingToFloor = true;
+                monkeyArm.setPositionFloorLocation();
             }
 
-            if (input.getBool("armLengthSmall")) {
-                movingToFloor=false;
-                movingToLow=true;
-                movingToMid=false;
-                movingToHigh=false;
-                doOnce=false;
+            if (input.getBool("armLengthSmall") || movingToLow) {
+                movingToLow = true;
+                monkeyArm.setPositionLowLocation();
             }
-            if (input.getBool("armLengthMedium")) {
-                movingToFloor=false;
-                movingToLow=false;
-                movingToMid=true;
-                movingToHigh=false;
-                doOnce=false;
+            if (input.getBool("armLengthMedium") || movingToMid) {
+                movingToMid = true;
+                monkeyArm.setPositionMiddleLocation();
             }
-            if (input.getBool("armLengthTall")) {
-                movingToFloor=false;
-                movingToLow=false;
-                movingToMid=false;
-                movingToHigh=true;
-                doOnce=false;
+            if (input.getBool("armLengthTall") || movingToHigh) {
+                movingToHigh = true;
+                monkeyArm.setPositionHighLocation();
             }
-
-            if(movingToHigh){
-                monkeyArm.extendArm(1);
-                if (hands.getMotorPosition("monkeyShoulder")>=monkeyArm.highPosition-25){
-                    monkeyArm.stopArm();
-                    movingToHigh=false;
-                }
-            } else if (movingToMid){
-                if (!doOnce) {
-                    startingPos=towerPos;
-                    if (startingPos > monkeyArm.middlePosition) {
-                        sign= -0.75;
-                    } else {
-                        sign=1;
-                    }
-                    doOnce=true;
-                }
-
-                hands.setMotorPower("monkeyShoulder",sign);
-
-                if (Math.abs(hands.getMotorPosition("monkeyShoulder")-startingPos)>=Math.abs(monkeyArm.middlePosition-startingPos)-25){
-                    monkeyArm.stopArm();
-                    movingToMid=false;
-                    doOnce=false;
-                }
-
-            } else if (movingToLow){
-                if (!doOnce) {
-                    startingPos=towerPos;
-                    if (startingPos > monkeyArm.lowPosition) {
-                        sign= -0.75;
-                    } else {
-                        sign=1;
-                    }
-                    doOnce=true;
-                }
-
-                hands.setMotorPower("monkeyShoulder",sign);
-
-                if (Math.abs(hands.getMotorPosition("monkeyShoulder")-startingPos)>=Math.abs(monkeyArm.lowPosition-startingPos)-25){
-                    monkeyArm.stopArm();
-                    movingToLow=false;
-                    doOnce=false;
-                }
-            } else if (movingToFloor){
-                monkeyArm.retractArm(1);
-                if (hands.getMotorPosition("monkeyShoulder")<=monkeyArm.lowPosition+25){
-                    monkeyArm.stopArm();
-                    movingToFloor=false;
-                }
-            }
-
-
 
             telemetry.addData("FL Power", driver.frontLeft.getPower());
             telemetry.addData("FR Power", driver.frontRight.getPower());
