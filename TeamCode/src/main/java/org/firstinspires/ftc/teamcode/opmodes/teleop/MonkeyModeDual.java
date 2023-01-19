@@ -224,12 +224,14 @@ public class MonkeyModeDual extends OpMode {
                 movingToMid=false;
                 movingToLow=false;
                 movingToFloor=false;
+                monkeyArm.resetDoOnce();
             } else if (input.getBool("retractArm")) {
                 monkeyArm.retractArm(input.getFloat("retractArm"));
                 movingToHigh=false;
                 movingToMid=false;
                 movingToLow=false;
                 movingToFloor=false;
+                monkeyArm.resetDoOnce();
             } else if (!movingToFloor && !movingToLow && !movingToMid && !movingToHigh){
                 monkeyArm.stopArm();
             }
@@ -254,6 +256,7 @@ public class MonkeyModeDual extends OpMode {
                 movingToLow=false;
                 movingToMid=false;
                 movingToHigh=false;
+                monkeyArm.resetDoOnce();
             }
 
             if (input.getBool("armLengthSmall")) {
@@ -261,18 +264,21 @@ public class MonkeyModeDual extends OpMode {
                 movingToLow=true;
                 movingToMid=false;
                 movingToHigh=false;
+                monkeyArm.resetDoOnce();
             }
             if (input.getBool("armLengthMedium")) {
                 movingToFloor=false;
                 movingToLow=false;
                 movingToMid=true;
                 movingToHigh=false;
+                monkeyArm.resetDoOnce();
             }
             if (input.getBool("armLengthTall")) {
                 movingToFloor=false;
                 movingToLow=false;
                 movingToMid=false;
                 movingToHigh=true;
+                monkeyArm.resetDoOnce();
             }
 
             if (movingToFloor) {
