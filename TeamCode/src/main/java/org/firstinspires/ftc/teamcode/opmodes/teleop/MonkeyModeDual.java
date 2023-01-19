@@ -224,10 +224,12 @@ public class MonkeyModeDual extends OpMode {
             } else {
                 monkeyArm.closeHand();
             }
-
-            hands.setMotorPower("monkeyShoulder", (input.getFloat("extendArm") * 0.75));
-            hands.setMotorPower("monkeyShoulder", (input.getFloat("retractArm") * -0.75));
-
+            if (input.getBool("extendArm")) {
+                hands.setMotorPower("monkeyShoulder", (input.getFloat("extendArm") * 0.75));
+            }
+            if (input.getBool("retractArm")) {
+                hands.setMotorPower("monkeyShoulder", (input.getFloat("retractArm") * -0.75));
+            }
             /*if (input.getBool("colorNYOOM") && !nyooming) {
                 nyooming = true;
                 rr.setBusy();
