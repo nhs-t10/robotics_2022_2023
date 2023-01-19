@@ -22,13 +22,14 @@ goto start;
     driveOmni(1,0,0), after 120cm next;
     //driveOmni(0,0,1), after 150degs next;
     driveOmni(0,-0.5,0), after 28.5cm next;
-
-#slides:
+   goto slides1;
+#slides1:
+    //setPositionHighLocation();
     let done = setPositionHighLocation();
     if (done){
         goto process2;
     } else {
-        goto slides;
+        goto slides1;
     }
 
 #process2:
@@ -54,16 +55,17 @@ goto start;
     driveOmni(0,-1,0), after 68cm next;
     next;//go left one tile, go forward 1.5 tiles
     driveOmni(1,0,0), after 95cm next;
-    goto end;
+    goto slides2;
 
 #color2:
-    driveOmni(1,0,0), after 95cm next; //go forward 1.5 tiles    goto end;
+    driveOmni(1,0,0), after 95cm next;
+    goto slides2;//go forward 1.5 tiles    goto end;
 
 #color3:
     driveOmni(0,1,0), after 68cm next;
     next;//go right one tile, go forward 1.5 tiles
     driveOmni(1,0,0), after 95cm next;
-    goto end;
+    goto slides2;
 
 #error:
 //this is a stupid hack
@@ -73,6 +75,13 @@ goto start;
     goto end;
 */
 //this didn't work
+#slides2:
+    let done = setPositionFloorLocation();
+    if (done){
+        goto end;
+    } else {
+        goto slides2;
+    }
 #end:
 // Putting the forward driveOmni here doesn't work for whatever reason, don't try it lol.
     setAutoAutoPosition(new (Pose2d())), next;

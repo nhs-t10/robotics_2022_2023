@@ -158,7 +158,7 @@ public class MonkeyModeDual extends OpMode {
         //input.registerInput("rrTog", new ToggleNode(new ButtonNode("dpadup")));
         input.registerInput("rrToggle", new ButtonNode("dpadup"));
         input.setOverlapResolutionMethod(InputOverlapResolutionMethod.MOST_COMPLEX_ARE_THE_FAVOURITE_CHILD);
-        rr.calibrateDriveToAutoPosition();
+        //rr.calibrateDriveToAutoPosition();
 
         PriorityAsyncOpmodeComponent.start(() -> {
             /*if (input.getBool("rrToggle") && !rrStatus) {

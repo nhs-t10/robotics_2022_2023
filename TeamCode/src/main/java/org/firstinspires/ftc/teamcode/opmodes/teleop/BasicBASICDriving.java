@@ -33,7 +33,7 @@ import org.firstinspires.ftc.teamcode.managers.telemetry.TelemetryManager;
 import java.util.Arrays;
 
 @TeleOp
-public class LearnDual extends OpMode {
+public class BasicBASICDriving extends OpMode {
     public MovementManager driver;
     public ManipulationManager hands;
     public InputManager input;
@@ -64,13 +64,11 @@ public class LearnDual extends OpMode {
         hands = new ManipulationManager(
                 hardwareMap,
                 crservo         (),
-                servo           ("leftWiper", "rightWiper"),
-                motor           ("Catapault")
+                servo           (),
+                motor           ()
         );
 
         arm = new bigArmManager(hands);
-
-        clawPosition = new NateManager(hands, hardwareMap.get(TouchSensor.class, "limit"));
         input = new InputManager(gamepad1, gamepad2);
         input.registerInput("drivingControls",
                 new MultiplyNode(
@@ -82,11 +80,6 @@ public class LearnDual extends OpMode {
                     )
                 )
             );
-
-        input.registerInput("leftWiperControl", new ButtonNode("left_bumper"));
-        input.registerInput("rightWiperControl", new ButtonNode("right_bumper"));
-
-        input.registerInput("catapaultControl", new JoystickNode("right_trigger"));
 
         input.setOverlapResolutionMethod(InputOverlapResolutionMethod.MOST_COMPLEX_ARE_THE_FAVOURITE_CHILD);
 
@@ -115,26 +108,6 @@ public class LearnDual extends OpMode {
     }
     public void real_loop_Bad_Practice_Fix_Me_Later() {
         input.update();
-
-        hands.setMotorPower("Catapault",
-                input.getFloat("CatapaultControl")
-        );
-
-
-        if(input.getBool("leftWiperControl")) {
-            hands.setServoPosition("leftWiper", 1);
-        } else {
-            hands.setServoPosition("leftWiper", 0);
-        }
-
-        if(input.getBool("rightWiperControl")) {
-            hands.setServoPosition("rightWiper", 0);
-        } else {
-            hands.setServoPosition("rightWiper", 1);
-        }
-
-
-
 
         //FeatureManager.logger.log(BuildHistory.buildName);
         telemetry.addData("FL Power", driver.frontLeft.getPower());
