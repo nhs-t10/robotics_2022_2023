@@ -27,9 +27,9 @@ public class FeatureManager {
 
 
     public static final RobotConfiguration monkeyWheelsConfiguration = new RobotConfiguration("monkeyWheels",
-            W(-1f,-1,1f,1), W(-1f,1,1f,-1),
+            W(1f,-1,-1f,-1), W(-1f,1,-1f,1),
             new OmniCalcComponents(
-                vertical      (-0.96f,1f,0.96f,-1f),
+                vertical      (1f,1f,1f,-1f),
                 rotational    (1f, 1f, -1f, -1f),
                 horizontal    (1f,1f,1f,1f)
             ),

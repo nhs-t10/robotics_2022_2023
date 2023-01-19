@@ -55,15 +55,15 @@ public class RRManager extends FeatureManager {
     }
     public void reverseMotors(){
         driveRR.fr.setDirection(DcMotorSimple.Direction.REVERSE);
-        driveRR.br.setDirection(DcMotorSimple.Direction.REVERSE);
-        driveRR.fl.setDirection(DcMotorSimple.Direction.FORWARD);
-        driveRR.bl.setDirection(DcMotorSimple.Direction.FORWARD);
+        driveRR.br.setDirection(DcMotorSimple.Direction.FORWARD);
+        driveRR.fl.setDirection(DcMotorSimple.Direction.REVERSE);
+        driveRR.bl.setDirection(DcMotorSimple.Direction.REVERSE);
     }
     public void resetMotors(){
         driveRR.fr.setDirection(DcMotorSimple.Direction.FORWARD);
-        driveRR.br.setDirection(DcMotorSimple.Direction.FORWARD);
-        driveRR.fl.setDirection(DcMotorSimple.Direction.FORWARD);
-        driveRR.bl.setDirection(DcMotorSimple.Direction.FORWARD);
+        driveRR.br.setDirection(DcMotorSimple.Direction.REVERSE);
+        driveRR.fl.setDirection(DcMotorSimple.Direction.REVERSE);
+        driveRR.bl.setDirection(DcMotorSimple.Direction.REVERSE);
     }
     /**
      * Moves the robot to the given id's position and rotates it to the id's given rotation
