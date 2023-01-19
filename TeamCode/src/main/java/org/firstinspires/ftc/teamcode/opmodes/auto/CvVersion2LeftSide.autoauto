@@ -14,15 +14,24 @@ goto start;
     log(color), next;
     log(getAnalysisTest()), next;
     stopWebcam(), next;
-    goto process;
+    goto process1;
 
-#process:
+#process1:
     driveOmni(0,0.5,0), after 10cm next; //todo:fix distance
     driveOmni(0,-1,0), after 55cm next;
     //driveOmni(0,0,0.5), after 5degs next;
     driveOmni(1,0,0), after 100cm next;
     //driveOmni(0,0,1), after 150degs next;
+#slides:
     //setPositionHighLocation();
+    let done = setPositionHighLocation();
+    if (done){
+        goto process2;
+    } else {
+        goto slides;
+    }
+
+#process2:
     driveOmni(0,0.5,0), after 55cm next;
     driveOmni(0,0,0), after 2s next;
     //openHand();
@@ -71,4 +80,3 @@ goto start;
     driveOmni(0, 0, 0), next;
     setAutoAutoPosition(new (Pose2d())), next;
     log("I go to the end!");
-
