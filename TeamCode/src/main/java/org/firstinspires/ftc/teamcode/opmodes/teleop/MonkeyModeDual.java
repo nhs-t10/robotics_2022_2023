@@ -46,14 +46,24 @@ public class MonkeyModeDual extends OpMode {
     public TrajectoryBuilder trajBuild;
     public bigArmManager monkeyArm;
     public SensorManager sensing;
+
     private boolean handStatus = false;
-    private boolean rrStatus = false;
-    private boolean stopOnce = false;
     private boolean intakeToggle = false;
+    private boolean rrStatus = false;
+    boolean rrToggle = false;
+
+    private boolean movingToLow = false;
+    private boolean movingToMid = false;
+    private boolean movingToHigh = false;
+    private boolean movingToFloor = false;
+    private boolean doOnce = false;
+    private double sign=1.0;
+    private int startingPos=0;
+
     public boolean nyooming = false;
     public double distance;
     int towerPos = 0;
-    boolean rrToggle = false;
+
     int currentColor = 0;
     int currentColor1 = 0;
     float rainbowSenseRed = 0;
@@ -85,7 +95,7 @@ public class MonkeyModeDual extends OpMode {
                 servo           ("monkeyHand"),
                 motor           ("monkeyShoulder")
         );
-        hands.setMotorMode("monkeyShoulder", DcMotor.RunMode.RUN_USING_ENCODER);
+        //hands.resetEncoders("monkeyShoulder");
         sensing = new SensorManager(
                 hardwareMap,
                 SensorManager.colorSensor("rainbowSense", "rainbowSense1"),
@@ -174,24 +184,33 @@ public class MonkeyModeDual extends OpMode {
                     }
                 }
                 if (input.getBool("RR2")) {
-                    rr.moveToPosWithID(1);
+                    //rr.moveToPosWithID(1);
+                    telemetry.log().add("RR PATH STARTED");
+                    rr.customMoveWithPose(new Pose2d(0, 25), "strafe", 20);
                 }
                 if (input.getBool("RR3") && rr.notBusy()) {
                     rr.calibrateDriveToZero();
                 }
                 if (input.getBool("RR4") && rr.notBusy()) {
-                    rr.customMoveWithPose(new Pose2d(), "forward", 20);
+                    telemetry.log().add("RR PATH STARTED");
+                    rr.customMoveWithPose(new Pose2d(0, 20), "strafe", 20);
                 }
             }
+            rr.updateLocalizer();
+            rr.doOmniDisplace(input.gamepad, input.gamepad2);
+            telemetry = new MultipleTelemetry(telemetry, FtcDashboard.getInstance().getTelemetry());
+
+
 
         });
-        rr.updateLocalizer();
-        rr.doOmniDisplace(input.gamepad, input.gamepad2);
-        telemetry = new MultipleTelemetry(telemetry, FtcDashboard.getInstance().getTelemetry());
+
     }
     public void loop() {
         try {
             input.update();
+            towerPos = (int)hands.getMotorPosition("monkeyShoulder");
+
+
             if(rr.notBusy()){
                 //Meant to be if this && !input.getBool("armLengthNone");
                 driver.driveOmni(input.getFloatArrayOfInput("drivingControls"));
@@ -211,10 +230,20 @@ public class MonkeyModeDual extends OpMode {
 
             if (input.getBool("extendArm")) {
                 monkeyArm.extendArm(input.getFloat("extendArm"));
+                movingToHigh=false;
+                movingToMid=false;
+                movingToLow=false;
+                movingToFloor=false;
+                doOnce=false;
             } else if (input.getBool("retractArm")) {
                 monkeyArm.retractArm(input.getFloat("retractArm"));
                 intakeToggle=false;
-            } else if (monkeyArm.finishedMoving()){
+                movingToHigh=false;
+                movingToMid=false;
+                movingToLow=false;
+                movingToFloor=false;
+                doOnce=false;
+            } else if (!movingToFloor && !movingToLow && !movingToMid && !movingToHigh){
                 monkeyArm.stopArm();
             }
             /*if (input.getBool("colorNYOOM") && !nyooming) {
@@ -227,20 +256,91 @@ public class MonkeyModeDual extends OpMode {
                 driver.driveOmni(0,0,0);
                 nyooming = false;
             }*/
-            currentColor = sensing.getColor("rainbowSense");
-            currentColor1 = sensing.getColor("rainbowSense1");
+//            currentColor = sensing.getColor("rainbowSense");
+//            currentColor1 = sensing.getColor("rainbowSense1");
             if (input.getBool("armLengthNone")) {
-                monkeyArm.setPositionFloorLocation();
+                movingToFloor=true;
+                movingToLow=false;
+                movingToMid=false;
+                movingToHigh=false;
+                doOnce=false;
             }
+
             if (input.getBool("armLengthSmall")) {
-                monkeyArm.setPositionLowLocation();
+                movingToFloor=false;
+                movingToLow=true;
+                movingToMid=false;
+                movingToHigh=false;
+                doOnce=false;
             }
             if (input.getBool("armLengthMedium")) {
-                monkeyArm.setPositionMiddleLocation();
+                movingToFloor=false;
+                movingToLow=false;
+                movingToMid=true;
+                movingToHigh=false;
+                doOnce=false;
             }
             if (input.getBool("armLengthTall")) {
-                monkeyArm.setPositionHighLocation();
+                movingToFloor=false;
+                movingToLow=false;
+                movingToMid=false;
+                movingToHigh=true;
+                doOnce=false;
             }
+
+            if(movingToHigh){
+                monkeyArm.extendArm(1);
+                if (hands.getMotorPosition("monkeyShoulder")>=monkeyArm.highPosition-25){
+                    monkeyArm.stopArm();
+                    movingToHigh=false;
+                }
+            } else if (movingToMid){
+                if (!doOnce) {
+                    startingPos=towerPos;
+                    if (startingPos > monkeyArm.middlePosition) {
+                        sign= -0.75;
+                    } else {
+                        sign=1;
+                    }
+                    doOnce=true;
+                }
+
+                hands.setMotorPower("monkeyShoulder",sign);
+
+                if (Math.abs(hands.getMotorPosition("monkeyShoulder")-startingPos)>=Math.abs(monkeyArm.middlePosition-startingPos)-25){
+                    monkeyArm.stopArm();
+                    movingToMid=false;
+                    doOnce=false;
+                }
+
+            } else if (movingToLow){
+                if (!doOnce) {
+                    startingPos=towerPos;
+                    if (startingPos > monkeyArm.lowPosition) {
+                        sign= -0.75;
+                    } else {
+                        sign=1;
+                    }
+                    doOnce=true;
+                }
+
+                hands.setMotorPower("monkeyShoulder",sign);
+
+                if (Math.abs(hands.getMotorPosition("monkeyShoulder")-startingPos)>=Math.abs(monkeyArm.lowPosition-startingPos)-25){
+                    monkeyArm.stopArm();
+                    movingToLow=false;
+                    doOnce=false;
+                }
+            } else if (movingToFloor){
+                monkeyArm.retractArm(1);
+                if (hands.getMotorPosition("monkeyShoulder")<=monkeyArm.lowPosition+25){
+                    monkeyArm.stopArm();
+                    movingToFloor=false;
+                }
+            }
+
+
+
             telemetry.addData("FL Power", driver.frontLeft.getPower());
             telemetry.addData("FR Power", driver.frontRight.getPower());
             telemetry.addData("BR Power", driver.backLeft.getPower());
@@ -249,7 +349,7 @@ public class MonkeyModeDual extends OpMode {
             telemetry.addData("Heading", rr.getDrive().getExternalHeading());
             telemetry.addData("Servo Open",""+intakeToggle);
             telemetry.addData("Tower Power", hands.getMotorPower("monkeyShoulder"));
-            telemetry.addData("Tower Position: ", (int) hands.getMotorPosition("monkeyShoulder"));
+            telemetry.addData("Tower Position: ", towerPos);
             telemetry.addData("FL Position: ", driver.frontLeft.getCurrentPosition());
             telemetry.addData("Last Error: ", lastError);
             telemetry.addData("CurrentColor", currentColor);
