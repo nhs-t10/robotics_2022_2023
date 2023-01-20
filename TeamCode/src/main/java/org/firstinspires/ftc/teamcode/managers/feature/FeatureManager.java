@@ -27,11 +27,11 @@ public class FeatureManager {
 
 
     public static final RobotConfiguration monkeyWheelsConfiguration = new RobotConfiguration("monkeyWheels",
-            W(1f,-1,1f,1), W(-1f,1,-1f,1),
+            W(-1f,1,-1f,1f), W(-1f,1f,-1f,1f),
             new OmniCalcComponents(
-                vertical      (-1f,-1f,1f,-1f),
-                rotational    (1f, 1f, -1f, -1f),
-                horizontal    (1f,1f,1f,1f)
+                vertical      (1f,1f,1f,1f),
+                rotational    (-1f, 1f, -1f, 1f),
+                horizontal    (-1f,1f,1f,-1f)
             ),
             0.03f, 537.7, 1, 8.9, 0.89, 3f,
             PIDMAP(

@@ -68,7 +68,7 @@ public class MonkeyModeDual extends OpMode {
     public Pose2d lastError;
     private boolean looping = false;
     private boolean shouldActuallyDoThings = true;
-    private RRManager rr;
+    //private RRManager rr;
     boolean deb = false;
 
 
@@ -80,7 +80,7 @@ public class MonkeyModeDual extends OpMode {
         TelemetryManager telemetryManager = new TelemetryManager(telemetry, this, TelemetryManager.BITMASKS.NONE);
         telemetry = telemetryManager;
         FeatureManager.logger.setBackend(telemetry.log());
-        rr = new RRManager(hardwareMap, new Pose2d(0, 0, Math.toRadians(0)), telemetryManager, this);
+        //rr = new RRManager(hardwareMap, new Pose2d(0, 0, Math.toRadians(0)), telemetryManager, this);
         DcMotor fl = hardwareMap.get(DcMotor.class, "fl");
         DcMotor fr = hardwareMap.get(DcMotor.class, "fr");
         DcMotor br = hardwareMap.get(DcMotor.class, "br");
@@ -143,16 +143,16 @@ public class MonkeyModeDual extends OpMode {
         input.registerInput("armLengthNone",
                 new ButtonNode("gamepad2b")
         );
-        input.registerInput("RR1",
+        input.registerInput("y1",
                 new ButtonNode("y")
                 );
-        input.registerInput("RR2",
+        input.registerInput("x1",
                 new ButtonNode("x")
         );
-        input.registerInput("RR3",
+        input.registerInput("b1",
                 new ButtonNode("b")
         );
-        input.registerInput("RR4",
+        input.registerInput("a1",
                 new ButtonNode("a")
         );
         //input.registerInput("rrTog", new ToggleNode(new ButtonNode("dpadup")));
@@ -166,7 +166,7 @@ public class MonkeyModeDual extends OpMode {
                 rrStatus = true;
             } else if (!input.getBool("rrToggle") && rrStatus){
                 rrStatus = false;
-            }*/
+            }*//*
             if(rrToggle && rr.notBusy()) {
                 if (input.getBool("RR1") && rr.notBusy()) {
                     //rr.moveToPosWithID(2);
@@ -193,7 +193,7 @@ public class MonkeyModeDual extends OpMode {
             }
             rr.updateLocalizer();
             rr.doOmniDisplace(input.gamepad, input.gamepad2);
-            telemetry = new MultipleTelemetry(telemetry, FtcDashboard.getInstance().getTelemetry());
+            telemetry = new MultipleTelemetry(telemetry, FtcDashboard.getInstance().getTelemetry());*/
         });
 
     }
@@ -202,10 +202,11 @@ public class MonkeyModeDual extends OpMode {
             input.update();
             towerPos = (int)hands.getMotorPosition("monkeyShoulder");
 
-            if(rr.notBusy()){
+//            if(rr.notBusy()){
                 //Meant to be if this && !input.getBool("armLengthNone");
-                driver.driveOmni(input.getFloatArrayOfInput("drivingControls"));
-            }
+            //driver.driveOmni(input.getFloatArrayOfInput("drivingControls"));
+//            }
+            driver.driveOmni(input.getFloatArrayOfInput("drivingControls"));
 
             if (input.getBool("handToggle") && !handStatus) {
                 intakeToggle=!intakeToggle;
@@ -295,8 +296,8 @@ public class MonkeyModeDual extends OpMode {
             telemetry.addData("FR Power", driver.frontRight.getPower());
             telemetry.addData("BR Power", driver.backLeft.getPower());
             telemetry.addData("BL Power", driver.backRight.getPower());
-            telemetry.addData("Roadrunner Not Busy: ", rr.notBusy());
-            telemetry.addData("Heading", rr.getDrive().getExternalHeading());
+//            telemetry.addData("Roadrunner Not Busy: ", rr.notBusy());
+//            telemetry.addData("Heading", rr.getDrive().getExternalHeading());
             telemetry.addData("Servo Open",""+intakeToggle);
             telemetry.addData("Tower Power", hands.getMotorPower("monkeyShoulder"));
             telemetry.addData("Tower Position: ", towerPos);
@@ -304,7 +305,7 @@ public class MonkeyModeDual extends OpMode {
             telemetry.addData("Last Error: ", lastError);
             telemetry.addData("CurrentColor", currentColor);
             telemetry.addData("CurrentColor1", currentColor1);
-            telemetry.addData("Pos: ", rr.getDrive().getPoseEstimate());
+//            telemetry.addData("Pos: ", rr.getDrive().getPoseEstimate());
             telemetry.update();
         }
         catch (Throwable t) {
