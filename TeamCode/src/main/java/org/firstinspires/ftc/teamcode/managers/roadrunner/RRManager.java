@@ -10,8 +10,10 @@ import com.qualcomm.robotcore.hardware.Gamepad;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 
 import org.checkerframework.framework.qual.Unused;
+import org.firstinspires.ftc.teamcode.auxilary.PaulMath;
 import org.firstinspires.ftc.teamcode.drive.SampleMecanumDrive;
 import org.firstinspires.ftc.teamcode.managers.feature.FeatureManager;
+import org.firstinspires.ftc.teamcode.managers.input.InputManager;
 import org.firstinspires.ftc.teamcode.managers.telemetry.TelemetryManager;
 import org.firstinspires.ftc.teamcode.trajectorysequence.TrajectorySequenceBuilder;
 import org.firstinspires.ftc.teamcode.trajectorysequence.TrajectorySequenceRunner;
@@ -344,14 +346,16 @@ public class RRManager extends FeatureManager {
      * @param gamepad1 Gamepad 1 (Main driver)
      * @param gamepad2 Gamepad 2 (Micro driver)
      */
-    public void doOmniDisplace(Gamepad gamepad1, Gamepad gamepad2){
+    public void doOmniDisplace(Gamepad gamepad1, Gamepad gamepad2, InputManager inputManager){
         Pose2d poseEstimate = driveRR.getPoseEstimate();
-
+        float[] powers = inputManager.getFloatArrayOfInput("drivingControls");
+        float scale = 0.6f;
+        float[] sum = PaulMath.omniCalc(powers[0]*scale, powers[1]*scale, powers[2] * scale);
         // Create a vector from the gamepad x/y inputs
         // Then, rotate that vector by the inverse of that heading
         Vector2d input = new Vector2d(
-                -gamepad1.left_stick_y,
-                -gamepad1.left_stick_x
+                -sum[0],
+                -sum[1]
         ).rotated(-poseEstimate.getHeading());
 
         // Pass in the rotated input + right stick value for rotation
@@ -360,26 +364,11 @@ public class RRManager extends FeatureManager {
                 new Pose2d(
                         input.getX(),
                         input.getY(),
-                        gamepad1.right_stick_x
+                        sum[2]
                 )
         );
         driveRR.update();
-        Vector2d input2 = new Vector2d(
-                -gamepad2.left_stick_y*0.25,
-                -gamepad2.left_stick_x*0.25
-        ).rotated(-poseEstimate.getHeading());
 
-        // Pass in the rotated input + right stick value for rotation
-        // Rotation is not part of the rotated input thus must be passed in separately
-        driveRR.setWeightedDrivePower(
-                new Pose2d(
-                        input.getX(),
-                        input.getY(),
-                        gamepad2.right_stick_x*0.25
-                )
-        );
-        // Update everything. Odometry. Etc.
-        driveRR.update();
 
         // Print pose to telemetry
         //telemetry.addData("x", poseEstimate.getX());
