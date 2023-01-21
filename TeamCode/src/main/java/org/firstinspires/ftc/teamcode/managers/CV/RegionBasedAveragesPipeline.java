@@ -26,8 +26,7 @@ public class RegionBasedAveragesPipeline extends PipelineThatExposesSomeAnalysis
     /*
      * An enum to define the skystone position
      */
-    public enum SkystonePosition
-    {
+    public enum SkystonePosition {
         LEFT,
         CENTER,
         RIGHT
@@ -42,9 +41,9 @@ public class RegionBasedAveragesPipeline extends PipelineThatExposesSomeAnalysis
     /*
      * The core values which define the location and size of the sample regions
      */
-    static final Point REGION1_TOPLEFT_ANCHOR_POINT = new Point(109,98);
-    static final Point REGION2_TOPLEFT_ANCHOR_POINT = new Point(181,98);
-    static final Point REGION3_TOPLEFT_ANCHOR_POINT = new Point(253,98);
+    static final Point REGION1_TOPLEFT_ANCHOR_POINT = new Point(109, 98);
+    static final Point REGION2_TOPLEFT_ANCHOR_POINT = new Point(181, 98);
+    static final Point REGION3_TOPLEFT_ANCHOR_POINT = new Point(253, 98);
     static final int REGION_WIDTH = 20;
     static final int REGION_HEIGHT = 20;
 
@@ -99,15 +98,13 @@ public class RegionBasedAveragesPipeline extends PipelineThatExposesSomeAnalysis
      * This function takes the RGB frame, converts to YCrCb,
      * and extracts the Cb channel to the 'Cb' variable
      */
-    void inputToCb(Mat input)
-    {
+    void inputToCb(Mat input) {
         Imgproc.cvtColor(input, YCrCb, Imgproc.COLOR_RGB2YCrCb);
         Core.extractChannel(YCrCb, Cr, 1);
     }
 
     @Override
-    public void init(Mat firstFrame)
-    {
+    public void init(Mat firstFrame) {
         /*
          * We need to call this in order to make sure the 'Cb'
          * object is initialized, so that the submats we make
@@ -130,8 +127,7 @@ public class RegionBasedAveragesPipeline extends PipelineThatExposesSomeAnalysis
     }
 
     @Override
-    public Mat processFrame(Mat input)
-    {
+    public Mat processFrame(Mat input) {
         /*
          * Overview of what we're doing:
          *
@@ -227,7 +223,7 @@ public class RegionBasedAveragesPipeline extends PipelineThatExposesSomeAnalysis
          * Now that we found the max, we actually need to go and
          * figure out which sample region that value was from
          */
-        if(max == avg1) // Was it from region 1?
+        if (max == avg1) // Was it from region 1?
         {
             position = SkystonePosition.LEFT; // Record our analysis
 
@@ -241,8 +237,7 @@ public class RegionBasedAveragesPipeline extends PipelineThatExposesSomeAnalysis
                     region1_pointB, // Second point which defines the rectangle
                     GREEN, // The color the rectangle is drawn in
                     -1); // Negative thickness means solid fill
-        }
-        else if(max == avg2) // Was it from region 2?
+        } else if (max == avg2) // Was it from region 2?
         {
             position = SkystonePosition.CENTER; // Record our analysis
 
@@ -256,8 +251,7 @@ public class RegionBasedAveragesPipeline extends PipelineThatExposesSomeAnalysis
                     region2_pointB, // Second point which defines the rectangle
                     GREEN, // The color the rectangle is drawn in
                     -1); // Negative thickness means solid fill
-        }
-        else if(max == avg3) // Was it from region 3?
+        } else if (max == avg3) // Was it from region 3?
         {
             position = SkystonePosition.RIGHT; // Record our analysis
 
@@ -280,7 +274,12 @@ public class RegionBasedAveragesPipeline extends PipelineThatExposesSomeAnalysis
          */
         return input;
     }
+
     public int getAnalysis() {
         return position.ordinal();
+    }
+
+    public double getAnalysisPrecise() {
+        return 0;
     }
 }
