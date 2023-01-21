@@ -8,13 +8,13 @@ import org.firstinspires.ftc.teamcode.opmodes.teleop.MonkeyModeDual;
 
 public class bigArmManager extends FeatureManager {
     ManipulationManager hands;
-    public final int floorPosition = 150; //The distance from the floor position to the lowest tower's height
-    public final int lowPosition=1000;
-    public final int middlePosition = 1951; //The distance from the floor position to the middle tower's height
+    public final int floorPosition = 250; //The distance from the floor position to the lowest tower's height
+    public final int lowPosition=1450;
+    public final int middlePosition = 2181; //The distance from the floor position to the middle tower's height
     public final int highPosition = 2956; //The distance from the floor position  to the high tower's height
     public double direction =1.0;
     public boolean doOnce=false;
-    int towerPos = 0;
+    public int towerPos = 0;
     int startingPos = 0;
 
     public bigArmManager(ManipulationManager hands){
@@ -60,6 +60,7 @@ public class bigArmManager extends FeatureManager {
     }
 
     public boolean setPositionFloorLocation(){
+        closeHand();
         retractArm(1);
         if (hands.getMotorPosition("monkeyShoulder") <= floorPosition + 25){
             stopArm();
