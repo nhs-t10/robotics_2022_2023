@@ -5,6 +5,9 @@ $
 goto start;
 
 #start:
+    driveOmni(0,0.5,0), after 4cm next;
+    driveOmni(0.5,0,0), after 40cm next;
+    driveOmni(0,0,0), next;
     let distance = 3, let rep_times = 0, next;
     webcam.startStreaming(1280, 720, OpenCvCameraRotation.UPRIGHT), after 2s next; // Standardize window size
     goto getColor;
@@ -14,10 +17,11 @@ goto start;
     log(color), next;
     log(getAnalysisTest()), next;
     stopWebcam(), next;
+    driveOmni(-0.5,0,0), after 20cm next;
     goto process1;
 
 #process1:
-    driveOmni(0,0.5,0), after 10cm next;//todo:fix distance
+    //todo:fix distance
     driveOmni(0.5,0,0), after 2cm next;
     goto process3;
     driveOmni(0,-1,0), after 65cm next;
@@ -60,17 +64,17 @@ goto start;
     }
 
 #color1:
-    driveOmni(0,1,0), after 68cm next; //go left one tile, go forward 1.5 tiles
-    driveOmni(1,0,0), after 60cm next;
+    driveOmni(0,0.5,0), after 80cm next; //go left one tile, go forward 1.5 tiles
+    driveOmni(0.5,0,0), after 60cm next;
     goto end;
 
 #color2:
-    driveOmni(1,0,0), after 60cm next; //go forward 1.5 tiles
+    driveOmni(0.5,0,0), after 60cm next; //go forward 1.5 tiles
     goto end;
 
 #color3:
-    driveOmni(0,-1,0), after 80cm next; //go right one tile, go forward 1.5 tiles
-    driveOmni(1,0,0), after 60cm next;
+    driveOmni(0,-0.5,0), after 80cm next; //go right one tile, go forward 1.5 tiles
+    driveOmni(0.5,0,0), after 60cm next;
     goto end;
 
 #error:
