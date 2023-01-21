@@ -8,5 +8,5 @@ public abstract class PipelineThatExposesSomeAnalysis extends OpenCvPipeline {
     public abstract Mat processFrame(Mat input);
 
     abstract int getAnalysis();
-    double getAnalysisPrecise() { return 0; }
+    abstract double getAnalysisPrecise();
 }

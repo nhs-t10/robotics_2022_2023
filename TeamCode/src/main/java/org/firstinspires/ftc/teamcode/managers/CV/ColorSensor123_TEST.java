@@ -2,6 +2,8 @@ package org.firstinspires.ftc.teamcode.managers.CV;
 
 import static org.firstinspires.ftc.teamcode.managers.CV.RegionBasedAveragesPipeline.BLUE;
 
+import org.firstinspires.ftc.teamcode.managers.imu.ImuManager;
+import org.firstinspires.ftc.teamcode.managers.telemetry.TelemetryManager;
 import org.opencv.core.Core;
 import org.opencv.core.Mat;
 import org.opencv.core.Point;
@@ -15,10 +17,11 @@ public class ColorSensor123_TEST extends PipelineThatExposesSomeTestingAnalysis 
     // Working variables. Because of memory concerns, we're not allowed to make ANY non-primitive variables within the `processFrame` method.
 
     //Mat is what you see
-    Mat YCrCb = new Mat(), greenPixels = new Mat(), hierarchy = new Mat(), Region_Cr = new Mat(), Region_Cb = new Mat();
+    Mat YCrCb = new Mat(), Region_Cr = new Mat(), Region_Cb = new Mat();
     Mat Cr = new Mat();
     Mat Cb = new Mat();
     private int avg_Cr, avg_Cb, color;
+    public TelemetryManager telemetry;
 
     void inputToCr(Mat input) {
         Imgproc.cvtColor(input, YCrCb, Imgproc.COLOR_RGB2YCrCb);
@@ -34,6 +37,7 @@ public class ColorSensor123_TEST extends PipelineThatExposesSomeTestingAnalysis 
     int getCr() {
         return avg_Cr;
     }
+
     double getCb() {
         double cb_amount = avg_Cb;
         return cb_amount;

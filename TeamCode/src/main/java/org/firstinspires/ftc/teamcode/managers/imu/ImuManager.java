@@ -12,9 +12,14 @@ import org.firstinspires.ftc.robotcore.external.navigation.Position;
 import org.firstinspires.ftc.robotcore.external.navigation.Velocity;
 import org.firstinspires.ftc.teamcode.auxilary.PaulMath;
 import org.firstinspires.ftc.teamcode.managers.feature.FeatureManager;
+import org.firstinspires.ftc.teamcode.managers.manipulation.ManipulationManager;
+import org.firstinspires.ftc.teamcode.managers.movement.MovementManager;
 
 public class ImuManager extends FeatureManager {
     public BNO055IMU imu;
+    private boolean doOnce = false;
+    ManipulationManager hands;
+    MovementManager driver;
 
     public ImuManager(BNO055IMU imu) {
         this.imu = imu;
@@ -91,6 +96,27 @@ public class ImuManager extends FeatureManager {
                 cartesian[1],
                 drive[2]
         };
+    }
+//power is a magnitude, so unsigned. Sign the angle.
+    public void rotate(double angle, float power) {
+
+        double startingPosition = getOrientation().thirdAngle;
+        double currentPosition = startingPosition;
+        double endingPosition = getOrientation().thirdAngle + angle;
+        if (angle < 0) {
+            power = power * -1;
+        }
+        driver.driveOmni(0, 0, power);
+        if(Math.abs(currentPosition - endingPosition) < 5)
+        {
+            driver.driveOmni(0,0,0);
+            return;
+        }
+        else
+        {
+            currentPosition = getOrientation().thirdAngle;
+        }
+        doOnce = false;
     }
 
 
