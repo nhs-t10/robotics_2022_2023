@@ -28,7 +28,7 @@ public class bigArmManager extends FeatureManager {
     public void retractArm(double power){
         hands.setMotorPower("monkeyShoulder", power * -0.75);
         //Done in teleop
-        //closeHand();
+        closeHand();
     }
     public void stopArm(){hands.setMotorPower("monkeyShoulder",0);}
     public void openHand(){
