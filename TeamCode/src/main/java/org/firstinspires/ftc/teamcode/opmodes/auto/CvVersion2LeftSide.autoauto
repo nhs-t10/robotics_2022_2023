@@ -17,9 +17,12 @@ goto start;
     goto process1;
 
 #process1:
-    driveOmni(0,0.5,0), after 10cm next; //todo:fix distance
-    driveOmni(0,-1,0), after 55cm next;
+    driveOmni(0,0.5,0), after 10cm next;//todo:fix distance
+    driveOmni(0.5,0,0), after 2cm next;
+    goto process3;
+    driveOmni(0,-1,0), after 65cm next;
     driveOmni(1,0,0), after 100cm next;
+    driveOmni(0,1,0), after 55cm next;
     goto slides1;
 #slides1:
     //setPositionHighLocation();
@@ -31,7 +34,7 @@ goto start;
     }
 
 #process2:
-    driveOmni(0,0.5,0), after 55cm next;
+    driveOmni(0,1,0), after 55cm next;
     driveOmni(0,0,0), next;
     retractArm("monkeyShoulder", -0.75), after 1s next;
     openHand();
@@ -40,6 +43,9 @@ goto start;
     driveOmni(0,-0.5,0), after 40cm next;
     driveOmni(-1,0,0), after 110cm next;
     driveOmni(0,1,0), after 60cm next;
+    goto process3;
+
+#process3:
     if (color == 1) {
         goto color1;
     }
@@ -55,17 +61,17 @@ goto start;
 
 #color1:
     driveOmni(0,1,0), after 68cm next; //go left one tile, go forward 1.5 tiles
-    driveOmni(1,0,0), after 95cm next;
-    goto slides2;
+    driveOmni(1,0,0), after 60cm next;
+    goto end;
 
 #color2:
-    driveOmni(1,0,0), after 95cm next; //go forward 1.5 tiles
-    goto slides2;
+    driveOmni(1,0,0), after 60cm next; //go forward 1.5 tiles
+    goto end;
 
 #color3:
-    driveOmni(0,-1,0), after 68cm next; //go right one tile, go forward 1.5 tiles
-    driveOmni(1,0,0), after 95cm next;
-    goto slides2;
+    driveOmni(0,-1,0), after 80cm next; //go right one tile, go forward 1.5 tiles
+    driveOmni(1,0,0), after 60cm next;
+    goto end;
 
 #error:
 //this is a stupid hack
