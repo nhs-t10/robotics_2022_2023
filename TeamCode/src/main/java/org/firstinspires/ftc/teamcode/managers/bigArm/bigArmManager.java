@@ -1,17 +1,14 @@
 package org.firstinspires.ftc.teamcode.managers.bigArm;
 
-import com.qualcomm.robotcore.hardware.DcMotor;
-
 import org.firstinspires.ftc.teamcode.managers.feature.FeatureManager;
 import org.firstinspires.ftc.teamcode.managers.manipulation.ManipulationManager;
-import org.firstinspires.ftc.teamcode.opmodes.teleop.MonkeyModeDual;
 
 public class bigArmManager extends FeatureManager {
     ManipulationManager hands;
-    public final int floorPosition = 250; //The distance from the floor position to the lowest tower's height
-    public final int lowPosition=1450;
-    public final int middlePosition = 2181; //The distance from the floor position to the middle tower's height
-    public final int highPosition = 2956; //The distance from the floor position  to the high tower's height
+    public final int floorPosition = 250; //The position of the floor
+    public final int lowPosition=1450; //The position of the low tower
+    public final int middlePosition = 2181; //The position of the middle tower
+    public final int highPosition = 2956; //The position of the high tower
     public double direction =1.0;
     public boolean doOnce=false;
     public int towerPos = 0;
@@ -27,7 +24,6 @@ public class bigArmManager extends FeatureManager {
 
     public void retractArm(double power){
         hands.setMotorPower("monkeyShoulder", power * -0.75);
-        //Done in teleop
         closeHand();
     }
     public void stopArm(){hands.setMotorPower("monkeyShoulder",0);}
@@ -60,10 +56,14 @@ public class bigArmManager extends FeatureManager {
     }
 
     public boolean setPositionFloorLocation(){
-        closeHand();
+        if(!doOnce){
+            closeHand();
+            doOnce=true;
+        }
         retractArm(1);
         if (hands.getMotorPosition("monkeyShoulder") <= floorPosition + 25){
             stopArm();
+            openHand();
             towerPos=0;
             return false;
         }
