@@ -1,7 +1,8 @@
 package org.firstinspires.ftc.teamcode.managers.roadrunner;
 
 public class SequenceInitException extends Throwable {
-    public SequenceInitException(String s) throws Exception {
+    public SequenceInitException(String s, RRManager r) throws Exception {
+        r.errorInterrupt();
         throw new Exception("Sequence Initialization Error: "+s);
 
     }
