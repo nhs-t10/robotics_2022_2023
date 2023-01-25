@@ -32,7 +32,7 @@ public class GradualStickNode extends InputManagerInputNode{
      *
      * @param control The input that will be accelerated
      * @param initialSpeed The initial speed of the input
-     * @param accelConstant How much the speed will increase per frame. NOTE: This number must be very small, 0.0001f as an example, since it adds this speed every tick. Too high and the acceleration will be nearly insteant.
+     * @param accelConstant How much the speed will increase per frame. NOTE: This number must be very small, 0.0001f as an example, since it adds this speed every tick. Too high and the acceleration will be nearly instant.
      * @see AccelerationNode#AccelerationNode(InputManagerInputNode, InputManagerInputNode, InputManagerInputNode, InputManagerInputNode) AccelerationNode
      * @see DecelerationNode#DecelerationNode(InputManagerInputNode, InputManagerInputNode, InputManagerInputNode, InputManagerInputNode) DecelerationNode
      * @see BothcelerationNode#BothcelerationNode(InputManagerInputNode, InputManagerInputNode, InputManagerInputNode, InputManagerInputNode) BothcelerationNode
@@ -51,7 +51,7 @@ public class GradualStickNode extends InputManagerInputNode{
     @Override
     public void update() {
         control.update();
-        isActive = Math.abs(control.getResult().getFloat()) >= 0.1f;
+        isActive = Math.abs(control.getResult().getFloat()) >= startingSpeed;
         endingSpeed = control.getResult().getFloat();
         if(isActive) {
             if(!wasActive) {
