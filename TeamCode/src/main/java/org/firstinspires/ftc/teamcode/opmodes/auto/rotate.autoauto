@@ -1,0 +1,15 @@
+$
+    ignorewarning_american_m_unit: true
+$
+
+goto start;
+
+#start:
+    log("starting"), next;
+    rotate(180, 0.5), goto end;
+
+
+
+
+#end:
+    log("done")
