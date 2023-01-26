@@ -116,12 +116,13 @@ public class MonkeyModeDual extends OpMode {
                     )
         );
         input.registerInput("handToggle",
-                new AnyNode(
-                        new ButtonNode("rightbumper"),
-                        new ButtonNode("gamepad2rightbumper")
+                new ToggleNode(
+                        new AnyNode(
+                            new ButtonNode("rightbumper"),
+                            new ButtonNode("gamepad2rightbumper")
+                        )
                 )
         );
-
         input.registerInput("extendArm",
                 new ButtonNode("gamepad2righttrigger")
         );
@@ -209,14 +210,9 @@ public class MonkeyModeDual extends OpMode {
             driver.driveOmni(input.getFloatArrayOfInput("drivingControls"));
 
             if (input.getBool("handToggle") && !handStatus) {
-                intakeToggle=!intakeToggle;
-                handStatus = true;
-            } else if (!input.getBool("handToggle") && handStatus){
-                    handStatus = false;
-            }
-            if (intakeToggle){
                 monkeyArm.openHand();
-            } else {
+            }
+            else {
                 monkeyArm.closeHand();
             }
             if (input.getBool("extendArm")) {
@@ -233,6 +229,7 @@ public class MonkeyModeDual extends OpMode {
                 movingToLow=false;
                 movingToFloor=false;
                 monkeyArm.resetDoOnce();
+                intakeToggle = false;
             } else if (!movingToFloor && !movingToLow && !movingToMid && !movingToHigh){
                 monkeyArm.stopArm();
             }
@@ -259,7 +256,6 @@ public class MonkeyModeDual extends OpMode {
                 movingToHigh=false;
                 monkeyArm.resetDoOnce();
             }
-
             if (input.getBool("armLengthSmall")) {
                 movingToFloor=false;
                 movingToLow=true;
@@ -281,7 +277,6 @@ public class MonkeyModeDual extends OpMode {
                 movingToHigh=true;
                 monkeyArm.resetDoOnce();
             }
-
             if (movingToFloor) {
                  movingToFloor = monkeyArm.setPositionFloorLocation();
             } else if (movingToLow) {

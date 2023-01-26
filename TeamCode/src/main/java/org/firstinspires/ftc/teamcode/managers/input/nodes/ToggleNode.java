@@ -8,6 +8,7 @@ import androidx.annotation.NonNull;
 public class ToggleNode extends InputManagerInputNode {
     private final InputManagerInputNode node;
 
+    private boolean isPressed;
     private boolean wasPressed;
     private boolean toggledOn;
     private final InputManagerNodeResult result = new InputManagerNodeResult();
@@ -29,8 +30,8 @@ public class ToggleNode extends InputManagerInputNode {
     @Override
     public void update() {
         node.update();
-        boolean isPressed = node.getResult().getBool();
-        if(isPressed && wasPressed == false) {
+        isPressed = node.getResult().getBool();
+        if(isPressed && !wasPressed) {
             toggledOn = !toggledOn;
         }
         wasPressed = isPressed;
