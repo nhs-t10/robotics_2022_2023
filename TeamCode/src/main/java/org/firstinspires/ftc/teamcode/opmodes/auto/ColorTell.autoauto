@@ -10,11 +10,13 @@ goto start;
     goto process;
 
 #process:
-    log("cr: ",getAnalysisTest()), next;
+/*    log("cr: ",getAnalysisTest()), next;
     log("cb: ", getAnalysisPreciseTest()), next;
+*/
     log("result: ", getAnalysis()), next;
     let loopnum = loopnum + 1, next;
     if (loopnum == 100) { stopWebcam(), goto end }, next;
+
     after 1s goto process;
 
 

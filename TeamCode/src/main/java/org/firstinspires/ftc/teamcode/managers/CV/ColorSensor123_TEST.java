@@ -21,6 +21,8 @@ public class ColorSensor123_TEST extends PipelineThatExposesSomeTestingAnalysis 
     Mat Cr = new Mat();
     Mat Cb = new Mat();
     private int avg_Cr, avg_Cb, color;
+    boolean went_through_init = true;
+    boolean went_through_process = false;
     public TelemetryManager telemetry;
 
     void inputToCr(Mat input) {
@@ -33,8 +35,20 @@ public class ColorSensor123_TEST extends PipelineThatExposesSomeTestingAnalysis 
         Core.extractChannel(YCrCb, Cb, 2);
     }
 
+    boolean check_run()
+    {
+        if(!went_through_process)
+        {
+            return false;
+        }
+        else
+        {
+            return true;
+        }
+    }
 
     int getCr() {
+
         return avg_Cr;
     }
 
@@ -56,6 +70,7 @@ public class ColorSensor123_TEST extends PipelineThatExposesSomeTestingAnalysis 
         Region_Cr = Cr.submat(new Rect(TopLeftAnchorPoint, BottomRightAnchorPoint));
         inputToCb(firstFrame);
         Region_Cb = Cb.submat(new Rect(TopLeftAnchorPoint, BottomRightAnchorPoint));
+        went_through_init = true;
     }
 
     @Override
@@ -73,7 +88,7 @@ public class ColorSensor123_TEST extends PipelineThatExposesSomeTestingAnalysis 
                 BLUE, // The color the rectangle is drawn in
                 2); // Thickness of the rectangle lines
 
-
+        went_through_process = true;
         return input;
     }
 
