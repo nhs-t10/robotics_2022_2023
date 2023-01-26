@@ -1,5 +1,7 @@
 package org.firstinspires.ftc.teamcode.managers.imu;
 
+import com.acmerobotics.roadrunner.geometry.Pose2d;
+import com.acmerobotics.roadrunner.geometry.Vector2d;
 import com.qualcomm.hardware.bosch.BNO055IMU;
 
 import org.firstinspires.ftc.robotcore.external.navigation.Acceleration;
@@ -11,6 +13,7 @@ import org.firstinspires.ftc.robotcore.external.navigation.Orientation;
 import org.firstinspires.ftc.robotcore.external.navigation.Position;
 import org.firstinspires.ftc.robotcore.external.navigation.Velocity;
 import org.firstinspires.ftc.teamcode.auxilary.PaulMath;
+import org.firstinspires.ftc.teamcode.auxilary.integratedasync.PriorityAsyncOpmodeComponent;
 import org.firstinspires.ftc.teamcode.managers.feature.FeatureManager;
 import org.firstinspires.ftc.teamcode.managers.manipulation.ManipulationManager;
 import org.firstinspires.ftc.teamcode.managers.movement.MovementManager;
@@ -76,7 +79,7 @@ public class ImuManager extends FeatureManager {
     public double getAccelerationY() {
         return imu.getAcceleration().zAccel;
     }
-
+    private Thread thread;
     public Acceleration getLinearAcceleration() {
         return imu.getLinearAcceleration();
     }
@@ -99,25 +102,22 @@ public class ImuManager extends FeatureManager {
     }
 //power is a magnitude, so unsigned. Sign the angle.
     public void rotate(double angle, float power) {
-
-        double startingPosition = getOrientation().thirdAngle;
-        double currentPosition = startingPosition;
-        double endingPosition = getOrientation().thirdAngle + angle;
         if (angle < 0) {
             power = power * -1;
         }
+        double endingPosition = getOrientation().thirdAngle + angle;
         driver.driveOmni(0, 0, power);
-        if(Math.abs(currentPosition - endingPosition) < 5)
-        {
-            driver.driveOmni(0,0,0);
-            return;
-        }
-        else
-        {
-            currentPosition = getOrientation().thirdAngle;
-        }
-        doOnce = false;
+        thread = new Thread(() -> {
+            double currentPosition = getOrientation().thirdAngle;
+            while (!(Math.abs(currentPosition - endingPosition) < 5)) {
+                driver.driveOmni(0, 0, 0);
+                threadStop();
+                return;
+            }
+        });
     }
-
+    public void threadStop(){
+        thread.interrupt();
+    }
 
 }
