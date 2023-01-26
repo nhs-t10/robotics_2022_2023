@@ -38,7 +38,7 @@ import org.openftc.easyopencv.OpenCvInternalCamera;
 import org.openftc.easyopencv.OpenCvWebcam;
 
 public class CVManager extends FeatureManager {
-    OpenCvWebcam webcam;
+    public OpenCvWebcam webcam;
     PipelineThatExposesSomeAnalysis pipeline;
     PipelineThatExposesSomeSecondaryAnalysis pipeline_Secondary;
     PipelineThatExposesSomeTestingAnalysis pipeline_Testing;
