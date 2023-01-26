@@ -104,9 +104,9 @@ public class MonkeyModeDual extends OpMode {
         input.registerInput("drivingControls",
                     new PlusNode(
                             new MultiInputNode(
-                                    new MultiplyNode(new GradualStickNode(new JoystickNode("left_stick_y"), 0.25f, 0.0001f), -1.6f),
-                                    new MultiplyNode(new GradualStickNode(new JoystickNode("left_stick_x"), 0.25f, 0.0001f), -1.6f),
-                                    new MultiplyNode(new GradualStickNode(new JoystickNode("right_stick_x"), 0.25f, 0.0001f), -1.6f)
+                                    new MultiplyNode(new GradualStickNode(new JoystickNode("left_stick_y"), 0.25f, 0.5f), -1f),
+                                    new MultiplyNode(new GradualStickNode(new JoystickNode("left_stick_x"), 0.25f, 0.5f), -1f),
+                                    new MultiplyNode(new GradualStickNode(new JoystickNode("right_stick_x"), 0.25f, 0.5f), -1f)
                             ),
                             new MultiInputNode(
                                     new MultiplyNode(new JoystickNode("gamepad2left_stick_y"), -0.4f),
