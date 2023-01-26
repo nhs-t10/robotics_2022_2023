@@ -51,6 +51,7 @@ public class MonkeyModeDual extends OpMode {
     private boolean intakeToggle = false;
     private boolean rrStatus = false;
     boolean rrToggle = false;
+    private float microDriveSpeed = 0.4f;
 
     public boolean movingToLow = false;
     public boolean movingToMid = false;
@@ -109,12 +110,15 @@ public class MonkeyModeDual extends OpMode {
                                     new MultiplyNode(new GradualStickNode(new JoystickNode("right_stick_x"), 0.25f, 0.5f), -1f)
                             ),
                             new MultiInputNode(
-                                    new MultiplyNode(new JoystickNode("gamepad2left_stick_y"), -0.4f),
-                                    new MultiplyNode(new JoystickNode("gamepad2left_stick_x"), -0.4f),
-                                    new MultiplyNode(new JoystickNode("gamepad2right_stick_x"), -0.4f)
+                                    new MultiplyNode(new JoystickNode("gamepad2left_stick_y"), microDriveSpeed),
+                                    new MultiplyNode(new JoystickNode("gamepad2left_stick_x"), microDriveSpeed),
+                                    new MultiplyNode(new JoystickNode("gamepad2right_stick_x"), microDriveSpeed)
                             )
                     )
         );
+        input.registerInput("inversionToggle",
+                    new ToggleNode(new ButtonNode("gamepad2leftbumper"))
+                );
         input.registerInput("handToggle",
                 new ToggleNode(
                         new AnyNode(
@@ -157,18 +161,13 @@ public class MonkeyModeDual extends OpMode {
                 new ButtonNode("a")
         );
         //input.registerInput("rrTog", new ToggleNode(new ButtonNode("dpadup")));
-        input.registerInput("rrToggle", new ButtonNode("dpadup"));
+        input.registerInput("rrToggle", new ToggleNode(new ButtonNode("dpadup")));
         input.setOverlapResolutionMethod(InputOverlapResolutionMethod.MOST_COMPLEX_ARE_THE_FAVOURITE_CHILD);
         //rr.calibrateDriveToAutoPosition();
 
         PriorityAsyncOpmodeComponent.start(() -> {
-            /*if (input.getBool("rrToggle") && !rrStatus) {
-                rrToggle=!rrToggle;
-                rrStatus = true;
-            } else if (!input.getBool("rrToggle") && rrStatus){
-                rrStatus = false;
-            }*//*
-            if(rrToggle && rr.notBusy()) {
+            /*
+            if(input.getBool("rrToggle") && rr.notBusy()) {
                 if (input.getBool("RR1") && rr.notBusy()) {
                     //rr.moveToPosWithID(2);
                     try {
@@ -208,7 +207,12 @@ public class MonkeyModeDual extends OpMode {
             //driver.driveOmni(input.getFloatArrayOfInput("drivingControls"));
 //            }
             driver.driveOmni(input.getFloatArrayOfInput("drivingControls"));
-
+            if (input.getBool("inversionToggle")){
+                microDriveSpeed = 0.4f;
+            }
+            else {
+                microDriveSpeed = -0.4f;
+            }
             if (input.getBool("handToggle") && !handStatus) {
                 monkeyArm.openHand();
             }
@@ -291,8 +295,8 @@ public class MonkeyModeDual extends OpMode {
             telemetry.addData("FR Power", driver.frontRight.getPower());
             telemetry.addData("BR Power", driver.backLeft.getPower());
             telemetry.addData("BL Power", driver.backRight.getPower());
-//            telemetry.addData("Roadrunner Not Busy: ", rr.notBusy());
-//            telemetry.addData("Heading", rr.getDrive().getExternalHeading());
+//          telemetry.addData("Roadrunner Not Busy: ", rr.notBusy());
+//          telemetry.addData("Heading", rr.getDrive().getExternalHeading());
             telemetry.addData("Servo Open",""+intakeToggle);
             telemetry.addData("Tower Power", hands.getMotorPower("monkeyShoulder"));
             telemetry.addData("Tower Position: ", towerPos);
