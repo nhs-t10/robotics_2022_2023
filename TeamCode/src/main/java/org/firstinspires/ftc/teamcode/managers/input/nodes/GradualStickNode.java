@@ -31,8 +31,8 @@ public class GradualStickNode extends InputManagerInputNode{
      * <img src="./doc-files/acceleration-node.png" width="200">
      *
      * @param control The input that will be accelerated
-     * @param initialSpeed The initial speed of the input
-     * @param accelConstant How much the speed will increase per frame. NOTE: This number must be very small, 0.0001f as an example, since it adds this speed every tick. Too high and the acceleration will be nearly instant.
+     * @param initialSpeed The initial speed of the input. If this is too low, (below 0.25) the robot may move slowly without input.
+     * @param accelConstant A scale from 0 to 1 that affects the speed of acceleration. 0 is no acceleration, 1 is instantaneous. 0.5 is a good average acceleration.
      * @see AccelerationNode#AccelerationNode(InputManagerInputNode, InputManagerInputNode, InputManagerInputNode, InputManagerInputNode) AccelerationNode
      * @see DecelerationNode#DecelerationNode(InputManagerInputNode, InputManagerInputNode, InputManagerInputNode, InputManagerInputNode) DecelerationNode
      * @see BothcelerationNode#BothcelerationNode(InputManagerInputNode, InputManagerInputNode, InputManagerInputNode, InputManagerInputNode) BothcelerationNode
@@ -67,15 +67,15 @@ public class GradualStickNode extends InputManagerInputNode{
             //float percentageCompleted = Math.min(1, timeSinceStart / movementTime);
             //resultNumber = startingSpeed + percentageCompleted * (endingSpeed - startingSpeed);
             if (currentSpeed > 0) {
-                if ((currentSpeed + accelerationConstant) < endingSpeed) {
-                    currentSpeed = currentSpeed + accelerationConstant;
+                if ((currentSpeed + (accelerationConstant/2000)) < endingSpeed) {
+                    currentSpeed = currentSpeed + (accelerationConstant/5000);
                 } else {
                     currentSpeed = endingSpeed;
                 }
             }
             else {
-                if ((currentSpeed - accelerationConstant) > endingSpeed) {
-                    currentSpeed = currentSpeed - accelerationConstant;
+                if ((currentSpeed - (accelerationConstant/2000)) > endingSpeed) {
+                    currentSpeed = currentSpeed - (accelerationConstant/5000);
                 } else {
                     currentSpeed = endingSpeed;
                 }
@@ -85,7 +85,8 @@ public class GradualStickNode extends InputManagerInputNode{
             currentSpeed = 0.0f;
         }
         wasActive = isActive;
-        result.setFloat(currentSpeed);
+        //Multiplied by 1.6 to allow reaching full power, otherwise it caps out at around 60% speed.
+        result.setFloat(currentSpeed*1.6f);
     }
 
     @NonNull
