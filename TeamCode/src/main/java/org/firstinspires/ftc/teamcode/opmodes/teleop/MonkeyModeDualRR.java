@@ -164,7 +164,7 @@ public class MonkeyModeDualRR extends OpMode {
                 rrStatus = false;
             }
             if(rrToggle && rr.notBusy()) {
-                if (input.getBool("RR1") && rr.notBusy()) {
+                if (input.getBool("a1") && rr.notBusy()) {
                     //rr.moveToPosWithID(2);
                     try {
                         rr.customMoveSequenceWithPoseTrajSequence(new Pose2d[]{new Pose2d(0, 15), new Pose2d(0, 15), new Pose2d(15, 15)}, new String[]{"strafe", "turn", "strafe"}, new double[]{0, 90, 0});
@@ -174,15 +174,15 @@ public class MonkeyModeDualRR extends OpMode {
                         e.printStackTrace();
                     }
                 }
-                if (input.getBool("RR2")) {
+                if (input.getBool("b1")) {
                     //rr.moveToPosWithID(1);
                     telemetry.log().add("RR PATH STARTED");
                     rr.customMoveWithPose(new Pose2d(0, 25), "strafe", 20);
                 }
-                if (input.getBool("RR3") && rr.notBusy()) {
+                if (input.getBool("x1") && rr.notBusy()) {
                     rr.calibrateDriveToZero();
                 }
-                if (input.getBool("RR4") && rr.notBusy()) {
+                if (input.getBool("y1") && rr.notBusy()) {
                     telemetry.log().add("RR PATH STARTED");
                     rr.customMoveWithPose(new Pose2d(0, 20), "strafe", 20);
                 }

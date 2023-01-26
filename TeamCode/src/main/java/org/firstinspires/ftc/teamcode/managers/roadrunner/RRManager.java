@@ -199,7 +199,7 @@ public class RRManager extends FeatureManager {
      */
     public void customMoveSequenceWithPose(@NotNull Pose2d[] poseArr, @NotNull String[] typeArr, @NotNull double[] rotationArr) throws SequenceInitException, Exception {
         if(poseArr.length != typeArr.length || typeArr.length != rotationArr.length || poseArr.length != rotationArr.length){
-            throw new SequenceInitException("Array Lengths for sequence do not match! "+poseArr.length+" does not equal "+typeArr.length+" or does not equal "+rotationArr.length);
+            throw new SequenceInitException("Array Lengths for sequence do not match! "+poseArr.length+" does not equal "+typeArr.length+" or does not equal "+rotationArr.length, this);
         }
         for(int i = 0; i<poseArr.length; i++) {
             updateLocalizer();
@@ -248,7 +248,7 @@ public class RRManager extends FeatureManager {
     public void customMoveSequenceWithPoseTrajSequence(@NotNull Pose2d[] poseArr, @NotNull String[] typeArr, @NotNull double[] rotationArr) throws SequenceInitException, Exception {
         reverseMotors();
         if(poseArr.length != typeArr.length || typeArr.length != rotationArr.length || poseArr.length != rotationArr.length){
-            throw new SequenceInitException("Array Lengths for sequence do not match! "+poseArr.length+" does not equal "+typeArr.length+" or does not equal "+rotationArr.length);
+            throw new SequenceInitException("Array Lengths for sequence do not match! "+poseArr.length+" does not equal "+typeArr.length+" or does not equal "+rotationArr.length, this);
         }
         tsb = driveRR.trajectorySequenceBuilder(driveRR.getPoseEstimate());
         for(int i = 0; i<poseArr.length; i++) {
@@ -349,13 +349,12 @@ public class RRManager extends FeatureManager {
     public void doOmniDisplace(Gamepad gamepad1, Gamepad gamepad2, InputManager inputManager){
         Pose2d poseEstimate = driveRR.getPoseEstimate();
         float[] powers = inputManager.getFloatArrayOfInput("drivingControls");
-        float scale = 0.6f;
-        float[] sum = PaulMath.omniCalc(powers[0]*scale, powers[1]*scale, powers[2] * scale);
+
         // Create a vector from the gamepad x/y inputs
         // Then, rotate that vector by the inverse of that heading
         Vector2d input = new Vector2d(
-                -sum[0],
-                -sum[1]
+                -powers[0],
+                -powers[1]
         ).rotated(-poseEstimate.getHeading());
 
         // Pass in the rotated input + right stick value for rotation
@@ -364,7 +363,7 @@ public class RRManager extends FeatureManager {
                 new Pose2d(
                         input.getX(),
                         input.getY(),
-                        sum[2]
+                        powers[2]
                 )
         );
         driveRR.update();
