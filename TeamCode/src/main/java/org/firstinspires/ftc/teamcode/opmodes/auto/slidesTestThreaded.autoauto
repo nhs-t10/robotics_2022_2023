@@ -1,0 +1,21 @@
+$
+    ignorewarning_american_m_unit: true
+$
+#init:
+goto start;
+
+#start:
+    ThreadedMoveToPosition(3), next;
+    driveOmni(0.25,0,0), after 1s next;
+    goto dropCone;
+
+#dropCone:
+    let doneLifting = finishedMoving(), after 0.5s next;
+    if(doneLifting){
+        goto end;
+    } else {
+        goto dropCone;
+    }
+#end:
+    openHand(), next;
+    log("Done");

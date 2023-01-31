@@ -9,6 +9,7 @@ public class bigArmManager extends FeatureManager {
     public final int lowPosition=1450; //The position of the low tower
     public final int middlePosition = 2181; //The position of the middle tower
     public final int highPosition = 2956; //The position of the high tower
+    public final int[] positions = {floorPosition,lowPosition,middlePosition,highPosition};
     public double direction =1.0;
     public boolean doOnce=false;
     public int towerPos = 0;
@@ -52,8 +53,10 @@ public class bigArmManager extends FeatureManager {
      */
 
     public boolean finishedMoving(){
-        return !hands.hasEncodedMovement("monkeyShoulder");
+        return !(Math.abs(hands.getMotorPower("monkeyShoulder"))<0.1f);
     }
+
+    public int getPosition(){ return (int)hands.getMotorPosition("monkeyShoulder"); }
 
     public boolean setPositionFloorLocation(){
         if(!doOnce){
@@ -73,7 +76,7 @@ public class bigArmManager extends FeatureManager {
         doOnce=false;
     }
     public boolean setPositionLowLocation(){
-        towerPos = (int)hands.getMotorPosition("monkeyShoulder");
+        towerPos = getPosition();
 
         if(!doOnce){
             startingPos=towerPos;
@@ -94,7 +97,7 @@ public class bigArmManager extends FeatureManager {
     }
 
     public boolean setPositionMiddleLocation(){
-        towerPos = (int)hands.getMotorPosition("monkeyShoulder");
+        towerPos = getPosition();
 
         if(!doOnce){
             startingPos=towerPos;
@@ -121,5 +124,28 @@ public class bigArmManager extends FeatureManager {
             return false;
         }
         return true;
+    }
+
+    public void ThreadedMoveToPosition(int index){
+        //For reference:
+        //  positions = {floorPosition,lowPosition,middlePosition,highPosition};
+        new Thread(()->{
+            startingPos=getPosition();
+            int targetPos = positions[index];
+            if(startingPos>targetPos){
+                direction=-0.75;
+            } else {
+                direction=1;
+            }
+            hands.setMotorPower("monkeyShoulder",direction);
+            while(Math.abs(hands.getMotorPosition("monkeyShoulder")-startingPos)<=Math.abs(targetPos-startingPos)-25){
+                if(!FeatureManager.isOpModeRunning){
+                    stopArm();
+                    break;
+                }
+            }
+            stopArm();
+        }).start();
+
     }
 }

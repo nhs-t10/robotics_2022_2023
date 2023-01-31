@@ -1,0 +1,21 @@
+$
+    ignorewarning_american_m_unit: true
+$
+#init:
+goto start;
+
+#start:
+
+    goto slides1;
+
+#slides1:
+    log(getPosition()), next;
+    let notDone = setPositionHighLocation(), next;
+    if (notDone){
+        goto slides1;
+    } else {
+        goto end;
+    }
+#end:
+    openHand(), next;
+    log("Done");

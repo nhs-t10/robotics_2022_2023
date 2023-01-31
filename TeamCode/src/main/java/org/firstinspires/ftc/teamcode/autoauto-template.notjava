@@ -64,8 +64,8 @@ public class template extends OpMode {
         limbs = new ManipulationManager(
                                 hardwareMap,
                                 new String[] { "nateMoverLeft", "nateMoverRight"},
-                                new String[] {"nateClaw", "rampLeft", "rampRight", "intakeMoverRight", "intakeMoverLeft"},
-                                new String[] {"Carousel", "ClawMotor", "noodle", "intake", "NeckMotor"}
+                                new String[] {"nateClaw", "rampLeft", "rampRight", "intakeMoverRight", "intakeMoverLeft", "monkeyHand"},
+                                new String[] {"Carousel", "ClawMotor", "noodle", "intake", "NeckMotor", "monkeyShoulder"}
                         );
        clawPosition = new NateManager(limbs, hardwareMap.tryGet(TouchSensor.class, "limit"));
        neck = new GiraffeManager(clawPosition);
