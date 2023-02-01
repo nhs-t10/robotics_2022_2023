@@ -4,19 +4,19 @@ import com.acmerobotics.roadrunner.geometry.Pose2d;
 import com.acmerobotics.roadrunner.geometry.Vector2d;
 import com.acmerobotics.roadrunner.localization.Localizer;
 import com.acmerobotics.roadrunner.trajectory.TrajectoryBuilder;
+import com.acmerobotics.roadrunner.util.Angle;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.Gamepad;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 
-import org.checkerframework.framework.qual.Unused;
 import org.firstinspires.ftc.teamcode.auxilary.PaulMath;
+import org.firstinspires.ftc.teamcode.auxilary.RobotTime;
 import org.firstinspires.ftc.teamcode.drive.SampleMecanumDrive;
 import org.firstinspires.ftc.teamcode.managers.feature.FeatureManager;
 import org.firstinspires.ftc.teamcode.managers.input.InputManager;
 import org.firstinspires.ftc.teamcode.managers.telemetry.TelemetryManager;
 import org.firstinspires.ftc.teamcode.trajectorysequence.TrajectorySequenceBuilder;
-import org.firstinspires.ftc.teamcode.trajectorysequence.TrajectorySequenceRunner;
 import org.firstinspires.ftc.teamcode.util.AssetsTrajectoryManager;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.*;
@@ -30,12 +30,18 @@ import java.util.Arrays;
 public class RRManager extends FeatureManager {
     public static Pose2d currentPose = new Pose2d(0, 0, Math.toRadians(0));
     private SampleMecanumDrive driveRR;
+    private Localizer l;
     private TrajectoryBuilder trajBuildRR;
     private TrajectorySequenceBuilder tsb;
     private TelemetryManager telemetry;
     private OpMode opMode;
+    private Vector2d estimatedPosition;
+    private float[] sum;
+    private Pose2d vel;
+    private Vector2d input;
+    private Pose2d drivePower;
+    private double firstWheelLastRotation, secondWheelLastRotation, lastHeading;
     private static final Pose2d[] nonono = {new Pose2d(-120, 48), new Pose2d(-72, 48), new Pose2d(-24, 48), new Pose2d(-24, 0), new Pose2d(-120, 0), new Pose2d(-72, 0), new Pose2d(-24, -48), new Pose2d(-120, -48), new Pose2d(-72, -48)};
-
     /**
      * Initializes the Road Runner Manager
      * @param hardwareMap The hardwareMap for Roadrunner to access for the drive motors
@@ -345,33 +351,54 @@ public class RRManager extends FeatureManager {
      * Get the gamepad inputs and use them to sense where the robot is displacing to...
      * @param gamepad1 Gamepad 1 (Main driver)
      * @param gamepad2 Gamepad 2 (Micro driver)
+     * @return
      */
-    public void doOmniDisplace(Gamepad gamepad1, Gamepad gamepad2, InputManager inputManager){
-        Pose2d poseEstimate = driveRR.getPoseEstimate();
-        float[] powers = inputManager.getFloatArrayOfInput("drivingControls");
+    public void doOmniDisplace(Gamepad gamepad1, Gamepad gamepad2, float[] driving){
 
-        // Create a vector from the gamepad x/y inputs
-        // Then, rotate that vector by the inverse of that heading
-        Vector2d input = new Vector2d(
-                -powers[0],
-                -powers[1]
-        ).rotated(-poseEstimate.getHeading());
+        reverseMotorsOmni();
 
-        // Pass in the rotated input + right stick value for rotation
-        // Rotation is not part of the rotated input thus must be passed in separately
-        driveRR.setWeightedDrivePower(
+        input = new Vector2d(
+                driving[1],
+                driving[0]
+        );
+        drivePower = new Pose2d(
+                input.getX(),
+                input.getY(),
+                -driving[2]
+        );
+        vel = drivePower;
+        if (Math.abs(drivePower.getX()) + Math.abs(drivePower.getY())
+                + Math.abs(drivePower.getHeading()) > 1) {
+            // re-normalize the powers according to the weights
+            double denom = 1 * Math.abs(drivePower.getX())
+                    + 1 * Math.abs(drivePower.getY())
+                    + 1 * Math.abs(drivePower.getHeading());
+
+            vel = new Pose2d(
+                    1 * drivePower.getX(),
+                    1 * drivePower.getY(),
+                    1 * drivePower.getHeading()
+            ).div(denom);
+        }
+
+        sum = PaulMath.omniCalc((float) vel.getX(),(float) vel.getY(),(float) vel.getHeading());
+        driveRR.setMotorPowers(sum[0], sum[1], sum[2], sum[3]);
+        /*driveRR.setWeightedDrivePower(
                 new Pose2d(
                         input.getX(),
                         input.getY(),
-                        powers[2]
+                        -driving[2]
                 )
-        );
+        );*/
         driveRR.update();
+        resetMotors();
+    }
 
-
-        // Print pose to telemetry
-        //telemetry.addData("x", poseEstimate.getX());
-        //telemetry.addData("y", poseEstimate.getY());
+    public void reverseMotorsOmni() {
+        driveRR.fr.setDirection(DcMotorSimple.Direction.FORWARD);
+        driveRR.br.setDirection(DcMotorSimple.Direction.REVERSE);
+        driveRR.fl.setDirection(DcMotorSimple.Direction.FORWARD);
+        driveRR.bl.setDirection(DcMotorSimple.Direction.REVERSE);
     }
 
 }
