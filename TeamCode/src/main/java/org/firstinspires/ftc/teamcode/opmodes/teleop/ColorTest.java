@@ -32,7 +32,8 @@ import java.util.Arrays;
 
 @TeleOp
 public class ColorTest extends OpMode {
-    public CVManager cv;
+    private CVManager cv;
+    private CVManager cv_test;
     String color = "";
 
 
@@ -72,8 +73,8 @@ public class ColorTest extends OpMode {
 
     }
     public void loop() {
-        telemetry.addData("CR: ", cv.getAnalysisTest());
-        telemetry.addData("CB: ", cv.getAnalysisPreciseTest());
+        telemetry.addData("CR: ", cv_test.getAnalysisTest());
+        telemetry.addData("CB: ", cv_test.getAnalysisPreciseTest());
         process();
         telemetry.addData("color:", color);
         telemetry.update();

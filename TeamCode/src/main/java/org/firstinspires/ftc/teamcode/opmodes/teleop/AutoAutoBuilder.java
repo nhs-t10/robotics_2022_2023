@@ -67,7 +67,11 @@ public class AutoAutoBuilder extends OpMode {
                         new PlusNode(
                                 new MultiplyNode(new ButtonNode("dpadright"), 0.5f),
                                 new MultiplyNode(new ButtonNode("dpadleft"), -0.5f)
-                        )
+                        )/*,
+                        new PlusNode(
+                                new MultiplyNode(new ButtonNode("b"), 0.5f),
+                                new MultiplyNode(new ButtonNode("x"), -0.5f)
+                        )*/
                 )
         );
         input.setOverlapResolutionMethod(InputOverlapResolutionMethod.MOST_COMPLEX_ARE_THE_FAVOURITE_CHILD);
@@ -77,7 +81,7 @@ public class AutoAutoBuilder extends OpMode {
         try {
             input.update();
             float[] h = input.getFloatArrayOfInput("D-Pad Drive");
-            driver.driveOmni(h[0],h[1],0);
+            driver.driveOmni(h[0],h[1],0/*h[2]*/);
             if (input.getBool("distanceTracker")) {
                 if (!tracking){
                     startPosition = driver.frontLeft.getCurrentPosition();

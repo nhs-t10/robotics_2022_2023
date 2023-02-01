@@ -27,6 +27,7 @@ import com.qualcomm.robotcore.hardware.HardwareMap;
 
 import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
 import org.firstinspires.ftc.teamcode.managers.feature.FeatureManager;
+import org.jetbrains.annotations.Nullable;
 import org.opencv.core.Mat;
 import org.opencv.core.Point;
 import org.opencv.core.Scalar;
@@ -71,7 +72,7 @@ public class CVManager extends FeatureManager {
              * of a frame from the camera. Note that switching pipelines on-the-fly
              * (while a streaming session is in flight) *IS* supported.
              */
-            webcam.setPipeline(pipeline);
+                webcam.setPipeline(pipeline);
 
             /*
              * Open the connection to the camera device. New in v1.4.0 is the ability
@@ -111,6 +112,33 @@ public class CVManager extends FeatureManager {
                      * This will be called if the camera could not be opened
                      */
                 }
+            });
+        }
+    }
+    //This is identical in every way, except allows more flexibilty in which pipeline you use
+    public CVManager(HardwareMap hardwareMap, int pipeline_index) {
+        if (hardwareMap.appContext != null) {
+            this.pipeline = new ColorSensor123();
+            this.pipeline_Secondary = new MinesweeperPipeline_Secondary();
+            this.pipeline_Testing = new ColorSensor123_TEST();
+            int cameraMonitorViewId = hardwareMap.appContext.getResources().getIdentifier("cameraMonitorViewId", "id", hardwareMap.appContext.getPackageName());
+            webcam = OpenCvCameraFactory.getInstance().createWebcam(hardwareMap.get(WebcamName.class, "Eyer"), cameraMonitorViewId);
+            if (pipeline_index == 0) {
+                webcam.setPipeline(pipeline);
+            } else if (pipeline_index == 1) {
+                webcam.setPipeline(pipeline_Secondary);
+            } else if (pipeline_index == 2) {
+                webcam.setPipeline(pipeline_Testing);
+            }
+            else {
+                webcam.setPipeline(pipeline);
+            }
+            webcam.setMillisecondsPermissionTimeout(2500); // Timeout for obtaining permission is configurable. Set before opening.
+            webcam.openCameraDeviceAsync(new OpenCvCamera.AsyncCameraOpenListener() {
+                @Override
+                public void onOpened() { webcam.startStreaming(640, 480, OpenCvCameraRotation.UPRIGHT); }
+                @Override
+                public void onError(int errorCode) {}
             });
         }
     }
