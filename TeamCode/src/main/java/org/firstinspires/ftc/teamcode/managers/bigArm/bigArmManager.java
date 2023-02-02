@@ -6,11 +6,11 @@ import org.firstinspires.ftc.teamcode.managers.manipulation.ManipulationManager;
 public class bigArmManager extends FeatureManager {
     ManipulationManager hands;
     public final int floorPosition = 250; //The position of the floor
-    public final int lowPosition=1450; //The position of the low tower
-    public final int middlePosition = 2181; //The position of the middle tower
+    public final int lowPosition= 1250; //The position of the low tower
+    public final int middlePosition = 2081; //The position of the middle tower
     public final int highPosition = 2956; //The position of the high tower
-    public final int[] positions = {floorPosition,lowPosition,middlePosition,highPosition};
-    public double direction =1.0;
+    public final int[] positions = {floorPosition, lowPosition, middlePosition, highPosition};
+    public double direction = 1.0;
     public boolean doOnce=false;
     public int towerPos = 0;
     int startingPos = 0;
@@ -26,7 +26,7 @@ public class bigArmManager extends FeatureManager {
                     direction = 1;
                 }
                 hands.setMotorPower("monkeyShoulder", direction);
-                while (Math.abs(hands.getMotorPosition("monkeyShoulder") - startingPos) <= Math.abs(targetPos - startingPos) - 25) {
+                while (Math.abs(getPosition() - startingPos) <= Math.abs(targetPos - startingPos) - 25) {
                     if (!FeatureManager.isOpModeRunning) {
                         stopArm();
                         break;
@@ -80,7 +80,7 @@ public class bigArmManager extends FeatureManager {
      */
 
     public boolean finishedMoving(){
-        return !(Math.abs(hands.getMotorPower("monkeyShoulder"))<0.1f);
+        return (Math.abs(hands.getMotorPower("monkeyShoulder"))<0.1f);
     }
 
     public int getPosition(){ return (int)hands.getMotorPosition("monkeyShoulder"); }

@@ -217,6 +217,12 @@ public class ManipulationManager extends FeatureManager {
         motors[index].setMode(mode);
     }
 
+    public void setZeroPowerBehavior(String name, DcMotor.ZeroPowerBehavior mode) {
+        int index = (Arrays.asList(motorNames)).indexOf(name);
+        if(index == -1) throw new IllegalArgumentException("Motor " + name + " does not exist or is not registered in ManipulationManager");
+        motors[index].setZeroPowerBehavior(mode);
+    }
+
     public void resetEncoders() {
         for(DcMotor motor : motors) {
             if(motor != null) motor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);

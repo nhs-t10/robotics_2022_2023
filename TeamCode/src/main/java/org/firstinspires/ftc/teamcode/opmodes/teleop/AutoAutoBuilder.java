@@ -25,6 +25,7 @@ import org.firstinspires.ftc.teamcode.managers.input.nodes.JoystickNode;
 import org.firstinspires.ftc.teamcode.managers.input.nodes.MultiInputNode;
 import org.firstinspires.ftc.teamcode.managers.input.nodes.MultiplyNode;
 import org.firstinspires.ftc.teamcode.managers.input.nodes.PlusNode;
+import org.firstinspires.ftc.teamcode.managers.input.nodes.ToggleNode;
 import org.firstinspires.ftc.teamcode.managers.manipulation.ManipulationManager;
 import org.firstinspires.ftc.teamcode.managers.movement.MovementManager;
 import org.firstinspires.ftc.teamcode.managers.sensor.SensorManager;
@@ -57,6 +58,10 @@ public class AutoAutoBuilder extends OpMode {
         input.registerInput("distanceTracker",
                 new ButtonNode("leftbumper")
         );
+        fl.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        fr.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        bl.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        br.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         //Turns inputs into ints (false is 0 and true is 1) and then multiplies them by 0.5
         input.registerInput("D-Pad Drive",
                 new MultiInputNode(
@@ -73,6 +78,12 @@ public class AutoAutoBuilder extends OpMode {
                                 new MultiplyNode(new ButtonNode("x"), -0.5f)
                         )*/
                 )
+        );
+        input.registerInput("SanityTestA",
+                new ButtonNode("a")
+        );
+        input.registerInput("SanityTestB",
+                new ButtonNode("b")
         );
         input.setOverlapResolutionMethod(InputOverlapResolutionMethod.MOST_COMPLEX_ARE_THE_FAVOURITE_CHILD);
         telemetry = new MultipleTelemetry(telemetry, FtcDashboard.getInstance().getTelemetry());
@@ -95,6 +106,12 @@ public class AutoAutoBuilder extends OpMode {
                     telemetry.addLine("Movement Number " + trackNumber + ":  " + distance);
                 }
                 tracking = false;
+            }
+            if (input.getBool("SanityTestA")){
+                driver.driveBlue(1,-1,1,-1);
+            }
+            if (input.getBool("SanityTestB")){
+                driver.driveBlue(-1,1,-1,1);
             }
             telemetry.addData("FL Power", driver.frontLeft.getPower());
             telemetry.addData("FR Power", driver.frontRight.getPower());

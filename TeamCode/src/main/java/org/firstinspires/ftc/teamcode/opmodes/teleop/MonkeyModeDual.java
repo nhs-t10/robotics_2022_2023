@@ -93,6 +93,7 @@ public class MonkeyModeDual extends OpMode {
                 servo           ("monkeyHand"),
                 motor           ("monkeyShoulder")
         );
+        hands.setZeroPowerBehavior("monkeyShoulder", DcMotor.ZeroPowerBehavior.BRAKE);
         //hands.resetEncoders("monkeyShoulder");
         sensing = new SensorManager(
                 hardwareMap,
