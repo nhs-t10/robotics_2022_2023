@@ -7,11 +7,13 @@ import static org.firstinspires.ftc.teamcode.managers.manipulation.ManipulationM
 import com.acmerobotics.dashboard.FtcDashboard;
 import com.acmerobotics.dashboard.telemetry.MultipleTelemetry;
 import com.acmerobotics.roadrunner.geometry.Pose2d;
+import com.acmerobotics.roadrunner.geometry.Vector2d;
 import com.acmerobotics.roadrunner.trajectory.TrajectoryBuilder;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
 
+import org.firstinspires.ftc.teamcode.auxilary.RobotTime;
 import org.firstinspires.ftc.teamcode.auxilary.integratedasync.PriorityAsyncOpmodeComponent;
 import org.firstinspires.ftc.teamcode.drive.SampleMecanumDrive;
 import org.firstinspires.ftc.teamcode.managers.bigArm.bigArmManager;
@@ -25,6 +27,7 @@ import org.firstinspires.ftc.teamcode.managers.input.nodes.JoystickNode;
 import org.firstinspires.ftc.teamcode.managers.input.nodes.MultiInputNode;
 import org.firstinspires.ftc.teamcode.managers.input.nodes.MultiplyNode;
 import org.firstinspires.ftc.teamcode.managers.input.nodes.PlusNode;
+import org.firstinspires.ftc.teamcode.managers.input.nodes.ToggleNode;
 import org.firstinspires.ftc.teamcode.managers.manipulation.ManipulationManager;
 import org.firstinspires.ftc.teamcode.managers.movement.MovementManager;
 import org.firstinspires.ftc.teamcode.managers.roadrunner.RRManager;
@@ -56,7 +59,7 @@ public class MonkeyModeDualRR extends OpMode {
     public boolean nyooming = false;
     public double distance;
     int towerPos = 0;
-
+    SampleMecanumDrive driveRR;
     int currentColor = 0;
     int currentColor1 = 0;
     float rainbowSenseRed = 0;
@@ -77,6 +80,7 @@ public class MonkeyModeDualRR extends OpMode {
         telemetry = telemetryManager;
         FeatureManager.logger.setBackend(telemetry.log());
         rr = new RRManager(hardwareMap, new Pose2d(0, 0, Math.toRadians(0)), telemetryManager, this);
+        driveRR = rr.getDrive();
         DcMotor fl = hardwareMap.get(DcMotor.class, "fl");
         DcMotor fr = hardwareMap.get(DcMotor.class, "fr");
         DcMotor br = hardwareMap.get(DcMotor.class, "br");
@@ -98,18 +102,18 @@ public class MonkeyModeDualRR extends OpMode {
         monkeyArm = new bigArmManager(hands);
         input = new InputManager(gamepad1, gamepad2);
         input.registerInput("drivingControls",
-                    new PlusNode(
-                            new MultiInputNode(
-                                    new MultiplyNode(new GradualStickNode(new JoystickNode("left_stick_y"), 0.1f, 0.002f), -1.5f),
-                                    new MultiplyNode(new GradualStickNode(new JoystickNode("left_stick_x"), 0.1f, 0.002f), -1.5f),
-                                    new MultiplyNode(new GradualStickNode(new JoystickNode("right_stick_x"), 0.1f, 0.002f), -1.5f)
-                            ),
-                            new MultiInputNode(
-                                    new MultiplyNode(new JoystickNode("gamepad2left_stick_y"), -0.4f),
-                                    new MultiplyNode(new JoystickNode("gamepad2left_stick_x"), -0.4f),
-                                    new MultiplyNode(new JoystickNode("gamepad2right_stick_x"), -0.4f)
-                            )
-                    )
+                new PlusNode(
+                        new MultiInputNode(
+                                new MultiplyNode(new GradualStickNode(new JoystickNode("left_stick_y"), 0.25f, 0.5f), -1f),
+                                new MultiplyNode(new GradualStickNode(new JoystickNode("left_stick_x"), 0.25f, 0.5f), -1f),
+                                new MultiplyNode(new GradualStickNode(new JoystickNode("right_stick_x"), 0.25f, 0.5f), -1f)
+                        ),
+                        new MultiInputNode(
+                                new MultiplyNode(new JoystickNode("gamepad2left_stick_y"), -0.4f),
+                                new MultiplyNode(new JoystickNode("gamepad2left_stick_x"), -0.4f),
+                                new MultiplyNode(new JoystickNode("gamepad2right_stick_x"), -0.4f)
+                        )
+                )
         );
         input.registerInput("handToggle",
                 new AnyNode(
@@ -151,19 +155,25 @@ public class MonkeyModeDualRR extends OpMode {
         input.registerInput("a1",
                 new ButtonNode("a")
         );
-        //input.registerInput("rrTog", new ToggleNode(new ButtonNode("dpadup")));
+        input.registerInput("rrTog", new ToggleNode(new ButtonNode("dpadup")));
         input.registerInput("rrToggle", new ButtonNode("dpadup"));
         input.setOverlapResolutionMethod(InputOverlapResolutionMethod.MOST_COMPLEX_ARE_THE_FAVOURITE_CHILD);
         rr.calibrateDriveToAutoPosition();
-
         PriorityAsyncOpmodeComponent.start(() -> {
-            if (input.getBool("rrToggle") && !rrStatus) {
-                rrToggle=!rrToggle;
-                rrStatus = true;
-            } else if (!input.getBool("rrToggle") && rrStatus){
-                rrStatus = false;
+
+            while(FeatureManager.isOpModeRunning) {
+
+                if (rr.notBusy()) {
+
+                    rr.doOmniDisplace(gamepad1, gamepad2, input.getFloatArrayOfInput("drivingControls"));
+                }
+
             }
-            if(rrToggle && rr.notBusy()) {
+
+        });
+        PriorityAsyncOpmodeComponent.start(() -> {
+
+            if(input.getBool("rrTog") && rr.notBusy()) {
                 if (input.getBool("a1") && rr.notBusy()) {
                     //rr.moveToPosWithID(2);
                     try {
@@ -188,9 +198,7 @@ public class MonkeyModeDualRR extends OpMode {
                 }
             }
             rr.updateLocalizer();
-            if(rr.notBusy()){
-                rr.doOmniDisplace(input.gamepad, input.gamepad2, input);
-            }
+
 
             telemetry = new MultipleTelemetry(telemetry, FtcDashboard.getInstance().getTelemetry());
         });
