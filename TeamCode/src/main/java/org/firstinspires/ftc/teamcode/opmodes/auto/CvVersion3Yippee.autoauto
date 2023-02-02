@@ -22,7 +22,7 @@ goto start;
     driveOmni(0,-0.5,-0.02), after 48cm next;
     driveOmni(0.5,0,0), after 64cm next;
     driveOmni(0,-0.5,-0.02), after 24cm next;
-    driveOmni(0.5,0,0), after 6cm next;
+    driveOmni(0.5,0,0), after 4cm next;
     stopDrive(), next;
     goto dropCone;
 
@@ -30,7 +30,7 @@ goto start;
     let doneLifting = finishedMoving(), after 0.5s next;
     if(doneLifting){
         openHand(), next;
-        goto end;
+        goto postLoadedCone;
     } else {
         goto dropCone;
     }
