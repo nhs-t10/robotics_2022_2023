@@ -14,6 +14,33 @@ public class bigArmManager extends FeatureManager {
     public boolean doOnce=false;
     public int towerPos = 0;
     int startingPos = 0;
+    private boolean linSlidesMoving = false;
+    private Thread linSlides = new Thread(() -> {
+        while(true){
+            if(linSlidesMoving){
+                startingPos = getPosition();
+                int targetPos = positions[this.index];
+                if (startingPos > targetPos) {
+                    direction = -0.75;
+                } else {
+                    direction = 1;
+                }
+                hands.setMotorPower("monkeyShoulder", direction);
+                while (Math.abs(hands.getMotorPosition("monkeyShoulder") - startingPos) <= Math.abs(targetPos - startingPos) - 25) {
+                    if (!FeatureManager.isOpModeRunning) {
+                        stopArm();
+                        break;
+                    }
+                }
+                stopArm();
+                linSlidesMoving = false;
+            }
+
+        }
+
+
+    });
+    private int index;
 
     public bigArmManager(ManipulationManager hands){
         this.hands = hands;
@@ -129,23 +156,13 @@ public class bigArmManager extends FeatureManager {
     public void ThreadedMoveToPosition(int index){
         //For reference:
         //  positions = {floorPosition,lowPosition,middlePosition,highPosition};
-        new Thread(()->{
-            startingPos=getPosition();
-            int targetPos = positions[index];
-            if(startingPos>targetPos){
-                direction=-0.75;
-            } else {
-                direction=1;
-            }
-            hands.setMotorPower("monkeyShoulder",direction);
-            while(Math.abs(hands.getMotorPosition("monkeyShoulder")-startingPos)<=Math.abs(targetPos-startingPos)-25){
-                if(!FeatureManager.isOpModeRunning){
-                    stopArm();
-                    break;
-                }
-            }
-            stopArm();
-        }).start();
+        if(linSlides.getState() == Thread.State.NEW){
+            linSlides.start();
+        }
+        if(!linSlidesMoving) {
+            linSlidesMoving = true;
+        }
+        this.index = index;
 
     }
 }

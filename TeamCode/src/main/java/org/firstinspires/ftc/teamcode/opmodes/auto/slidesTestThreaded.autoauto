@@ -7,6 +7,7 @@ goto start;
 #start:
     ThreadedMoveToPosition(3), next;
     driveOmni(0.25,0,0), after 1s next;
+    stopDrive(), next;
     goto dropCone;
 
 #dropCone:
