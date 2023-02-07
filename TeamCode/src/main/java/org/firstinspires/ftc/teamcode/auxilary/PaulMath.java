@@ -4,6 +4,7 @@ import static java.lang.Math.PI;
 
 import com.qualcomm.robotcore.util.Range;
 
+import org.apache.commons.math3.geometry.euclidean.twod.Vector2D;
 import org.firstinspires.ftc.teamcode.managers.feature.FeatureManager;
 import org.firstinspires.ftc.teamcode.managers.feature.robotconfiguration.RobotConfiguration;
 
@@ -67,6 +68,14 @@ public abstract class PaulMath extends FeatureManager {
         double x = Math.cos(angle) * magnitude;
 
         return new float[] {(float)x, (float)y };
+    }
+
+    public static float[] rotateVector(float[] cartesianCoords,float angle){
+        double radians = (angle * PI / 180);
+
+        double x = cartesianCoords[0]*Math.cos(radians) - cartesianCoords[1]*Math.sin(radians);
+        double y = cartesianCoords[0]*Math.sin(radians) - cartesianCoords[1]*Math.cos(radians);
+        return new float[] {(float)x, (float) y};
     }
 
     /**

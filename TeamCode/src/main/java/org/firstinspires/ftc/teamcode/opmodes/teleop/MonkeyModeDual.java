@@ -47,7 +47,6 @@ public class MonkeyModeDual extends OpMode {
     public bigArmManager monkeyArm;
     public SensorManager sensing;
 
-    private boolean handStatus = false;
     private boolean intakeToggle = false;
     private boolean rrStatus = false;
     boolean rrToggle = false;
@@ -214,7 +213,7 @@ public class MonkeyModeDual extends OpMode {
             else {
                 microDriveSpeed = -0.4f;
             }
-            if (input.getBool("handToggle") && !handStatus) {
+            if (input.getBool("handToggle")) {
                 monkeyArm.openHand();
             }
             else {

@@ -1,8 +1,11 @@
 package org.firstinspires.ftc.teamcode.managers.imu;
 
+import static org.firstinspires.ftc.robotcore.external.BlocksOpModeCompanion.hardwareMap;
+
 import com.acmerobotics.roadrunner.geometry.Pose2d;
 import com.acmerobotics.roadrunner.geometry.Vector2d;
 import com.qualcomm.hardware.bosch.BNO055IMU;
+import com.qualcomm.robotcore.hardware.DcMotor;
 
 import org.firstinspires.ftc.robotcore.external.navigation.Acceleration;
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
@@ -20,12 +23,17 @@ import org.firstinspires.ftc.teamcode.managers.movement.MovementManager;
 
 public class ImuManager extends FeatureManager {
     public BNO055IMU imu;
-    private boolean doOnce = false;
     ManipulationManager hands;
     MovementManager driver;
+    float targetAngle;
+    float globalAngle;
+    boolean doOnce=false;
+    float power=0f;
+    Orientation lastAngles = new Orientation();
 
-    public ImuManager(BNO055IMU imu) {
+    public ImuManager(BNO055IMU imu, MovementManager driver) {
         this.imu = imu;
+        this.driver=driver;
         BNO055IMU.Parameters parameters = new BNO055IMU.Parameters();
 
         parameters.mode = BNO055IMU.SensorMode.NDOF;
@@ -34,6 +42,7 @@ public class ImuManager extends FeatureManager {
         parameters.useExternalCrystal = true;
         parameters.loggingEnabled  = true;
         parameters.loggingTag = "Imu";
+
 
         imu.initialize(parameters);
         imu.startAccelerationIntegration(null, null,0);
@@ -79,9 +88,23 @@ public class ImuManager extends FeatureManager {
     public double getAccelerationY() {
         return imu.getAcceleration().zAccel;
     }
-    private Thread thread;
     public Acceleration getLinearAcceleration() {
         return imu.getLinearAcceleration();
+    }
+
+    public float getAngle(){
+        Orientation angles = getOrientation();
+        float deltaAngle = getThirdAngleOrientation() - lastAngles.thirdAngle;
+        if (deltaAngle < -180)
+            deltaAngle += 360;
+        else if (deltaAngle > 180)
+            deltaAngle -= 360;
+
+        globalAngle += deltaAngle;
+
+        lastAngles = angles;
+
+        return globalAngle;
     }
 
     public float[] rotateDriveControlToHeadless(float[] drive) {
@@ -100,24 +123,27 @@ public class ImuManager extends FeatureManager {
                 drive[2]
         };
     }
+    public void resetDoOnce(){doOnce=false;}
 //power is a magnitude, so unsigned. Sign the angle.
-    public void rotate(double angle, float power) {
-        if (angle < 0) {
-            power = power * -1;
-        }
-        double endingPosition = getOrientation().thirdAngle + angle;
-        driver.driveOmni(0, 0, power);
-        thread = new Thread(() -> {
-            double currentPosition = getOrientation().thirdAngle;
-            while (!(Math.abs(currentPosition - endingPosition) < 5)) {
-                driver.driveOmni(0, 0, 0);
-                threadStop();
-                return;
+    public boolean rotate(float angle, float power) {
+        if (!doOnce){
+            targetAngle = getAngle()+angle;
+            if (angle<0){
+                this.power=power*-1;
             }
-        });
-    }
-    public void threadStop(){
-        thread.interrupt();
+            doOnce=true;
+
+        }
+
+
+        driver.driveOmni(0, 0, this.power);
+        if (Math.abs(getAngle()-targetAngle) < 5){
+            driver.stopDrive();
+            doOnce=false;
+            return false;
+        }
+        return true;
+
     }
 
 }
