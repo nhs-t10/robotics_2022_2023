@@ -69,6 +69,7 @@ public class template extends OpMode {
                         );
        clawPosition = new NateManager(limbs, hardwareMap.tryGet(TouchSensor.class, "limit"));
        neck = new GiraffeManager(clawPosition);
+       limbs.setZeroPowerBehavior("monkeyShoulder", DcMotor.ZeroPowerBehavior.BRAKE);
 
         cv = new CVManager(hardwareMap);
         rr = new RRManager(hardwareMap, new Pose2d(0, 0), telemetryManager, this);

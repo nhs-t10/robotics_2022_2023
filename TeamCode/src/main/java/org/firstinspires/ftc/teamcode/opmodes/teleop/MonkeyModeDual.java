@@ -50,12 +50,15 @@ public class MonkeyModeDual extends OpMode {
     private boolean intakeToggle = false;
     private boolean rrStatus = false;
     boolean rrToggle = false;
-    private float microDriveSpeed = 0.4f;
+    private float microDriveSpeed = 1f;
 
     public boolean movingToLow = false;
     public boolean movingToMid = false;
     public boolean movingToHigh = false;
     public boolean movingToFloor = false;
+    private float[] drivePowers1 = new float[3];
+    private float[] drivePowers2 = new float[3];
+    private float[] drivePowers3 = new float[3];
 
     public boolean nyooming = false;
     public double distance;
@@ -92,7 +95,6 @@ public class MonkeyModeDual extends OpMode {
                 servo           ("monkeyHand"),
                 motor           ("monkeyShoulder")
         );
-        hands.setZeroPowerBehavior("monkeyShoulder", DcMotor.ZeroPowerBehavior.BRAKE);
         //hands.resetEncoders("monkeyShoulder");
         sensing = new SensorManager(
                 hardwareMap,
@@ -103,18 +105,18 @@ public class MonkeyModeDual extends OpMode {
         monkeyArm = new bigArmManager(hands);
         input = new InputManager(gamepad1, gamepad2);
         input.registerInput("drivingControls",
-                    new PlusNode(
-                            new MultiInputNode(
-                                    new MultiplyNode(new GradualStickNode(new JoystickNode("left_stick_y"), 0.25f, 0.5f), -1f),
-                                    new MultiplyNode(new GradualStickNode(new JoystickNode("left_stick_x"), 0.25f, 0.5f), -1f),
-                                    new MultiplyNode(new GradualStickNode(new JoystickNode("right_stick_x"), 0.25f, 0.5f), -1f)
-                            ),
-                            new MultiInputNode(
-                                    new MultiplyNode(new JoystickNode("gamepad2left_stick_y"), microDriveSpeed),
-                                    new MultiplyNode(new JoystickNode("gamepad2left_stick_x"), microDriveSpeed),
-                                    new MultiplyNode(new JoystickNode("gamepad2right_stick_x"), microDriveSpeed)
-                            )
-                    )
+                new MultiInputNode(
+                        new MultiplyNode(new GradualStickNode(new JoystickNode("left_stick_y"), 0.25f, 0.5f), -1f),
+                        new MultiplyNode(new GradualStickNode(new JoystickNode("left_stick_x"), 0.25f, 0.5f), -1f),
+                        new MultiplyNode(new JoystickNode("right_stick_x"), -1f)
+                )
+        );
+        input.registerInput("drivingControlsMicro",
+                new MultiInputNode(
+                        new MultiplyNode(new JoystickNode("gamepad2left_stick_y"), 0.4f),
+                        new MultiplyNode(new JoystickNode("gamepad2left_stick_x"), 0.4f),
+                        new MultiplyNode(new JoystickNode("gamepad2right_stick_x"), 0.4f)
+                )
         );
         input.registerInput("inversionToggle",
                     new ToggleNode(new ButtonNode("gamepad2leftbumper"))
@@ -206,12 +208,16 @@ public class MonkeyModeDual extends OpMode {
                 //Meant to be if this && !input.getBool("armLengthNone");
             //driver.driveOmni(input.getFloatArrayOfInput("drivingControls"));
 //            }
-            driver.driveOmni(input.getFloatArrayOfInput("drivingControls"));
+            drivePowers1 = input.getFloatArrayOfInput("drivingControls");
+            drivePowers2 = input.getFloatArrayOfInput("drivingControlsMicro");
+            drivePowers3[0] = drivePowers1[0] + (microDriveSpeed * drivePowers2[0]);
+            drivePowers3[1] = drivePowers1[1] + (microDriveSpeed * drivePowers2[1]);
+            drivePowers3[2] = drivePowers1[2] + (microDriveSpeed * drivePowers2[2]);
+            driver.driveOmni(drivePowers3);
             if (input.getBool("inversionToggle")){
-                microDriveSpeed = 0.4f;
-            }
-            else {
-                microDriveSpeed = -0.4f;
+                microDriveSpeed = 1f;
+            } else {
+                microDriveSpeed = -1f;
             }
             if (input.getBool("handToggle")) {
                 monkeyArm.openHand();
