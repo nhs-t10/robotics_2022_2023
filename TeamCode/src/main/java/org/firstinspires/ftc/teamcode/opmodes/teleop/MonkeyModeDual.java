@@ -21,6 +21,7 @@ import org.firstinspires.ftc.teamcode.managers.input.InputOverlapResolutionMetho
 import org.firstinspires.ftc.teamcode.managers.input.nodes.AnyNode;
 import org.firstinspires.ftc.teamcode.managers.input.nodes.ButtonNode;
 import org.firstinspires.ftc.teamcode.managers.input.nodes.GradualStickNode;
+import org.firstinspires.ftc.teamcode.managers.input.nodes.InversionNode;
 import org.firstinspires.ftc.teamcode.managers.input.nodes.JoystickNode;
 import org.firstinspires.ftc.teamcode.managers.input.nodes.MultiInputNode;
 import org.firstinspires.ftc.teamcode.managers.input.nodes.MultiplyNode;
@@ -105,22 +106,28 @@ public class MonkeyModeDual extends OpMode {
         monkeyArm = new bigArmManager(hands);
         input = new InputManager(gamepad1, gamepad2);
         input.registerInput("drivingControls",
-                new MultiInputNode(
-                        new MultiplyNode(new GradualStickNode(new JoystickNode("left_stick_y"), 0.25f, 0.5f), -1f),
-                        new MultiplyNode(new GradualStickNode(new JoystickNode("left_stick_x"), 0.25f, 0.5f), -1f),
-                        new MultiplyNode(new JoystickNode("right_stick_x"), -1f)
+                new PlusNode(
+                    new MultiInputNode(
+                            new MultiplyNode(new GradualStickNode(new JoystickNode("left_stick_y"), 0.25f, 0.5f), -1f),
+                            new MultiplyNode(new GradualStickNode(new JoystickNode("left_stick_x"), 0.25f, 0.5f), -1f),
+                            new MultiplyNode(new JoystickNode("right_stick_x"), -1f)
+                    ),
+                    new MultiInputNode(
+                            new InversionNode(
+                                    new MultiplyNode(new JoystickNode("gamepad2left_stick_y"), 0.4f),
+                                    new ToggleNode(new ButtonNode("gamepad2leftbumper"))
+                            ),
+                            new InversionNode(
+                                    new MultiplyNode(new JoystickNode("gamepad2left_stick_x"), 0.4f),
+                                    new ToggleNode(new ButtonNode("gamepad2leftbumper"))
+                            ),
+                            new InversionNode(
+                                    new MultiplyNode(new JoystickNode("gamepad2right_stick_x"), 0.4f),
+                                    new ToggleNode(new ButtonNode("gamepad2leftbumper"))
+                            )
+                    )
                 )
         );
-        input.registerInput("drivingControlsMicro",
-                new MultiInputNode(
-                        new MultiplyNode(new JoystickNode("gamepad2left_stick_y"), 0.4f),
-                        new MultiplyNode(new JoystickNode("gamepad2left_stick_x"), 0.4f),
-                        new MultiplyNode(new JoystickNode("gamepad2right_stick_x"), 0.4f)
-                )
-        );
-        input.registerInput("inversionToggle",
-                    new ToggleNode(new ButtonNode("gamepad2leftbumper"))
-                );
         input.registerInput("handToggle",
                 new ToggleNode(
                         new AnyNode(
@@ -208,12 +215,7 @@ public class MonkeyModeDual extends OpMode {
                 //Meant to be if this && !input.getBool("armLengthNone");
             //driver.driveOmni(input.getFloatArrayOfInput("drivingControls"));
 //            }
-            drivePowers1 = input.getFloatArrayOfInput("drivingControls");
-            drivePowers2 = input.getFloatArrayOfInput("drivingControlsMicro");
-            drivePowers3[0] = drivePowers1[0] + (microDriveSpeed * drivePowers2[0]);
-            drivePowers3[1] = drivePowers1[1] + (microDriveSpeed * drivePowers2[1]);
-            drivePowers3[2] = drivePowers1[2] + (microDriveSpeed * drivePowers2[2]);
-            driver.driveOmni(drivePowers3);
+            driver.driveOmni(input.getFloatArrayOfInput("drivingControls"));
             if (input.getBool("inversionToggle")){
                 microDriveSpeed = 1f;
             } else {
