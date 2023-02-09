@@ -1,5 +1,7 @@
 package org.firstinspires.ftc.teamcode.managers.roadrunner;
 
+import androidx.annotation.NonNull;
+
 import com.acmerobotics.roadrunner.geometry.Pose2d;
 import com.acmerobotics.roadrunner.geometry.Vector2d;
 import com.acmerobotics.roadrunner.localization.Localizer;
@@ -399,7 +401,7 @@ public class RoadRunnerManager extends FeatureManager {
      * @param gamepad2 Gamepad 2 (Micro driver)
      * @return
      */
-    public void doOmniDisplace(Gamepad gamepad1, Gamepad gamepad2, float[] driving) {
+    public void doOmniDisplace(Gamepad gamepad1, Gamepad gamepad2, @NonNull float[] driving) {
 
 
         input = new Vector2d(
