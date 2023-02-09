@@ -37,6 +37,7 @@ public class RoadRunnerManager extends FeatureManager {
     private float[] sum;
     private Pose2d vel;
     private Vector2d input;
+    private double denom;
     private Pose2d drivePower;
     private Trajectory t;
     private Trajectory t2;
@@ -61,7 +62,7 @@ public class RoadRunnerManager extends FeatureManager {
         this.t2 = AssetsTrajectoryManager.load("dropoffleftblue", telemetry);
         this.t3 = AssetsTrajectoryManager.load("dropoffright", telemetry);
         this.t4 = AssetsTrajectoryManager.load("dropoffrightblue", telemetry);
-
+        reverseMotorsOmni();
         calibrateDriveToZero();
         calibrateDriveToAutoPosition();
         telemetry.log().add("Go to 192.168.43.1:8080/dash for the FTC Dashboard! Unless this is the competition, for which, in that case, never mind, don't use FTC Dashboard...");
@@ -378,12 +379,13 @@ public class RoadRunnerManager extends FeatureManager {
      */
     public void doOmniDisplace(Gamepad gamepad1, Gamepad gamepad2, float[] driving){
 
-        reverseMotorsOmni();
+
 
         input = new Vector2d(
                 driving[1],
                 driving[0]
         );
+
         drivePower = new Pose2d(
                 input.getX(),
                 input.getY(),
@@ -393,7 +395,7 @@ public class RoadRunnerManager extends FeatureManager {
         if (Math.abs(drivePower.getX()) + Math.abs(drivePower.getY())
                 + Math.abs(drivePower.getHeading()) > 1) {
             // re-normalize the powers according to the weights
-            double denom = 1 * Math.abs(drivePower.getX())
+            denom = 1 * Math.abs(drivePower.getX())
                     + 1 * Math.abs(drivePower.getY())
                     + 1 * Math.abs(drivePower.getHeading());
 
@@ -414,7 +416,7 @@ public class RoadRunnerManager extends FeatureManager {
                 )
         );*/
         driveRR.update();
-        resetMotors();
+
     }
 
     public void reverseMotorsOmni() {

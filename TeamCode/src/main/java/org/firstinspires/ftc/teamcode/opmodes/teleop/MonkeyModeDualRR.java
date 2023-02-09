@@ -49,7 +49,7 @@ public class MonkeyModeDualRR extends OpMode {
     private boolean rrStatus = false;
     private float[] driving;
     boolean rrToggle = false;
-
+    private float[] controlFloats;
     public boolean movingToLow = false;
     public boolean movingToMid = false;
     public boolean movingToHigh = false;
@@ -163,8 +163,9 @@ public class MonkeyModeDualRR extends OpMode {
         rr.calibrateDriveToAutoPosition();
         PriorityAsyncOpmodeComponent.start(() -> {
             input.update();
+            controlFloats = input.getFloatArrayOfInput("drivingControls");
             if (rr.notBusy()) {
-                rr.doOmniDisplace(gamepad1, gamepad2, input.getFloatArrayOfInput("drivingControls"));
+                rr.doOmniDisplace(gamepad1, gamepad2, controlFloats);
             }
         });
         PriorityAsyncOpmodeComponent.start(() -> {
