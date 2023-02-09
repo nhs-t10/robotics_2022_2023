@@ -124,8 +124,8 @@ public class RoadRunnerManager extends FeatureManager {
     /**
      * Method that sets the current Roadrunner position to what AutoAuto reports
      */
-    public void setAutoAutoPosition(Pose2d pose){
-        RoadRunnerManager.currentPose = pose;
+    public void setAutoAutoPosition(double x, double y, double rot){
+        RoadRunnerManager.currentPose = new Pose2d(x, y, Math.toRadians(rot));
     }
     /**
      * Returns the drive object element from the class FOR TESTING ONLY
@@ -165,6 +165,9 @@ public class RoadRunnerManager extends FeatureManager {
     public void calibrateDriveToAutoPosition(){
         driveRR.setPoseEstimate(currentPose);
         telemetry.log().add("RoadRunner Drive Calibrated to Auto Position");
+    }
+    public double[] getCurrPose(){
+        return new double[]{driveRR.getPoseEstimate().getX(), driveRR.getPoseEstimate().getY(), Math.toDegrees(driveRR.getPoseEstimate().getHeading())};
     }
 
     /**
