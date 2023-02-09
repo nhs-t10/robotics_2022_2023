@@ -3,18 +3,16 @@ package org.firstinspires.ftc.teamcode.managers.roadrunner;
 import com.acmerobotics.roadrunner.geometry.Pose2d;
 import com.acmerobotics.roadrunner.geometry.Vector2d;
 import com.acmerobotics.roadrunner.localization.Localizer;
+import com.acmerobotics.roadrunner.trajectory.Trajectory;
 import com.acmerobotics.roadrunner.trajectory.TrajectoryBuilder;
-import com.acmerobotics.roadrunner.util.Angle;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.Gamepad;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 
 import org.firstinspires.ftc.teamcode.auxilary.PaulMath;
-import org.firstinspires.ftc.teamcode.auxilary.RobotTime;
 import org.firstinspires.ftc.teamcode.drive.SampleMecanumDrive;
 import org.firstinspires.ftc.teamcode.managers.feature.FeatureManager;
-import org.firstinspires.ftc.teamcode.managers.input.InputManager;
 import org.firstinspires.ftc.teamcode.managers.telemetry.TelemetryManager;
 import org.firstinspires.ftc.teamcode.trajectorysequence.TrajectorySequenceBuilder;
 import org.firstinspires.ftc.teamcode.util.AssetsTrajectoryManager;
@@ -27,7 +25,7 @@ import java.util.Arrays;
 /**
  * Manager for Pathing and Dead Reckoning... Makes Road runner much easier to use with a set of complex methods for making precise paths. created by ACHYUT SHASTRI
  */
-public class RRManager extends FeatureManager {
+public class RoadRunnerManager extends FeatureManager {
     public static Pose2d currentPose = new Pose2d(0, 0, Math.toRadians(0));
     private SampleMecanumDrive driveRR;
     private Localizer l;
@@ -40,6 +38,7 @@ public class RRManager extends FeatureManager {
     private Pose2d vel;
     private Vector2d input;
     private Pose2d drivePower;
+    private Trajectory t;
     private double firstWheelLastRotation, secondWheelLastRotation, lastHeading;
     private static final Pose2d[] nonono = {new Pose2d(-120, 48), new Pose2d(-72, 48), new Pose2d(-24, 48), new Pose2d(-24, 0), new Pose2d(-120, 0), new Pose2d(-72, 0), new Pose2d(-24, -48), new Pose2d(-120, -48), new Pose2d(-72, -48)};
     /**
@@ -50,12 +49,12 @@ public class RRManager extends FeatureManager {
      * {@link #telemetry}
      *
      */
-    public RRManager(@NotNull HardwareMap hardwareMap, @NotNull Pose2d start, @NotNull TelemetryManager telemetryManager, @NotNull OpMode opMode){
+    public RoadRunnerManager(@NotNull HardwareMap hardwareMap, @NotNull Pose2d start, @NotNull TelemetryManager telemetryManager, @NotNull OpMode opMode){
         driveRR = new SampleMecanumDrive(hardwareMap); //Necessary Component for RoadRunner!
         trajBuildRR = driveRR.trajectoryBuilder(start, true);
         this.opMode = opMode;
-
         this.telemetry = telemetryManager;
+        this.t = AssetsTrajectoryManager.load("dropoff", telemetry);
         calibrateDriveToZero();
         calibrateDriveToAutoPosition();
         telemetry.log().add("Go to 192.168.43.1:8080/dash for the FTC Dashboard! Unless this is the competition, for which, in that case, never mind, don't use FTC Dashboard...");
@@ -81,7 +80,10 @@ public class RRManager extends FeatureManager {
         reverseMotors();
         if(id==1){driveRR.followTrajectory(trajBuildRR.splineToSplineHeading(new Pose2d(-24, 12), Math.toRadians(90)).build());}
         else if(id==2){driveRR.followTrajectory(trajBuildRR.splineToSplineHeading(new Pose2d(0, 72), Math.toRadians(driveRR.getExternalHeading())).build());}
-        else if(id==3){driveRR.followTrajectory(AssetsTrajectoryManager.load("path1"));}
+        else if(id==3){
+            telemetry.log().add("Trajectory: ", t);
+            driveRR.followTrajectory(t);
+        }
         driveRR.update();
         resetMotors();
     }
@@ -106,7 +108,7 @@ public class RRManager extends FeatureManager {
      * Method that sets the current Roadrunner position to what AutoAuto reports
      */
     public void setAutoAutoPosition(Pose2d pose){
-        RRManager.currentPose = pose;
+        RoadRunnerManager.currentPose = pose;
     }
     /**
      * Returns the drive object element from the class FOR TESTING ONLY
@@ -138,6 +140,11 @@ public class RRManager extends FeatureManager {
 
         telemetry.log().add("RoadRunner Drive Calibrated to 0,0");
     }
+    public void calibrateDrive(int x, int y, double rotation){
+        driveRR.setPoseEstimate(new Pose2d(x, y, Math.toRadians(rotation)));
+
+        telemetry.log().add("RoadRunner Drive Calibrated to 0,0");
+    }
     public void calibrateDriveToAutoPosition(){
         driveRR.setPoseEstimate(currentPose);
         telemetry.log().add("RoadRunner Drive Calibrated to Auto Position");
@@ -158,7 +165,7 @@ public class RRManager extends FeatureManager {
      * @param type The type of movement the robot is to perform
      * @param rotation The end rotation, if needed, for the movement
      */
-    public void customMoveWithPose(@NotNull Pose2d pose, @NotNull String type, @Nullable double rotation){
+    public void customMoveWithPose(Pose2d pose, String type, double rotation){
         reverseMotors();
         for(Pose2d poses: nonono){
             if(pose.equals(poses)){
@@ -338,7 +345,7 @@ public class RRManager extends FeatureManager {
      */
     @Override
     public String toString() {
-        return "RRManager{" +
+        return "RoadRunnerManager{" +
                 "driveRR=" + driveRR +
                 ", trajBuildRR=" + trajBuildRR +
                 ", tsb=" + tsb +

@@ -7,13 +7,11 @@ import static org.firstinspires.ftc.teamcode.managers.manipulation.ManipulationM
 import com.acmerobotics.dashboard.FtcDashboard;
 import com.acmerobotics.dashboard.telemetry.MultipleTelemetry;
 import com.acmerobotics.roadrunner.geometry.Pose2d;
-import com.acmerobotics.roadrunner.geometry.Vector2d;
 import com.acmerobotics.roadrunner.trajectory.TrajectoryBuilder;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
 
-import org.firstinspires.ftc.teamcode.auxilary.RobotTime;
 import org.firstinspires.ftc.teamcode.auxilary.integratedasync.PriorityAsyncOpmodeComponent;
 import org.firstinspires.ftc.teamcode.drive.SampleMecanumDrive;
 import org.firstinspires.ftc.teamcode.managers.bigArm.bigArmManager;
@@ -30,7 +28,7 @@ import org.firstinspires.ftc.teamcode.managers.input.nodes.PlusNode;
 import org.firstinspires.ftc.teamcode.managers.input.nodes.ToggleNode;
 import org.firstinspires.ftc.teamcode.managers.manipulation.ManipulationManager;
 import org.firstinspires.ftc.teamcode.managers.movement.MovementManager;
-import org.firstinspires.ftc.teamcode.managers.roadrunner.RRManager;
+import org.firstinspires.ftc.teamcode.managers.roadrunner.RoadRunnerManager;
 import org.firstinspires.ftc.teamcode.managers.roadrunner.SequenceInitException;
 import org.firstinspires.ftc.teamcode.managers.sensor.SensorManager;
 import org.firstinspires.ftc.teamcode.managers.telemetry.TelemetryManager;
@@ -45,10 +43,11 @@ public class MonkeyModeDualRR extends OpMode {
     public TrajectoryBuilder trajBuild;
     public bigArmManager monkeyArm;
     public SensorManager sensing;
-
+    private float microDriveSpeed = 0.4f;
     private boolean handStatus = false;
     private boolean intakeToggle = false;
     private boolean rrStatus = false;
+    private float[] driving;
     boolean rrToggle = false;
 
     public boolean movingToLow = false;
@@ -67,7 +66,7 @@ public class MonkeyModeDualRR extends OpMode {
     public Pose2d lastError;
     private boolean looping = false;
     private boolean shouldActuallyDoThings = true;
-    private RRManager rr;
+    private RoadRunnerManager rr;
     boolean deb = false;
 
 
@@ -79,7 +78,7 @@ public class MonkeyModeDualRR extends OpMode {
         TelemetryManager telemetryManager = new TelemetryManager(telemetry, this, TelemetryManager.BITMASKS.NONE);
         telemetry = telemetryManager;
         FeatureManager.logger.setBackend(telemetry.log());
-        rr = new RRManager(hardwareMap, new Pose2d(0, 0, Math.toRadians(0)), telemetryManager, this);
+        rr = new RoadRunnerManager(hardwareMap, new Pose2d(0, 0, Math.toRadians(0)), telemetryManager, this);
         driveRR = rr.getDrive();
         DcMotor fl = hardwareMap.get(DcMotor.class, "fl");
         DcMotor fr = hardwareMap.get(DcMotor.class, "fr");
@@ -114,6 +113,9 @@ public class MonkeyModeDualRR extends OpMode {
                                 new MultiplyNode(new JoystickNode("gamepad2right_stick_x"), -0.4f)
                         )
                 )
+        );
+        input.registerInput("inversionToggle",
+                new ToggleNode(new ButtonNode("gamepad2leftbumper"))
         );
         input.registerInput("handToggle",
                 new AnyNode(
@@ -160,16 +162,10 @@ public class MonkeyModeDualRR extends OpMode {
         input.setOverlapResolutionMethod(InputOverlapResolutionMethod.MOST_COMPLEX_ARE_THE_FAVOURITE_CHILD);
         rr.calibrateDriveToAutoPosition();
         PriorityAsyncOpmodeComponent.start(() -> {
-
-            while(FeatureManager.isOpModeRunning) {
-
-                if (rr.notBusy()) {
-
-                    rr.doOmniDisplace(gamepad1, gamepad2, input.getFloatArrayOfInput("drivingControls"));
-                }
-
+            input.update();
+            if (rr.notBusy()) {
+                rr.doOmniDisplace(gamepad1, gamepad2, input.getFloatArrayOfInput("drivingControls"));
             }
-
         });
         PriorityAsyncOpmodeComponent.start(() -> {
 
@@ -210,20 +206,20 @@ public class MonkeyModeDualRR extends OpMode {
             towerPos = (int)hands.getMotorPosition("monkeyShoulder");
 
 //            if(rr.notBusy()){
-                //Meant to be if this && !input.getBool("armLengthNone");
+            //Meant to be if this && !input.getBool("armLengthNone");
             //driver.driveOmni(input.getFloatArrayOfInput("drivingControls"));
 //            }
-            //driver.driveOmni(input.getFloatArrayOfInput("drivingControls"));
 
-            if (input.getBool("handToggle") && !handStatus) {
-                intakeToggle=!intakeToggle;
-                handStatus = true;
-            } else if (!input.getBool("handToggle") && handStatus){
-                    handStatus = false;
+            if (input.getBool("inversionToggle")){
+                microDriveSpeed = 0.4f;
             }
-            if (intakeToggle){
+            else {
+                microDriveSpeed = -0.4f;
+            }
+            if (input.getBool("handToggle") && !handStatus) {
                 monkeyArm.openHand();
-            } else {
+            }
+            else {
                 monkeyArm.closeHand();
             }
             if (input.getBool("extendArm")) {
@@ -240,6 +236,7 @@ public class MonkeyModeDualRR extends OpMode {
                 movingToLow=false;
                 movingToFloor=false;
                 monkeyArm.resetDoOnce();
+                intakeToggle = false;
             } else if (!movingToFloor && !movingToLow && !movingToMid && !movingToHigh){
                 monkeyArm.stopArm();
             }
@@ -266,7 +263,6 @@ public class MonkeyModeDualRR extends OpMode {
                 movingToHigh=false;
                 monkeyArm.resetDoOnce();
             }
-
             if (input.getBool("armLengthSmall")) {
                 movingToFloor=false;
                 movingToLow=true;
@@ -288,9 +284,8 @@ public class MonkeyModeDualRR extends OpMode {
                 movingToHigh=true;
                 monkeyArm.resetDoOnce();
             }
-
             if (movingToFloor) {
-                 movingToFloor = monkeyArm.setPositionFloorLocation();
+                movingToFloor = monkeyArm.setPositionFloorLocation();
             } else if (movingToLow) {
                 movingToLow = monkeyArm.setPositionLowLocation();
             } else if (movingToMid) {
@@ -303,8 +298,8 @@ public class MonkeyModeDualRR extends OpMode {
             telemetry.addData("FR Power", driver.frontRight.getPower());
             telemetry.addData("BR Power", driver.backLeft.getPower());
             telemetry.addData("BL Power", driver.backRight.getPower());
-//            telemetry.addData("Roadrunner Not Busy: ", rr.notBusy());
-//            telemetry.addData("Heading", rr.getDrive().getExternalHeading());
+//          telemetry.addData("Roadrunner Not Busy: ", rr.notBusy());
+//          telemetry.addData("Heading", rr.getDrive().getExternalHeading());
             telemetry.addData("Servo Open",""+intakeToggle);
             telemetry.addData("Tower Power", hands.getMotorPower("monkeyShoulder"));
             telemetry.addData("Tower Position: ", towerPos);

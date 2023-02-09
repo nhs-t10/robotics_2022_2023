@@ -1,5 +1,7 @@
 package org.firstinspires.ftc.teamcode.util;
 
+import android.util.Log;
+
 import androidx.annotation.Nullable;
 
 import com.acmerobotics.roadrunner.trajectory.Trajectory;
@@ -9,6 +11,7 @@ import com.acmerobotics.roadrunner.trajectory.config.TrajectoryConfigManager;
 import com.acmerobotics.roadrunner.trajectory.config.TrajectoryGroupConfig;
 
 import org.firstinspires.ftc.robotcore.internal.system.AppUtil;
+import org.firstinspires.ftc.teamcode.managers.telemetry.TelemetryManager;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -25,7 +28,8 @@ public class AssetsTrajectoryManager {
     TrajectoryGroupConfig loadGroupConfig() {
         try {
             InputStream inputStream = AppUtil.getDefContext().getAssets().open(
-                    "trajectory/" + TrajectoryConfigManager.GROUP_FILENAME);
+                    "trajectory/"+TrajectoryConfigManager.GROUP_FILENAME);
+            System.out.println(TrajectoryConfigManager.GROUP_FILENAME);
             return TrajectoryConfigManager.loadGroupConfig(inputStream);
         } catch (IOException e) {
             return null;
@@ -48,9 +52,11 @@ public class AssetsTrajectoryManager {
     /**
      * Loads a trajectory builder with the given name.
      */
-    public static @Nullable TrajectoryBuilder loadBuilder(String name) {
+    public static @Nullable TrajectoryBuilder loadBuilder(String name, TelemetryManager telemetry) {
         TrajectoryGroupConfig groupConfig = loadGroupConfig();
         TrajectoryConfig config = loadConfig(name);
+        telemetry.log().add("groupConfig:", groupConfig);
+        telemetry.log().add("Config:", config);
         if (groupConfig == null || config == null) {
             return null;
         }
@@ -60,8 +66,8 @@ public class AssetsTrajectoryManager {
     /**
      * Loads a trajectory with the given name.
      */
-    public static @Nullable Trajectory load(String name) {
-        TrajectoryBuilder builder = loadBuilder(name);
+    public static @Nullable Trajectory load(String name, TelemetryManager telemetry) {
+        TrajectoryBuilder builder = loadBuilder(name, telemetry);
         if (builder == null) {
             return null;
         }

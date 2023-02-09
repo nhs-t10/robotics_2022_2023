@@ -4,8 +4,6 @@ import static org.firstinspires.ftc.teamcode.managers.manipulation.ManipulationM
 import static org.firstinspires.ftc.teamcode.managers.manipulation.ManipulationManager.motor;
 import static org.firstinspires.ftc.teamcode.managers.manipulation.ManipulationManager.servo;
 
-import com.acmerobotics.dashboard.FtcDashboard;
-import com.acmerobotics.dashboard.telemetry.MultipleTelemetry;
 import com.acmerobotics.roadrunner.geometry.Pose2d;
 import com.acmerobotics.roadrunner.trajectory.TrajectoryBuilder;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
@@ -29,13 +27,8 @@ import org.firstinspires.ftc.teamcode.managers.input.nodes.PlusNode;
 import org.firstinspires.ftc.teamcode.managers.input.nodes.ToggleNode;
 import org.firstinspires.ftc.teamcode.managers.manipulation.ManipulationManager;
 import org.firstinspires.ftc.teamcode.managers.movement.MovementManager;
-import org.firstinspires.ftc.teamcode.managers.roadrunner.RRManager;
-import org.firstinspires.ftc.teamcode.managers.roadrunner.SequenceInitException;
 import org.firstinspires.ftc.teamcode.managers.sensor.SensorManager;
 import org.firstinspires.ftc.teamcode.managers.telemetry.TelemetryManager;
-
-import java.sql.Time;
-import java.time.Instant;
 
 @TeleOp
 public class MonkeyModeDual extends OpMode {
@@ -72,7 +65,7 @@ public class MonkeyModeDual extends OpMode {
     public Pose2d lastError;
     private boolean looping = false;
     private boolean shouldActuallyDoThings = true;
-    //private RRManager rr;
+    //private RoadRunnerManager rr;
     boolean deb = false;
 
 
@@ -84,7 +77,7 @@ public class MonkeyModeDual extends OpMode {
         TelemetryManager telemetryManager = new TelemetryManager(telemetry, this, TelemetryManager.BITMASKS.NONE);
         telemetry = telemetryManager;
         FeatureManager.logger.setBackend(telemetry.log());
-        //rr = new RRManager(hardwareMap, new Pose2d(0, 0, Math.toRadians(0)), telemetryManager, this);
+        //rr = new RoadRunnerManager(hardwareMap, new Pose2d(0, 0, Math.toRadians(0)), telemetryManager, this);
         DcMotor fl = hardwareMap.get(DcMotor.class, "fl");
         DcMotor fr = hardwareMap.get(DcMotor.class, "fr");
         DcMotor br = hardwareMap.get(DcMotor.class, "br");

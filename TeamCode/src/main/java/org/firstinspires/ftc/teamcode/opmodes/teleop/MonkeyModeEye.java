@@ -12,7 +12,6 @@ import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
 
-import org.firstinspires.ftc.robotcore.external.navigation.Orientation;
 import org.firstinspires.ftc.teamcode.auxilary.integratedasync.PriorityAsyncOpmodeComponent;
 import org.firstinspires.ftc.teamcode.drive.SampleMecanumDrive;
 import org.firstinspires.ftc.teamcode.managers.CV.CVManager;
@@ -29,20 +28,9 @@ import org.firstinspires.ftc.teamcode.managers.input.nodes.MultiplyNode;
 import org.firstinspires.ftc.teamcode.managers.input.nodes.PlusNode;
 import org.firstinspires.ftc.teamcode.managers.manipulation.ManipulationManager;
 import org.firstinspires.ftc.teamcode.managers.movement.MovementManager;
-import org.firstinspires.ftc.teamcode.managers.roadrunner.RRManager;
+import org.firstinspires.ftc.teamcode.managers.roadrunner.RoadRunnerManager;
 import org.firstinspires.ftc.teamcode.managers.sensor.SensorManager;
 import org.firstinspires.ftc.teamcode.managers.telemetry.TelemetryManager;
-import org.firstinspires.ftc.teamcode.auxilary.clocktower.Clocktower;
-import org.firstinspires.ftc.teamcode.auxilary.clocktower.ClocktowerCodes;
-import org.opencv.core.Core;
-import org.opencv.core.Mat;
-import org.opencv.core.MatOfPoint;
-import org.opencv.core.Point;
-import org.opencv.core.Rect;
-import org.opencv.core.Scalar;
-import org.opencv.imgproc.Imgproc;
-
-import java.util.ArrayList;
 
 @TeleOp
 public class MonkeyModeEye extends OpMode {
@@ -68,7 +56,7 @@ public class MonkeyModeEye extends OpMode {
     public Pose2d lastError;
     private boolean looping = false;
     private boolean shouldActuallyDoThings = true;
-    private RRManager rr;
+    private RoadRunnerManager rr;
 
     public void StickSense(int cvIndex)
     {
@@ -106,7 +94,7 @@ public class MonkeyModeEye extends OpMode {
         TelemetryManager telemetryManager = new TelemetryManager(telemetry, this, TelemetryManager.BITMASKS.NONE);
         telemetry = telemetryManager;
         FeatureManager.logger.setBackend(telemetry.log());
-        rr = new RRManager(hardwareMap, new Pose2d(0, 0), telemetryManager, this);
+        rr = new RoadRunnerManager(hardwareMap, new Pose2d(0, 0), telemetryManager, this);
         DcMotor fl = hardwareMap.get(DcMotor.class, "fl");
         DcMotor fr = hardwareMap.get(DcMotor.class, "fr");
         DcMotor br = hardwareMap.get(DcMotor.class, "br");
