@@ -16,7 +16,7 @@ public class MovementManager extends FeatureManager {
     public DcMotor backLeft;
     public DcMotor backRight;
 
-    private float scale = 0.6f;
+    private float scale = 0.8f;
 
     /**
      * Create a MovementManager with a hardware map.
