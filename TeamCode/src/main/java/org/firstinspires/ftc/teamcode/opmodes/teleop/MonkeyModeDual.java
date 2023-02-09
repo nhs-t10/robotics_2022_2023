@@ -42,6 +42,7 @@ public class MonkeyModeDual extends OpMode {
     public SensorManager sensing;
 
     private boolean intakeToggle = false;
+    private boolean handStatus=false;
     private boolean rrStatus = false;
     boolean rrToggle = false;
     private float microDriveSpeed = 1f;
@@ -122,12 +123,13 @@ public class MonkeyModeDual extends OpMode {
                 )
         );
         input.registerInput("handToggle",
-                new ToggleNode(
-                        new AnyNode(
-                            new ButtonNode("rightbumper"),
-                            new ButtonNode("gamepad2rightbumper")
-                        )
-                )
+//                new ToggleNode(
+//                        new AnyNode(
+//                            new ButtonNode("rightbumper"),
+//                            new ButtonNode("gamepad2rightbumper")
+//                        )
+//                )
+                new ButtonNode("gamepad2rightbumper")
         );
         input.registerInput("extendArm",
                 new ButtonNode("gamepad2righttrigger")
@@ -214,12 +216,18 @@ public class MonkeyModeDual extends OpMode {
             } else {
                 microDriveSpeed = -1f;
             }
-            if (input.getBool("handToggle")) {
-                monkeyArm.openHand();
+            if (input.getBool("handToggle") && !handStatus) {
+                intakeToggle=!intakeToggle;
+                handStatus = true;
+            } else if (!input.getBool("handToggle") && handStatus){
+                handStatus = false;
             }
-            else {
+            if (intakeToggle){
+                monkeyArm.openHand();
+            } else {
                 monkeyArm.closeHand();
             }
+
             if (input.getBool("extendArm")) {
                 monkeyArm.extendArm(input.getFloat("extendArm"));
                 movingToHigh=false;
@@ -234,7 +242,7 @@ public class MonkeyModeDual extends OpMode {
                 movingToLow=false;
                 movingToFloor=false;
                 monkeyArm.resetDoOnce();
-                intakeToggle = false;
+                //intakeToggle = false;
             } else if (!movingToFloor && !movingToLow && !movingToMid && !movingToHigh){
                 monkeyArm.stopArm();
             }
@@ -260,6 +268,7 @@ public class MonkeyModeDual extends OpMode {
                 movingToMid=false;
                 movingToHigh=false;
                 monkeyArm.resetDoOnce();
+                intakeToggle=false;
             }
             if (input.getBool("armLengthSmall")) {
                 movingToFloor=false;

@@ -85,14 +85,14 @@ public class bigArmManager extends FeatureManager {
     public int getPosition(){ return (int)hands.getMotorPosition("monkeyShoulder"); }
 
     public boolean setPositionFloorLocation(){
-        if(!doOnce){
-            closeHand();
-            doOnce=true;
-        }
+//        if(!doOnce){
+//            closeHand();
+//            doOnce=true;
+//        }
         retractArm(1);
         if (hands.getMotorPosition("monkeyShoulder") <= floorPosition + 25){
             stopArm();
-            openHand();
+            //openHand();
             towerPos=0;
             return false;
         }

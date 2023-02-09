@@ -21,7 +21,7 @@ goto start;
     ThreadedMoveToPosition(3), next;
     driveOmni(0,-0.5,-0.02), after 48cm next;
     driveOmni(0.5,0,0), after 64cm next;
-    driveOmni(0,-0.5,-0.02), after 24cm next;
+    driveOmni(0,-0.5,-0.02), after 26cm next;
     driveOmni(0.5,0,0), after 3cm next;
     stopDrive(), next;
     ThreadedMoveToPosition(2), next;
@@ -30,31 +30,29 @@ goto start;
 #dropCone:
     let doneLifting = finishedMoving(), after 0.5s next;
     if(doneLifting){
-        log("opening hand"), openHand(), after 2s next;
-        goto colorStuffs;
+        log("opening hand"), openHand(), after 2s goto colorStuffs;
     } else {
         goto dropCone;
     }
 
 
 #colorStuffs:
-    ThreadedMoveToPosition(3), after 2s next;
+    //ThreadedMoveToPosition(3), after 1s next;
     driveOmni(-0.5,0,0), after 7cm next;
+    closeHand(), next;
     ThreadedMoveToPosition(0), next;
     if (color == 1) {
-        driveOmni(0,0.5,0), after 150cm next;
-        goto end;
+        driveOmni(0,0.5,0.02), after 150cm goto end;
     }
     else if (color == 2) {
-        driveOmni(0,0.5,0), after 80cm next;
-        goto end;
+        driveOmni(0,0.5,0.02), after 80cm goto end;
     }
     else {
-        driveOmni(0,0.5,0), after 20cm next;
-        goto end;
+        driveOmni(0,0.5,0.02), after 20cm goto end;
     }
 
 #end:
+    driveOmni(0,0,0.7), after 10in next;
     log("I'm done"), next;
     stopDrive();
 //    driveOmni(0,0.5,0), after 8cm next;
