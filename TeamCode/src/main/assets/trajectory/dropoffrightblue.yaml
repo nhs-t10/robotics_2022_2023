@@ -23,5 +23,5 @@ waypoints:
   heading: -1.5707963267948966
   tangent: -1.5707963267948966
   interpolationType: "LINEAR"
-resolution: 0.25
+resolution: 1.0
 version: 1
