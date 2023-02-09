@@ -1,0 +1,146 @@
+$
+    ignorewarning_american_m_unit: true
+$
+#init:
+goto start;
+
+#start:
+    closeHand(), next;
+    let distance = 3, let rep_times = 0, next;
+    calibrateDrive(32, -63, 90), next;
+    webcam.startStreaming(1280, 720, OpenCvCameraRotation.UPRIGHT), after 2s next; // Standardize window size
+    goto getColor;
+
+#getColor:
+    let color = getAnalysis(), next;
+    log(color), next;
+    log(getAnalysisTest()), next;
+    stopWebcam(), next;
+    goto preLoadedCone;
+
+#preLoadedCone:
+    ThreadedMoveToPosition(3), next;
+    calibrateDriveToZero(), next;
+    moveToPosWithID(3), next;
+    stopDrive(), next;
+    ThreadedMoveToPosition(2), next;
+    goto dropCone;
+
+#dropCone:
+    let doneLifting = finishedMoving(), after 0.5s next;
+    if(doneLifting){
+        log("opening hand"), openHand(), goto postLoadedCone;
+    } else {
+        goto dropCone;
+    }
+
+#postLoadedCone:
+    ThreadedMoveToPosition(3), next;
+    driveOmni(0,0.5,0.02), after 48cm next;
+    driveOmni(-0.5,0,0), after 64cm next;
+    stopDrive(), next;
+    goto colorStuffs;
+
+#colorStuffs:
+    if (color == 1) {
+        driveOmni(-0.5,0,0), after 128cm next;
+        goto finalMove;
+    }
+    else if (color == 2) {
+      driveOmni(-0.5,0,0), after 64cm next;
+      goto finalMove;
+    }
+    else {
+       goto finalMove;
+    }
+
+#finalMove:
+    driveOmni(0.5,0,0), after 60cm next;
+    goto end;
+#end:
+    log("I'm done");
+//    driveOmni(0,0.5,0), after 8cm next;
+//    //driveOmni(0.5,0,0), after 35cm next;
+//    driveOmni(0,0,0), next;
+//    //driveOmni(-0.5,0,0), after 40cm next;
+//    goto process1;
+//
+//#process1:
+//    //todo:fix distance
+//    driveOmni(0.5,0,0), after 2cm next;
+//    goto process3;
+//    driveOmni(0,-1,0), after 65cm next;
+//    driveOmni(1,0,0), after 100cm next;
+//    driveOmni(0,1,0), after 55cm next;
+//    goto slides1;
+//#slides1:
+//    //setPositionHighLocation();
+//    let done = setPositionHighLocation();
+//    if (done){
+//        goto process2;
+//    } else {
+//        goto slides1;
+//    }
+//
+//#process2:
+//    driveOmni(0,1,0), after 55cm next;
+//    driveOmni(0,0,0), next;
+//    retractArm("monkeyShoulder", -0.75), after 1s next;
+//    openHand();
+//    extendArm("monkeyShoulder", 0.75), after 1.5s next;
+//    closeHand();
+//    driveOmni(0,-0.5,0), after 40cm next;
+//    driveOmni(-1,0,0), after 110cm next;
+//    driveOmni(0,1,0), after 60cm next;
+//    goto process3;
+//
+//#process3:
+//    if (color == 1) {
+//        goto color1;
+//    }
+//    else if (color == 2) {
+//        goto color2;
+//    }
+//    else if (color == 3) {
+//        goto color3;
+//    }
+//    else {
+//        goto error;
+//    }
+//
+//#color1:
+//    driveOmni(0,0.5,0), after 80cm next; //go left one tile, go forward 1.5 tiles
+//    driveOmni(0.5,0,0), after 60cm next;
+//    goto end;
+//
+//#color2:
+//    driveOmni(0.5,0,0), after 60cm next; //go forward 1.5 tiles
+//    goto end;
+//
+//#color3:
+//    driveOmni(0,-0.5,0), after 70cm next; //go right one tile, go forward 1.5 tiles
+//    driveOmni(0.5,0,0), after 60cm next;
+//    goto end;
+//
+//#error:
+////this is a stupid hack
+//    goto color1;
+///*    log("color problem"), next;
+//    let rep_times = rep_times + 1, next;
+//    goto end;
+//*/
+////this didn't work
+//
+//#slides2:
+//    let done = setPositionFloorLocation();
+//    if (done){
+//        goto end;
+//    } else {
+//        goto slides2;
+//    }
+//
+//#end:
+//// Putting the forward driveOmni here doesn't work for whatever reason, don't try it lol.
+//    driveOmni(0, 0, 0), next;
+//    setAutoAutoPosition(new (Pose2d())), next;
+//    log("I go to the end!");

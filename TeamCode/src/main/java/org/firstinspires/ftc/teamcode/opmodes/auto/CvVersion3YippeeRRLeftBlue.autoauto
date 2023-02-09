@@ -7,7 +7,7 @@ goto start;
 #start:
     closeHand(), next;
     let distance = 3, let rep_times = 0, next;
-    calibrateDrive(-32, -63, 90), next;
+    calibrateDrive(32, 63, -90), next;
     webcam.startStreaming(1280, 720, OpenCvCameraRotation.UPRIGHT), after 2s next; // Standardize window size
     goto getColor;
 
@@ -21,8 +21,7 @@ goto start;
 #preLoadedCone:
     ThreadedMoveToPosition(3), next;
     calibrateDriveToZero(), next;
-
-    moveToPosWithID(3), next;
+    moveToPosWithID(2), next;
     stopDrive(), next;
     ThreadedMoveToPosition(2), next;
     goto dropCone;

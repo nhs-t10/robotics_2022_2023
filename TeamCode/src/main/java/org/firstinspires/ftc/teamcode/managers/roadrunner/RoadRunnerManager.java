@@ -39,6 +39,9 @@ public class RoadRunnerManager extends FeatureManager {
     private Vector2d input;
     private Pose2d drivePower;
     private Trajectory t;
+    private Trajectory t2;
+    private Trajectory t3;
+    private Trajectory t4;
     private double firstWheelLastRotation, secondWheelLastRotation, lastHeading;
     private static final Pose2d[] nonono = {new Pose2d(-120, 48), new Pose2d(-72, 48), new Pose2d(-24, 48), new Pose2d(-24, 0), new Pose2d(-120, 0), new Pose2d(-72, 0), new Pose2d(-24, -48), new Pose2d(-120, -48), new Pose2d(-72, -48)};
     /**
@@ -54,7 +57,11 @@ public class RoadRunnerManager extends FeatureManager {
         trajBuildRR = driveRR.trajectoryBuilder(start, true);
         this.opMode = opMode;
         this.telemetry = telemetryManager;
-        this.t = AssetsTrajectoryManager.load("dropoff", telemetry);
+        this.t = AssetsTrajectoryManager.load("dropoffleft", telemetry);
+        this.t2 = AssetsTrajectoryManager.load("dropoffleftblue", telemetry);
+        this.t3 = AssetsTrajectoryManager.load("dropoffright", telemetry);
+        this.t4 = AssetsTrajectoryManager.load("dropoffrightblue", telemetry);
+
         calibrateDriveToZero();
         calibrateDriveToAutoPosition();
         telemetry.log().add("Go to 192.168.43.1:8080/dash for the FTC Dashboard! Unless this is the competition, for which, in that case, never mind, don't use FTC Dashboard...");
@@ -78,11 +85,20 @@ public class RoadRunnerManager extends FeatureManager {
      */
     public void moveToPosWithID(int id){
         reverseMotors();
-        if(id==1){driveRR.followTrajectory(trajBuildRR.splineToSplineHeading(new Pose2d(-24, 12), Math.toRadians(90)).build());}
-        else if(id==2){driveRR.followTrajectory(trajBuildRR.splineToSplineHeading(new Pose2d(0, 72), Math.toRadians(driveRR.getExternalHeading())).build());}
-        else if(id==3){
+        if(id==1){
             telemetry.log().add("Trajectory: ", t);
             driveRR.followTrajectory(t);
+        }
+        else if(id==2){
+            telemetry.log().add("Trajectory: ", t2);
+            driveRR.followTrajectory(t2);
+        }
+        else if(id==3){
+            telemetry.log().add("Trajectory: ", t3);
+            driveRR.followTrajectory(t3);
+        }else if (id == 4){
+            telemetry.log().add("Trajectory: ", t4);
+            driveRR.followTrajectory(t4);
         }
         driveRR.update();
         resetMotors();
