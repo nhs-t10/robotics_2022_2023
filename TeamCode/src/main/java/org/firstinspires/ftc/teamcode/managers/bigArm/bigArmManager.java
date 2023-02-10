@@ -9,7 +9,7 @@ public class bigArmManager extends FeatureManager {
     public final int lowPosition= 1250; //The position of the low tower
     public final int middlePosition = 2081; //The position of the middle tower
     public final int highPosition = 2956; //The position of the high tower
-    public final int[] positions = {floorPosition, lowPosition, middlePosition, highPosition, highPosition+70};
+    public final int[] positions = {floorPosition, lowPosition, middlePosition, highPosition, highPosition+30};
     public double direction = 1.0;
     public boolean doOnce=false;
     public int towerPos = 0;
@@ -26,7 +26,7 @@ public class bigArmManager extends FeatureManager {
                     direction = 1;
                 }
                 hands.setMotorPower("monkeyShoulder", direction);
-                while (Math.abs(getPosition() - startingPos) <= Math.abs(targetPos - startingPos) - 25) {
+                while (Math.abs(getPosition() - startingPos) <= Math.abs(targetPos - startingPos) - 25 && linSlidesMoving) {
                     if (!FeatureManager.isOpModeRunning) {
                         stopArm();
                         break;
@@ -164,4 +164,5 @@ public class bigArmManager extends FeatureManager {
         this.index = index;
 
     }
+    public void stopThreadedMovement(){linSlidesMoving=false;}
 }

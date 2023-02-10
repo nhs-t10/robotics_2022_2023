@@ -19,12 +19,13 @@ goto start;
     goto preLoadedCone;
 
 #preLoadedCone:
-    ThreadedMoveToPosition(3), next;
+    ThreadedMoveToPosition(4), next;
     driveOmni(0,-0.5,-0.02), after 48cm next;
     driveOmni(0.5,0,0), after 64cm next;
     driveOmni(0,-0.5,-0.02), after 26cm next;
     driveOmni(0.5,0,0), after 5.5cm next;
-    stopDrive(), after 1.5s next;
+    stopDrive(),  next;
+    stopThreadedMovement(), after 1s next;
     ThreadedMoveToPosition(2), next;
     goto dropCone;
 
@@ -40,8 +41,8 @@ goto start;
 
 #colorStuffs:
     //ThreadedMoveToPosition(3), after 1s next;
-    driveOmni(-0.5,0,0), after 1.5cm next;
-    after 0.5s next;
+    driveOmni(-0.5,0,0), after 0.5cm next;
+    stopDrive(), after 0.5s next;
     closeHand(), next;
     ThreadedMoveToPosition(0), next;
     if (color == 1) {
