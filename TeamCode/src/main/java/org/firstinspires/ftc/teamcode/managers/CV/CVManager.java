@@ -43,6 +43,7 @@ public class CVManager extends FeatureManager {
     PipelineThatExposesSomeAnalysis pipeline;
     PipelineThatExposesSomeSecondaryAnalysis pipeline_Secondary;
     PipelineThatExposesSomeTestingAnalysis pipeline_Testing;
+    private int active_pipeline = 0;
 
     public CVManager(HardwareMap hardwareMap) {
         //only initialize the webcam if we're NOT unit-testing.
@@ -73,6 +74,7 @@ public class CVManager extends FeatureManager {
              * (while a streaming session is in flight) *IS* supported.
              */
                 webcam.setPipeline(pipeline);
+                active_pipeline = 0;
 
             /*
              * Open the connection to the camera device. New in v1.4.0 is the ability
@@ -133,6 +135,7 @@ public class CVManager extends FeatureManager {
             else {
                 webcam.setPipeline(pipeline);
             }
+            active_pipeline = pipeline_index;
             webcam.setMillisecondsPermissionTimeout(2500); // Timeout for obtaining permission is configurable. Set before opening.
             webcam.openCameraDeviceAsync(new OpenCvCamera.AsyncCameraOpenListener() {
                 @Override
@@ -192,6 +195,8 @@ public class CVManager extends FeatureManager {
     {
         return pipeline.getAnalysis();
     }
+
+    public double getAnalysisPrecise() {return pipeline_Secondary.getAnalysisPrecise();}
 
     public int getAnalysisSecondary() {return pipeline_Secondary.getAnalysis();}
 
