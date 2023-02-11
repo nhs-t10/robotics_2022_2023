@@ -95,6 +95,35 @@ public class RoadRunnerManager extends FeatureManager {
         } else if (id == 4) {
             telemetry.log().add("Trajectory: ", t4);
             driveRR.followTrajectory(t4);
+        } else if (id == 5) {
+
+
+            driveRR.followTrajectory(driveRR.trajectoryBuilder(new Pose2d()).strafeLeft(50).build());
+
+        } else if (id == 6) {
+
+            driveRR.followTrajectory(driveRR.trajectoryBuilder(new Pose2d()).strafeLeft(31.5).build());
+
+        } else if (id == 7) {
+
+            driveRR.followTrajectory(driveRR.trajectoryBuilder(new Pose2d()).strafeLeft(12).build());
+
+        } else if (id == 8) {
+
+            driveRR.followTrajectory(driveRR.trajectoryBuilder(new Pose2d()).strafeRight(50).build());
+
+        } else if (id == 9) {
+
+            driveRR.followTrajectory(driveRR.trajectoryBuilder(new Pose2d()).strafeRight(50).build());
+
+        } else if (id == 10) {
+
+            driveRR.followTrajectory(driveRR.trajectoryBuilder(new Pose2d()).strafeRight(55).build());
+
+        } else if (id == 11) {
+            driveRR.followTrajectory(driveRR.trajectoryBuilder(new Pose2d()).forward(26).build());
+        } else if (id == 12) {
+            driveRR.followTrajectory(driveRR.trajectoryBuilder(new Pose2d()).back(40).build());
         }
         return;
 

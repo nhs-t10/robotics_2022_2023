@@ -23,22 +23,23 @@ goto start;
     calibrateDriveToZero(), next;
     moveToPosWithID(1), next;
     stopDrive(), next;
+    stopThreadedMovement(), after 0.5s next;
     ThreadedMoveToPosition(2), next;
     goto dropCone;
 
 #dropCone:
     let doneLifting = finishedMoving(), after 0.5s next;
     if(doneLifting){
-        log("opening hand"), openHand(), goto postLoadedCone;
+        log("opening hand"), openHand(), after 1s goto postLoadedCone;
     } else {
         goto dropCone;
     }
 
 #postLoadedCone:
-    ThreadedMoveToPosition(3), next;
-    driveOmni(0,0.5,0.02), after 48cm next;
-    driveOmni(-0.5,0,0), after 64cm next;
-    stopDrive(), next;
+    driveOmni(-0.5,0,0), after 5cm next;
+    stopDrive(), after 0.5s next;
+    closeHand(), next;
+    ThreadedMoveToPosition(0), next;
     goto colorStuffs;
 
 #colorStuffs:
@@ -51,7 +52,6 @@ goto start;
     else {
         driveOmni(0,0.5,0.02), after 30cm goto finalMove;
     }
-
 #finalMove:
     stopDrive(), next;
     let pose = getCurrPose(), next;

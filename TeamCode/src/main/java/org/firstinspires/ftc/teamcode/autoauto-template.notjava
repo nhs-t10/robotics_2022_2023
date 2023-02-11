@@ -52,7 +52,8 @@ public class template extends OpMode {
     public void init() {
         FeatureManager.setIsOpModeRunning(true);
         FeatureManager.reconfigureForAuto();
-
+        this.msStuckDetectInitLoop = 20000;
+        this.msStuckDetectLoop = 20000;
         telemetryManager = new TelemetryManager(telemetry, this, TelemetryManager.BITMASKS.NONE);
         telemetry = telemetryManager;
         FeatureManager.logger.setBackend(telemetry.log());
