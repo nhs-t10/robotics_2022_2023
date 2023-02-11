@@ -99,6 +99,7 @@ public class MonkeyModeDual extends OpMode {
         );
         monkeyArm = new bigArmManager(hands);
         input = new InputManager(gamepad1, gamepad2);
+        hands.setZeroPowerBehavior("monkeyShoulder",DcMotor.ZeroPowerBehavior.BRAKE);
         input.registerInput("drivingControls",
             new PlusNode(
                 new MultiInputNode(

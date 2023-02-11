@@ -2,9 +2,7 @@
 //control Q = documentation
 
 #one:
-driveOmni(1,0,0), after 3s next;
-driveOmni(1,0,0), next;
-driveOmni(v = 1), after 90deg goto end;
+moveToPosWithID(1), after 1s goto end;
 
 #end:
     log("I got to the end!")

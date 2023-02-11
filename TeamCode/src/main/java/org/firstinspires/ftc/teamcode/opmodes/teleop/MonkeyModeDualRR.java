@@ -162,14 +162,21 @@ public class MonkeyModeDualRR extends OpMode {
         input.setOverlapResolutionMethod(InputOverlapResolutionMethod.MOST_COMPLEX_ARE_THE_FAVOURITE_CHILD);
         rr.calibrateDriveToAutoPosition();
         PriorityAsyncOpmodeComponent.start(() -> {
+
+        });
+        PriorityAsyncOpmodeComponent.start(() -> {
+
+
+        });
+
+    }
+    public void loop() {
+        try {
             input.update();
             controlFloats = input.getFloatArrayOfInput("drivingControls");
             if (rr.notBusy()) {
                 rr.doOmniDisplace(gamepad1, gamepad2, controlFloats);
             }
-        });
-        PriorityAsyncOpmodeComponent.start(() -> {
-
             if(input.getBool("rrTog") && rr.notBusy()) {
                 if (input.getBool("a1") && rr.notBusy()) {
                     //rr.moveToPosWithID(2);
@@ -198,12 +205,6 @@ public class MonkeyModeDualRR extends OpMode {
 
 
             telemetry = new MultipleTelemetry(telemetry, FtcDashboard.getInstance().getTelemetry());
-        });
-
-    }
-    public void loop() {
-        try {
-            input.update();
             towerPos = (int)hands.getMotorPosition("monkeyShoulder");
 
 //            if(rr.notBusy()){
@@ -299,8 +300,8 @@ public class MonkeyModeDualRR extends OpMode {
             telemetry.addData("FR Power", driver.frontRight.getPower());
             telemetry.addData("BR Power", driver.backLeft.getPower());
             telemetry.addData("BL Power", driver.backRight.getPower());
-//          telemetry.addData("Roadrunner Not Busy: ", rr.notBusy());
-//          telemetry.addData("Heading", rr.getDrive().getExternalHeading());
+            telemetry.addData("Roadrunner Not Busy: ", rr.notBusy());
+            telemetry.addData("Heading", rr.getDrive().getExternalHeading());
             telemetry.addData("Servo Open",""+intakeToggle);
             telemetry.addData("Tower Power", hands.getMotorPower("monkeyShoulder"));
             telemetry.addData("Tower Position: ", towerPos);
@@ -308,7 +309,7 @@ public class MonkeyModeDualRR extends OpMode {
             telemetry.addData("Last Error: ", lastError);
             telemetry.addData("CurrentColor", currentColor);
             telemetry.addData("CurrentColor1", currentColor1);
-//            telemetry.addData("Pos: ", rr.getDrive().getPoseEstimate());
+            telemetry.addData("Pos: ", rr.getDrive().getPoseEstimate());
             telemetry.update();
         }
         catch (Throwable t) {

@@ -1,2 +1,2 @@
 #init:
-pass;
+moveToPosWithID(1), next;

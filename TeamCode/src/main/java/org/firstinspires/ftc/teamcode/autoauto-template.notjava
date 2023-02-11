@@ -72,12 +72,12 @@ public class template extends OpMode {
        limbs.setZeroPowerBehavior("monkeyShoulder", DcMotor.ZeroPowerBehavior.BRAKE);
 
         cv = new CVManager(hardwareMap);
-        //rr = new RoadRunnerManager(hardwareMap, new Pose2d(0, 0), telemetryManager, this);
-        imu = new ImuManager(hardwareMap.get(com.qualcomm.hardware.bosch.BNO055IMU.class, "imu"),driver);
+        rr = new RoadRunnerManager(hardwareMap, new Pose2d(0, 0), telemetryManager, this);
+        //imu = new ImuManager(hardwareMap.get(com.qualcomm.hardware.bosch.BNO055IMU.class, "imu"),driver);
 
         arm = new bigArmManager(limbs);
 
-        runtime = new AutoautoRuntime(generateProgram(), getClass().getCanonicalName(), imu, driver, limbs, telemetryManager, cv, clawPosition, neck, arm);
+        runtime = new AutoautoRuntime(generateProgram(), getClass().getCanonicalName(), driver, limbs, telemetryManager, cv, clawPosition, neck, arm, rr);
         
         /*COMPAT_MODE_SETTING*/
 
