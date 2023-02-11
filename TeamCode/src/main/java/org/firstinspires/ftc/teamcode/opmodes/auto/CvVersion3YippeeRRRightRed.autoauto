@@ -42,20 +42,22 @@ goto start;
     goto colorStuffs;
 
 #colorStuffs:
-    if (color == 1) {
-        driveOmni(-0.5,0,0), after 128cm next;
-        goto finalMove;
-    }
-    else if (color == 2) {
-      driveOmni(-0.5,0,0), after 64cm next;
-      goto finalMove;
-    }
-    else {
-       goto finalMove;
-    }
+        driveOmni(-0.5,0,0), after 5cm next;
+        stopDrive(), after 0.5s next;
+        closeHand(), next;
+        ThreadedMoveToPosition(0), next;
+        if (color == 1) {
+            driveOmni(0,-0.5,-0.02), after 150cm goto finalMove;
+        }
+        else if (color == 2) {
+            driveOmni(0,-0.5,-0.02), after 80cm goto finalMove;
+        }
+        else {
+            driveOmni(0,-0.5,-0.02), after 30cm goto finalMove;
+        }
 
 #finalMove:
-    driveOmni(0.5,0,0), after 60cm next;
+    stopDrive(), next;
     let pose = getCurrPose(), next;
     setAutoAutoPosition(pose[0], psoe[1], pose[2]), next;
     goto end;
