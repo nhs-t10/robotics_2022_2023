@@ -71,10 +71,10 @@ public class RoadRunnerManager extends FeatureManager {
         this.t2 = AssetsTrajectoryManager.load("dropoffleftblue", telemetry);
         this.t3 = AssetsTrajectoryManager.load("dropoffright", telemetry);
         this.t4 = AssetsTrajectoryManager.load("dropoffrightblue", telemetry);
-        this.t5 = AssetsTrajectoryManager.load("dropoffleft", telemetry);
-        this.t6 = AssetsTrajectoryManager.load("dropoffleftblue", telemetry);
-        this.t7 = AssetsTrajectoryManager.load("dropoffright", telemetry);
-        this.t8 = AssetsTrajectoryManager.load("dropoffrightblue", telemetry);
+        this.t5 = AssetsTrajectoryManager.load("ConeStackBlue", telemetry);
+        this.t6 = AssetsTrajectoryManager.load("MoveToHigh", telemetry);
+        this.t7 = AssetsTrajectoryManager.load("BackToStack", telemetry);
+        this.t8 = AssetsTrajectoryManager.load("JunctionToParking", telemetry);
         calibrateDriveToZero();
         calibrateDriveToAutoPosition();
         telemetry.log().add("Go to 192.168.43.1:8080/dash for the FTC Dashboard! Unless this is the competition, for which, in that case, never mind, don't use FTC Dashboard...");
@@ -131,6 +131,18 @@ public class RoadRunnerManager extends FeatureManager {
             driveRR.followTrajectory(driveRR.trajectoryBuilder(new Pose2d()).forward(26).build());
         } else if (id == 12) {
             driveRR.followTrajectory(driveRR.trajectoryBuilder(new Pose2d()).back(40).build());
+        } else if (id == 13) {
+            telemetry.log().add("Trajectory: ", t5);
+            driveRR.followTrajectory(t5);
+        } else if (id == 14) {
+            telemetry.log().add("Trajectory: ", t6);
+            driveRR.followTrajectory(t6);
+        } else if (id == 15) {
+            telemetry.log().add("Trajectory: ", t7);
+            driveRR.followTrajectory(t7);
+        } else if (id == 16) {
+            telemetry.log().add("Trajectory: ", t8);
+            driveRR.followTrajectory(t8);
         }
         return;
 

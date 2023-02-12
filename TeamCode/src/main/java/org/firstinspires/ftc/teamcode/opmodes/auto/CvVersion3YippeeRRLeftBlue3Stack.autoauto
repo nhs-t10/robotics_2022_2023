@@ -29,7 +29,7 @@ goto start;
     goto dropCone;
 
 #dropCone:
-    let doneLifting = finishedMoving(), after 1s next;
+    let doneLifting = finishedMoving(), after 0.5s next;
     if(doneLifting){
         log("opening hand"), openHand(), after 0.5s goto postLoadedCone;
     } else {
@@ -41,8 +41,51 @@ goto start;
     stopDrive(), after 0.5s next;
 
     //ThreadedMoveToPosition(0), next;
-    goto colorStuffs;
+    goto coneStack;
 
+#coneStack:
+    ThreadedMoveToPosition(2), next;
+    moveToPosWithID(13), next;
+    closeHand(), next;
+    ThreadedMoveToPosition(4), next;
+    moveToPosWithID(14),ThreadedMoveToPosition(2), goto dropCone2;
+
+#dropCone2:
+
+    let doneLifting = finishedMoving(), after 0.5s next;
+    if(doneLifting){
+        log("opening hand"), openHand(), after 0.5s goto postConeStack;
+    } else {
+        goto dropCone2;
+    }
+#postConeStack:
+    ThreadedMoveToPosition(4), next;
+    moveToPosWithID(15), next;
+    ThreadedMoveToPosition(2), goto pickup;
+
+#pickup:
+
+    let doneLifting = finishedMoving(), after 0.5s next;
+    if(doneLifting){
+        log("opening hand"), openHand(), after 0.5s goto postConeStack2;
+    } else {
+        goto pickup;
+    }
+#postConeStack2:
+    closeHand(), next;
+    ThreadedMoveToPosition(4), next;
+    moveToPosWithID(14),ThreadedMoveToPosition(2), goto dropCone3;
+
+#dropCone3:
+
+    let doneLifting = finishedMoving(), after 0.5s next;
+    if(doneLifting){
+        log("opening hand"), openHand(), after 0.5s goto backToJunction;
+    } else {
+        goto dropCone3;
+    }
+#backToJunction:
+    moveToPosWithID(16), goto colorStuffs;
 #colorStuffs:
     moveToPosWithID(12), next;
     closeHand(), next;

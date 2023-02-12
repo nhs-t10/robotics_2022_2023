@@ -2,17 +2,17 @@
 startPose:
   x: -4.0
   y: 36.4
-  heading: 3.141592653589793
-startTangent: 3.141592653589793
+  heading: -1.5707963267948966
+startTangent: -3.141592653589793
 waypoints:
 - position:
-    x: -4.0
-    y: 36.41
-  heading: 3.141592653589793
-  tangent: 3.141592653589793
-  interpolationType: "LINEAR"
+    x: -10.0
+    y: 36.4
+  heading: 0.0
+  tangent: -1.5707963267948966
+  interpolationType: "CONSTANT"
 - position:
-    x: -6.0
+    x: -7.0
     y: 12.0
   heading: 0.0
   tangent: 0.0
