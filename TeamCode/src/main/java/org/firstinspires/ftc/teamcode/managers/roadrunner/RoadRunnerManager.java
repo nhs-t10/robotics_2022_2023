@@ -47,6 +47,10 @@ public class RoadRunnerManager extends FeatureManager {
     private Trajectory t2;
     private Trajectory t3;
     private Trajectory t4;
+    private Trajectory t5;
+    private Trajectory t6;
+    private Trajectory t7;
+    private Trajectory t8;
     private double firstWheelLastRotation, secondWheelLastRotation, lastHeading;
     private static final Pose2d[] nonono = {new Pose2d(-120, 48), new Pose2d(-72, 48), new Pose2d(-24, 48), new Pose2d(-24, 0), new Pose2d(-120, 0), new Pose2d(-72, 0), new Pose2d(-24, -48), new Pose2d(-120, -48), new Pose2d(-72, -48)};
 
@@ -67,7 +71,10 @@ public class RoadRunnerManager extends FeatureManager {
         this.t2 = AssetsTrajectoryManager.load("dropoffleftblue", telemetry);
         this.t3 = AssetsTrajectoryManager.load("dropoffright", telemetry);
         this.t4 = AssetsTrajectoryManager.load("dropoffrightblue", telemetry);
-
+        this.t5 = AssetsTrajectoryManager.load("dropoffleft", telemetry);
+        this.t6 = AssetsTrajectoryManager.load("dropoffleftblue", telemetry);
+        this.t7 = AssetsTrajectoryManager.load("dropoffright", telemetry);
+        this.t8 = AssetsTrajectoryManager.load("dropoffrightblue", telemetry);
         calibrateDriveToZero();
         calibrateDriveToAutoPosition();
         telemetry.log().add("Go to 192.168.43.1:8080/dash for the FTC Dashboard! Unless this is the competition, for which, in that case, never mind, don't use FTC Dashboard...");
