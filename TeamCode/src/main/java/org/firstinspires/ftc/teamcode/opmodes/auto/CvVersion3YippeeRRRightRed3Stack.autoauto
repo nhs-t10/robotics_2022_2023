@@ -5,10 +5,9 @@ $
 goto start;
 
 #start:
-    closeHand(), after 8s next;
-
+    closeHand(), next;
     let distance = 3, let rep_times = 0, next;
-    calibrateDrive(32, 63, -90), next;
+    calibrateDrive(32, -63, 90), next;
     webcam.startStreaming(1280, 720, OpenCvCameraRotation.UPRIGHT), after 2s next; // Standardize window size
     goto getColor;
 
@@ -22,7 +21,7 @@ goto start;
 #preLoadedCone:
     ThreadedMoveToPosition(4), next;
     calibrateDriveToZero(), next;
-    moveToPosWithID(2), next;
+    moveToPosWithID(3), next;
     stopDrive(), next;
     stopThreadedMovement(), after 0.5s next;
     ThreadedMoveToPosition(2), next;
@@ -45,10 +44,10 @@ goto start;
 
 #coneStack:
     ThreadedMoveToPosition(2), next;
-    moveToPosWithID(13), next;
+    moveToPosWithID(17), next;
     closeHand(), next;
     ThreadedMoveToPosition(4), next;
-    moveToPosWithID(14),ThreadedMoveToPosition(2), goto dropCone2;
+    moveToPosWithID(18),ThreadedMoveToPosition(2), goto dropCone2;
 
 #dropCone2:
 
@@ -60,7 +59,7 @@ goto start;
     }
 #postConeStack:
     ThreadedMoveToPosition(4), next;
-    moveToPosWithID(15), next;
+    moveToPosWithID(19), next;
     ThreadedMoveToPosition(2), goto pickup;
 
 #pickup:
@@ -74,7 +73,7 @@ goto start;
 #postConeStack2:
     closeHand(), next;
     ThreadedMoveToPosition(4), next;
-    moveToPosWithID(14),ThreadedMoveToPosition(2), goto dropCone3;
+    moveToPosWithID(18),ThreadedMoveToPosition(2), goto dropCone3;
 
 #dropCone3:
 
@@ -85,11 +84,12 @@ goto start;
         goto dropCone3;
     }
 #backToJunction:
-    moveToPosWithID(16), moveToPosWithID(21), goto colorStuffs;
+    moveToPosWithID(20), moveToPosWithID(21), goto colorStuffs;
 #colorStuffs:
     moveToPosWithID(12), next;
     closeHand(), next;
     if (color == 3) {
+
         moveToPosWithID(7), goto finalMove;
     }
     else if (color == 2) {
@@ -104,7 +104,7 @@ goto start;
     ThreadedMoveToPosition(0), next;
     moveToPosWithID(11), next;
     let pose = getCurrPose(), next;
-    setAutoAutoPosition(pose[0], psoe[1], pose[2]), next;
+    setAutoAutoPosition(pose[0], pose[1], pose[2]), next;
     goto end;
 #end:
     log("I'm done");

@@ -51,6 +51,10 @@ public class RoadRunnerManager extends FeatureManager {
     private Trajectory t6;
     private Trajectory t7;
     private Trajectory t8;
+    private Trajectory t9;
+    private Trajectory t10;
+    private Trajectory t11;
+    private Trajectory t12;
     private double firstWheelLastRotation, secondWheelLastRotation, lastHeading;
     private static final Pose2d[] nonono = {new Pose2d(-120, 48), new Pose2d(-72, 48), new Pose2d(-24, 48), new Pose2d(-24, 0), new Pose2d(-120, 0), new Pose2d(-72, 0), new Pose2d(-24, -48), new Pose2d(-120, -48), new Pose2d(-72, -48)};
 
@@ -75,6 +79,10 @@ public class RoadRunnerManager extends FeatureManager {
         this.t6 = AssetsTrajectoryManager.load("MoveToHigh", telemetry);
         this.t7 = AssetsTrajectoryManager.load("BackToStack", telemetry);
         this.t8 = AssetsTrajectoryManager.load("JunctionToParking", telemetry);
+        this.t9 = AssetsTrajectoryManager.load("ConeStackRed", telemetry);
+        this.t10 = AssetsTrajectoryManager.load("MoveToHighRed", telemetry);
+        this.t11 = AssetsTrajectoryManager.load("BackToStackRed", telemetry);
+        this.t12 = AssetsTrajectoryManager.load("JunctionToParkingRed", telemetry);
         calibrateDriveToZero();
         calibrateDriveToAutoPosition();
         telemetry.log().add("Go to 192.168.43.1:8080/dash for the FTC Dashboard! Unless this is the competition, for which, in that case, never mind, don't use FTC Dashboard...");
@@ -143,6 +151,20 @@ public class RoadRunnerManager extends FeatureManager {
         } else if (id == 16) {
             telemetry.log().add("Trajectory: ", t8);
             driveRR.followTrajectory(t8);
+        } else if (id == 17) {
+            telemetry.log().add("Trajectory: ", t9);
+            driveRR.followTrajectory(t9);
+        } else if (id == 18) {
+            telemetry.log().add("Trajectory: ", t10);
+            driveRR.followTrajectory(t10);
+        } else if (id == 19) {
+            telemetry.log().add("Trajectory: ", t11);
+            driveRR.followTrajectory(t11);
+        } else if (id == 20) {
+            telemetry.log().add("Trajectory: ", t12);
+            driveRR.followTrajectory(t12);
+        } else if (id == 21) {
+            driveRR.turn(90);
         }
         return;
 
