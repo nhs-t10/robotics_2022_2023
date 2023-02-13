@@ -32,6 +32,8 @@ import com.acmerobotics.roadrunner.geometry.Pose2d;
 import com.acmerobotics.roadrunner.geometry.Vector2d;
 import com.acmerobotics.roadrunner.localization.Localizer;
 import com.acmerobotics.roadrunner.trajectory.TrajectoryBuilder;
+import com.acmerobotics.dashboard.FtcDashboard;
+import com.acmerobotics.dashboard.telemetry.MultipleTelemetry;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 
@@ -92,6 +94,7 @@ public class template extends OpMode {
         telemetry.addData("Build Name", BuildHistory.buildName);
         telemetry.addData("Build Time", BuildHistory.buildTimeIso);
         telemetry.update();
+        telemetry = new MultipleTelemetry(telemetry, FtcDashboard.getInstance().getTelemetry());
         try {
             if(shouldActuallyDoThings) runtime.loop();
         } catch (Throwable t) {

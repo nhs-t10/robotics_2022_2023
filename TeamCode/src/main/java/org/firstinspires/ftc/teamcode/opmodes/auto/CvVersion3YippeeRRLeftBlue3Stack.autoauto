@@ -5,7 +5,7 @@ $
 goto start;
 
 #start:
-    closeHand() next;
+    closeHand(), next;
 
     let distance = 3, let rep_times = 0, next;
     calibrateDrive(32, 63, -90), next;

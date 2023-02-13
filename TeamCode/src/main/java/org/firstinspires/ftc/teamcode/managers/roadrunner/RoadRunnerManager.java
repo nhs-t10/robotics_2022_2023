@@ -170,7 +170,15 @@ public class RoadRunnerManager extends FeatureManager {
 
 
     }
-
+    public void activateMacro(int id){
+        if (id==1){
+            driveRR.followTrajectory(driveRR.trajectoryBuilder(new Pose2d()).lineToLinearHeading(new Pose2d(-20, 0, Math.toRadians(180))).build());
+        } else if (id == 2) {
+            driveRR.followTrajectory(driveRR.trajectoryBuilder(new Pose2d()).strafeRight(90).build());
+        } else if (id == 3) {
+            driveRR.followTrajectory(driveRR.trajectoryBuilder(new Pose2d()).strafeLeft(90).build());
+        }
+    }
     public void setBusy() {
         driveRR.isBusy();
     }
@@ -463,19 +471,12 @@ public class RoadRunnerManager extends FeatureManager {
      * @return
      */
     public void doOmniDisplace(Gamepad gamepad1, Gamepad gamepad2, @NonNull float[] driving) {
-
-
-        input = new Vector2d(
-                driving[1],
-                driving[0]
-        );
-
         drivePower = new Pose2d(
-                input.getX(),
-                input.getY(),
+                driving[1],
+                driving[0],
                 -driving[2]
         );
-        vel = drivePower;
+
         if (Math.abs(drivePower.getX()) + Math.abs(drivePower.getY())
                 + Math.abs(drivePower.getHeading()) > 1) {
             // re-normalize the powers according to the weights
