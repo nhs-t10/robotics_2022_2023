@@ -139,6 +139,10 @@ public class MovementManager extends FeatureManager {
         float[] sum = PaulMath.omniCalc(powers[0]*scale, powers[1]*scale, powers[2] * scale);
         driveBlue(sum[0], sum[1], sum[2], sum[3]);
     }
+    public void driveOmniAuto(float[] powers) {
+        float[] sum = PaulMath.omniCalc(powers[0]*scale, powers[1]*scale, powers[2] * scale);
+        driveBlue(-sum[0], sum[1], -sum[2], sum[3]);
+    }
 
     public double getFLMotorPower(){
         return this.frontLeft.getPower();

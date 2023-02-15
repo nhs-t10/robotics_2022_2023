@@ -2,6 +2,7 @@ package org.firstinspires.ftc.teamcode.managers.roadrunner;
 
 import androidx.annotation.NonNull;
 
+import com.acmerobotics.dashboard.config.Config;
 import com.acmerobotics.roadrunner.geometry.Pose2d;
 import com.acmerobotics.roadrunner.geometry.Vector2d;
 import com.acmerobotics.roadrunner.localization.Localizer;
@@ -27,6 +28,7 @@ import java.util.Arrays;
 /**
  * Manager for Pathing and Dead Reckoning... Makes Road runner much easier to use with a set of complex methods for making precise paths. created by ACHYUT SHASTRI
  */
+@Config
 public class RoadRunnerManager extends FeatureManager {
     public static Pose2d currentPose = new Pose2d(0, 0, Math.toRadians(0));
     private SampleMecanumDrive driveRR;
@@ -45,6 +47,14 @@ public class RoadRunnerManager extends FeatureManager {
     private Trajectory t2;
     private Trajectory t3;
     private Trajectory t4;
+    private Trajectory t5;
+    private Trajectory t6;
+    private Trajectory t7;
+    private Trajectory t8;
+    private Trajectory t9;
+    private Trajectory t10;
+    private Trajectory t11;
+    private Trajectory t12;
     private double firstWheelLastRotation, secondWheelLastRotation, lastHeading;
     private static final Pose2d[] nonono = {new Pose2d(-120, 48), new Pose2d(-72, 48), new Pose2d(-24, 48), new Pose2d(-24, 0), new Pose2d(-120, 0), new Pose2d(-72, 0), new Pose2d(-24, -48), new Pose2d(-120, -48), new Pose2d(-72, -48)};
 
@@ -58,32 +68,24 @@ public class RoadRunnerManager extends FeatureManager {
      */
     public RoadRunnerManager(@NotNull HardwareMap hardwareMap, @NotNull Pose2d start, @NotNull TelemetryManager telemetryManager, @NotNull OpMode opMode) {
         driveRR = new SampleMecanumDrive(hardwareMap); //Necessary Component for RoadRunner!
-        trajBuildRR = driveRR.trajectoryBuilder(start, true);
+        trajBuildRR = driveRR.trajectoryBuilder(start);
         this.opMode = opMode;
         this.telemetry = telemetryManager;
         this.t = AssetsTrajectoryManager.load("dropoffleft", telemetry);
         this.t2 = AssetsTrajectoryManager.load("dropoffleftblue", telemetry);
         this.t3 = AssetsTrajectoryManager.load("dropoffright", telemetry);
         this.t4 = AssetsTrajectoryManager.load("dropoffrightblue", telemetry);
-        reverseMotorsOmni();
+        this.t5 = AssetsTrajectoryManager.load("ConeStackBlue", telemetry);
+        this.t6 = AssetsTrajectoryManager.load("MoveToHigh", telemetry);
+        this.t7 = AssetsTrajectoryManager.load("BackToStack", telemetry);
+        this.t8 = AssetsTrajectoryManager.load("JunctionToParking", telemetry);
+        this.t9 = AssetsTrajectoryManager.load("ConeStackRed", telemetry);
+        this.t10 = AssetsTrajectoryManager.load("MoveToHighRed", telemetry);
+        this.t11 = AssetsTrajectoryManager.load("BackToStackRed", telemetry);
+        this.t12 = AssetsTrajectoryManager.load("JunctionToParkingRed", telemetry);
         calibrateDriveToZero();
         calibrateDriveToAutoPosition();
         telemetry.log().add("Go to 192.168.43.1:8080/dash for the FTC Dashboard! Unless this is the competition, for which, in that case, never mind, don't use FTC Dashboard...");
-
-    }
-
-    public void reverseMotors() {
-        driveRR.fr.setDirection(DcMotorSimple.Direction.REVERSE);
-        driveRR.br.setDirection(DcMotorSimple.Direction.FORWARD);
-        driveRR.fl.setDirection(DcMotorSimple.Direction.REVERSE);
-        driveRR.bl.setDirection(DcMotorSimple.Direction.REVERSE);
-    }
-
-    public void resetMotors() {
-        driveRR.fr.setDirection(DcMotorSimple.Direction.FORWARD);
-        driveRR.br.setDirection(DcMotorSimple.Direction.REVERSE);
-        driveRR.fl.setDirection(DcMotorSimple.Direction.REVERSE);
-        driveRR.bl.setDirection(DcMotorSimple.Direction.REVERSE);
     }
 
     /**
@@ -92,7 +94,6 @@ public class RoadRunnerManager extends FeatureManager {
      * @param id The id for the specified movement: 1 = Center, 2 = Top Corner, 3 = Bottom Corner
      */
     public void moveToPosWithID(int id) {
-        reverseMotors();
         if (id == 1) {
             telemetry.log().add("Trajectory: ", t);
             driveRR.followTrajectory(t);
@@ -105,11 +106,60 @@ public class RoadRunnerManager extends FeatureManager {
         } else if (id == 4) {
             telemetry.log().add("Trajectory: ", t4);
             driveRR.followTrajectory(t4);
+        } else if (id == 5) {
+            driveRR.followTrajectory(driveRR.trajectoryBuilder(new Pose2d()).strafeLeft(50).build());
+        } else if (id == 6) {
+            driveRR.followTrajectory(driveRR.trajectoryBuilder(new Pose2d()).strafeLeft(31.5).build());
+        } else if (id == 7) {
+            driveRR.followTrajectory(driveRR.trajectoryBuilder(new Pose2d()).strafeLeft(12).build());
+        } else if (id == 8) {
+            driveRR.followTrajectory(driveRR.trajectoryBuilder(new Pose2d()).strafeRight(50).build());
+        } else if (id == 9) {
+            driveRR.followTrajectory(driveRR.trajectoryBuilder(new Pose2d()).strafeRight(50).build());
+        } else if (id == 10) {
+            driveRR.followTrajectory(driveRR.trajectoryBuilder(new Pose2d()).strafeRight(55).build());
+        } else if (id == 11) {
+            driveRR.followTrajectory(driveRR.trajectoryBuilder(new Pose2d()).forward(26).build());
+        } else if (id == 12) {
+            driveRR.followTrajectory(driveRR.trajectoryBuilder(new Pose2d()).back(40).build());
+        } else if (id == 13) {
+            telemetry.log().add("Trajectory: ", t5);
+            driveRR.followTrajectory(t5);
+        } else if (id == 14) {
+            telemetry.log().add("Trajectory: ", t6);
+            driveRR.followTrajectory(t6);
+        } else if (id == 15) {
+            telemetry.log().add("Trajectory: ", t7);
+            driveRR.followTrajectory(t7);
+        } else if (id == 16) {
+            telemetry.log().add("Trajectory: ", t8);
+            driveRR.followTrajectory(t8);
+        } else if (id == 17) {
+            telemetry.log().add("Trajectory: ", t9);
+            driveRR.followTrajectory(t9);
+        } else if (id == 18) {
+            telemetry.log().add("Trajectory: ", t10);
+            driveRR.followTrajectory(t10);
+        } else if (id == 19) {
+            telemetry.log().add("Trajectory: ", t11);
+            driveRR.followTrajectory(t11);
+        } else if (id == 20) {
+            telemetry.log().add("Trajectory: ", t12);
+            driveRR.followTrajectory(t12);
+        } else if (id == 21) {
+            driveRR.turn(90);
         }
-        driveRR.update();
-        resetMotors();
+        return;
     }
-
+    public void activateMacro(int id){
+        if (id==1){
+            driveRR.followTrajectory(driveRR.trajectoryBuilder(new Pose2d()).lineToLinearHeading(new Pose2d(-20, 0, Math.toRadians(180))).build());
+        } else if (id == 2) {
+            driveRR.followTrajectory(driveRR.trajectoryBuilder(new Pose2d()).strafeRight(90).build());
+        } else if (id == 3) {
+            driveRR.followTrajectory(driveRR.trajectoryBuilder(new Pose2d()).strafeLeft(90).build());
+        }
+    }
     public void setBusy() {
         driveRR.isBusy();
     }
@@ -198,14 +248,13 @@ public class RoadRunnerManager extends FeatureManager {
     }
 
     /**
-     * Allows for the developer to specify a specific pose and type of movement for teh robot to follow
-     *
+     * Allows for the developer to specify a specific pose and type of movement for the robot to follow
      * @param pose     The pose to go to
      * @param type     The type of movement the robot is to perform
      * @param rotation The end rotation, if needed, for the movement
      */
     public void customMoveWithPose(Pose2d pose, String type, double rotation) {
-        reverseMotors();
+
         for (Pose2d poses : nonono) {
             if (pose.equals(poses)) {
                 return;
@@ -234,7 +283,7 @@ public class RoadRunnerManager extends FeatureManager {
         }
         telemetry.log().add("Out of if");
         //updateLocalizer();
-        resetMotors();
+
     }
 
     /**
@@ -252,15 +301,12 @@ public class RoadRunnerManager extends FeatureManager {
         }
         for (int i = 0; i < poseArr.length; i++) {
             updateLocalizer();
-            reverseMotors();
             Pose2d pose = poseArr[i];
             String type = typeArr[i];
             double rotation = rotationArr[i];
             for (Pose2d poses : nonono) {
                 if (pose.equals(poses)) {
                     return;
-                } else {
-
                 }
             }
             telemetry.log().add("Path Accepted");
@@ -278,10 +324,8 @@ public class RoadRunnerManager extends FeatureManager {
             } else if (type.equals("turn")) {
                 driveRR.turn(rotation);
             }
-
             driveRR.waitForIdle();
             updateLocalizer();
-            resetMotors();
         }
     }
 
@@ -296,7 +340,6 @@ public class RoadRunnerManager extends FeatureManager {
      */
     @Test
     public void customMoveSequenceWithPoseTrajSequence(@NotNull Pose2d[] poseArr, @NotNull String[] typeArr, @NotNull double[] rotationArr) throws SequenceInitException, Exception {
-        reverseMotors();
         if (poseArr.length != typeArr.length || typeArr.length != rotationArr.length || poseArr.length != rotationArr.length) {
             throw new SequenceInitException("Array Lengths for sequence do not match! " + poseArr.length + " does not equal " + typeArr.length + " or does not equal " + rotationArr.length, this);
         }
@@ -309,8 +352,6 @@ public class RoadRunnerManager extends FeatureManager {
             for (Pose2d poses : nonono) {
                 if (pose.equals(poses)) {
                     return;
-                } else {
-
                 }
             }
             telemetry.log().add("Path Accepted");
@@ -329,7 +370,7 @@ public class RoadRunnerManager extends FeatureManager {
             driveRR.followTrajectorySequence(tsb.build());
             driveRR.waitForIdle();
             updateLocalizer();
-            resetMotors();
+
         }
     }
 
@@ -354,10 +395,7 @@ public class RoadRunnerManager extends FeatureManager {
      *
      * @return Localizer of RoadRunner
      */
-    public Localizer getLocalizer() {
-        return driveRR.getLocalizer();
-
-    }
+    public Localizer getLocalizer() {return driveRR.getLocalizer();}
 
     /**
      * Determines whether a pose is viable for te robot to go to
@@ -370,8 +408,6 @@ public class RoadRunnerManager extends FeatureManager {
         for (Pose2d poses : nonono) {
             if (pose2d.equals(poses)) {
                 return false;
-            } else {
-
             }
         }
         telemetry.log().add("Path Accepted");
@@ -402,19 +438,11 @@ public class RoadRunnerManager extends FeatureManager {
      * @return
      */
     public void doOmniDisplace(Gamepad gamepad1, Gamepad gamepad2, @NonNull float[] driving) {
-
-
-        input = new Vector2d(
-                driving[1],
-                driving[0]
-        );
-
         drivePower = new Pose2d(
-                input.getX(),
-                input.getY(),
+                driving[1],
+                driving[0],
                 -driving[2]
         );
-        vel = drivePower;
         if (Math.abs(drivePower.getX()) + Math.abs(drivePower.getY())
                 + Math.abs(drivePower.getHeading()) > 1) {
             // re-normalize the powers according to the weights
@@ -430,7 +458,7 @@ public class RoadRunnerManager extends FeatureManager {
         }
 
         sum = PaulMath.omniCalc((float) vel.getX(), (float) vel.getY(), (float) vel.getHeading());
-        driveRR.setMotorPowers(sum[0], sum[1], sum[2], sum[3]);
+        driveRR.setMotorPowers(sum[0], -sum[1], -sum[2], sum[3]);
         /*driveRR.setWeightedDrivePower(
                 new Pose2d(
                         input.getX(),
@@ -444,9 +472,9 @@ public class RoadRunnerManager extends FeatureManager {
 
     public void reverseMotorsOmni() {
         driveRR.fr.setDirection(DcMotorSimple.Direction.FORWARD);
-        driveRR.br.setDirection(DcMotorSimple.Direction.REVERSE);
+        driveRR.br.setDirection(DcMotorSimple.Direction.FORWARD);
         driveRR.fl.setDirection(DcMotorSimple.Direction.FORWARD);
-        driveRR.bl.setDirection(DcMotorSimple.Direction.REVERSE);
+        driveRR.bl.setDirection(DcMotorSimple.Direction.FORWARD);
     }
 
     public boolean areMotorsIdle(){

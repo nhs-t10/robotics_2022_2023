@@ -1,6 +1,6 @@
 package org.firstinspires.ftc.teamcode.drive;
+
 import com.acmerobotics.dashboard.config.Config;
-import com.qualcomm.hardware.rev.RevHubOrientationOnRobot;
 import com.qualcomm.robotcore.hardware.PIDFCoefficients;
 
 
@@ -16,14 +16,16 @@ import com.qualcomm.robotcore.hardware.PIDFCoefficients;
  * These are not the only parameters; some are located in the localizer classes, org.firstinspires.ftc.teamcode.drive base classes,
  * and op modes themselves.
  */
-
+@Config
 public class DriveConstants {
 
     /*
      * These are motor constants that should be listed online for your motors.
      */
-    public static final double TICKS_PER_REV = 537.7;
-    public static final double MAX_RPM = 312;
+
+
+    public static double TICKS_PER_REV = 537.7;
+    public static double MAX_RPM = 312;
 
     /*
      * Set RUN_USING_ENCODER to true to enable built-in hub velocity control using org.firstinspires.ftc.teamcode.drive encoders.
@@ -34,8 +36,8 @@ public class DriveConstants {
      * from DriveVelocityPIDTuner.
      */
     public static final boolean RUN_USING_ENCODER = false;
-    public static PIDFCoefficients MOTOR_VELO_PID = new PIDFCoefficients(1, 0, 10,
-            getMotorVelocityF(MAX_RPM / 60 * TICKS_PER_REV));
+    public static PIDFCoefficients MOTOR_VELO_PID = new PIDFCoefficients(0, 0, 0,
+            18);
 
     /*
      * These are physical constants that can be determined from your robot (including the track
@@ -45,9 +47,9 @@ public class DriveConstants {
      * angular distances although most angular parameters are wrapped in Math.toRadians() for
      * convenience. Make sure to exclude any gear ratio included in MOTOR_CONFIG from GEAR_RATIO.
      */
-    public static double WHEEL_RADIUS = 2; // in
-    public static double GEAR_RATIO = 1; // output (wheel) speed / input (motor) speed
-    public static double TRACK_WIDTH = 13.25; // in
+    public static double WHEEL_RADIUS = 1.1; // in
+    public static double GEAR_RATIO = 1.53; // output (wheel) speed / input (motor) speed
+    public static double TRACK_WIDTH = 12.1; // in
 
     /*
      * These are the feedforward parameters used to model the org.firstinspires.ftc.teamcode.drive motor behavior. If you are using
@@ -55,13 +57,10 @@ public class DriveConstants {
      * motor encoders or have elected not to use them for velocity control, these values should be
      * empirically tuned.
      */
-    public static double kV = 1.0 / rpmToVelocity(MAX_RPM);
-    public static double kA = 0;
+    public static double kV = 0.018;
+    public static double kA = 0.00022;
     public static double kStatic = 0;
-    public static RevHubOrientationOnRobot.LogoFacingDirection LOGO_FACING_DIR =
-            RevHubOrientationOnRobot.LogoFacingDirection.LEFT;
-    public static RevHubOrientationOnRobot.UsbFacingDirection USB_FACING_DIR =
-            RevHubOrientationOnRobot.UsbFacingDirection.UP;
+
     /*
      * These values are used to generate the trajectories for you robot. To ensure proper operation,
      * the constraints should never exceed ~80% of the robot's actual capabilities. While Road
@@ -69,10 +68,10 @@ public class DriveConstants {
      * small and gradually increase them later after everything is working. All distance units are
      * inches.
      */
-    public static double MAX_VEL = 45;
-    public static double MAX_ACCEL = 45;
-    public static double MAX_ANG_VEL = Math.toRadians(360);
-    public static double MAX_ANG_ACCEL = Math.toRadians(360);
+    public static double MAX_VEL = 40;
+    public static double MAX_ACCEL = 40;
+    public static double MAX_ANG_VEL = 3.4;
+    public static double MAX_ANG_ACCEL = 3.4;
 
 
     public static double encoderTicksToInches(double ticks) {
@@ -85,6 +84,7 @@ public class DriveConstants {
 
     public static double getMotorVelocityF(double ticksPerSecond) {
         // see https://docs.google.com/document/d/1tyWrXDfMidwYyP_5H4mZyVgaEswhOC35gvdmP-V-5hA/edit#heading=h.61g9ixenznbx
+
         return 32767 / ticksPerSecond;
     }
 }

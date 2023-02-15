@@ -32,6 +32,8 @@ import com.acmerobotics.roadrunner.geometry.Pose2d;
 import com.acmerobotics.roadrunner.geometry.Vector2d;
 import com.acmerobotics.roadrunner.localization.Localizer;
 import com.acmerobotics.roadrunner.trajectory.TrajectoryBuilder;
+import com.acmerobotics.dashboard.FtcDashboard;
+import com.acmerobotics.dashboard.telemetry.MultipleTelemetry;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 
@@ -52,7 +54,8 @@ public class template extends OpMode {
     public void init() {
         FeatureManager.setIsOpModeRunning(true);
         FeatureManager.reconfigureForAuto();
-
+        this.msStuckDetectInitLoop = Integer.MAX_VALUE;
+        this.msStuckDetectLoop = Integer.MAX_VALUE;
         telemetryManager = new TelemetryManager(telemetry, this, TelemetryManager.BITMASKS.NONE);
         telemetry = telemetryManager;
         FeatureManager.logger.setBackend(telemetry.log());
@@ -72,12 +75,12 @@ public class template extends OpMode {
        limbs.setZeroPowerBehavior("monkeyShoulder", DcMotor.ZeroPowerBehavior.BRAKE);
 
         cv = new CVManager(hardwareMap);
-        //rr = new RoadRunnerManager(hardwareMap, new Pose2d(0, 0), telemetryManager, this);
-        imu = new ImuManager(hardwareMap.get(com.qualcomm.hardware.bosch.BNO055IMU.class, "imu"),driver);
+        rr = new RoadRunnerManager(hardwareMap, new Pose2d(0, 0), telemetryManager, this);
+        //imu = new ImuManager(hardwareMap.get(com.qualcomm.hardware.bosch.BNO055IMU.class, "imu"),driver);
 
         arm = new bigArmManager(limbs);
 
-        runtime = new AutoautoRuntime(generateProgram(), getClass().getCanonicalName(), imu, driver, limbs, telemetryManager, cv, clawPosition, neck, arm);
+        runtime = new AutoautoRuntime(generateProgram(), getClass().getCanonicalName(), driver, limbs, telemetryManager, cv, clawPosition, neck, arm, rr);
         
         /*COMPAT_MODE_SETTING*/
 
@@ -91,6 +94,7 @@ public class template extends OpMode {
         telemetry.addData("Build Name", BuildHistory.buildName);
         telemetry.addData("Build Time", BuildHistory.buildTimeIso);
         telemetry.update();
+        telemetry = new MultipleTelemetry(telemetry, FtcDashboard.getInstance().getTelemetry());
         try {
             if(shouldActuallyDoThings) runtime.loop();
         } catch (Throwable t) {

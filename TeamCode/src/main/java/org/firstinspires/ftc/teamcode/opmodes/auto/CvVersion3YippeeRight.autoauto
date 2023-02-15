@@ -5,9 +5,9 @@ $
 goto start;
 
 #start:
+
     closeHand(), next;
     let distance = 3, let rep_times = 0, next;
-    calibrateDrive(-32, -63, 90), next;
     webcam.startStreaming(1280, 720, OpenCvCameraRotation.UPRIGHT), after 2s next; // Standardize window size
     goto getColor;
 
@@ -19,46 +19,45 @@ goto start;
     goto preLoadedCone;
 
 #preLoadedCone:
-    ThreadedMoveToPosition(3), next;
-    calibrateDriveToZero(), next;
-    moveToPosWithID(1), next;
-    stopDrive(), next;
-    stopThreadedMovement(), after 0.5s next;
+    ThreadedMoveToPosition(4), next;
+    driveOmni(0,0.5,0.02), after 48cm next;
+    driveOmni(0.5,0,0), after 64cm next;
+    driveOmni(0,0.5,0.01), after 26cm next;
+    driveOmni(0.5,0,0), after 5.5cm next;
+    stopDrive(),  next;
+    stopThreadedMovement(), after 1s next;
     ThreadedMoveToPosition(2), next;
     goto dropCone;
 
 #dropCone:
     let doneLifting = finishedMoving(), after 0.5s next;
     if(doneLifting){
-        log("opening hand"), openHand(), after 1s goto postLoadedCone;
+        log("opening hand"), openHand(), after 2s next;
+        goto colorStuffs;
     } else {
         goto dropCone;
     }
 
-#postLoadedCone:
+
+#colorStuffs:
+    //ThreadedMoveToPosition(3), after 1s next;
     driveOmni(-0.5,0,0), after 5cm next;
     stopDrive(), after 0.5s next;
     closeHand(), next;
     ThreadedMoveToPosition(0), next;
-    goto colorStuffs;
-
-#colorStuffs:
     if (color == 1) {
-        driveOmni(0,0.5,0.02), after 150cm goto finalMove;
+        driveOmni(0,-0.5,-0.02), after 150cm goto end;
     }
     else if (color == 2) {
-        driveOmni(0,0.5,0.02), after 80cm goto finalMove;
+        driveOmni(0,-0.5,-0.02), after 80cm goto end;
     }
     else {
-        driveOmni(0,0.5,0.02), after 30cm goto finalMove;
+        driveOmni(0,-0.5,-0.02), after 30cm goto end;
     }
-#finalMove:
-    stopDrive(), next;
-    let pose = getCurrPose(), next;
-    setAutoAutoPosition(pose[0], psoe[1], pose[2]), next;
-    goto end;
+
 #end:
-    log("I'm done");
+    log("I'm done"), next;
+    stopDrive();
 //    driveOmni(0,0.5,0), after 8cm next;
 //    //driveOmni(0.5,0,0), after 35cm next;
 //    driveOmni(0,0,0), next;
