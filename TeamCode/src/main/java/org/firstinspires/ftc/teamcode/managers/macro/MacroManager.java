@@ -11,6 +11,7 @@ public class MacroManager extends FeatureManager {
     public boolean movingAndRotating=false;
     //Note: this is x,y or h,v while driveOmni uses v,h
     private float[] driveVector={0f,0f};
+    private float[] startVector={0f,0f};
     private float power=0f;
     private Thread macroThread;
 
@@ -22,7 +23,7 @@ public class MacroManager extends FeatureManager {
                 if(movingAndRotating){
                     float startAngle=imu.getAngle();
                     while(Math.abs(imu.getAngle()-startAngle)<180){
-                        driveVector=PaulMath.rotateVector(driveVector,Math.abs(imu.getAngle()-startAngle));
+                        driveVector=PaulMath.rotateVector(startVector,Math.abs(imu.getAngle()-startAngle));
                         driver.driveOmni(driveVector[1],driveVector[0],power);
                         if(!isOpModeRunning){
                             break;
@@ -39,6 +40,7 @@ public class MacroManager extends FeatureManager {
             macroThread.start();
         }
         this.driveVector=new float[] {h,v};
+        this.startVector=new float[] {h,v};
         this.power=Math.abs(power);
         if (!movingAndRotating){
             movingAndRotating=true;
