@@ -92,7 +92,7 @@ public class RotationTesting extends OpMode {
                 driver.driveOmni(0,0,-0.5f);
                 turningLeft=false;
                 turningRight=false;
-            } else if (!turningRight && !turningLeft){
+            } else if (!turningRight && !turningLeft && !(macro.movingAndRotating)){
                 driver.stopDrive();
             }
             if (input.getBool("turn90Left")){
