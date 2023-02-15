@@ -86,10 +86,7 @@ public class RoadRunnerManager extends FeatureManager {
         calibrateDriveToZero();
         calibrateDriveToAutoPosition();
         telemetry.log().add("Go to 192.168.43.1:8080/dash for the FTC Dashboard! Unless this is the competition, for which, in that case, never mind, don't use FTC Dashboard...");
-
     }
-
-
 
     /**
      * Moves the robot to the given id's position and rotates it to the id's given rotation
@@ -97,7 +94,6 @@ public class RoadRunnerManager extends FeatureManager {
      * @param id The id for the specified movement: 1 = Center, 2 = Top Corner, 3 = Bottom Corner
      */
     public void moveToPosWithID(int id) {
-
         if (id == 1) {
             telemetry.log().add("Trajectory: ", t);
             driveRR.followTrajectory(t);
@@ -111,30 +107,17 @@ public class RoadRunnerManager extends FeatureManager {
             telemetry.log().add("Trajectory: ", t4);
             driveRR.followTrajectory(t4);
         } else if (id == 5) {
-
-
             driveRR.followTrajectory(driveRR.trajectoryBuilder(new Pose2d()).strafeLeft(50).build());
-
         } else if (id == 6) {
-
             driveRR.followTrajectory(driveRR.trajectoryBuilder(new Pose2d()).strafeLeft(31.5).build());
-
         } else if (id == 7) {
-
             driveRR.followTrajectory(driveRR.trajectoryBuilder(new Pose2d()).strafeLeft(12).build());
-
         } else if (id == 8) {
-
             driveRR.followTrajectory(driveRR.trajectoryBuilder(new Pose2d()).strafeRight(50).build());
-
         } else if (id == 9) {
-
             driveRR.followTrajectory(driveRR.trajectoryBuilder(new Pose2d()).strafeRight(50).build());
-
         } else if (id == 10) {
-
             driveRR.followTrajectory(driveRR.trajectoryBuilder(new Pose2d()).strafeRight(55).build());
-
         } else if (id == 11) {
             driveRR.followTrajectory(driveRR.trajectoryBuilder(new Pose2d()).forward(26).build());
         } else if (id == 12) {
@@ -167,8 +150,6 @@ public class RoadRunnerManager extends FeatureManager {
             driveRR.turn(90);
         }
         return;
-
-
     }
     public void activateMacro(int id){
         if (id==1){
@@ -267,8 +248,7 @@ public class RoadRunnerManager extends FeatureManager {
     }
 
     /**
-     * Allows for the developer to specify a specific pose and type of movement for teh robot to follow
-     *
+     * Allows for the developer to specify a specific pose and type of movement for the robot to follow
      * @param pose     The pose to go to
      * @param type     The type of movement the robot is to perform
      * @param rotation The end rotation, if needed, for the movement
@@ -321,15 +301,12 @@ public class RoadRunnerManager extends FeatureManager {
         }
         for (int i = 0; i < poseArr.length; i++) {
             updateLocalizer();
-
             Pose2d pose = poseArr[i];
             String type = typeArr[i];
             double rotation = rotationArr[i];
             for (Pose2d poses : nonono) {
                 if (pose.equals(poses)) {
                     return;
-                } else {
-
                 }
             }
             telemetry.log().add("Path Accepted");
@@ -347,10 +324,8 @@ public class RoadRunnerManager extends FeatureManager {
             } else if (type.equals("turn")) {
                 driveRR.turn(rotation);
             }
-
             driveRR.waitForIdle();
             updateLocalizer();
-
         }
     }
 
@@ -365,7 +340,6 @@ public class RoadRunnerManager extends FeatureManager {
      */
     @Test
     public void customMoveSequenceWithPoseTrajSequence(@NotNull Pose2d[] poseArr, @NotNull String[] typeArr, @NotNull double[] rotationArr) throws SequenceInitException, Exception {
-
         if (poseArr.length != typeArr.length || typeArr.length != rotationArr.length || poseArr.length != rotationArr.length) {
             throw new SequenceInitException("Array Lengths for sequence do not match! " + poseArr.length + " does not equal " + typeArr.length + " or does not equal " + rotationArr.length, this);
         }
@@ -378,8 +352,6 @@ public class RoadRunnerManager extends FeatureManager {
             for (Pose2d poses : nonono) {
                 if (pose.equals(poses)) {
                     return;
-                } else {
-
                 }
             }
             telemetry.log().add("Path Accepted");
@@ -423,10 +395,7 @@ public class RoadRunnerManager extends FeatureManager {
      *
      * @return Localizer of RoadRunner
      */
-    public Localizer getLocalizer() {
-        return driveRR.getLocalizer();
-
-    }
+    public Localizer getLocalizer() {return driveRR.getLocalizer();}
 
     /**
      * Determines whether a pose is viable for te robot to go to
@@ -439,8 +408,6 @@ public class RoadRunnerManager extends FeatureManager {
         for (Pose2d poses : nonono) {
             if (pose2d.equals(poses)) {
                 return false;
-            } else {
-
             }
         }
         telemetry.log().add("Path Accepted");
@@ -476,7 +443,6 @@ public class RoadRunnerManager extends FeatureManager {
                 driving[0],
                 -driving[2]
         );
-
         if (Math.abs(drivePower.getX()) + Math.abs(drivePower.getY())
                 + Math.abs(drivePower.getHeading()) > 1) {
             // re-normalize the powers according to the weights
