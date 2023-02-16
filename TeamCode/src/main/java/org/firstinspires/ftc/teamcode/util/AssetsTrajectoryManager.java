@@ -55,8 +55,7 @@ public class AssetsTrajectoryManager {
     public static @Nullable TrajectoryBuilder loadBuilder(String name, TelemetryManager telemetry) {
         TrajectoryGroupConfig groupConfig = loadGroupConfig();
         TrajectoryConfig config = loadConfig(name);
-        telemetry.log().add("groupConfig:", groupConfig);
-        telemetry.log().add("Config:", config);
+
         if (groupConfig == null || config == null) {
             return null;
         }
