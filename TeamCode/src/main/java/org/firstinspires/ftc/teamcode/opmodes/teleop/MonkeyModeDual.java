@@ -106,8 +106,8 @@ public class MonkeyModeDual extends OpMode {
         input.registerInput("drivingControls",
             new PlusNode(
                 new MultiInputNode(
-                    new MultiplyNode(new GradualStickNode(new JoystickNode("left_stick_y"), 0.25f, 0.9f), -1f),
-                    new MultiplyNode(new GradualStickNode(new JoystickNode("left_stick_x"), 0.25f, 0.9f), -1f),
+                    new MultiplyNode(new GradualStickNode(new JoystickNode("left_stick_y"), 0.25f, 0.5f), -1f),
+                    new MultiplyNode(new GradualStickNode(new JoystickNode("left_stick_x"), 0.25f, 0.5f), -1f),
                     new MultiplyNode(new JoystickNode("right_stick_x"), -1f)
                 ),
                 new MultiInputNode(
@@ -168,11 +168,9 @@ public class MonkeyModeDual extends OpMode {
         //input.registerInput("rrTog", new ToggleNode(new ButtonNode("dpadup")));
         input.registerInput("rrToggle", new ToggleNode(new ButtonNode("dpadup")));
         input.setOverlapResolutionMethod(InputOverlapResolutionMethod.MOST_COMPLEX_ARE_THE_FAVOURITE_CHILD);
-        rr.calibrateDriveToAutoPosition();
 
         PriorityAsyncOpmodeComponent.start(() -> {
-            if(input.getBool("rrToggle") && rr.notBusy()) {
-                /*
+          /*  if(input.getBool("rrToggle") && rr.notBusy()) {
                 if (input.getBool("a1") && rr.notBusy()) {
                     //rr.moveToPosWithID(2);
                     rr.activateMacro(1);
@@ -188,12 +186,9 @@ public class MonkeyModeDual extends OpMode {
                     telemetry.log().add("RR PATH STARTED");
                     rr.customMoveWithPose(new Pose2d(0, 20), "strafe", 20);
                 }*/
-            }
             //rr.updateLocalizer();
             //rr.doOmniDisplace(input.gamepad, input.gamepad2);
-            telemetry = new MultipleTelemetry(telemetry, FtcDashboard.getInstance().getTelemetry());
         });
-
     }
     public void loop() {
         try {
@@ -294,8 +289,8 @@ public class MonkeyModeDual extends OpMode {
             telemetry.addData("FR Power", driver.frontRight.getPower());
             telemetry.addData("BR Power", driver.backLeft.getPower());
             telemetry.addData("BL Power", driver.backRight.getPower());
-            telemetry.addData("Roadrunner Not Busy: ", rr.notBusy());
-            telemetry.addData("Heading", rr.getDrive().getExternalHeading());
+            //telemetry.addData("Roadrunner Not Busy: ", rr.notBusy());
+            //telemetry.addData("Heading", rr.getDrive().getExternalHeading());
             telemetry.addData("Servo Open",""+intakeToggle);
             telemetry.addData("Tower Power", hands.getMotorPower("monkeyShoulder"));
             telemetry.addData("Tower Position: ", towerPos);
@@ -303,7 +298,7 @@ public class MonkeyModeDual extends OpMode {
             telemetry.addData("Last Error: ", lastError);
             telemetry.addData("CurrentColor", currentColor);
             telemetry.addData("CurrentColor1", currentColor1);
-            telemetry.addData("Pos: ", rr.getDrive().getPoseEstimate());
+           // telemetry.addData("Pos: ", rr.getDrive().getPoseEstimate());
             telemetry.update();
         }
         catch (Throwable t) {
