@@ -96,7 +96,7 @@ public class MonkeyModeDual extends OpMode {
         );
         sensing = new SensorManager(
                 hardwareMap,
-                SensorManager.colorSensor("rainbowSense", "rainbowSense1"),
+                SensorManager.colorSensor(),
                 SensorManager.touchSensor(),
                 SensorManager.distanceSensor()
         );

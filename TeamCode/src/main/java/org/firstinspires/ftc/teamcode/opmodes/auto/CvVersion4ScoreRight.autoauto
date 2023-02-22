@@ -7,7 +7,7 @@ goto start;
 #start:
     closeHand(), next;
     let distance = 3, let rep_times = 0, next;
-    calibrateDrive(32, -63, 90), next;
+    calibrateDrive(32, 63, -90), next;
     webcam.startStreaming(1280, 720, OpenCvCameraRotation.UPRIGHT), after 2s next; // Standardize window size
     goto getColor;
 
@@ -19,92 +19,93 @@ goto start;
     goto preLoadedCone;
 
 #preLoadedCone:
-    ThreadedMoveToPosition(4), next;
+    ThreadedMoveToPosition(1), next;
     calibrateDriveToZero(), next;
-    moveToPosWithID(3), next;
+    moveToPosWithID(17), next;
     stopDrive(), next;
     stopThreadedMovement(), after 0.5s next;
-    ThreadedMoveToPosition(2), next;
+    ThreadedMoveToPosition(14), next;
     goto dropCone;
 
 #dropCone:
+    stopThreadedMovement(), after 0.5s next;
     let doneLifting = finishedMoving(), after 0.5s next;
     if(doneLifting){
-        log("opening hand"), openHand(), after 0.5s goto postLoadedCone;
+        log("opening hand"), openHand(), goto toConeStack1;
     } else {
         goto dropCone;
     }
 
-#postLoadedCone:
+#toConeStack1:
+    ThreadedMoveToPosition(4), after 1s next;
+    moveToPosWithID(19), next;
 
-    stopDrive(), after 0.5s next;
-
-    //ThreadedMoveToPosition(0), next;
-    goto coneStack;
-
-#coneStack:
-    ThreadedMoveToPosition(2), next;
-    moveToPosWithID(17), next;
-    closeHand(), next;
-    ThreadedMoveToPosition(4), next;
-    moveToPosWithID(18),ThreadedMoveToPosition(2), goto dropCone2;
-
-#dropCone2:
-
+#pickup1:
     let doneLifting = finishedMoving(), after 0.5s next;
     if(doneLifting){
-        log("opening hand"), openHand(), after 0.5s goto postConeStack;
+        log("opening hand"), closeHand(), after 0.5s goto backToPole1;
+    } else {
+        goto pickup1;
+    }
+
+#backToPole1:
+    ThreadedMoveToPosition(4), next;
+    moveToPosWithID(18), ThreadedMoveToPosition(2), goto dropCone2;
+
+#dropCone2:
+    let doneLifting = finishedMoving(), after 0.5s next;
+    if(doneLifting){
+        log("opening hand"), openHand(), after 0.5s goto toConeStack2;
     } else {
         goto dropCone2;
     }
-#postConeStack:
+
+#toConeStack2:
     ThreadedMoveToPosition(4), next;
     moveToPosWithID(19), next;
-    ThreadedMoveToPosition(2), goto pickup;
+    ThreadedMoveToPosition(7), goto pickup2;
 
-#pickup:
-
+#pickup2:
     let doneLifting = finishedMoving(), after 0.5s next;
     if(doneLifting){
-        log("opening hand"), openHand(), after 0.5s goto postConeStack2;
+        log("opening hand"), closeHand(), after 0.5s goto backToPole2;
     } else {
-        goto pickup;
+        goto pickup2;
     }
-#postConeStack2:
-    closeHand(), next;
+
+#backToPole2:
     ThreadedMoveToPosition(4), next;
     moveToPosWithID(18),ThreadedMoveToPosition(2), goto dropCone3;
 
 #dropCone3:
-
     let doneLifting = finishedMoving(), after 0.5s next;
     if(doneLifting){
         log("opening hand"), openHand(), after 0.5s goto backToJunction;
     } else {
         goto dropCone3;
     }
+
 #backToJunction:
-    moveToPosWithID(20), moveToPosWithID(21), goto colorStuffs;
+    moveToPosWithID(20), moveToPosWithID(22), goto colorStuffs;
+
 #colorStuffs:
     moveToPosWithID(12), next;
     closeHand(), next;
     if (color == 3) {
-
-        moveToPosWithID(7), goto finalMove;
+        moveToPosWithID(8), goto finalMove;
     }
     else if (color == 2) {
-        moveToPosWithID(6), goto finalMove;
+        moveToPosWithID(9), goto finalMove;
     }
     else {
-        moveToPosWithID(5), goto finalMove;
+        moveToPosWithID(10), goto finalMove;
     };
-
 
 #finalMove:
     ThreadedMoveToPosition(0), next;
     moveToPosWithID(11), next;
     let pose = getCurrPose(), next;
-    setAutoAutoPosition(pose[0], pose[1], pose[2]), next;
+    setAutoAutoPosition(pose[0], psoe[1], pose[2]), next;
     goto end;
 #end:
     log("I'm done");
