@@ -252,7 +252,6 @@ public class MonkeyModeDual extends OpMode {
                 movingToMid=false;
                 movingToHigh=false;
                 monkeyArm.resetDoOnce();
-                intakeToggle=false;
             }
             if (input.getBool("armLengthSmall")) {
                 movingToFloor=false;

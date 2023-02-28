@@ -9,7 +9,7 @@ public class bigArmManager extends FeatureManager {
     public final int lowPosition= 1250; //The position of the low tower
     public final int middlePosition = 2081; //The position of the middle tower
     public final int highPosition = 2956; //The position of the high tower
-    public final int[] positions = {floorPosition, lowPosition, middlePosition, highPosition, highPosition+30, lowPosition-50, lowPosition-100};
+    public final int[] positions = {floorPosition, lowPosition, middlePosition, highPosition, highPosition+100, lowPosition-275, lowPosition-325};
     public double direction = 1.0;
     public boolean doOnce=false;
     public int towerPos = 0;
@@ -55,10 +55,9 @@ public class bigArmManager extends FeatureManager {
     }
     public void stopArm(){hands.setMotorPower("monkeyShoulder",0);}
     public void openHand(){
-        hands.setServoPosition("monkeyHand", 0.1);
+        hands.setServoPosition("monkeyHand", 0.28);
     }
-    public void closeHand(){
-        hands.setServoPosition("monkeyHand", 0.5);
+    public void closeHand(){hands.setServoPosition("monkeyHand", 0.4);
     }
 
     /*
