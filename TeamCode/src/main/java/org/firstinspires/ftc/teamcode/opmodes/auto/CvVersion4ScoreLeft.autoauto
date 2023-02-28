@@ -6,9 +6,8 @@ goto start;
 
 #start:
     closeHand(), next;
-    let distance = 3, let rep_times = 0, next;
     calibrateDrive(32, 63, -90), next;
-    webcam.startStreaming(1280, 720, OpenCvCameraRotation.UPRIGHT), after 2s next; // Standardize window size
+    webcam.startStreaming(1280, 720, OpenCvCameraRotation.UPRIGHT), after 1s next; // Standardize window size
     goto getColor;
 
 #getColor:
@@ -21,89 +20,96 @@ goto start;
 #preLoadedCone:
     ThreadedMoveToPosition(4), next;
     calibrateDriveToZero(), next;
-    moveToPosWithID(2), next;
+    moveToPosWithID(13), next;
+    moveToPosWithID(21), next;
+    moveToPosWithID(23), next;
     stopDrive(), next;
     stopThreadedMovement(), after 0.5s next;
     ThreadedMoveToPosition(2), next;
     goto dropCone;
 
 #dropCone:
-    let doneLifting = finishedMoving(), after 0.5s next;
+    let doneLifting = finishedMoving(), after 0.1s next;
     if(doneLifting){
-        log("opening hand"), openHand(), after 0.5s goto postLoadedCone;
+        log("opening hand"), openHand(), after 0.5s goto toConeStack1;
     } else {
         goto dropCone;
     }
 
-#postLoadedCone:
+#toConeStack1:
+    ThreadedMoveToPosition(6), next;
+    moveToPosWithID(15), goto pickup1;
 
-    stopDrive(), after 0.5s next;
 
-    //ThreadedMoveToPosition(0), next;
-    goto coneStack;
+#pickup1:
+    let doneLifting = finishedMoving(), after 0.1s next;
+    if(doneLifting){
+        log("closing hand"), closeHand(), after 0.1s goto backToPole1;
+    } else {
+        goto pickup1;
+    }
 
-#coneStack:
-    ThreadedMoveToPosition(2), next;
-    moveToPosWithID(13), next;
-    closeHand(), next;
+#backToPole1:
     ThreadedMoveToPosition(4), next;
-    moveToPosWithID(14),ThreadedMoveToPosition(2), goto dropCone2;
+    moveToPosWithID(14), next;
+    ThreadedMoveToPosition(2), next;
+    goto dropCone2;
 
 #dropCone2:
-
-    let doneLifting = finishedMoving(), after 0.5s next;
+    let doneLifting = finishedMoving(), after 0.1s next;
     if(doneLifting){
-        log("opening hand"), openHand(), after 0.5s goto postConeStack;
+        log("opening hand"), openHand(), after 0.5s goto toConeStack2;
     } else {
         goto dropCone2;
     }
-#postConeStack:
-    ThreadedMoveToPosition(4), next;
+
+#toConeStack2:
+    ThreadedMoveToPosition(5), next;
     moveToPosWithID(15), next;
-    ThreadedMoveToPosition(2), goto pickup;
+    goto pickup2;
 
-#pickup:
-
-    let doneLifting = finishedMoving(), after 0.5s next;
+#pickup2:
+    let doneLifting = finishedMoving(), after 0.1s next;
     if(doneLifting){
-        log("opening hand"), openHand(), after 0.5s goto postConeStack2;
+        log("closing hand"), closeHand(), after 0.5s goto backToPole2;
     } else {
-        goto pickup;
+        goto pickup2;
     }
-#postConeStack2:
-    closeHand(), next;
+
+#backToPole2:
     ThreadedMoveToPosition(4), next;
-    moveToPosWithID(14),ThreadedMoveToPosition(2), goto dropCone3;
+    moveToPosWithID(14), next;
+    ThreadedMoveToPosition(2), next;
+    goto dropCone3;
 
 #dropCone3:
-
-    let doneLifting = finishedMoving(), after 0.5s next;
+    let doneLifting = finishedMoving(), after 0.1s next;
     if(doneLifting){
-        log("opening hand"), openHand(), after 0.5s goto backToJunction;
+        log("opening hand"), openHand(), after 0.1s goto backToJunction;
     } else {
         goto dropCone3;
     }
+
 #backToJunction:
-    moveToPosWithID(16), moveToPosWithID(21), goto colorStuffs;
+    moveToPosWithID(16), next;
+    goto colorStuffs;
+
 #colorStuffs:
-    moveToPosWithID(12), next;
     closeHand(), next;
     if (color == 3) {
-        moveToPosWithID(7), goto finalMove;
+        moveToPosWithID(5), goto finalMove;
     }
     else if (color == 2) {
         moveToPosWithID(6), goto finalMove;
     }
     else {
-        moveToPosWithID(5), goto finalMove;
+        moveToPosWithID(7), goto finalMove;
     };
-
 
 #finalMove:
     ThreadedMoveToPosition(0), next;
-    moveToPosWithID(11), next;
     let pose = getCurrPose(), next;
-    setAutoAutoPosition(pose[0], psoe[1], pose[2]), next;
+    setAutoAutoPosition(pose[0], pose[1], pose[2]), next;
     goto end;
 #end:
     log("I'm done");

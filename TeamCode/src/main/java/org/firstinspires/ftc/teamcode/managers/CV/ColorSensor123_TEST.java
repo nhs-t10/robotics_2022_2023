@@ -58,7 +58,7 @@ public class ColorSensor123_TEST extends PipelineThatExposesSomeTestingAnalysis 
     }
 
 
-    static final Point TopLeftAnchorPoint = new Point(300,288); //Base Picture is 600 x 480 when taken on the robot.
+    static final Point TopLeftAnchorPoint = new Point(300,318); //Base Picture is 600 x 480 when taken on the robot.
     static final int REGION_WIDTH = 20; //1cm
     static final int REGION_HEIGHT = 20; //1cm
     static final Point BottomRightAnchorPoint = new Point(TopLeftAnchorPoint.x + REGION_WIDTH, TopLeftAnchorPoint.y + REGION_HEIGHT);

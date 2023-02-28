@@ -62,22 +62,22 @@ public class RoadRunnerManager extends FeatureManager {
         this.t2 = AssetsTrajectoryManager.load("dropoffleftblue", telemetry);
         this.t3 = AssetsTrajectoryManager.load("dropoffright", telemetry);
         this.t4 = AssetsTrajectoryManager.load("dropoffrightblue", telemetry);
-        telemetry.log().add("DONE");
+        telemetry.log().add("DONE1");
 
     });
     Thread load2 = new Thread(() -> {
-        this.t5 = AssetsTrajectoryManager.load("ConeStackBlue", telemetry);
-        this.t6 = AssetsTrajectoryManager.load("MoveToHigh", telemetry);
-        this.t7 = AssetsTrajectoryManager.load("BackToStack", telemetry);
-        this.t8 = AssetsTrajectoryManager.load("JunctionToParking", telemetry);
-        telemetry.log().add("DONE");
+        this.t5 = AssetsTrajectoryManager.load("toLeftPole", telemetry);
+        this.t6 = AssetsTrajectoryManager.load("MoveToHighLeft", telemetry);
+        this.t7 = AssetsTrajectoryManager.load("BackToStackLeft", telemetry);
+        this.t8 = AssetsTrajectoryManager.load("JunctionToParkingLeft", telemetry);
+        telemetry.log().add("DONE2");
     });
     Thread load3 = new Thread(() -> {
-        this.t9 = AssetsTrajectoryManager.load("ConeStackRed", telemetry);
-        this.t10 = AssetsTrajectoryManager.load("MoveToHighRed", telemetry);
-        this.t11 = AssetsTrajectoryManager.load("BackToStackRed", telemetry);
-        this.t12 = AssetsTrajectoryManager.load("JunctionToParkingRed", telemetry);
-        telemetry.log().add("DONE");
+        this.t9 = AssetsTrajectoryManager.load("toRightPole", telemetry);
+        this.t10 = AssetsTrajectoryManager.load("MoveToHighRight", telemetry);
+        this.t11 = AssetsTrajectoryManager.load("BackToStackRight", telemetry);
+        this.t12 = AssetsTrajectoryManager.load("JunctionToParkingRight", telemetry);
+        telemetry.log().add("DONE3");
     });
     private double firstWheelLastRotation, secondWheelLastRotation, lastHeading;
     private static final Pose2d[] nonono = {new Pose2d(-120, 48), new Pose2d(-72, 48), new Pose2d(-24, 48), new Pose2d(-24, 0), new Pose2d(-120, 0), new Pose2d(-72, 0), new Pose2d(-24, -48), new Pose2d(-120, -48), new Pose2d(-72, -48)};
@@ -102,10 +102,7 @@ public class RoadRunnerManager extends FeatureManager {
         calibrateDriveToZero();
         calibrateDriveToAutoPosition();
         telemetry.log().add("Go to 192.168.43.1:8080/dash for the FTC Dashboard! Unless this is the competition, for which, in that case, never mind, don't use FTC Dashboard...");
-
     }
-
-
 
     /**
      * Moves the robot to the given id's position and rotates it to the id's given rotation
@@ -113,7 +110,6 @@ public class RoadRunnerManager extends FeatureManager {
      * @param id The id for the specified movement: 1 = Center, 2 = Top Corner, 3 = Bottom Corner
      */
     public void moveToPosWithID(int id) {
-
         switch (id) {
             case 1:
                 telemetry.log().add("Trajectory: ", t);
@@ -132,22 +128,22 @@ public class RoadRunnerManager extends FeatureManager {
                 driveRR.followTrajectory(t4);
                 break;
             case 5:
-                driveRR.followTrajectory(driveRR.trajectoryBuilder(new Pose2d()).strafeLeft(50).build());
+                driveRR.followTrajectory(driveRR.trajectoryBuilder(new Pose2d()).forward(36).build());
                 break;
             case 6:
-                driveRR.followTrajectory(driveRR.trajectoryBuilder(new Pose2d()).strafeLeft(31.5).build());
+                driveRR.followTrajectory(driveRR.trajectoryBuilder(new Pose2d()).forward(18).build());
                 break;
             case 7:
-                driveRR.followTrajectory(driveRR.trajectoryBuilder(new Pose2d()).strafeLeft(12).build());
+                driveRR.followTrajectory(driveRR.trajectoryBuilder(new Pose2d()).forward(0).build());
                 break;
             case 8:
-                driveRR.followTrajectory(driveRR.trajectoryBuilder(new Pose2d()).strafeRight(50).build());
+                driveRR.followTrajectory(driveRR.trajectoryBuilder(new Pose2d()).forward(36).build());
                 break;
             case 9:
-                driveRR.followTrajectory(driveRR.trajectoryBuilder(new Pose2d()).strafeRight(50).build());
+                driveRR.followTrajectory(driveRR.trajectoryBuilder(new Pose2d()).forward(18).build());
                 break;
             case 10:
-                driveRR.followTrajectory(driveRR.trajectoryBuilder(new Pose2d()).strafeRight(55).build());
+                driveRR.followTrajectory(driveRR.trajectoryBuilder(new Pose2d()).forward(0).build());
                 break;
             case 11:
                 driveRR.followTrajectory(driveRR.trajectoryBuilder(new Pose2d()).forward(26).build());
@@ -188,7 +184,13 @@ public class RoadRunnerManager extends FeatureManager {
                 driveRR.followTrajectory(t12);
                 break;
             case 21:
-                driveRR.turn(90);
+                driveRR.turn(1.57079632679);
+                break;
+            case 22:
+                driveRR.turn(-1.57079632679);
+                break;
+            case 23:
+                driveRR.followTrajectory(driveRR.trajectoryBuilder(new Pose2d()).forward(7).build());
                 break;
             default:
                 return;
@@ -217,35 +219,22 @@ public class RoadRunnerManager extends FeatureManager {
                     driveRR.followTrajectory(t4);
                     break;
                 case 5:
-
-
                     driveRR.followTrajectory(driveRR.trajectoryBuilder(new Pose2d()).strafeLeft(50).build());
-
                     break;
                 case 6:
-
                     driveRR.followTrajectory(driveRR.trajectoryBuilder(new Pose2d()).strafeLeft(31.5).build());
-
                     break;
                 case 7:
-
                     driveRR.followTrajectory(driveRR.trajectoryBuilder(new Pose2d()).strafeLeft(12).build());
-
                     break;
                 case 8:
-
                     driveRR.followTrajectory(driveRR.trajectoryBuilder(new Pose2d()).strafeRight(50).build());
-
                     break;
                 case 9:
-
                     driveRR.followTrajectory(driveRR.trajectoryBuilder(new Pose2d()).strafeRight(50).build());
-
                     break;
                 case 10:
-
                     driveRR.followTrajectory(driveRR.trajectoryBuilder(new Pose2d()).strafeRight(55).build());
-
                     break;
                 case 11:
                     driveRR.followTrajectory(driveRR.trajectoryBuilder(new Pose2d()).forward(26).build());
@@ -288,13 +277,14 @@ public class RoadRunnerManager extends FeatureManager {
                 case 21:
                     driveRR.turn(90);
                     break;
+                case 22:
+                    driveRR.turn(-90);
+                    break;
                 default:
                     return;
             }
         }
         return;
-
-
     }
 
     public void activateMacro(int id){
@@ -377,7 +367,7 @@ public class RoadRunnerManager extends FeatureManager {
     public void calibrateDrive(int x, int y, double rotation) {
         driveRR.setPoseEstimate(new Pose2d(x, y, Math.toRadians(rotation)));
 
-        telemetry.log().add("RoadRunner Drive Calibrated to 0,0");
+        telemetry.log().add("RoadRunner Drive Calibrated to " + x + ", " + y + " and " + rotation + " degrees.");
     }
 
     public void calibrateDriveToAutoPosition() {

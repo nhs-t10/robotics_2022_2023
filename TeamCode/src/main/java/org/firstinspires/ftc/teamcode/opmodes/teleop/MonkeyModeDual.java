@@ -96,7 +96,7 @@ public class MonkeyModeDual extends OpMode {
         );
         sensing = new SensorManager(
                 hardwareMap,
-                SensorManager.colorSensor("rainbowSense", "rainbowSense1"),
+                SensorManager.colorSensor(),
                 SensorManager.touchSensor(),
                 SensorManager.distanceSensor()
         );
@@ -252,7 +252,6 @@ public class MonkeyModeDual extends OpMode {
                 movingToMid=false;
                 movingToHigh=false;
                 monkeyArm.resetDoOnce();
-                intakeToggle=false;
             }
             if (input.getBool("armLengthSmall")) {
                 movingToFloor=false;
