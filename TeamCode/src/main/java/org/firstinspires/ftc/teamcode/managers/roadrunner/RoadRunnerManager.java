@@ -146,7 +146,7 @@ public class RoadRunnerManager extends FeatureManager {
                 driveRR.followTrajectory(driveRR.trajectoryBuilder(new Pose2d()).forward(0).build());
                 break;
             case 11:
-                driveRR.followTrajectory(driveRR.trajectoryBuilder(new Pose2d()).forward(26).build());
+                driveRR.followTrajectory(driveRR.trajectoryBuilder(new Pose2d()).strafeRight(14).build());
                 break;
             case 12:
                 driveRR.followTrajectory(driveRR.trajectoryBuilder(new Pose2d()).back(40).build());
@@ -190,7 +190,7 @@ public class RoadRunnerManager extends FeatureManager {
                 driveRR.turn(-1.57079632679);
                 break;
             case 23:
-                driveRR.followTrajectory(driveRR.trajectoryBuilder(new Pose2d()).forward(7).build());
+                driveRR.followTrajectory(driveRR.trajectoryBuilder(new Pose2d()).forward(24).build());
                 break;
             default:
                 return;

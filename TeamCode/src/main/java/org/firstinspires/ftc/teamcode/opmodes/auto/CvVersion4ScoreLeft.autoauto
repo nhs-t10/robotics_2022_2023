@@ -21,10 +21,11 @@ goto start;
     ThreadedMoveToPosition(4), next;
     calibrateDriveToZero(), next;
     moveToPosWithID(13), next;
+    moveToPosWithID(11), next;
     moveToPosWithID(21), next;
     moveToPosWithID(23), next;
     stopDrive(), next;
-    stopThreadedMovement(), after 0.5s next;
+    stopThreadedMovement(), next;
     ThreadedMoveToPosition(2), next;
     goto dropCone;
 

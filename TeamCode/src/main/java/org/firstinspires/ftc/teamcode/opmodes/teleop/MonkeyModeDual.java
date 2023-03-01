@@ -207,7 +207,7 @@ public class MonkeyModeDual extends OpMode {
                 handStatus = false;
             }
             if (intakeToggle){
-                monkeyArm.openHand();
+                monkeyArm.openHandTeleop();
             } else {
                 monkeyArm.closeHand();
             }
