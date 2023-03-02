@@ -629,23 +629,6 @@ public class RoadRunnerManager extends FeatureManager {
     }
 
     /**
-     * Returns the overview of Roadrunner's instance variables and reference ids
-     *
-     * @return String of overview
-     */
-    @Override
-    public String toString() {
-        final String s = "RoadRunnerManager{" +
-                "driveRR=" + driveRR +
-                ", trajBuildRR=" + trajBuildRR +
-                ", tsb=" + tsb +
-                ", telemetry=" + telemetry +
-                ", nonono=" + Arrays.toString(nonono) +
-                "} For OpMode " + opMode.toString();
-        return s;
-    }
-
-    /**
      * Get the gamepad inputs and use them to sense where the robot is displacing to...
      *
      * @param gamepad1 Gamepad 1 (Main driver)
@@ -699,5 +682,50 @@ public class RoadRunnerManager extends FeatureManager {
             }
         }
         return false;
+    }
+
+    /**
+     * Returns the overview of Roadrunner's instance variables and reference ids
+     *
+     * @return String of overview
+     */
+    @NonNull
+    @Override
+    public String toString() {
+        return "RoadRunnerManager{" +
+                "driveRR=" + driveRR +
+                ", l=" + l +
+                ", trajBuildRR=" + trajBuildRR +
+                ", tsb=" + tsb +
+                ", telemetry=" + telemetry +
+                ", opMode=" + opMode +
+                ", estimatedPosition=" + estimatedPosition +
+                ", sum=" + Arrays.toString(sum) +
+                ", vel=" + vel +
+                ", input=" + input +
+                ", denom=" + denom +
+                ", drivePower=" + drivePower +
+                ", t=" + t +
+                ", t2=" + t2 +
+                ", t3=" + t3 +
+                ", t4=" + t4 +
+                ", t5=" + t5 +
+                ", t6=" + t6 +
+                ", t7=" + t7 +
+                ", t8=" + t8 +
+                ", t9=" + t9 +
+                ", t10=" + t10 +
+                ", t11=" + t11 +
+                ", t12=" + t12 +
+                ", t13=" + t13 +
+                ", t14=" + t14 +
+                ", d=" + d +
+                ", load=" + load +
+                ", load2=" + load2 +
+                ", load3=" + load3 +
+                ", firstWheelLastRotation=" + firstWheelLastRotation +
+                ", secondWheelLastRotation=" + secondWheelLastRotation +
+                ", lastHeading=" + lastHeading +
+                '}';
     }
 }
