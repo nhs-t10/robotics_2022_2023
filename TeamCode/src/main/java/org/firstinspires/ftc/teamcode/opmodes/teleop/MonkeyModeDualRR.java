@@ -78,7 +78,7 @@ public class MonkeyModeDualRR extends OpMode {
         TelemetryManager telemetryManager = new TelemetryManager(telemetry, this, TelemetryManager.BITMASKS.NONE);
         telemetry = telemetryManager;
         FeatureManager.logger.setBackend(telemetry.log());
-        rr = new RoadRunnerManager(hardwareMap, new Pose2d(0, 0, Math.toRadians(0)), telemetryManager, this);
+        rr = new RoadRunnerManager(hardwareMap, new Pose2d(0, 0, Math.toRadians(0)), telemetryManager, this, true);
         driveRR = rr.getDrive();
         DcMotor fl = hardwareMap.get(DcMotor.class, "fl");
         DcMotor fr = hardwareMap.get(DcMotor.class, "fr");

@@ -77,7 +77,7 @@ public class template extends OpMode {
        limbs.setZeroPowerBehavior("monkeyShoulder", DcMotor.ZeroPowerBehavior.BRAKE);
 
         cv = new CVManager(hardwareMap);
-        rr = new RoadRunnerManager(hardwareMap, new Pose2d(0, 0), telemetryManager, this);
+        rr = new RoadRunnerManager(hardwareMap, new Pose2d(0, 0), telemetryManager, this, false);
         //imu = new ImuManager(hardwareMap.get(com.qualcomm.hardware.bosch.BNO055IMU.class, "imu"),driver);
 
         arm = new bigArmManager(limbs);

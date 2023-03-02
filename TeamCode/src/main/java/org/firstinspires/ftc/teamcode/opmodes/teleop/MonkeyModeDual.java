@@ -44,7 +44,7 @@ public class MonkeyModeDual extends OpMode {
     public SensorManager sensing;
 
     private boolean intakeToggle = false;
-    private boolean handStatus=false;
+    private boolean handStatus = false;
     private boolean rrStatus = false;
 
     private float microDriveSpeed = 1f;
@@ -81,7 +81,7 @@ public class MonkeyModeDual extends OpMode {
         telemetry = telemetryManager;
         FeatureManager.logger.setBackend(telemetry.log());
 
-        //rr = new RoadRunnerManager(hardwareMap, new Pose2d(0, 0), telemetryManager, this);
+        //rr = new RoadRunnerManager(hardwareMap, new Pose2d(0, 0), telemetryManager, this, true);
 
         DcMotor fl = hardwareMap.get(DcMotor.class, "fl");
         DcMotor fr = hardwareMap.get(DcMotor.class, "fr");

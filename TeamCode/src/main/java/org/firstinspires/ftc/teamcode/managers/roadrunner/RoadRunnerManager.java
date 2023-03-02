@@ -3,13 +3,11 @@ package org.firstinspires.ftc.teamcode.managers.roadrunner;
 import androidx.annotation.NonNull;
 
 import com.acmerobotics.dashboard.config.Config;
-import com.acmerobotics.roadrunner.drive.Drive;
 import com.acmerobotics.roadrunner.geometry.Pose2d;
 import com.acmerobotics.roadrunner.geometry.Vector2d;
 import com.acmerobotics.roadrunner.localization.Localizer;
 import com.acmerobotics.roadrunner.trajectory.Trajectory;
 import com.acmerobotics.roadrunner.trajectory.TrajectoryBuilder;
-import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
@@ -28,6 +26,8 @@ import org.jetbrains.annotations.*;
 import org.junit.Test;
 
 import java.util.Arrays;
+
+import kotlin.OptionalExpectation;
 
 /**
  * Manager for Pathing, Dead Reckoning, and Macros... Makes Road runner much easier to use with a set of complex methods for making precise paths. created by ACHYUT SHASTRI
@@ -64,6 +64,7 @@ public class RoadRunnerManager extends FeatureManager {
     private Trajectory t15;
     private Trajectory t16;
     private DriveConstants d;
+
     Thread load = new Thread(() -> {
         this.t = AssetsTrajectoryManager.load("dropoffleft", telemetry);
         this.t2 = AssetsTrajectoryManager.load("dropoffleftblue", telemetry);
@@ -101,25 +102,32 @@ public class RoadRunnerManager extends FeatureManager {
      * @param telemetryManager The telemetry manager to use for telemetry logging
      *                         {@link #telemetry}
      */
-    public RoadRunnerManager(@NotNull HardwareMap hardwareMap, @NotNull Pose2d start, @NotNull TelemetryManager telemetryManager, @NotNull OpMode opMode) {
+    public RoadRunnerManager(@NotNull HardwareMap hardwareMap, @NotNull Pose2d start, @NotNull TelemetryManager telemetryManager, @NotNull OpMode opMode, @NotNull boolean isTeleop) {
         DriveConstants.updateBattery(hardwareMap);
-        driveRR = new SampleMecanumDrive(hardwareMap); //Necessary Component for RoadRunner!
+        driveRR = new SampleMecanumDrive(hardwareMap); //Necessary Component for RoadRunner! DO NOT DELETE!
         trajBuildRR = driveRR.trajectoryBuilder(start);
         this.opMode = opMode;
         this.telemetry = telemetryManager;
-        load.start();
-        load2.start();
-        load3.start();
-
+        if(!isTeleop) {
+            loadYAMLs();
+        }
         calibrateDriveToZero();
         calibrateDriveToAutoPosition();
         telemetry.log().add("Go to 192.168.43.1:8080/dash for the FTC Dashboard! Unless this is the competition, for which, in that case, never mind, don't use FTC Dashboard...");
     }
-
+    /**
+     * Adds all YAMLs... YAMLs are stored in assets/trajectory in the main folder
+     * Uses {@link AssetsTrajectoryManager}
+     */
+    public void loadYAMLs(){
+        load.start();
+        load2.start();
+        load3.start();
+    }
     /**
      * Moves the robot to the given id's position and rotates it to the id's given rotation
      *
-     * @param id The id for the specified movement: 1 = Center, 2 = Top Corner, 3 = Bottom Corner
+     * @param id The id for the specified movement
      */
     public void moveToPosWithID(int id) {
         switch (id) {
