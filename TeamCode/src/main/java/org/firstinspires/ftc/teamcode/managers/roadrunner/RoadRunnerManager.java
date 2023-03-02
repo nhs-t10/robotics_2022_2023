@@ -99,7 +99,7 @@ public class RoadRunnerManager extends FeatureManager {
      *                         {@link #telemetry}
      */
     public RoadRunnerManager(@NotNull HardwareMap hardwareMap, @NotNull Pose2d start, @NotNull TelemetryManager telemetryManager, @NotNull OpMode opMode) {
-        d = new DriveConstants(hardwareMap);
+        DriveConstants.updateBattery(hardwareMap);
         driveRR = new SampleMecanumDrive(hardwareMap); //Necessary Component for RoadRunner!
         trajBuildRR = driveRR.trajectoryBuilder(start);
         this.opMode = opMode;
@@ -609,18 +609,23 @@ public class RoadRunnerManager extends FeatureManager {
     }
 
     public boolean arePosesViable(Pose2d... pose2ds) {
+        boolean pass = true
         for (Pose2d pose2d : pose2ds) {
             for (Pose2d poses : nonono) {
                 if (pose2d.equals(poses)) {
-                    telemetry.log().add("Path Not Accepted! Pose:" +pose2d.toString());
-                    return false;
+                    telemetry.log().add("Path Not Accepted! Pose:" +pose2d.getX()+", "+pose2d.getY()+", "+Math.toDegrees(pose2d.getHeading()));
+                    pass = false;
                 } else {
 
                 }
             }
         }
-        telemetry.log().add("Paths Accepted");
-        return true;
+        if(pass){
+            telemetry.log().add("Paths Accepted");
+            return true;
+        }
+        return false;
+
     }
 
     /**

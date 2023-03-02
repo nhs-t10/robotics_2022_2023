@@ -1,5 +1,7 @@
 package org.firstinspires.ftc.teamcode.drive;
 
+import android.util.Log;
+
 import com.acmerobotics.dashboard.config.Config;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.PIDFCoefficients;
@@ -20,10 +22,11 @@ import com.qualcomm.robotcore.hardware.VoltageSensor;
 @Config
 public class DriveConstants {
 
+    private static VoltageSensor voltage;
     /*
      * These are motor constants that should be listed online for your motors.
      */
-    private VoltageSensor voltage;
+
 
     public static double TICKS_PER_REV = 537.7;
     public static double MAX_RPM = 312;
@@ -79,9 +82,10 @@ public class DriveConstants {
     public static double MAX_ANG_VEL = 3.4;
     public static double MAX_ANG_ACCEL = 3.4;
     //Calculations for kV at the beginning of the match
-    public DriveConstants(HardwareMap hardwareMap){
-        voltage = hardwareMap.voltageSensor.iterator().next();
+    public static void updateBattery(HardwareMap hardwareMap){
         if(newBatteryCalcEnabled){
+            voltage = hardwareMap.voltageSensor.iterator().next();
+            Log.d(null, "DriveConstants - Voltage Reported: "+voltage.getVoltage());
             kV = (-1.14*Math.pow(10.0, -3.0)*voltage.getVoltage())+0.0319;
             newBatteryCalcEnabled = false;
         }
