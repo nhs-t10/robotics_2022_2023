@@ -609,7 +609,7 @@ public class RoadRunnerManager extends FeatureManager {
     }
 
     public boolean arePosesViable(Pose2d... pose2ds) {
-        boolean pass = true
+        boolean pass = true;
         for (Pose2d pose2d : pose2ds) {
             for (Pose2d poses : nonono) {
                 if (pose2d.equals(poses)) {
