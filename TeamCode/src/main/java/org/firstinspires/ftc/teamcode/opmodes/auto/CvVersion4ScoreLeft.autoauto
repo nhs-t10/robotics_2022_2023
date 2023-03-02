@@ -92,19 +92,19 @@ goto start;
     }
 
 #backToJunction:
-    moveToPosWithID(16), next;
+
     goto colorStuffs;
 
 #colorStuffs:
     closeHand(), next;
     if (color == 3) {
-        moveToPosWithID(5), goto finalMove;
+        moveToPosWithID(16), goto finalMove;
     }
     else if (color == 2) {
-        moveToPosWithID(6), goto finalMove;
+        moveToPosWithID(24), goto finalMove;
     }
     else {
-        moveToPosWithID(7), goto finalMove;
+        moveToPosWithID(25), goto finalMove;
     };
 
 #finalMove:

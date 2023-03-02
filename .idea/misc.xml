@@ -3,6 +3,9 @@
   <component name="DesignSurface">
     <option name="filePathToZoomLevelMap">
       <map>
+        <entry key="..\:/Users/achyu/AndroidStudioProjects/robotics_2022_2023/FtcRobotController/src/main/res/layout/activity_ftc_controller.xml" value="0.12552083333333333" />
+        <entry key="..\:/Users/achyu/AndroidStudioProjects/robotics_2022_2023/FtcRobotController/src/main/res/menu/ftc_robot_controller.xml" value="0.264" />
+        <entry key="..\:/Users/achyu/AndroidStudioProjects/robotics_2022_2023/FtcRobotController/src/main/res/xml/app_settings.xml" value="0.1" />
         <entry key="..\:/Users/conno/Documents/GitHub/robotics_2022_2023/robotics_2022_2023/FtcRobotController/src/main/res/menu/ftc_robot_controller.xml" value="0.11302083333333333" />
       </map>
     </option>

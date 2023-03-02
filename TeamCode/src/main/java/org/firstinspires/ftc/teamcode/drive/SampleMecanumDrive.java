@@ -67,13 +67,13 @@ import kotlin.jvm.internal.Intrinsics;
 @Config
 public class SampleMecanumDrive extends MecanumDrive {
     public static PIDCoefficients TRANSLATIONAL_PID = new PIDCoefficients(0, 0, 0);
-    public static PIDCoefficients HEADING_PID = new PIDCoefficients(2, 0, 0);
+    public static PIDCoefficients HEADING_PID = new PIDCoefficients(3, 0, 0);
 
     public static double LATERAL_MULTIPLIER = 1.4;
-
+    public static double VOLTAGE = 14.2;
     public static double VX_WEIGHT = 1;
     public static double VY_WEIGHT = 1;
-    public static double OMEGA_WEIGHT = 1;
+    public static double OMEGA_WEIGHT = 1.35;
     private RobotConfiguration configuration;
     private TrajectorySequenceRunner trajectorySequenceRunner;
 
@@ -164,6 +164,7 @@ public class SampleMecanumDrive extends MecanumDrive {
         // for instance, setLocalizer(new ThreeTrackingWheelLocalizer(...));
 
         trajectorySequenceRunner = new TrajectorySequenceRunner(follower, HEADING_PID);
+        VOLTAGE = batteryVoltageSensor.getVoltage();
     }
 
     public TrajectoryBuilder trajectoryBuilder(Pose2d startPose) {
@@ -237,6 +238,7 @@ public class SampleMecanumDrive extends MecanumDrive {
         while (Thread.currentThread().isAlive() && isBusy())
             update();
 
+
     }
 
     public boolean isBusy() {
@@ -261,7 +263,7 @@ public class SampleMecanumDrive extends MecanumDrive {
     public void setPIDFCoefficients(DcMotor.RunMode runMode, PIDFCoefficients coefficients) {
         PIDFCoefficients compensatedCoefficients = new PIDFCoefficients(
                 coefficients.p, coefficients.i, coefficients.d,
-                coefficients.f
+                coefficients.f * batteryVoltageSensor.getVoltage() / VOLTAGE
         );
 
         for (DcMotorEx motor : motors) {

@@ -1,15 +1,17 @@
 package org.firstinspires.ftc.teamcode.managers.bigArm;
 
+import com.acmerobotics.dashboard.config.Config;
+
 import org.firstinspires.ftc.teamcode.managers.feature.FeatureManager;
 import org.firstinspires.ftc.teamcode.managers.manipulation.ManipulationManager;
-
+@Config
 public class bigArmManager extends FeatureManager {
     ManipulationManager hands;
-    public final int floorPosition = 250; //The position of the floor
-    public final int lowPosition= 1250; //The position of the low tower
-    public final int middlePosition = 2081; //The position of the middle tower
-    public final int highPosition = 2956; //The position of the high tower
-    public final int[] positions = {floorPosition, lowPosition, middlePosition, highPosition, highPosition+100, lowPosition-275, lowPosition-325};
+    public static int floorPosition = 250; //The position of the floor
+    public static int lowPosition= 1250; //The position of the low tower
+    public static int middlePosition = 2081; //The position of the middle tower
+    public static int highPosition = 2956; //The position of the high tower
+    public static int[] positions = {floorPosition, lowPosition, middlePosition, highPosition, highPosition+30, lowPosition-425, lowPosition-475};
     public double direction = 1.0;
     public boolean doOnce=false;
     public int towerPos = 0;
@@ -58,7 +60,7 @@ public class bigArmManager extends FeatureManager {
         hands.setServoPosition("monkeyHand", 0.35);
     }
     public void openHandTeleop(){hands.setServoPosition("monkeyHand", 0.30);}
-    public void closeHand(){hands.setServoPosition("monkeyHand", 0.45);
+    public void closeHand(){hands.setServoPosition("monkeyHand", 0.5);
     }
 
     /*

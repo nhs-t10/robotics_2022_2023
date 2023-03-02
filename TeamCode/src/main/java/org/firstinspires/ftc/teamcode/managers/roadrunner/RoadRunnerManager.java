@@ -57,11 +57,15 @@ public class RoadRunnerManager extends FeatureManager {
     private Trajectory t10;
     private Trajectory t11;
     private Trajectory t12;
+    private Trajectory t13;
+    private Trajectory t14;
+
     Thread load = new Thread(() -> {
         this.t = AssetsTrajectoryManager.load("dropoffleft", telemetry);
         this.t2 = AssetsTrajectoryManager.load("dropoffleftblue", telemetry);
         this.t3 = AssetsTrajectoryManager.load("dropoffright", telemetry);
         this.t4 = AssetsTrajectoryManager.load("dropoffrightblue", telemetry);
+        this.t13 = AssetsTrajectoryManager.load("JunctionToParkingGreenLeft", telemetry);
         telemetry.log().add("DONE1");
 
     });
@@ -69,7 +73,8 @@ public class RoadRunnerManager extends FeatureManager {
         this.t5 = AssetsTrajectoryManager.load("toLeftPole", telemetry);
         this.t6 = AssetsTrajectoryManager.load("MoveToHighLeft", telemetry);
         this.t7 = AssetsTrajectoryManager.load("BackToStackLeft", telemetry);
-        this.t8 = AssetsTrajectoryManager.load("JunctionToParkingLeft", telemetry);
+        this.t8 = AssetsTrajectoryManager.load("JunctionToParkingBlueLeft", telemetry);
+
         telemetry.log().add("DONE2");
     });
     Thread load3 = new Thread(() -> {
@@ -77,6 +82,7 @@ public class RoadRunnerManager extends FeatureManager {
         this.t10 = AssetsTrajectoryManager.load("MoveToHighRight", telemetry);
         this.t11 = AssetsTrajectoryManager.load("BackToStackRight", telemetry);
         this.t12 = AssetsTrajectoryManager.load("JunctionToParkingRight", telemetry);
+        this.t14 = AssetsTrajectoryManager.load("JunctionToParkingPinkLeft", telemetry);
         telemetry.log().add("DONE3");
     });
     private double firstWheelLastRotation, secondWheelLastRotation, lastHeading;
@@ -190,7 +196,13 @@ public class RoadRunnerManager extends FeatureManager {
                 driveRR.turn(-1.57079632679);
                 break;
             case 23:
-                driveRR.followTrajectory(driveRR.trajectoryBuilder(new Pose2d()).forward(24).build());
+                driveRR.followTrajectory(driveRR.trajectoryBuilder(new Pose2d()).forward(17).build());
+                break;
+            case 24:
+                driveRR.followTrajectory(t13);
+                break;
+            case 25:
+                driveRR.followTrajectory(t14);
                 break;
             default:
                 return;
