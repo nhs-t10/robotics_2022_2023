@@ -69,8 +69,8 @@ public class RoadRunnerManager extends FeatureManager {
         this.t2 = AssetsTrajectoryManager.load("dropoffleftblue", telemetry);
         this.t3 = AssetsTrajectoryManager.load("dropoffright", telemetry);
         this.t4 = AssetsTrajectoryManager.load("dropoffrightblue", telemetry);
-        this.t15 = AssetsTrajectoryManager.load("JunctionToParkingGreenLeft", telemetry);
-
+        this.t13 = AssetsTrajectoryManager.load("JunctionToParkingGreenLeft", telemetry);
+        this.t15 = AssetsTrajectoryManager.load("JunctionToParkingPinkRight", telemetry);
         telemetry.log().add("DONE1");
 
     });
