@@ -613,7 +613,7 @@ public class RoadRunnerManager extends FeatureManager {
         for (Pose2d pose2d : pose2ds) {
             for (Pose2d poses : nonono) {
                 if (pose2d.equals(poses)) {
-                    telemetry.log().add("Path Not Accepted! Pose:" +pose2d.getX()+", "+pose2d.getY()+", "+Math.toDegrees(pose2d.getHeading()));
+                    telemetry.log().add("Path Not Accepted! Pose:" +pose2d.getX()+", "+pose2d.getY()+", "+Math.toDegrees(pose2d.getHeading())+" degrees");
                     pass = false;
                 } else {
 
