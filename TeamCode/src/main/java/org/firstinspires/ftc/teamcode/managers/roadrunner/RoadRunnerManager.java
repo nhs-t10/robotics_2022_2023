@@ -3,6 +3,7 @@ package org.firstinspires.ftc.teamcode.managers.roadrunner;
 import androidx.annotation.NonNull;
 
 import com.acmerobotics.dashboard.config.Config;
+import com.acmerobotics.roadrunner.drive.Drive;
 import com.acmerobotics.roadrunner.geometry.Pose2d;
 import com.acmerobotics.roadrunner.geometry.Vector2d;
 import com.acmerobotics.roadrunner.localization.Localizer;
@@ -16,6 +17,7 @@ import com.qualcomm.robotcore.hardware.Gamepad;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 
 import org.firstinspires.ftc.teamcode.auxilary.PaulMath;
+import org.firstinspires.ftc.teamcode.drive.DriveConstants;
 import org.firstinspires.ftc.teamcode.drive.SampleMecanumDrive;
 import org.firstinspires.ftc.teamcode.managers.feature.FeatureManager;
 import org.firstinspires.ftc.teamcode.managers.telemetry.TelemetryManager;
@@ -59,7 +61,7 @@ public class RoadRunnerManager extends FeatureManager {
     private Trajectory t12;
     private Trajectory t13;
     private Trajectory t14;
-
+    private DriveConstants d;
     Thread load = new Thread(() -> {
         this.t = AssetsTrajectoryManager.load("dropoffleft", telemetry);
         this.t2 = AssetsTrajectoryManager.load("dropoffleftblue", telemetry);
@@ -97,6 +99,7 @@ public class RoadRunnerManager extends FeatureManager {
      *                         {@link #telemetry}
      */
     public RoadRunnerManager(@NotNull HardwareMap hardwareMap, @NotNull Pose2d start, @NotNull TelemetryManager telemetryManager, @NotNull OpMode opMode) {
+        d = new DriveConstants(hardwareMap);
         driveRR = new SampleMecanumDrive(hardwareMap); //Necessary Component for RoadRunner!
         trajBuildRR = driveRR.trajectoryBuilder(start);
         this.opMode = opMode;

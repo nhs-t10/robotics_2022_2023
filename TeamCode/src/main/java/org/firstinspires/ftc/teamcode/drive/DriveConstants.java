@@ -1,8 +1,9 @@
 package org.firstinspires.ftc.teamcode.drive;
 
 import com.acmerobotics.dashboard.config.Config;
+import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.PIDFCoefficients;
-
+import com.qualcomm.robotcore.hardware.VoltageSensor;
 
 
 /*
@@ -22,7 +23,7 @@ public class DriveConstants {
     /*
      * These are motor constants that should be listed online for your motors.
      */
-
+    private VoltageSensor voltage;
 
     public static double TICKS_PER_REV = 537.7;
     public static double MAX_RPM = 312;
@@ -58,6 +59,7 @@ public class DriveConstants {
      * empirically tuned.
      */
     public static double kV = 0.017;
+    public static boolean newBatteryCalcEnabled = true;
     public static double kA = 0.00031;
     public static double kStatic = 0;
 
@@ -76,8 +78,14 @@ public class DriveConstants {
     public static double MAX_ACCEL = 40;
     public static double MAX_ANG_VEL = 3.4;
     public static double MAX_ANG_ACCEL = 3.4;
-
-
+    //Calculations for kV at the beginning of the match
+    public DriveConstants(HardwareMap hardwareMap){
+        voltage = hardwareMap.voltageSensor.iterator().next();
+        if(newBatteryCalcEnabled){
+            kV = (-1.14*Math.pow(10.0, -3.0)*voltage.getVoltage())+0.0319;
+            newBatteryCalcEnabled = false;
+        }
+    }
     public static double encoderTicksToInches(double ticks) {
         return WHEEL_RADIUS * 2 * Math.PI * GEAR_RATIO * ticks / TICKS_PER_REV;
     }
