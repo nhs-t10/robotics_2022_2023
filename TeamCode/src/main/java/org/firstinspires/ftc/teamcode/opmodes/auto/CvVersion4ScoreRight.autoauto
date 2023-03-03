@@ -37,7 +37,7 @@ goto start;
     }
 
 #toConeStack1:
-    ThreadedMoveToPosition(4), after 1s next;
+    ThreadedMoveToPosition(5), after 1s next;
     moveToPosWithID(19), next;
 
 #pickup1:
@@ -61,9 +61,8 @@ goto start;
     }
 
 #toConeStack2:
-    ThreadedMoveToPosition(4), next;
     moveToPosWithID(19), next;
-    ThreadedMoveToPosition(7), goto pickup2;
+    ThreadedMoveToPosition(6), goto pickup2;
 
 #pickup2:
     let doneLifting = finishedMoving(), after 0.5s next;
@@ -80,30 +79,25 @@ goto start;
 #dropCone3:
     let doneLifting = finishedMoving(), after 0.5s next;
     if(doneLifting){
-        log("opening hand"), openHand(), after 0.5s goto backToJunction;
+        log("opening hand"), openHand(), after 0.5s goto colorStuffs;
     } else {
         goto dropCone3;
     }
 
-#backToJunction:
-    moveToPosWithID(20), moveToPosWithID(22), goto colorStuffs;
-
 #colorStuffs:
-    moveToPosWithID(12), next;
     closeHand(), next;
     if (color == 3) {
-        moveToPosWithID(8), goto finalMove;
+        moveToPosWithID(16), goto finalMove;
     }
     else if (color == 2) {
-        moveToPosWithID(9), goto finalMove;
+        moveToPosWithID(27), goto finalMove;
     }
     else {
-        moveToPosWithID(10), goto finalMove;
+        moveToPosWithID(26), goto finalMove;
     };
 
 #finalMove:
     ThreadedMoveToPosition(0), next;
-    moveToPosWithID(11), next;
     let pose = getCurrPose(), next;
     setAutoAutoPosition(pose[0], psoe[1], pose[2]), next;
     goto end;
