@@ -114,6 +114,7 @@ public class template extends OpMode {
 
     @Override
     public void stop() {
+        rr.stopDrive();
         FeatureManager.setIsOpModeRunning(false);
     }
 

@@ -11,7 +11,7 @@ public class bigArmManager extends FeatureManager {
     public static int lowPosition= 1250; //The position of the low tower
     public static int middlePosition = 2081; //The position of the middle tower
     public static int highPosition = 2956; //The position of the high tower
-    public static int[] positions = {floorPosition, lowPosition, middlePosition, highPosition, highPosition+30, lowPosition-425, lowPosition-475};
+    public static int[] positions = {floorPosition, lowPosition, middlePosition, highPosition, highPosition+30, lowPosition-525, lowPosition-575};
     public double direction = 1.0;
     public boolean doOnce=false;
     public int towerPos = 0;

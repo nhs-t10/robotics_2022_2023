@@ -61,7 +61,7 @@ public class DriveConstants {
      * motor encoders or have elected not to use them for velocity control, these values should be
      * empirically tuned.
      */
-    public static double kV = 0.017;
+    public static double kV = 0.0171;
     public static boolean newBatteryCalcEnabled = true;
     public static double kA = 0.00031;
     public static double kStatic = 0;
@@ -86,7 +86,7 @@ public class DriveConstants {
         if(newBatteryCalcEnabled){
             voltage = hardwareMap.voltageSensor.iterator().next();
             Log.d(null, "DriveConstants - Voltage Reported: "+voltage.getVoltage());
-            kV = (-1.14*Math.pow(10.0, -3.0)*voltage.getVoltage())+0.0319;
+            kV = (-1.14*Math.pow(10.0, -3.0)*voltage.getVoltage())+0.0335;
             newBatteryCalcEnabled = false;
         }
     }

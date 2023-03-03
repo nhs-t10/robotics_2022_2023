@@ -65,7 +65,7 @@ goto start;
     }
 
 #toConeStack2:
-    ThreadedMoveToPosition(5), next;
+    ThreadedMoveToPosition(6), next;
     moveToPosWithID(15), next;
     goto pickup2;
 
@@ -79,21 +79,17 @@ goto start;
 
 #backToPole2:
     ThreadedMoveToPosition(4), next;
-    moveToPosWithID(14), next;
+    moveToPosWithID(14), after 0.5s next;
     ThreadedMoveToPosition(2), next;
     goto dropCone3;
 
 #dropCone3:
     let doneLifting = finishedMoving(), after 0.1s next;
     if(doneLifting){
-        log("opening hand"), openHand(), after 0.1s goto backToJunction;
+        log("opening hand"), openHand(), after 0.1s goto colorStuffs;
     } else {
         goto dropCone3;
     }
-
-#backToJunction:
-
-    goto colorStuffs;
 
 #colorStuffs:
     closeHand(), next;

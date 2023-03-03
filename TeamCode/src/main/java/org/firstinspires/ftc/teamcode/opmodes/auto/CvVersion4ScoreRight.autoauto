@@ -24,7 +24,7 @@ goto start;
     moveToPosWithID(17), next;
     moveToPosWithID(28), next;
     moveToPosWithID(22), next;
-    moveToPosWithID(23)
+    moveToPosWithID(23), next;
     stopDrive(), next;
     stopThreadedMovement(), after 0.5s next;
     ThreadedMoveToPosition(2), next;

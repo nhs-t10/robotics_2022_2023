@@ -93,10 +93,10 @@ public class ColorSensor123 extends PipelineThatExposesSomeAnalysis {
 
 
     static final int color2_min_Cr = 95; //green min cr
-    static final int color2_max_Cr = 125; //green max cr
+    static final int color2_max_Cr = 150; //green max cr
 
     static final int color2_min_Cb = 110; //green min cb
-    static final int color2_max_Cb = 140; //green max cb
+    static final int color2_max_Cb = 150; //green max cb
 
 
     static final int color3_min_Cr = 70; //teal min cr
