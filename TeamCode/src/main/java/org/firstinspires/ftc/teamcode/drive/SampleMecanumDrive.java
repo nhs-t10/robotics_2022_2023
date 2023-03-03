@@ -61,6 +61,7 @@ import static org.firstinspires.ftc.teamcode.drive.DriveConstants.kV;
 
 import android.util.Log;
 
+import kotlin.OptionalExpectation;
 import kotlin.jvm.internal.Intrinsics;
 
 /*
@@ -97,7 +98,7 @@ public class SampleMecanumDrive extends MecanumDrive {
 
 
         follower = new HolonomicPIDVAFollower(TRANSLATIONAL_PID, TRANSLATIONAL_PID, HEADING_PID,
-                new Pose2d(0.5, 0.5, Math.toRadians(5.0)), 0.5);
+                new Pose2d(0.5, 0.5, Math.toRadians(2.5)), 0.5);
 
         LynxModuleUtil.ensureMinimumFirmwareVersion(hardwareMap);
         configuration = FeatureManager.getRobotConfiguration();
