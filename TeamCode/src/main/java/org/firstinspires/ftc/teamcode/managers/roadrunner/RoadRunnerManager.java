@@ -224,6 +224,9 @@ public class RoadRunnerManager extends FeatureManager {
             case 27:
                 driveRR.followTrajectory(t16);
                 break;
+            case 28:
+                driveRR.followTrajectory(driveRR.trajectoryBuilder(new Pose2d()).strafeLeft(14).build());
+                break;
             default:
                 return;
         }
