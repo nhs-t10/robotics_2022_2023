@@ -47,7 +47,7 @@ public class MonkeyModeDual extends OpMode {
     private boolean handStatus = false;
     private boolean rrStatus = false;
 
-    private float microDriveSpeed = 1f;
+    private float microDriveSpeed = -1f;
 
     public boolean movingToLow = false;
     public boolean movingToMid = false;
@@ -311,6 +311,7 @@ public class MonkeyModeDual extends OpMode {
         }
     }
     public void stop() {
+        rr.stopDrive();
         FeatureManager.setIsOpModeRunning(false);
     }
 }

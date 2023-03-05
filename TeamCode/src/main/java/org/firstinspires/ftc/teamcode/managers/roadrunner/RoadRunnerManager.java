@@ -3,6 +3,7 @@ package org.firstinspires.ftc.teamcode.managers.roadrunner;
 import androidx.annotation.NonNull;
 
 import com.acmerobotics.dashboard.config.Config;
+import com.acmerobotics.roadrunner.drive.DriveSignal;
 import com.acmerobotics.roadrunner.geometry.Pose2d;
 import com.acmerobotics.roadrunner.geometry.Vector2d;
 import com.acmerobotics.roadrunner.localization.Localizer;
@@ -108,7 +109,7 @@ public class RoadRunnerManager extends FeatureManager {
      *                         {@link #telemetry}
      */
     public RoadRunnerManager(@NotNull HardwareMap hardwareMap, @NotNull Pose2d start, @NotNull TelemetryManager telemetryManager, @NotNull OpMode opMode, @NotNull boolean isTeleop) {
-        DriveConstants.updateBattery(hardwareMap);
+        //DriveConstants.updateBattery(hardwareMap);
         driveRR = new SampleMecanumDrive(hardwareMap); //Necessary Component for RoadRunner! DO NOT DELETE!
         trajBuildRR = driveRR.trajectoryBuilder(start);
         this.opMode = opMode;
@@ -364,9 +365,16 @@ public class RoadRunnerManager extends FeatureManager {
      * Allows for the opMode to stop on a critical error if chosen
      */
     public void errorInterrupt() {
+        if(driveRR.isBusy()){
+            driveRR.breakFollowing();
+        }
         opMode.stop();
     }
-
+    public void stopDrive() {
+        if(driveRR.isBusy()){
+            driveRR.breakFollowing();
+        }
+    }
     /**
      * Method that sets the current Roadrunner position to what AutoAuto reports
      */
