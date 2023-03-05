@@ -63,6 +63,7 @@ public class RoadRunnerManager extends FeatureManager {
     private Trajectory t14;
     private Trajectory t15;
     private Trajectory t16;
+    private Trajectory t17;
     private DriveConstants d;
 
     Thread load = new Thread(() -> {
@@ -90,6 +91,10 @@ public class RoadRunnerManager extends FeatureManager {
         this.t12 = AssetsTrajectoryManager.load("JunctionToParkingBlueRight", telemetry);
         this.t14 = AssetsTrajectoryManager.load("JunctionToParkingPinkLeft", telemetry);
         telemetry.log().add("DONE3");
+    });
+    Thread load4 = new Thread(() -> {
+        this.t17 = AssetsTrajectoryManager.load("ToMiddlePoleLeft", telemetry);
+        telemetry.log().add("DONE4");
     });
     private double firstWheelLastRotation, secondWheelLastRotation, lastHeading;
     private static final Pose2d[] nonono = {new Pose2d(-120, 48), new Pose2d(-72, 48), new Pose2d(-24, 48), new Pose2d(-24, 0), new Pose2d(-120, 0), new Pose2d(-72, 0), new Pose2d(-24, -48), new Pose2d(-120, -48), new Pose2d(-72, -48)};
@@ -226,6 +231,12 @@ public class RoadRunnerManager extends FeatureManager {
                 break;
             case 28:
                 driveRR.followTrajectory(driveRR.trajectoryBuilder(new Pose2d()).strafeLeft(14).build());
+                break;
+            case 29:
+                driveRR.followTrajectory(t17);
+                break;
+            case 30:
+                driveRR.followTrajectory(driveRR.trajectoryBuilder(new Pose2d()).forward(6).build());
                 break;
             default:
                 return;
