@@ -39,7 +39,7 @@ goto start;
 
 #toConeStack1:
     ThreadedMoveToPosition(6), next;
-    moveToPosWithID(18), goto pickup1;
+    moveToPosWithID(31), goto pickup1;
 
 
 #pickup1:
@@ -52,7 +52,7 @@ goto start;
 
 #backToPole1:
     ThreadedMoveToPosition(4), next;
-    moveToPosWithID(19), next;
+    moveToPosWithID(32), next;
     ThreadedMoveToPosition(2), next;
     goto dropCone2;
 
@@ -66,7 +66,7 @@ goto start;
 
 #toConeStack2:
     ThreadedMoveToPosition(5), next;
-    moveToPosWithID(18), next;
+    moveToPosWithID(31), next;
     goto pickup2;
 
 #pickup2:
@@ -79,7 +79,7 @@ goto start;
 
 #backToPole2:
     ThreadedMoveToPosition(4), next;
-    moveToPosWithID(19), next;
+    moveToPosWithID(32), next;
     ThreadedMoveToPosition(2), next;
     goto dropCone3;
 

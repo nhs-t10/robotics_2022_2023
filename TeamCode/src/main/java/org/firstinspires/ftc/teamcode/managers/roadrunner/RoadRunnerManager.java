@@ -65,6 +65,8 @@ public class RoadRunnerManager extends FeatureManager {
     private Trajectory t15;
     private Trajectory t16;
     private Trajectory t17;
+    private Trajectory t18;
+    private Trajectory t19;
     private DriveConstants d;
 
     Thread load = new Thread(() -> {
@@ -95,6 +97,8 @@ public class RoadRunnerManager extends FeatureManager {
     });
     Thread load4 = new Thread(() -> {
         this.t17 = AssetsTrajectoryManager.load("ToMiddlePoleLeft", telemetry);
+        this.t18 = AssetsTrajectoryManager.load("ToStackLeftMiddle", telemetry);
+        this.t19 = AssetsTrajectoryManager.load("BackToMiddleLeft", telemetry);
         telemetry.log().add("DONE4");
     });
     private double firstWheelLastRotation, secondWheelLastRotation, lastHeading;
@@ -129,6 +133,7 @@ public class RoadRunnerManager extends FeatureManager {
         load.start();
         load2.start();
         load3.start();
+        load4.start();
     }
     /**
      * Moves the robot to the given id's position and rotates it to the id's given rotation
@@ -238,6 +243,12 @@ public class RoadRunnerManager extends FeatureManager {
                 break;
             case 30:
                 driveRR.followTrajectory(driveRR.trajectoryBuilder(new Pose2d()).forward(6).build());
+                break;
+            case 31:
+                driveRR.followTrajectory(t17);
+                break;
+            case 32:
+                driveRR.followTrajectory(t17);
                 break;
             default:
                 return;
