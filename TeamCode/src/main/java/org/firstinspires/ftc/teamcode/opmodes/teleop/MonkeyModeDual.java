@@ -311,7 +311,7 @@ public class MonkeyModeDual extends OpMode {
         }
     }
     public void stop() {
-        rr.stopDrive();
+        driver.stopDrive();
         FeatureManager.setIsOpModeRunning(false);
     }
 }

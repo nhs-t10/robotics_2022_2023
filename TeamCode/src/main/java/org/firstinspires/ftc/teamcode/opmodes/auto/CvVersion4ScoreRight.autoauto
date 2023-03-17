@@ -31,20 +31,20 @@ goto start;
     goto dropCone;
 
 #dropCone:
-    stopThreadedMovement(), after 0.5s next;
-    let doneLifting = finishedMoving(), after 0.5s next;
+    stopThreadedMovement(), after 0.1s next;
+    let doneLifting = finishedMoving(), after 0.1s next;
     if(doneLifting){
-        log("opening hand"), openHand(), goto toConeStack1;
+        log("opening hand"), openHand(), after 0.5s goto toConeStack1;
     } else {
         goto dropCone;
     }
 
 #toConeStack1:
-    ThreadedMoveToPosition(5), after 1s next;
-    moveToPosWithID(19), next;
+    ThreadedMoveToPosition(5), next;
+    moveToPosWithID(19), goto pickup1;
 
 #pickup1:
-    let doneLifting = finishedMoving(), after 0.5s next;
+    let doneLifting = finishedMoving(), after 0.1s next;
     if(doneLifting){
         log("opening hand"), closeHand(), after 0.5s goto backToPole1;
     } else {
@@ -53,10 +53,11 @@ goto start;
 
 #backToPole1:
     ThreadedMoveToPosition(4), next;
-    moveToPosWithID(18), ThreadedMoveToPosition(2), goto dropCone2;
+    moveToPosWithID(18), next;
+    ThreadedMoveToPosition(2), goto dropCone2;
 
 #dropCone2:
-    let doneLifting = finishedMoving(), after 0.5s next;
+    let doneLifting = finishedMoving(), after 0.1s next;
     if(doneLifting){
         log("opening hand"), openHand(), after 0.5s goto toConeStack2;
     } else {
@@ -68,7 +69,7 @@ goto start;
     ThreadedMoveToPosition(6), goto pickup2;
 
 #pickup2:
-    let doneLifting = finishedMoving(), after 0.5s next;
+    let doneLifting = finishedMoving(), after 0.1s next;
     if(doneLifting){
         log("opening hand"), closeHand(), after 0.5s goto backToPole2;
     } else {

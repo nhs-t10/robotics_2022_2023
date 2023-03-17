@@ -16,6 +16,8 @@ import com.acmerobotics.roadrunner.trajectory.Trajectory;
 import com.acmerobotics.roadrunner.trajectory.TrajectoryMarker;
 import com.acmerobotics.roadrunner.util.NanoClock;
 
+import org.firstinspires.ftc.teamcode.drive.SampleMecanumDrive;
+import org.firstinspires.ftc.teamcode.managers.feature.FeatureManager;
 import org.firstinspires.ftc.teamcode.trajectorysequence.TrajectorySequence;
 import org.firstinspires.ftc.teamcode.trajectorysequence.sequencesegment.SequenceSegment;
 import org.firstinspires.ftc.teamcode.trajectorysequence.sequencesegment.TrajectorySegment;
@@ -81,7 +83,9 @@ public class TrajectorySequenceRunnerCancelable {
     DriveSignal update(Pose2d poseEstimate, Pose2d poseVelocity) {
         Pose2d targetPose = null;
         DriveSignal driveSignal = null;
-
+        if(SampleMecanumDrive.STOP){
+            remainingMarkers.clear();
+        }
         TelemetryPacket packet = new TelemetryPacket();
         Canvas fieldOverlay = packet.fieldOverlay();
 
@@ -99,6 +103,7 @@ public class TrajectorySequenceRunnerCancelable {
             }
 
             if (currentTrajectorySequence == null)
+
                 return new DriveSignal();
 
             double now = clock.seconds();
@@ -273,6 +278,7 @@ public class TrajectorySequenceRunnerCancelable {
     }
 
     public void breakFollowing() {
+
         currentTrajectorySequence = null;
         remainingMarkers.clear();
     }

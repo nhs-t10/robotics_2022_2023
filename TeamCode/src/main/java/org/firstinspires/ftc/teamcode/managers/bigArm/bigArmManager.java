@@ -59,6 +59,9 @@ public class bigArmManager extends FeatureManager {
     public void openHand(){
         hands.setServoPosition("monkeyHand", 0.35);
     }
+    public void openHandAuto(){
+        hands.setServoPosition("monkeyHand", 0.4);
+    }
     public void openHandTeleop(){hands.setServoPosition("monkeyHand", 0.30);}
     public void closeHand(){hands.setServoPosition("monkeyHand", 0.5);
     }

@@ -97,6 +97,7 @@ public class template extends OpMode {
     public void loop() {
         telemetry.addData("Build Name", BuildHistory.buildName);
         telemetry.addData("Build Time", BuildHistory.buildTimeIso);
+        telemetry.addData("Last Error:", rr.getDrive().getLastError());
         telemetry.update();
         telemetry = new MultipleTelemetry(telemetry, FtcDashboard.getInstance().getTelemetry());
         try {
@@ -116,6 +117,7 @@ public class template extends OpMode {
     public void stop() {
         rr.stopDrive();
         FeatureManager.setIsOpModeRunning(false);
+        driver.stopDrive();
     }
 
     public AutoautoProgram generateProgram() {

@@ -245,10 +245,127 @@ public class RoadRunnerManager extends FeatureManager {
                 driveRR.followTrajectory(driveRR.trajectoryBuilder(new Pose2d()).forward(6).build());
                 break;
             case 31:
-                driveRR.followTrajectory(t17);
+                driveRR.followTrajectory(t18);
                 break;
             case 32:
-                driveRR.followTrajectory(t17);
+                driveRR.followTrajectory(t19);
+                break;
+            default:
+                return;
+        }
+        return;
+
+
+    }
+    public void moveToPosWithIDAsync(int id) {
+        switch (id) {
+            case 1:
+                telemetry.log().add("Trajectory: ", t);
+                driveRR.followTrajectoryAsync(t);
+                break;
+            case 2:
+                telemetry.log().add("Trajectory: ", t2);
+                driveRR.followTrajectoryAsync(t2);
+                break;
+            case 3:
+                telemetry.log().add("Trajectory: ", t3);
+                driveRR.followTrajectoryAsync(t3);
+                break;
+            case 4:
+                telemetry.log().add("Trajectory: ", t4);
+                driveRR.followTrajectoryAsync(t4);
+                break;
+            case 5:
+                driveRR.followTrajectoryAsync(driveRR.trajectoryBuilder(new Pose2d()).forward(36).build());
+                break;
+            case 6:
+                driveRR.followTrajectoryAsync(driveRR.trajectoryBuilder(new Pose2d()).forward(18).build());
+                break;
+            case 7:
+                driveRR.followTrajectoryAsync(driveRR.trajectoryBuilder(new Pose2d()).forward(0).build());
+                break;
+            case 8:
+                driveRR.followTrajectoryAsync(driveRR.trajectoryBuilder(new Pose2d()).forward(36).build());
+                break;
+            case 9:
+                driveRR.followTrajectoryAsync(driveRR.trajectoryBuilder(new Pose2d()).forward(18).build());
+                break;
+            case 10:
+                driveRR.followTrajectoryAsync(driveRR.trajectoryBuilder(new Pose2d()).forward(0).build());
+                break;
+            case 11:
+                driveRR.followTrajectoryAsync(driveRR.trajectoryBuilder(new Pose2d()).strafeRight(14).build());
+                break;
+            case 12:
+                driveRR.followTrajectoryAsync(driveRR.trajectoryBuilder(new Pose2d()).back(40).build());
+                break;
+            case 13:
+                telemetry.log().add("Trajectory: ", t5);
+                driveRR.followTrajectoryAsync(t5);
+                break;
+            case 14:
+                telemetry.log().add("Trajectory: ", t6);
+                driveRR.followTrajectoryAsync(t6);
+                break;
+            case 15:
+                telemetry.log().add("Trajectory: ", t7);
+                driveRR.followTrajectoryAsync(t7);
+                break;
+            case 16:
+                telemetry.log().add("Trajectory: ", t8);
+                driveRR.followTrajectoryAsync(t8);
+                break;
+            case 17:
+                telemetry.log().add("Trajectory: ", t9);
+                driveRR.followTrajectoryAsync(t9);
+                break;
+            case 18:
+                telemetry.log().add("Trajectory: ", t10);
+                driveRR.followTrajectoryAsync(t10);
+                break;
+            case 19:
+                telemetry.log().add("Trajectory: ", t11);
+                driveRR.followTrajectoryAsync(t11);
+                break;
+            case 20:
+                telemetry.log().add("Trajectory: ", t12);
+                driveRR.followTrajectoryAsync(t12);
+                break;
+            case 21:
+                driveRR.turnAsync(1.57079632679);
+                break;
+            case 22:
+                driveRR.turnAsync(-1.57079632679);
+                break;
+            case 23:
+                driveRR.followTrajectoryAsync(driveRR.trajectoryBuilder(new Pose2d()).forward(17).build());
+                break;
+            case 24:
+                driveRR.followTrajectoryAsync(t13);
+                break;
+            case 25:
+                driveRR.followTrajectoryAsync(t14);
+                break;
+            case 26:
+                driveRR.followTrajectoryAsync(t15);
+                break;
+            case 27:
+                driveRR.followTrajectoryAsync(t16);
+                break;
+            case 28:
+                driveRR.followTrajectoryAsync(driveRR.trajectoryBuilder(new Pose2d()).strafeLeft(14).build());
+                break;
+            case 29:
+                driveRR.followTrajectoryAsync(t17);
+                break;
+            case 30:
+                driveRR.followTrajectoryAsync(driveRR.trajectoryBuilder(new Pose2d()).forward(6).build());
+                break;
+            case 31:
+                driveRR.followTrajectoryAsync(t18);
+                break;
+            case 32:
+                driveRR.followTrajectoryAsync(t19);
                 break;
             default:
                 return;
@@ -382,9 +499,8 @@ public class RoadRunnerManager extends FeatureManager {
         opMode.stop();
     }
     public void stopDrive() {
-        if(driveRR.isBusy()){
-            driveRR.breakFollowing();
-        }
+        driveRR.breakFollowing();
+        driveRR.setDriveSignal(new DriveSignal());
     }
     /**
      * Method that sets the current Roadrunner position to what AutoAuto reports

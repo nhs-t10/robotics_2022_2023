@@ -22,7 +22,7 @@ goto start;
     calibrateDriveToZero(), next;
     moveToPosWithID(29), next;
     moveToPosWithID(21), next;
-    moveToPosWithID(11), next;
+    moveToPosWithID(28), next;
     moveToPosWithID(30), next;
     stopDrive(), next;
     stopThreadedMovement(), next;
@@ -32,7 +32,7 @@ goto start;
 #dropCone:
     let doneLifting = finishedMoving(), after 0.1s next;
     if(doneLifting){
-        log("opening hand"), openHand(), after 0.5s goto toConeStack1;
+        log("opening hand"), openHandAuto(), after 0.5s goto toConeStack1;
     } else {
         goto dropCone;
     }
@@ -66,8 +66,8 @@ goto start;
 
 #toConeStack2:
     ThreadedMoveToPosition(5), next;
-    moveToPosWithID(31), next;
-    goto pickup2;
+    moveToPosWithID(31), after 2.3s next;
+    openHand(), after 0.7s goto pickup1;
 
 #pickup2:
     let doneLifting = finishedMoving(), after 0.1s next;
@@ -100,10 +100,10 @@ goto start;
         moveToPosWithID(16), goto finalMove;
     }
     else if (color == 2) {
-        moveToPosWithID(27), goto finalMove;
+        moveToPosWithID(24), goto finalMove;
     }
     else {
-        moveToPosWithID(26), goto finalMove;
+        moveToPosWithID(25), goto finalMove;
     };
 
 #finalMove:
