@@ -31,10 +31,10 @@ Basic:  	This is a minimally functional OpMode used to illustrate the skeleton/s
             of a particular style of OpMode.  These are bare bones examples.
 
 Sensor:    	This is a Sample OpMode that shows how to use a specific sensor.
-            It is not intended to org.firstinspires.ftc.teamcode.drive a functioning robot, it is simply showing the minimal code
+            It is not intended to org.firstinspires.ftc.teamcode.roadrunner.drive a functioning robot, it is simply showing the minimal code
             required to read and display the sensor values.
 
-Robot:	    This is a Sample OpMode that assumes a simple two-motor (differential) org.firstinspires.ftc.teamcode.drive base.
+Robot:	    This is a Sample OpMode that assumes a simple two-motor (differential) org.firstinspires.ftc.teamcode.roadrunner.drive base.
             It may be used to provide a common baseline driving OpMode, or
             to demonstrate how a particular sensor or concept can be used to navigate.
 

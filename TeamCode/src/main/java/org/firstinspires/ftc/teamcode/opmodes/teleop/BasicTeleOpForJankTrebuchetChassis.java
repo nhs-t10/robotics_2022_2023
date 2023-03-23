@@ -7,16 +7,9 @@ import static org.firstinspires.ftc.teamcode.managers.manipulation.ManipulationM
 import com.acmerobotics.dashboard.FtcDashboard;
 import com.acmerobotics.dashboard.telemetry.MultipleTelemetry;
 import com.acmerobotics.dashboard.telemetry.TelemetryPacket;
-import com.acmerobotics.roadrunner.geometry.Pose2d;
-import com.acmerobotics.roadrunner.geometry.Vector2d;
-import com.acmerobotics.roadrunner.trajectory.TrajectoryBuilder;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
-import com.qualcomm.robotcore.hardware.DcMotor;
 
-import org.firstinspires.ftc.teamcode.auxilary.integratedasync.PriorityAsyncOpmodeComponent;
-import org.firstinspires.ftc.teamcode.drive.SampleMecanumDrive;
-import org.firstinspires.ftc.teamcode.managers.bigArm.bigArmManager;
 import org.firstinspires.ftc.teamcode.managers.feature.FeatureManager;
 import org.firstinspires.ftc.teamcode.managers.input.InputManager;
 import org.firstinspires.ftc.teamcode.managers.input.InputOverlapResolutionMethod;
@@ -29,8 +22,6 @@ import org.firstinspires.ftc.teamcode.managers.input.nodes.StaticValueNode;
 import org.firstinspires.ftc.teamcode.managers.input.nodes.ToggleNode;
 import org.firstinspires.ftc.teamcode.managers.manipulation.ManipulationManager;
 import org.firstinspires.ftc.teamcode.managers.movement.MovementManager;
-import org.firstinspires.ftc.teamcode.managers.sensor.SensorManager;
-import org.firstinspires.ftc.teamcode.managers.telemetry.TelemetryManager;
 
 @TeleOp
 public class BasicTeleOpForJankTrebuchetChassis extends OpMode {

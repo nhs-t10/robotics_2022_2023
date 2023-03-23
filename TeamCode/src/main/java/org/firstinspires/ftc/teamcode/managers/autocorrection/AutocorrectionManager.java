@@ -47,7 +47,7 @@ public class AutocorrectionManager extends FeatureManager {
         float dev_fr = displ_fr - displ_average;
         float dev_bl= displ_bl - displ_average;
         float dev_br = displ_br - displ_average;
-//Compute the displacement of the holonomic org.firstinspires.ftc.teamcode.drive, in robot reference frame
+//Compute the displacement of the holonomic org.firstinspires.ftc.teamcode.roadrunner.drive, in robot reference frame
         //float twoSqrtTwo = (float) (2.0*Math.sqrt(2));
         float delt_Xr = 0;
         float delt_Yr = 0;

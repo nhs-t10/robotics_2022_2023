@@ -1,0 +1,17 @@
+$
+    ignorewarning_american_m_unit: true
+$
+#init:
+goto start;
+
+#start:
+    calibrateDrive(0, 63.5, 90), next;
+    moveToPosWithIDAsync(33), next;
+    goto end;
+
+
+#end:
+// Putting the forward driveOmni here doesn't work for whatever reason, don't try it lol.
+    driveOmni(0, 0, 0), next;
+    log("I go tto the end!");
+
