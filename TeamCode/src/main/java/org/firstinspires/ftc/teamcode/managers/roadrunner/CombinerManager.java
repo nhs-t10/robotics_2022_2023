@@ -10,6 +10,7 @@ import org.firstinspires.ftc.teamcode.managers.roadrunner.RoadRunnerManager;
 import org.firstinspires.ftc.teamcode.managers.bigArm.bigArmManager;
 import org.firstinspires.ftc.teamcode.managers.sensor.SensorManager;
 import org.firstinspires.ftc.teamcode.managers.telemetry.TelemetryManager;
+import org.jetbrains.annotations.Nullable;
 import org.jetbrains.annotations.TestOnly;
 import org.junit.Test;
 
@@ -19,14 +20,14 @@ import java.util.Objects;
  * Combines various advanced managers to complete complex tasks with the help of Roadrunner. Add more methods for more complex tasks... This is only the starting point. Make sure to add documentation!
  */
 public class CombinerManager extends FeatureManager {
-    private RoadRunnerManager rr;
-    private bigArmManager bigArm;
-    private SensorManager sensor;
-    private TelemetryManager telemetry;
+    private final RoadRunnerManager rr;
+    private final bigArmManager bigArm;
+    private final SensorManager sensor;
+    private final TelemetryManager telemetry;
     private Thread crashDetect;
 
     /**
-     *
+     * Creates a CombinerManager from the provided inputs
      * @param rr Roadrunner Manager {@link RoadRunnerManager}
      * @param arm bigArm Manager for arm manipulation {@link bigArmManager}
      * @param sensor Sensor Manager for sensor readings {@link SensorManager}
@@ -68,6 +69,15 @@ public class CombinerManager extends FeatureManager {
             }
         }
     }
+    public void multipleMovementFullControl(int moveID, int liftID, double speed){
+        if(readyForNext()){
+            bigArm.ThreadedMoveToPositionControlled(liftID, speed);
+            rr.moveToPosWithIDAsync(moveID);
+            if(crashDetect != null){
+                crashDetect.start();
+            }
+        }
+    }
 
     /**
      * Stop all movement
@@ -101,6 +111,24 @@ public class CombinerManager extends FeatureManager {
             return true;
         }
         return false;
+    }
+
+    /**
+     * Returns the value of a sensor asynchronously as RoadRunner handles movement. Roadrunner should be unimpeded by sensor reads.
+     * @param type type of sensor (all lowercase)
+     * @param nameOfSensor Name of the sensor in the hardware map
+     * @return returns a float no matter what type it is... It is up to you to interpret it in the code
+     */
+    public float readSensor(String type, @Nullable String nameOfSensor){
+        switch(type){
+            case "color":
+                return sensor.getColor(nameOfSensor);
+            case "dist":
+                return sensor.getDist(nameOfSensor);
+            case "touch":
+                return sensor.getTouching(nameOfSensor);
+        }
+        return 0f;
     }
 
     /**

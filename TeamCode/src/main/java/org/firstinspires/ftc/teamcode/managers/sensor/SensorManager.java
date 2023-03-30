@@ -86,7 +86,9 @@ public class SensorManager extends FeatureManager {
             s.update();
         }
     }
-
+    public float getDist(String name){
+        return sensors[indexOf(name)].getNumberValue();
+    }
     /**
      * Update a given sensor. The "update" operation isn't necessarily meaningful for every sensor.
      * @param index
@@ -149,5 +151,9 @@ public class SensorManager extends FeatureManager {
     public float getGreen(String name){
         ColorSensor sensor = (ColorSensor) sensors[indexOf(name)];
         return sensor.colorSensor.getNormalizedColors().green;
+    }
+
+    public float getTouching(String name) {
+        return sensors[indexOf(name)].getNumberValue();
     }
 }

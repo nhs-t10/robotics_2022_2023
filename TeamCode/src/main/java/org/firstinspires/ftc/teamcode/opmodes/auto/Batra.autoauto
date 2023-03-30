@@ -13,5 +13,5 @@ goto start;
 #end:
 // Putting the forward driveOmni here doesn't work for whatever reason, don't try it lol.
     driveOmni(0, 0, 0), next;
-    log("I go tto the end!");
+    log("I got to the end!");
 

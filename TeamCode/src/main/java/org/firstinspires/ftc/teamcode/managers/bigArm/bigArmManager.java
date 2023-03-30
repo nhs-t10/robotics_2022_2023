@@ -17,6 +17,7 @@ public class bigArmManager extends FeatureManager {
     public int towerPos = 0;
     int startingPos = 0;
     private boolean linSlidesMoving = false;
+    private double speed = 1;
     private Thread linSlides = new Thread(() -> {
         while(true){
             if(linSlidesMoving){
@@ -42,16 +43,39 @@ public class bigArmManager extends FeatureManager {
 
 
     });
+    private Thread linSlidesSpeedControl = new Thread(() -> {
+        while(true){
+            if(linSlidesMoving){
+                startingPos = getPosition();
+                int targetPos = positions[this.index];
+                if (startingPos > targetPos) {
+                    direction = -0.75*speed;
+                } else {
+                    direction = 1*speed;
+                }
+                hands.setMotorPower("monkeyShoulder", direction);
+                while (Math.abs(getPosition() - startingPos) <= Math.abs(targetPos - startingPos) - 25 && linSlidesMoving) {
+                    if (!FeatureManager.isOpModeRunning) {
+                        stopArm();
+                        break;
+                    }
+                }
+                stopArm();
+                linSlidesMoving = false;
+            }
+
+        }
+
+
+    });
     private int index;
 
     public bigArmManager(ManipulationManager hands){
         this.hands = hands;
     }
-
     public void extendArm(double power){
         hands.setMotorPower("monkeyShoulder", power);
     }
-
     public void retractArm(double power){
         hands.setMotorPower("monkeyShoulder", power * -0.75);
     }
@@ -63,8 +87,7 @@ public class bigArmManager extends FeatureManager {
         hands.setServoPosition("monkeyHand", 0.4);
     }
     public void openHandTeleop(){hands.setServoPosition("monkeyHand", 0.30);}
-    public void closeHand(){hands.setServoPosition("monkeyHand", 0.5);
-    }
+    public void closeHand(){hands.setServoPosition("monkeyHand", 0.5);}
 
     /*
     public void rotateShoulderRight() {
@@ -158,16 +181,33 @@ public class bigArmManager extends FeatureManager {
     }
 
     public void ThreadedMoveToPosition(int index){
+        if(!linSlidesSpeedControl.isAlive()) {
+            //For reference:
+            //  positions = {floorPosition,lowPosition,middlePosition,highPosition};
+            if (linSlides.getState() == Thread.State.NEW) {
+                linSlides.start();
+            }
+            if (!linSlidesMoving) {
+                linSlidesMoving = true;
+            }
+            this.index = index;
+        }
+    }
+    public void ThreadedMoveToPositionControlled(int index, double speed){
         //For reference:
         //  positions = {floorPosition,lowPosition,middlePosition,highPosition};
-        if(linSlides.getState() == Thread.State.NEW){
-            linSlides.start();
-        }
-        if(!linSlidesMoving) {
-            linSlidesMoving = true;
-        }
-        this.index = index;
 
+        if(!linSlides.isAlive()) {
+
+            if (linSlidesSpeedControl.getState() == Thread.State.NEW) {
+                linSlidesSpeedControl.start();
+            }
+            if (!linSlidesMoving) {
+                linSlidesMoving = true;
+            }
+            this.index = index;
+            this.speed = speed;
+        }
     }
     public void stopThreadedMovement(){linSlidesMoving=false;}
 }
