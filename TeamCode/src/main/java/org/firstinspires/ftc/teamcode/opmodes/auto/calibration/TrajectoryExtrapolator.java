@@ -1,4 +1,4 @@
-package org.firstinspires.ftc.teamcode.opmodes.teleop;
+package org.firstinspires.ftc.teamcode.opmodes.auto.calibration;
 
 import com.acmerobotics.dashboard.FtcDashboard;
 import com.acmerobotics.dashboard.config.Config;
@@ -7,14 +7,18 @@ import com.acmerobotics.roadrunner.geometry.Pose2d;
 import com.acmerobotics.roadrunner.trajectory.Trajectory;
 import com.acmerobotics.roadrunner.trajectory.TrajectoryBuilder;
 import com.acmerobotics.roadrunner.util.NanoClock;
-import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
+import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
 import org.firstinspires.ftc.robotcore.internal.system.Misc;
 import org.firstinspires.ftc.teamcode.managers.roadrunner.RoadRunnerManager;
 import org.firstinspires.ftc.teamcode.managers.telemetry.TelemetryManager;
+import org.firstinspires.ftc.teamcode.roadrunner.trajectorysequence.TrajectorySequence;
 import org.firstinspires.ftc.teamcode.roadrunner.trajectorysequence.TrajectorySequenceBuilder;
 
+import java.io.FileNotFoundException;
+import java.io.PrintWriter;
+import java.io.UnsupportedEncodingException;
 import java.util.ArrayList;
 
 /**
@@ -22,18 +26,19 @@ import java.util.ArrayList;
  *
  */
 @Config
-@Autonomous(group = "drive")
+@TeleOp(group = "calibration")
 public class TrajectoryExtrapolator extends LinearOpMode {
     public static double MAX_POWER = 1;
     public static double len = 17.0;
     public static double wid = 15.5;
-    public static double halfwid = wid/2.0;
-    public static double offsetWid = halfwid+0.5;
-    public static double halflen = len/2.0;
-    public static double offsetLen = halflen+0.5;
+    public static double halfWid = wid/2.0;
+    public static double offsetWid = halfWid +0.5;
+    public static double halfLen = len/2.0;
+    public static double offsetLen = halfLen +0.5;
     public static Pose2d finalDest = new Pose2d(30,30); // in
-    public static double[][] rangesX = {{-72+halfwid, -48-offsetWid}, {-48+offsetWid, -24-offsetWid}, {-24+offsetWid, 0-offsetWid},{0+offsetWid, 24-offsetWid}, {24+offsetWid, 48-offsetWid}, {48+offsetWid, 72-halfwid}};
-    public static double[][] rangesY = {{-72+offsetLen, -48-offsetLen}, {-48+offsetLen, -24-offsetLen}, {-24+offsetLen, 0-offsetLen},{0+offsetLen, 24-offsetLen}, {24+offsetLen, 48-offsetLen}, {48+offsetLen, 72-halflen}};
+    private static final double[][] rangesX = {{-72+ halfWid, -48-offsetWid}, {-48+offsetWid, -24-offsetWid}, {-24+offsetWid, 0-offsetWid},{0+offsetWid, 24-offsetWid}, {24+offsetWid, 48-offsetWid}, {48+offsetWid, 72- halfWid}};
+    private static final double[][] rangesY = {{-72+offsetLen, -48-offsetLen}, {-48+offsetLen, -24-offsetLen}, {-24+offsetLen, 0-offsetLen},{0+offsetLen, 24-offsetLen}, {24+offsetLen, 48-offsetLen}, {48+offsetLen, 72- halfLen}};
+    public static TrajectorySequence createdTrajSeq;
     @Override
     public void runOpMode() throws InterruptedException {
 
@@ -89,11 +94,13 @@ public class TrajectoryExtrapolator extends LinearOpMode {
         ArrayList<Trajectory> Pos = new ArrayList<>();
         double prevX = 0;
         double prevY = 0;
-        double prevRot = 0;
+        double prevTan = 0;
         int numStops = (int) (finalDest.getX() / 24) + 1;
         if(numStops < (int) (finalDest.getY() / 24) + 1){
             numStops = (int) (finalDest.getY() / 24) + 1;
         }
+        int numStopsX = (int) (finalDest.getX() / 24) + 1;
+        int numStopsY = (int) (finalDest.getY() / 24) + 1;
         int directionX = (int) (Math.abs(finalDest.getX()) / finalDest.getX());
         int directionY = (int) (Math.abs(finalDest.getY()) / finalDest.getY());
         for(int i = 1; i <= numStops; i++){
@@ -101,23 +108,28 @@ public class TrajectoryExtrapolator extends LinearOpMode {
             Trajectory finalTraj = null;
             double x = 0;
             double y = 0;
-            double rot = 0;
+            double tan = 0;
             double minDur = 1000;
+            int xMove = 1;
+            int yMove = 1;
             if(directionX > 0){
-                if (i==numStops-1){
+                if (i==numStopsX-1){
+                    tan = -90;
+                    xMove = 0;
                     break;
                 } else if(i==numStops){
                     finalTraj = nTrajBuild.splineToConstantHeading(finalDest.vec(), Math.toRadians(-90)).build();
                     break;
                 }
-                for(double j = rangesX[getRange(prevX+1)][0]; j<=rangesX[getRange(prevX+1)][1]; j+=0.1){
+                for(double j = rangesX[getRange(prevX+xMove)][0]; j<=rangesX[getRange(prevX+xMove)][1]; j+=0.1){
                     if(directionY < 0){
-                        if (i==numStops-1){
+                        if (i==numStopsY-1){
+                            yMove = 0;
                             break;
                         }
-                        for(double k = rangesY[getRange(prevY+1)][0]; k<=rangesY[getRange(prevY+1)][1]; k+=0.1){
+                        for(double k = rangesY[getRange(prevY+yMove)][0]; k<=rangesY[getRange(prevY+yMove)][1]; k+=0.1){
                             Pose2d testPos = new Pose2d(j, k);
-                            test = nTrajBuild.splineToConstantHeading(testPos.vec(), 0).build();
+                            test = nTrajBuild.splineToConstantHeading(testPos.vec(), tan).build();
                             if(test.duration() < minDur){
                                 finalTraj = test;
                                 minDur = finalTraj.duration();
@@ -129,7 +141,7 @@ public class TrajectoryExtrapolator extends LinearOpMode {
                         }
                         for(double k = rangesY[getRange(prevY-1)][0]; k<=rangesY[getRange(prevY-1)][1]; k-=0.1){
                             Pose2d testPos = new Pose2d(j, k);
-                            test = nTrajBuild.splineToConstantHeading(testPos.vec(), 0).build();
+                            test = nTrajBuild.splineToConstantHeading(testPos.vec(), tan).build();
                             if(test.duration() < minDur){
                                 finalTraj = test;
                                 minDur = finalTraj.duration();
@@ -142,7 +154,7 @@ public class TrajectoryExtrapolator extends LinearOpMode {
                 if (i==numStops-1){
                     break;
                 } else if(i==numStops){
-                    test = nTrajBuild.splineToConstantHeading(finalDest.vec(), Math.toRadians(-90)).build();
+                    finalTraj = nTrajBuild.splineToConstantHeading(finalDest.vec(), Math.toRadians(-90)).build();
                     break;
                 }
                 for(double j = rangesX[getRange(prevX-1)][0]; j<=rangesX[getRange(prevX-1)][1]; j-=0.1){
@@ -152,7 +164,7 @@ public class TrajectoryExtrapolator extends LinearOpMode {
                         }
                         for(double k = rangesY[getRange(prevY+1)][0]; k<=rangesY[getRange(prevY+1)][1]; k+=0.1){
                             Pose2d testPos = new Pose2d(j, k);
-                            test = nTrajBuild.splineToConstantHeading(testPos.vec(), 0).build();
+                            test = nTrajBuild.splineToConstantHeading(testPos.vec(), tan).build();
                             if(test.duration() < minDur){
                                 finalTraj = test;
                                 minDur = finalTraj.duration();
@@ -164,7 +176,7 @@ public class TrajectoryExtrapolator extends LinearOpMode {
                         }
                         for(double k = rangesY[getRange(prevY-1)][0]; k<=rangesY[getRange(prevY-1)][1]; k-=0.1){
                             Pose2d testPos = new Pose2d(j, k);
-                            test = nTrajBuild.splineToConstantHeading(testPos.vec(), 0).build();
+                            test = nTrajBuild.splineToConstantHeading(testPos.vec(), tan).build();
                             if(test.duration() < minDur){
                                 finalTraj = test;
                                 minDur = finalTraj.duration();
@@ -175,13 +187,32 @@ public class TrajectoryExtrapolator extends LinearOpMode {
             }
             prevX = x;
             prevY = y;
-            prevRot = rot;
+            prevTan = tan;
             Pos.add(finalTraj);
         }
+        int number = 1;
+        double dur = 0.0;
+        PrintWriter pw = null;
+        for(Trajectory t : Pos){
+            telemetry.addData(String.format("#"+"%.5 Trajectory", number), t.end());
+            try {
+                pw = new PrintWriter("lastTrajectoryOverview.txt", "UTF-8");
+                pw.println(String.format("#"+"%.5 Trajectory", number)+": "+ t.end());
 
-        while (!isStopRequested()) {
-            idle();
+            } catch (FileNotFoundException e) {
+                e.printStackTrace();
+            } catch (UnsupportedEncodingException e) {
+                e.printStackTrace();
+            }
+            trajBuild.addTrajectory(t);
+            dur += t.duration();
         }
+        pw.println("ALL HEADING INTERPOLATORS: CONSTANT");
+        pw.close();
+        telemetry.addData("Total Duration: ", dur);
+        createdTrajSeq = trajBuild.build();
+        drive.getDrive().followTrajectorySequence(createdTrajSeq);
+        stop();
     }
     public int getRange(double prev){
         if(prev>=-72 && prev<=-48){
