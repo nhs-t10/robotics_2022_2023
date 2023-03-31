@@ -214,7 +214,7 @@ public class TrajectoryExtrapolator extends LinearOpMode {
         drive.getDrive().followTrajectorySequence(createdTrajSeq);
         stop();
     }
-    public int getRange(double prev){
+    private int getRange(double prev){
         if(prev>=-72 && prev<=-48){
             return 0;
         }else if (prev>=-48 && prev<=-24){
