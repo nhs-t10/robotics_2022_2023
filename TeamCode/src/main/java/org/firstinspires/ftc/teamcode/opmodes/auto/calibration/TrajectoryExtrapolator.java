@@ -6,9 +6,8 @@ import com.acmerobotics.dashboard.telemetry.MultipleTelemetry;
 import com.acmerobotics.roadrunner.geometry.Pose2d;
 import com.acmerobotics.roadrunner.trajectory.Trajectory;
 import com.acmerobotics.roadrunner.trajectory.TrajectoryBuilder;
-import com.acmerobotics.roadrunner.util.NanoClock;
+import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
-import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
 import org.firstinspires.ftc.robotcore.internal.system.Misc;
 import org.firstinspires.ftc.teamcode.managers.roadrunner.RoadRunnerManager;
@@ -26,16 +25,15 @@ import java.util.ArrayList;
  *
  */
 @Config
-@TeleOp(group = "calibration")
+@Autonomous(group = "calibration")
 public class TrajectoryExtrapolator extends LinearOpMode {
-    public static double MAX_POWER = 1;
     public static double len = 17.0;
     public static double wid = 15.5;
     public static double halfWid = wid/2.0;
     public static double offsetWid = halfWid +0.5;
     public static double halfLen = len/2.0;
     public static double offsetLen = halfLen +0.5;
-    public static Pose2d finalDest = new Pose2d(30,30); // in
+    public static Pose2d finalDest = new Pose2d(67,120); // in
     private static final double[][] rangesX = {{-72+ halfWid, -48-offsetWid}, {-48+offsetWid, -24-offsetWid}, {-24+offsetWid, 0-offsetWid},{0+offsetWid, 24-offsetWid}, {24+offsetWid, 48-offsetWid}, {48+offsetWid, 72- halfWid}};
     private static final double[][] rangesY = {{-72+offsetLen, -48-offsetLen}, {-48+offsetLen, -24-offsetLen}, {-24+offsetLen, 0-offsetLen},{0+offsetLen, 24-offsetLen}, {24+offsetLen, 48-offsetLen}, {48+offsetLen, 72- halfLen}};
     public static TrajectorySequence createdTrajSeq;
@@ -47,7 +45,7 @@ public class TrajectoryExtrapolator extends LinearOpMode {
 
         RoadRunnerManager drive  = new RoadRunnerManager(hardwareMap, new Pose2d(0, 0), (TelemetryManager) telemetry, this, true);
         TrajectoryBuilder nTrajBuild = drive.getDrive().trajectoryBuilder(new Pose2d());
-        NanoClock clock = NanoClock.system();
+
 
         telemetry.addLine("Press play to begin the feedforward tuning routine");
         telemetry.update();
@@ -106,9 +104,9 @@ public class TrajectoryExtrapolator extends LinearOpMode {
         for(int i = 1; i <= numStops; i++){
             Trajectory test = null;
             Trajectory finalTraj = null;
-            double x = 0;
-            double y = 0;
-            double tan = 0;
+            double x = prevX;
+            double y = prevY;
+            double tan = prevTan;
             double minDur = 1000;
             int xMove = 1;
             int yMove = 1;
@@ -121,13 +119,13 @@ public class TrajectoryExtrapolator extends LinearOpMode {
                     finalTraj = nTrajBuild.splineToConstantHeading(finalDest.vec(), Math.toRadians(-90)).build();
                     break;
                 }
-                for(double j = rangesX[getRange(prevX+xMove)][0]; j<=rangesX[getRange(prevX+xMove)][1]; j+=0.1){
+                for(double j = rangesX[getRange(prevX)+xMove][0]; j<=rangesX[getRange(prevX)+xMove][1]; j+=0.1){
                     if(directionY < 0){
                         if (i==numStopsY-1){
                             yMove = 0;
                             break;
                         }
-                        for(double k = rangesY[getRange(prevY+yMove)][0]; k<=rangesY[getRange(prevY+yMove)][1]; k+=0.1){
+                        for(double k = rangesY[getRange(prevY)+yMove][0]; k<=rangesY[getRange(prevY)+yMove][1]; k+=0.1){
                             Pose2d testPos = new Pose2d(j, k);
                             test = nTrajBuild.splineToConstantHeading(testPos.vec(), tan).build();
                             if(test.duration() < minDur){
@@ -136,10 +134,11 @@ public class TrajectoryExtrapolator extends LinearOpMode {
                             }
                         }
                     }else{
-                        if (i==numStops-1){
+                        if (i==numStopsY-1){
+                            yMove=0;
                             break;
                         }
-                        for(double k = rangesY[getRange(prevY-1)][0]; k<=rangesY[getRange(prevY-1)][1]; k-=0.1){
+                        for(double k = rangesY[getRange(prevY)-yMove][0]; k<=rangesY[getRange(prevY)-yMove][1]; k-=0.1){
                             Pose2d testPos = new Pose2d(j, k);
                             test = nTrajBuild.splineToConstantHeading(testPos.vec(), tan).build();
                             if(test.duration() < minDur){
@@ -154,15 +153,15 @@ public class TrajectoryExtrapolator extends LinearOpMode {
                 if (i==numStops-1){
                     break;
                 } else if(i==numStops){
-                    finalTraj = nTrajBuild.splineToConstantHeading(finalDest.vec(), Math.toRadians(-90)).build();
+                    finalTraj = nTrajBuild.splineToConstantHeading(finalDest.vec(), Math.toRadians(90)).build();
                     break;
                 }
-                for(double j = rangesX[getRange(prevX-1)][0]; j<=rangesX[getRange(prevX-1)][1]; j-=0.1){
+                for(double j = rangesX[getRange(prevX)-xMove][0]; j<=rangesX[getRange(prevX)-xMove][1]; j-=0.1){
                     if(directionY < 0){
                         if (i==numStops-1){
                             break;
                         }
-                        for(double k = rangesY[getRange(prevY+1)][0]; k<=rangesY[getRange(prevY+1)][1]; k+=0.1){
+                        for(double k = rangesY[getRange(prevY)+yMove][0]; k<=rangesY[getRange(prevY)+yMove][1]; k+=0.1){
                             Pose2d testPos = new Pose2d(j, k);
                             test = nTrajBuild.splineToConstantHeading(testPos.vec(), tan).build();
                             if(test.duration() < minDur){
@@ -174,7 +173,7 @@ public class TrajectoryExtrapolator extends LinearOpMode {
                         if (i==numStops-1){
                             break;
                         }
-                        for(double k = rangesY[getRange(prevY-1)][0]; k<=rangesY[getRange(prevY-1)][1]; k-=0.1){
+                        for(double k = rangesY[getRange(prevY)-yMove][0]; k<=rangesY[getRange(prevY)-yMove][1]; k-=0.1){
                             Pose2d testPos = new Pose2d(j, k);
                             test = nTrajBuild.splineToConstantHeading(testPos.vec(), tan).build();
                             if(test.duration() < minDur){
@@ -205,8 +204,10 @@ public class TrajectoryExtrapolator extends LinearOpMode {
                 e.printStackTrace();
             }
             trajBuild.addTrajectory(t);
+            number++;
             dur += t.duration();
         }
+        assert pw != null;
         pw.println("ALL HEADING INTERPOLATORS: CONSTANT");
         pw.close();
         telemetry.addData("Total Duration: ", dur);
