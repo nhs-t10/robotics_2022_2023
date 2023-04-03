@@ -93,6 +93,7 @@ public class TrajectoryExtrapolator extends LinearOpMode {
         double prevX = 0;
         double prevY = 0;
         double prevTan = 0;
+        boolean turn = false;
         int numStops = (int) (finalDest.getX() / 24) + 1;
         if(numStops < (int) (finalDest.getY() / 24) + 1){
             numStops = (int) (finalDest.getY() / 24) + 1;
@@ -101,6 +102,11 @@ public class TrajectoryExtrapolator extends LinearOpMode {
         int numStopsY = (int) (finalDest.getY() / 24) + 1;
         int directionX = (int) (Math.abs(finalDest.getX()) / finalDest.getX());
         int directionY = (int) (Math.abs(finalDest.getY()) / finalDest.getY());
+        if (directionX > 0) {
+            drive.getDrive().setPoseEstimate(new Pose2d(drive.getDrive().getPoseEstimate().vec(), -90));
+        } else {
+            drive.getDrive().setPoseEstimate(new Pose2d(drive.getDrive().getPoseEstimate().vec(), 90));
+        }
         for(int i = 1; i <= numStops; i++){
             Trajectory test = null;
             Trajectory finalTraj = null;
@@ -118,12 +124,16 @@ public class TrajectoryExtrapolator extends LinearOpMode {
                 } else if(i==numStops){
                     finalTraj = nTrajBuild.splineToConstantHeading(finalDest.vec(), Math.toRadians(-90)).build();
                     break;
+                } else {
+                    tan = -90;
                 }
                 for(double j = rangesX[getRange(prevX)+xMove][0]; j<=rangesX[getRange(prevX)+xMove][1]; j+=0.1){
                     if(directionY < 0){
                         if (i==numStopsY-1){
                             yMove = 0;
                             break;
+                        } else {
+                            tan = 180;
                         }
                         for(double k = rangesY[getRange(prevY)+yMove][0]; k<=rangesY[getRange(prevY)+yMove][1]; k+=0.1){
                             Pose2d testPos = new Pose2d(j, k);
@@ -137,6 +147,8 @@ public class TrajectoryExtrapolator extends LinearOpMode {
                         if (i==numStopsY-1){
                             yMove=0;
                             break;
+                        }else{
+                            tan = 0;
                         }
                         for(double k = rangesY[getRange(prevY)-yMove][0]; k<=rangesY[getRange(prevY)-yMove][1]; k-=0.1){
                             Pose2d testPos = new Pose2d(j, k);
@@ -155,6 +167,8 @@ public class TrajectoryExtrapolator extends LinearOpMode {
                 } else if(i==numStops){
                     finalTraj = nTrajBuild.splineToConstantHeading(finalDest.vec(), Math.toRadians(90)).build();
                     break;
+                } else {
+                    tan = 90;
                 }
                 for(double j = rangesX[getRange(prevX)-xMove][0]; j<=rangesX[getRange(prevX)-xMove][1]; j-=0.1){
                     if(directionY < 0){
@@ -184,6 +198,7 @@ public class TrajectoryExtrapolator extends LinearOpMode {
                     }
                 }
             }
+
             prevX = x;
             prevY = y;
             prevTan = tan;
