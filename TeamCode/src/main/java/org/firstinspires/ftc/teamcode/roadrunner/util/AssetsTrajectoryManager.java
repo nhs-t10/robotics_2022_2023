@@ -26,12 +26,6 @@ import java.util.List;
  * Set of utilities for loading trajectories from assets (the plugin save location).
  */
 public class AssetsTrajectoryManager {
-    enum HeadingInterpolationType {
-        TANGENT,
-        CONSTANT,
-        LINEAR,
-        SPLINE
-    }
 
     /**
      * Loads the group config.
