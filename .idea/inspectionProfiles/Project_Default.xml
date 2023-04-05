@@ -38,16 +38,13 @@
     <inspection_tool class="CloneableClassInSecureContext" enabled="true" level="WARNING" enabled_by_default="true" />
     <inspection_tool class="CustomClassloader" enabled="true" level="WARNING" enabled_by_default="true" />
     <inspection_tool class="CustomSecurityManager" enabled="true" level="WARNING" enabled_by_default="true" />
-    <inspection_tool class="CyclomaticComplexity" enabled="true" level="WARNING" enabled_by_default="true">
-      <option name="m_limit" value="10" />
-    </inspection_tool>
     <inspection_tool class="DisjointPackage" enabled="true" level="WARNING" enabled_by_default="true" />
     <inspection_tool class="DriverManagerGetConnection" enabled="true" level="WARNING" enabled_by_default="true" />
     <inspection_tool class="EmptyDirectory" enabled="true" level="WARNING" enabled_by_default="true" />
     <inspection_tool class="ExceptionPackage" enabled="true" level="WARNING" enabled_by_default="true" />
     <inspection_tool class="FieldAccessNotGuarded" enabled="true" level="WARNING" enabled_by_default="true" />
     <inspection_tool class="FieldNotUsedInToString" enabled="true" level="WARNING" enabled_by_default="true" />
-    <inspection_tool class="HardcodedFileSeparators" enabled="true" level="WARNING" enabled_by_default="true">
+    <inspection_tool class="HardcodedFileSeparators" enabled="true" level="INFORMATION" enabled_by_default="true">
       <option name="m_recognizeExampleMediaType" value="false" />
     </inspection_tool>
     <inspection_tool class="HardcodedLineSeparators" enabled="true" level="WARNING" enabled_by_default="true" />
@@ -85,17 +82,9 @@
     <inspection_tool class="ModuleWithTooManyClasses" enabled="true" level="WARNING" enabled_by_default="true">
       <option name="limit" value="100" />
     </inspection_tool>
-    <inspection_tool class="MultipleReturnPointsPerMethod" enabled="true" level="WARNING" enabled_by_default="true">
-      <option name="ignoreGuardClauses" value="false" />
-      <option name="ignoreEqualsMethod" value="false" />
-      <option name="m_limit" value="1" />
-    </inspection_tool>
     <inspection_tool class="NativeMethods" enabled="true" level="WARNING" enabled_by_default="true" />
     <inspection_tool class="NestingDepth" enabled="true" level="WARNING" enabled_by_default="true">
       <option name="m_limit" value="5" />
-    </inspection_tool>
-    <inspection_tool class="NonCommentSourceStatements" enabled="true" level="WARNING" enabled_by_default="true">
-      <option name="m_limit" value="30" />
     </inspection_tool>
     <inspection_tool class="NonFinalClone" enabled="true" level="WARNING" enabled_by_default="true" />
     <inspection_tool class="NonFinalFieldInImmutable" enabled="true" level="WARNING" enabled_by_default="true" />

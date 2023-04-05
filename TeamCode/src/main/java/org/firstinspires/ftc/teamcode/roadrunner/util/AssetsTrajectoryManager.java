@@ -1,5 +1,6 @@
 package org.firstinspires.ftc.teamcode.roadrunner.util;
 
+import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
 import com.acmerobotics.roadrunner.geometry.Pose2d;
@@ -96,7 +97,8 @@ public class AssetsTrajectoryManager {
         }
         return builder.build();
     }
-    public static @Nullable TrajectorySequenceBuilder toSeq(TrajectoryConfig config, TrajectoryGroupConfig groupConfig){
+    @NonNull
+    public static TrajectorySequenceBuilder toSeq(TrajectoryConfig config, TrajectoryGroupConfig groupConfig){
         Pose2d startPose = config.getStartPose();
         double startTangent = config.getStartTangent();
 

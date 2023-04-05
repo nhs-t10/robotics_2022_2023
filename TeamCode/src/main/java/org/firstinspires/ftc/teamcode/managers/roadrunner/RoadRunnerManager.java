@@ -32,6 +32,7 @@ import java.util.Arrays;
 /**
  * Manager for Pathing, Dead Reckoning, and Macros... Makes Road runner much easier to use with a set of complex methods for making precise paths. created by ACHYUT SHASTRI
  */
+@SuppressWarnings("OverlyLongLambda")
 @Config
 public class RoadRunnerManager extends FeatureManager {
     public static Pose2d currentPose = new Pose2d(0, 0, Math.toRadians(0));
@@ -106,9 +107,7 @@ public class RoadRunnerManager extends FeatureManager {
         this.t20 = AssetsTrajectoryManager.load("Batra.RR", telemetry);
         telemetry.log().add("DONE4");
     });
-    Thread load5 = new Thread(() -> {
-        this.tSeqTest = AssetsTrajectoryManager.loadSequence("Batra.RR", telemetry);
-    });
+    Thread load5 = new Thread(() -> this.tSeqTest = AssetsTrajectoryManager.loadSequence("Batra.RR", telemetry));
     private double firstWheelLastRotation, secondWheelLastRotation, lastHeading;
     private static final Pose2d[] nonono = {new Pose2d(-120, 48), new Pose2d(-72, 48), new Pose2d(-24, 48), new Pose2d(-24, 0), new Pose2d(-120, 0), new Pose2d(-72, 0), new Pose2d(-24, -48), new Pose2d(-120, -48), new Pose2d(-72, -48)};
 
@@ -732,7 +731,7 @@ public class RoadRunnerManager extends FeatureManager {
      * @throws SequenceInitException The exception that tells you a sequence calculation has filed on init
      * @throws Exception             The regular exception that SequenceInit Exception uses
      */
-    @Test
+
     public void customMoveSequenceWithPoseTrajSequence(@NotNull Pose2d[] poseArr, @NotNull String[] typeArr, @NotNull double[] rotationArr) throws SequenceInitException, Exception {
 
         if (typeArr.length != rotationArr.length || poseArr.length != rotationArr.length) {
@@ -905,51 +904,6 @@ public class RoadRunnerManager extends FeatureManager {
         return false;
     }
 
-    /**
-     * Returns the overview of Roadrunner's instance variables and reference ids
-     *
-     * @return String of overview
-     */
-    @NonNull
-    @Override
-    public String toString() {
-        return "RoadRunnerManager{" +
-                "driveRR=" + driveRR +
-                ", l=" + l +
-                ", trajBuildRR=" + trajBuildRR +
-                ", tsb=" + tsb +
-                ", telemetry=" + telemetry +
-                ", opMode=" + opMode +
-                ", estimatedPosition=" + estimatedPosition +
-                ", sum=" + Arrays.toString(sum) +
-                ", vel=" + vel +
-                ", input=" + input +
-                ", denom=" + denom +
-                ", drivePower=" + drivePower +
-                ", t=" + t +
-                ", t2=" + t2 +
-                ", t3=" + t3 +
-                ", t4=" + t4 +
-                ", t5=" + t5 +
-                ", t6=" + t6 +
-                ", t7=" + t7 +
-                ", t8=" + t8 +
-                ", t9=" + t9 +
-                ", t10=" + t10 +
-                ", t11=" + t11 +
-                ", t12=" + t12 +
-                ", t13=" + t13 +
-                ", t14=" + t14 +
-                ", d=" + d +
-                ", load=" + load +
-                ", load2=" + load2 +
-                ", load3=" + load3 +
-                ", firstWheelLastRotation=" + firstWheelLastRotation +
-                ", secondWheelLastRotation=" + secondWheelLastRotation +
-                ", lastHeading=" + lastHeading +
-                '}';
-    }
-
     public Trajectory getT() {
         return t;
     }
@@ -1108,5 +1062,58 @@ public class RoadRunnerManager extends FeatureManager {
 
     public void setT20(Trajectory t20) {
         this.t20 = t20;
+    }
+
+    /**
+     * Returns the overview of Roadrunner's instance variables and reference ids
+     *
+     * @return String of overview
+     */
+    @Override
+    public String toString() {
+        return "RoadRunnerManager{" +
+                "driveRR=" + driveRR +
+                ", l=" + l +
+                ", trajBuildRR=" + trajBuildRR +
+                ", tsb=" + tsb +
+                ", telemetry=" + telemetry +
+                ", opMode=" + opMode +
+                ", estimatedPosition=" + estimatedPosition +
+                ", sum=" + Arrays.toString(sum) +
+                ", vel=" + vel +
+                ", input=" + input +
+                ", denom=" + denom +
+                ", drivePower=" + drivePower +
+                ", t=" + t +
+                ", t2=" + t2 +
+                ", t3=" + t3 +
+                ", t4=" + t4 +
+                ", t5=" + t5 +
+                ", t6=" + t6 +
+                ", t7=" + t7 +
+                ", t8=" + t8 +
+                ", t9=" + t9 +
+                ", t10=" + t10 +
+                ", t11=" + t11 +
+                ", t12=" + t12 +
+                ", t13=" + t13 +
+                ", t14=" + t14 +
+                ", t15=" + t15 +
+                ", t16=" + t16 +
+                ", t17=" + t17 +
+                ", t18=" + t18 +
+                ", t19=" + t19 +
+                ", t20=" + t20 +
+                ", tSeqTest=" + tSeqTest +
+                ", d=" + d +
+                ", load=" + load +
+                ", load2=" + load2 +
+                ", load3=" + load3 +
+                ", load4=" + load4 +
+                ", load5=" + load5 +
+                ", firstWheelLastRotation=" + firstWheelLastRotation +
+                ", secondWheelLastRotation=" + secondWheelLastRotation +
+                ", lastHeading=" + lastHeading +
+                '}';
     }
 }
