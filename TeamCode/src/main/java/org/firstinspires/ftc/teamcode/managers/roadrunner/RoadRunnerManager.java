@@ -107,7 +107,7 @@ public class RoadRunnerManager extends FeatureManager {
         this.t20 = AssetsTrajectoryManager.load("Batra.RR", telemetry);
         telemetry.log().add("DONE4");
     });
-    Thread load5 = new Thread(() -> this.tSeqTest = AssetsTrajectoryManager.loadSequence("Batra.RR", telemetry));
+    Thread load5 = new Thread(() -> this.tSeqTest = AssetsTrajectoryManager.loadSequence("TrajSeqEx", telemetry));
     private double firstWheelLastRotation, secondWheelLastRotation, lastHeading;
     private static final Pose2d[] nonono = {new Pose2d(-120, 48), new Pose2d(-72, 48), new Pose2d(-24, 48), new Pose2d(-24, 0), new Pose2d(-120, 0), new Pose2d(-72, 0), new Pose2d(-24, -48), new Pose2d(-120, -48), new Pose2d(-72, -48)};
 
