@@ -20,6 +20,7 @@ import org.firstinspires.ftc.teamcode.roadrunner.drive.DriveConstants;
 import org.firstinspires.ftc.teamcode.roadrunner.drive.SampleMecanumDrive;
 import org.firstinspires.ftc.teamcode.managers.feature.FeatureManager;
 import org.firstinspires.ftc.teamcode.managers.telemetry.TelemetryManager;
+import org.firstinspires.ftc.teamcode.roadrunner.trajectorysequence.TrajectorySequence;
 import org.firstinspires.ftc.teamcode.roadrunner.trajectorysequence.TrajectorySequenceBuilder;
 import org.firstinspires.ftc.teamcode.roadrunner.util.AssetsTrajectoryManager;
 import org.jetbrains.annotations.NotNull;
@@ -66,6 +67,7 @@ public class RoadRunnerManager extends FeatureManager {
     private Trajectory t18;
     private Trajectory t19;
     private Trajectory t20;
+    private TrajectorySequence tSeqTest;
     private DriveConstants d;
 
     Thread load = new Thread(() -> {
@@ -100,6 +102,9 @@ public class RoadRunnerManager extends FeatureManager {
         this.t19 = AssetsTrajectoryManager.load("BackToMiddleLeft", telemetry);
         this.t20 = AssetsTrajectoryManager.load("Batra.RR", telemetry);
         telemetry.log().add("DONE4");
+    });
+    Thread load5 = new Thread(() -> {
+        this.tSeqTest = AssetsTrajectoryManager.loadSequence("Batra.RR", telemetry);
     });
     private double firstWheelLastRotation, secondWheelLastRotation, lastHeading;
     private static final Pose2d[] nonono = {new Pose2d(-120, 48), new Pose2d(-72, 48), new Pose2d(-24, 48), new Pose2d(-24, 0), new Pose2d(-120, 0), new Pose2d(-72, 0), new Pose2d(-24, -48), new Pose2d(-120, -48), new Pose2d(-72, -48)};
@@ -252,6 +257,9 @@ public class RoadRunnerManager extends FeatureManager {
                 break;
             case 33:
                 driveRR.followTrajectory(t20);
+                break;
+            case 101:
+                driveRR.followTrajectorySequence(tSeqTest);
                 break;
             default:
                 return;
