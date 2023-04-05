@@ -104,7 +104,7 @@ public class AssetsTrajectoryManager {
     public static @Nullable TrajectorySequenceBuilder toSeq(TrajectoryConfig config, TrajectoryGroupConfig groupConfig){
         Pose2d startPose = config.getStartPose();
         double startTangent = config.getStartTangent();
-        TrajectoryVelocityConstraint velConstraint = groupConfig.getVelConstraint();
+
 
         TrajectorySequenceBuilder builder = new TrajectorySequenceBuilder(
                 config.getStartPose(),
@@ -126,17 +126,17 @@ public class AssetsTrajectoryManager {
             if (i == 0) {
                 prevTangent = startTangent;
             } else {
-                prevTangent = w.getTangent();
+                prevTangent = waypoints.get(i-1).getTangent();
             }
             Vector2d prevPosition;
             if (i == 0) {
                 prevPosition = startPose.vec();
             } else {
-                prevPosition = w.getPosition();
+                prevPosition = waypoints.get(i-1).getPosition();
             }
             double interWaypointAngle = (position.minus(prevPosition).angle());
-            boolean line = (Angle.normDelta(prevTangent - tangent)-0.0)<1e-6 &&
-                    (Angle.normDelta(tangent - interWaypointAngle)-0.0)<1e-6;
+            boolean line = ((Angle.normDelta(prevTangent - tangent)-0.0)<1e-6) &&
+                    ((Angle.normDelta(tangent - interWaypointAngle)-0.0)<1e-6);
 
             switch (interpolationType) {
                 case TANGENT:
