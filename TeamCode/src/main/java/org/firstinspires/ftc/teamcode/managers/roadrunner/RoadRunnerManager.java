@@ -774,7 +774,6 @@ public class RoadRunnerManager extends FeatureManager {
             driveRR.followTrajectorySequence(tsb.build());
             driveRR.waitForIdle();
             updateLocalizer();
-
         }
     }
 
@@ -888,12 +887,19 @@ public class RoadRunnerManager extends FeatureManager {
 
     }
 
+    /**
+     * Theoretical reversal of motors in roadrunner for driveOmni to wrok well. Rotation is still screwy tho
+     */
     public void reverseMotorsOmni() {
         for (DcMotorEx dcMotorEx : Arrays.asList(driveRR.fr, driveRR.br, driveRR.fl, driveRR.bl)) {
             dcMotorEx.setDirection(DcMotorSimple.Direction.FORWARD);
         }
     }
 
+    /**
+     * Gets whether the motors are running so that roadrunner does not inadvertently get a command and activate while driving.
+     * @return boolean whether or not the mototrs are idle
+     */
     public boolean areMotorsIdle(){
         double[] analyzer = new double[]{driveRR.fr.getPower(), driveRR.fl.getPower(), driveRR.br.getPower(), driveRR.bl.getPower()};
         for(double d: analyzer){
