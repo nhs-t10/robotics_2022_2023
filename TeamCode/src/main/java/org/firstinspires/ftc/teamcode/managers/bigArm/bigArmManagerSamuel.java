@@ -7,9 +7,11 @@ import org.firstinspires.ftc.teamcode.managers.feature.FeatureManager;
 import org.firstinspires.ftc.teamcode.managers.manipulation.ManipulationManager;
 
 @Config
-public class bigArmManagerSamuel extends FeatureManager {
+public class bigArmManagerSamuel extends bigArmManager {
+
     DcMotor hands;
     ManipulationManager manipulator;
+
     public static int floorPosition = 250; //The position of the floor
     public static int lowPosition= 1250; //The position of the low tower
     public static int middlePosition = 2081; //The position of the middle tower
@@ -74,23 +76,31 @@ public class bigArmManagerSamuel extends FeatureManager {
     private int index;
 
     public bigArmManagerSamuel(DcMotor hands, ManipulationManager manipulator){
+        super(manipulator);
         this.hands = hands;
         this.manipulator = manipulator;
     }
+    @Override
     public void extendArm(double power){
         hands.setPower(power);
     }
+    @Override
     public void retractArm(double power){
         hands.setPower(power * -0.75);
     }
+    @Override
     public void stopArm(){hands.setPower(0);}
+    @Override
     public void openHand(){
         manipulator.setServoPosition("monkeyHand", 0.35);
     }
+    @Override
     public void openHandAuto(){
         manipulator.setServoPosition("monkeyHand", 0.4);
     }
+    @Override
     public void openHandTeleop(){manipulator.setServoPosition("monkeyHand", 0.30);}
+    @Override
     public void closeHand(){manipulator.setServoPosition("monkeyHand", 0.5);}
 
     /*
@@ -109,13 +119,13 @@ public class bigArmManagerSamuel extends FeatureManager {
         }
     }
      */
-
+    @Override
     public boolean finishedMoving(){
         return (Math.abs(hands.getPower())<0.1f);
     }
-
+    @Override
     public int getPosition(){ return (int)hands.getCurrentPosition(); }
-
+    @Override
     public boolean setPositionFloorLocation(){
 //        if(!doOnce){
 //            closeHand();
@@ -130,9 +140,11 @@ public class bigArmManagerSamuel extends FeatureManager {
         }
         return true;
     }
+    @Override
     public void resetDoOnce(){
         doOnce=false;
     }
+    @Override
     public boolean setPositionLowLocation(){
         towerPos = getPosition();
 
@@ -153,7 +165,7 @@ public class bigArmManagerSamuel extends FeatureManager {
         }
         return true;
     }
-
+    @Override
     public boolean setPositionMiddleLocation(){
         towerPos = getPosition();
 
@@ -174,7 +186,7 @@ public class bigArmManagerSamuel extends FeatureManager {
         }
         return true;
     }
-
+    @Override
     public boolean setPositionHighLocation(){
         extendArm(1);
         if (hands.getCurrentPosition() >= highPosition - 25){
@@ -183,7 +195,7 @@ public class bigArmManagerSamuel extends FeatureManager {
         }
         return true;
     }
-
+    @Override
     public void ThreadedMoveToPosition(int index){
         if(!linSlidesSpeedControl.isAlive()) {
             //For reference:
@@ -197,6 +209,7 @@ public class bigArmManagerSamuel extends FeatureManager {
             this.index = index;
         }
     }
+    @Override
     public void ThreadedMoveToPositionControlled(int index, double speed){
         //For reference:
         //  positions = {floorPosition,lowPosition,middlePosition,highPosition};
@@ -213,5 +226,6 @@ public class bigArmManagerSamuel extends FeatureManager {
             this.speed = speed;
         }
     }
+    @Override
     public void stopThreadedMovement(){linSlidesMoving=false;}
 }

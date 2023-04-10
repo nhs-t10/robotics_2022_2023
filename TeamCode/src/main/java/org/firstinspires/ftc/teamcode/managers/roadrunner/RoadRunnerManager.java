@@ -514,10 +514,10 @@ public class RoadRunnerManager extends FeatureManager {
     public void activateMacro(int id){
         switch (id) {
             case 1:
-                driveRR.followTrajectory(driveRR.trajectoryBuilder(new Pose2d()).lineToLinearHeading(new Pose2d(-20, 0, Math.toRadians(180))).build());
+                driveRR.followTrajectory(driveRR.trajectoryBuilder(new Pose2d()).lineToLinearHeading(new Pose2d(-7.5, 0)).lineToLinearHeading(new Pose2d(-15, 0, Math.toRadians(180))).build());
                 break;
             case 2:
-                driveRR.followTrajectory(driveRR.trajectoryBuilder(new Pose2d()).strafeRight(90).build());
+                driveRR.followTrajectory(driveRR.trajectoryBuilder(new Pose2d()).lineToLinearHeading(new Pose2d(-7.5, 0, Math.toRadians(180))).lineToLinearHeading(new Pose2d(-15, 0, Math.toRadians(180))).build());
                 break;
             case 3:
                 driveRR.followTrajectory(driveRR.trajectoryBuilder(new Pose2d()).strafeLeft(90).build());

@@ -23,9 +23,11 @@ import org.firstinspires.ftc.teamcode.managers.input.nodes.JoystickNode;
 import org.firstinspires.ftc.teamcode.managers.input.nodes.MultiInputNode;
 import org.firstinspires.ftc.teamcode.managers.input.nodes.MultiplyNode;
 import org.firstinspires.ftc.teamcode.managers.input.nodes.PlusNode;
+import org.firstinspires.ftc.teamcode.managers.input.nodes.SwitchNode;
 import org.firstinspires.ftc.teamcode.managers.input.nodes.ToggleNode;
 import org.firstinspires.ftc.teamcode.managers.manipulation.ManipulationManager;
 import org.firstinspires.ftc.teamcode.managers.movement.MovementManager;
+import org.firstinspires.ftc.teamcode.managers.roadrunner.CombinerManager;
 import org.firstinspires.ftc.teamcode.managers.roadrunner.RoadRunnerManager;
 import org.firstinspires.ftc.teamcode.managers.sensor.SensorManager;
 import org.firstinspires.ftc.teamcode.managers.telemetry.TelemetryManager;
@@ -77,8 +79,8 @@ public class samuelDual extends OpMode {
         telemetry = telemetryManager;
         FeatureManager.logger.setBackend(telemetry.log());
 
-        //rr = new RoadRunnerManager(hardwareMap, new Pose2d(0, 0), telemetryManager, this, true);
-
+        rr = new RoadRunnerManager(hardwareMap, new Pose2d(0, 0), telemetryManager, this, true);
+        CombinerManager combinerManager = new CombinerManager(rr, monkeyArm, sensor, telemetryManager, false);
         DcMotor fl = hardwareMap.get(DcMotor.class, "fl");
         DcMotor fr = hardwareMap.get(DcMotor.class, "fr");
         DcMotor br = hardwareMap.get(DcMotor.class, "br");
@@ -99,9 +101,10 @@ public class samuelDual extends OpMode {
         );
         monkeyArm = new bigArmManagerSamuel(arm, hands);
         input = new InputManager(gamepad1, gamepad2);
+
         hands.setZeroPowerBehavior("monkeyShoulder",DcMotor.ZeroPowerBehavior.BRAKE);
         input.registerInput("drivingControls",
-            new PlusNode(
+            new SwitchNode(
                 new MultiInputNode(
                     new MultiplyNode(new GradualStickNode(new JoystickNode("left_stick_y"), 0.25f, 0.5f), -1f),
                     new MultiplyNode(new GradualStickNode(new JoystickNode("left_stick_x"), 0.25f, 0.5f), -1f),
@@ -120,9 +123,12 @@ public class samuelDual extends OpMode {
                             new MultiplyNode(new JoystickNode("gamepad2right_stick_x"), 0.4f),
                             new ToggleNode(new ButtonNode("gamepad2leftbumper"))
                     )
-                )
+                ),
+                new ButtonNode("dpaddown"),
+                new ButtonNode("gamepad2dpaddown")
             )
         );
+
         input.registerInput("handToggle",
                 new AnyNode(
                     new ButtonNode("rightbumper"),
@@ -167,24 +173,22 @@ public class samuelDual extends OpMode {
         input.setOverlapResolutionMethod(InputOverlapResolutionMethod.MOST_COMPLEX_ARE_THE_FAVOURITE_CHILD);
 
         PriorityAsyncOpmodeComponent.start(() -> {
-          /*  if(input.getBool("rrToggle") && rr.notBusy()) {
+            if (input.getBool("rrToggle") && rr.notBusy()) {
                 if (input.getBool("a1") && rr.notBusy()) {
                     //rr.moveToPosWithID(2);
-                    rr.activateMacro(1);
+                    combinerManager.combinedMacro(1);
                 }
-                if (input.getBool("b1")) {
+                if (input.getBool("b1") && rr.notBusy()) {
                     //rr.moveToPosWithID(1);
-                    rr.activateMacro(2);
+                    combinerManager.combinedMacro(2);
                 }
-                if (input.getBool("RR3") && rr.notBusy()) {
+                if (input.getBool("x1") && rr.notBusy()) {
                     rr.calibrateDriveToZero();
                 }
-                if (input.getBool("RR4") && rr.notBusy()) {
-                    telemetry.log().add("RR PATH STARTED");
-                    rr.customMoveWithPose(new Pose2d(0, 20), "strafe", 20);
-                }*/
-            //rr.updateLocalizer();
-            //rr.doOmniDisplace(input.gamepad, input.gamepad2);
+
+                //rr.updateLocalizer();
+                //rr.doOmniDisplace(input.gamepad, input.gamepad2);
+            }
         });
     }
     public void loop() {
@@ -192,11 +196,11 @@ public class samuelDual extends OpMode {
             input.update();
             towerPos = (int)hands.getMotorPosition("monkeyShoulder");
 
-//            if(rr.notBusy()){
+            if(rr.notBusy()){
                 //Meant to be if this && !input.getBool("armLengthNone");
-            //driver.driveOmni(input.getFloatArrayOfInput("drivingControls"));
-//            }
-            driver.driveOmni(input.getFloatArrayOfInput("drivingControls"));
+                driver.driveOmni(input.getFloatArrayOfInput("drivingControls"));
+            }
+
             if (input.getBool("handToggle") && !handStatus) {
                 intakeToggle=!intakeToggle;
                 handStatus = true;
