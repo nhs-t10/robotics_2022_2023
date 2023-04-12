@@ -15,11 +15,13 @@ public class SwitchNode extends InputManagerInputNode {
     private final InputManagerInputNode node1;
     private boolean isPressed;
     private boolean wasPressed;
+    private boolean isPressed2;
+    private boolean wasPressed2;
     private State state = State.GAMEPAD_1;
 
     /**
-     * Switches the result value between two arrays. <br>
-     *
+     * Switches the result value between two given input arrays.<br>
+     * Ideal for 2 gamepad coordinated control.
      * @param input1 The first input listed in the SwitchNode
      * @param input2 The second input listed in the SwitchNode
      * @param node The node that represents the switch that is pressed
@@ -45,15 +47,16 @@ public class SwitchNode extends InputManagerInputNode {
         input2.update();
         node.update();
         node1.update();
-        isPressed = node.getResult().getBool() || node1.getResult().getBool();
-        if(isPressed && !wasPressed) {
-            if(state == State.GAMEPAD_1) {
-                state = State.GAMEPAD_2;
-            }else if(state == State.GAMEPAD_2) {
-                state = State.GAMEPAD_1;
-            }
+        isPressed = node.getResult().getBool();
+        isPressed2 = node1.getResult().getBool();
+        if(state == State.GAMEPAD_1 && isPressed && !wasPressed) {
+            state = State.GAMEPAD_2;
+            InputManager.vibrategp2();
+        }else if(state == State.GAMEPAD_2 && isPressed2 && !wasPressed2) {
+            state = State.GAMEPAD_1;
+            InputManager.vibrategp();
         }
-        wasPressed = isPressed;
+
     }
 
     @NonNull
