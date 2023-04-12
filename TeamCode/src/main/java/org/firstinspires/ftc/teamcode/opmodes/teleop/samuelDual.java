@@ -86,6 +86,7 @@ public class samuelDual extends OpMode {
         DcMotor br = hardwareMap.get(DcMotor.class, "br");
         DcMotor bl = hardwareMap.get(DcMotor.class, "bl");
         DcMotor arm = hardwareMap.get(DcMotor.class, "monkeyShoulder");
+
         driver = new MovementManager(fl, fr, br, bl);
         hands = new ManipulationManager(
                 hardwareMap,

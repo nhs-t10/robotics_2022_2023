@@ -2,6 +2,8 @@ package org.firstinspires.ftc.teamcode.managers.input.nodes;
 
 import androidx.annotation.NonNull;
 
+import com.qualcomm.hardware.rev.RevBlinkinLedDriver;
+
 import org.firstinspires.ftc.teamcode.auxilary.PaulMath;
 import org.firstinspires.ftc.teamcode.managers.input.InputManager;
 import org.firstinspires.ftc.teamcode.managers.input.InputManagerNodeResult;
@@ -18,6 +20,7 @@ public class SwitchNode extends InputManagerInputNode {
     private boolean isPressed2;
     private boolean wasPressed2;
     private State state = State.GAMEPAD_1;
+    private RevBlinkinLedDriver led;
 
     /**
      * Switches the result value between two given input arrays.<br>
@@ -34,6 +37,13 @@ public class SwitchNode extends InputManagerInputNode {
         this.input2 = input2;
         this.node = node;
         this.node1 = node1;
+    }
+    public SwitchNode(InputManagerInputNode input1, InputManagerInputNode input2, InputManagerInputNode node, InputManagerInputNode node1, RevBlinkinLedDriver led) {
+        this.input1 = input1;
+        this.input2 = input2;
+        this.node = node;
+        this.node1 = node1;
+        this.led = led;
     }
 
     @Override
@@ -52,9 +62,15 @@ public class SwitchNode extends InputManagerInputNode {
         if(state == State.GAMEPAD_1 && isPressed && !wasPressed) {
             state = State.GAMEPAD_2;
             InputManager.vibrategp2();
+            if(led!= null) {
+                led.setPattern(RevBlinkinLedDriver.BlinkinPattern.ORANGE);
+            }
         }else if(state == State.GAMEPAD_2 && isPressed2 && !wasPressed2) {
             state = State.GAMEPAD_1;
             InputManager.vibrategp();
+            if(led!= null) {
+                led.setPattern(RevBlinkinLedDriver.BlinkinPattern.BLUE);
+            }
         }
 
     }
