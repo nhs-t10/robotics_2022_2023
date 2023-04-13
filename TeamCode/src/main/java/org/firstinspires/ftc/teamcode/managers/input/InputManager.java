@@ -22,22 +22,26 @@ public class InputManager extends FeatureManager {
 
     public static void vibrategp2() {
         if(gp2 != null) {
-            gp2.rumble(100);
+            gp2.rumbleBlips(3);
         }
     }
     public static void vibrategp() {
         if(gp != null) {
-            gp.rumble(100);
+            gp.rumbleBlips(3);
         }
     }
     public static void ledgp1() {
-        if(gp!= null) {
+        if(gp!= null &&  gp2 != null) {
+
+            gp2.runLedEffect(new Gamepad.LedEffect.Builder().addStep(0, 100, 0, 200).setRepeating(true).build());
             gp.runLedEffect(new Gamepad.LedEffect.Builder().addStep(0, 0, 255, 200).addStep(0, 0, 0, 200).addStep(0, 0, 255, 200).build());
-            gp.runLedEffect(new Gamepad.LedEffect.Builder().addStep(0, 255, 0, 200).setRepeating(true).build());
+            gp.runLedEffect(new Gamepad.LedEffect.Builder().addStep(0, 0, 255, 200).setRepeating(true).build());
+
         }
     }
     public static void ledgp2() {
-        if(gp2!= null) {
+        if(gp2!= null &&  gp != null) {
+            gp.runLedEffect(new Gamepad.LedEffect.Builder().addStep(0, 0, 100, 200).setRepeating(true).build());
             gp2.runLedEffect(new Gamepad.LedEffect.Builder().addStep(0, 255, 0, 200).addStep(0, 0, 0, 200).addStep(0, 255, 0, 200).addStep(0, 0, 0, 200).build());
             gp2.runLedEffect(new Gamepad.LedEffect.Builder().addStep(0, 255, 0, 200).setRepeating(true).build());
         }
