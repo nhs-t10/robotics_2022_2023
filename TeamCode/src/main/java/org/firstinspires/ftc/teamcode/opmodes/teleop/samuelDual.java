@@ -7,10 +7,10 @@ import static org.firstinspires.ftc.teamcode.managers.manipulation.ManipulationM
 import com.acmerobotics.roadrunner.geometry.Pose2d;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
+
 import com.qualcomm.robotcore.hardware.DcMotor;
 
 import org.firstinspires.ftc.teamcode.auxilary.integratedasync.PriorityAsyncOpmodeComponent;
-import org.firstinspires.ftc.teamcode.managers.bigArm.bigArmManager;
 import org.firstinspires.ftc.teamcode.managers.bigArm.bigArmManagerSamuel;
 import org.firstinspires.ftc.teamcode.managers.feature.FeatureManager;
 import org.firstinspires.ftc.teamcode.managers.input.InputManager;
@@ -22,7 +22,6 @@ import org.firstinspires.ftc.teamcode.managers.input.nodes.InversionNode;
 import org.firstinspires.ftc.teamcode.managers.input.nodes.JoystickNode;
 import org.firstinspires.ftc.teamcode.managers.input.nodes.MultiInputNode;
 import org.firstinspires.ftc.teamcode.managers.input.nodes.MultiplyNode;
-import org.firstinspires.ftc.teamcode.managers.input.nodes.PlusNode;
 import org.firstinspires.ftc.teamcode.managers.input.nodes.SwitchNode;
 import org.firstinspires.ftc.teamcode.managers.input.nodes.ToggleNode;
 import org.firstinspires.ftc.teamcode.managers.manipulation.ManipulationManager;
@@ -32,7 +31,7 @@ import org.firstinspires.ftc.teamcode.managers.roadrunner.RoadRunnerManager;
 import org.firstinspires.ftc.teamcode.managers.sensor.SensorManager;
 import org.firstinspires.ftc.teamcode.managers.telemetry.TelemetryManager;
 
-@TeleOp
+@TeleOp(name="DualControllerSamuel", group="Samuel")
 public class samuelDual extends OpMode {
     public MovementManager driver;
     public ManipulationManager hands;
@@ -63,6 +62,7 @@ public class samuelDual extends OpMode {
     private boolean looping = false;
     private boolean shouldActuallyDoThings = true;
     private RoadRunnerManager rr;
+    private CombinerManager combinerManager;
     //TODO: Fix RoadRunner implementation in TeleOp
 
 
@@ -80,7 +80,7 @@ public class samuelDual extends OpMode {
         FeatureManager.logger.setBackend(telemetry.log());
 
         rr = new RoadRunnerManager(hardwareMap, new Pose2d(0, 0), telemetryManager, this, true);
-        CombinerManager combinerManager = new CombinerManager(rr, monkeyArm, sensor, telemetryManager, false);
+        combinerManager = new CombinerManager(rr, monkeyArm, sensor, telemetryManager, false);
         DcMotor fl = hardwareMap.get(DcMotor.class, "fl");
         DcMotor fr = hardwareMap.get(DcMotor.class, "fr");
         DcMotor br = hardwareMap.get(DcMotor.class, "br");
@@ -232,18 +232,6 @@ public class samuelDual extends OpMode {
             } else if (!movingToFloor && !movingToLow && !movingToMid && !movingToHigh){
                 monkeyArm.stopArm();
             }
-            /*if (input.getBool("colorNYOOM") && !nyooming) {
-                nyooming = true;
-                rr.setBusy();
-                while (currentColor == 0 && currentColor1 == 0) {
-                    driver.driveOmni(0.5f, 0, 0);
-                }
-                rr.notBusy();
-                driver.driveOmni(0,0,0);
-                nyooming = false;
-            }*/
-//            currentColor = sensing.getColor("rainbowSense");
-//            currentColor1 = sensing.getColor("rainbowSense1");
 
             /*if ((input.getBool("armLengthNone") || movingToFloor) && !movingToLow && !movingToMid && !movingToHigh) {
                 movingToFloor = monkeyArm.setPositionFloorLocation();
@@ -290,7 +278,7 @@ public class samuelDual extends OpMode {
             telemetry.addData("FR Power", driver.frontRight.getPower());
             telemetry.addData("BR Power", driver.backLeft.getPower());
             telemetry.addData("BL Power", driver.backRight.getPower());
-            //telemetry.addData("Roadrunner Not Busy: ", rr.notBusy());
+            telemetry.addData("Roadrunner Not Busy: ", rr.notBusy());
             //telemetry.addData("Heading", rr.getDrive().getExternalHeading());
             telemetry.addData("Servo Open",""+intakeToggle);
             telemetry.addData("Tower Power", hands.getMotorPower("monkeyShoulder"));
@@ -314,6 +302,7 @@ public class samuelDual extends OpMode {
     }
     public void stop() {
         driver.stopDrive();
+        combinerManager.stopMoving();
         FeatureManager.setIsOpModeRunning(false);
     }
 }

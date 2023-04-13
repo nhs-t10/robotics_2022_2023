@@ -5,17 +5,14 @@ import androidx.annotation.Nullable;
 
 import com.acmerobotics.roadrunner.geometry.Pose2d;
 import com.acmerobotics.roadrunner.geometry.Vector2d;
-import com.acmerobotics.roadrunner.profile.VelocityConstraint;
 import com.acmerobotics.roadrunner.trajectory.Trajectory;
 import com.acmerobotics.roadrunner.trajectory.TrajectoryBuilder;
 import com.acmerobotics.roadrunner.trajectory.config.TrajectoryConfig;
 import com.acmerobotics.roadrunner.trajectory.config.TrajectoryConfigManager;
 import com.acmerobotics.roadrunner.trajectory.config.TrajectoryGroupConfig;
-import com.acmerobotics.roadrunner.trajectory.constraints.TrajectoryVelocityConstraint;
 import com.acmerobotics.roadrunner.util.Angle;
 
 import org.firstinspires.ftc.robotcore.internal.system.AppUtil;
-import org.firstinspires.ftc.teamcode.managers.telemetry.TelemetryManager;
 import org.firstinspires.ftc.teamcode.roadrunner.trajectorysequence.TrajectorySequence;
 import org.firstinspires.ftc.teamcode.roadrunner.trajectorysequence.TrajectorySequenceBuilder;
 
@@ -59,7 +56,7 @@ public class AssetsTrajectoryManager {
     /**
      * Loads a trajectory builder with the given name.
      */
-    public static @Nullable TrajectoryBuilder loadBuilder(String name, TelemetryManager telemetry) {
+    public static @Nullable TrajectoryBuilder loadBuilder(String name) {
         TrajectoryGroupConfig groupConfig = loadGroupConfig();
         TrajectoryConfig config = loadConfig(name);
 
@@ -68,7 +65,7 @@ public class AssetsTrajectoryManager {
         }
         return config.toTrajectoryBuilder(groupConfig);
     }
-    public static @Nullable TrajectorySequenceBuilder loadBuilderSequence(String name, TelemetryManager telemetry) {
+    public static @Nullable TrajectorySequenceBuilder loadBuilderSequence(String name) {
         TrajectoryGroupConfig groupConfig = loadGroupConfig();
         TrajectoryConfig config = loadConfig(name);
 
@@ -82,16 +79,16 @@ public class AssetsTrajectoryManager {
     /**
      * Loads a trajectory with the given name.
      */
-    public static @Nullable Trajectory load(String name, TelemetryManager telemetry) {
-        TrajectoryBuilder builder = loadBuilder(name, telemetry);
+    public static @Nullable Trajectory load(String name) {
+        TrajectoryBuilder builder = loadBuilder(name);
         if (builder == null) {
             return null;
         }
         return builder.build();
     }
     //Untested
-    public static @Nullable TrajectorySequence loadSequence(String name, TelemetryManager telemetry) {
-        TrajectorySequenceBuilder builder = loadBuilderSequence(name, telemetry);
+    public static @Nullable TrajectorySequence loadSequence(String name) {
+        TrajectorySequenceBuilder builder = loadBuilderSequence(name);
         if (builder == null) {
             return null;
         }

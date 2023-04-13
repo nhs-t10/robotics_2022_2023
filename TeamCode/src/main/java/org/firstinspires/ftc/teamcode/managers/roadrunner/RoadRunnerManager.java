@@ -25,7 +25,6 @@ import org.firstinspires.ftc.teamcode.roadrunner.trajectorysequence.TrajectorySe
 import org.firstinspires.ftc.teamcode.roadrunner.util.AssetsTrajectoryManager;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.*;
-import org.junit.Test;
 
 import java.util.Arrays;
 
@@ -75,39 +74,39 @@ public class RoadRunnerManager extends FeatureManager {
     Simply replace the names here with your own new YAML files and watch the magic happen!
      */
     Thread load = new Thread(() -> {
-        this.t = AssetsTrajectoryManager.load("dropoffleft", telemetry);
-        this.t2 = AssetsTrajectoryManager.load("dropoffleftblue", telemetry);
-        this.t3 = AssetsTrajectoryManager.load("dropoffright", telemetry);
-        this.t4 = AssetsTrajectoryManager.load("dropoffrightblue", telemetry);
-        this.t13 = AssetsTrajectoryManager.load("JunctionToParkingGreenLeft", telemetry);
-        this.t15 = AssetsTrajectoryManager.load("JunctionToParkingPinkRight", telemetry);
+        this.t = AssetsTrajectoryManager.load("dropoffleft");
+        this.t2 = AssetsTrajectoryManager.load("dropoffleftblue");
+        this.t3 = AssetsTrajectoryManager.load("dropoffright");
+        this.t4 = AssetsTrajectoryManager.load("dropoffrightblue");
+        this.t13 = AssetsTrajectoryManager.load("JunctionToParkingGreenLeft");
+        this.t15 = AssetsTrajectoryManager.load("JunctionToParkingPinkRight");
         telemetry.log().add("DONE1");
 
     });
     Thread load2 = new Thread(() -> {
-        this.t5 = AssetsTrajectoryManager.load("toLeftPole", telemetry);
-        this.t6 = AssetsTrajectoryManager.load("MoveToHighLeft", telemetry);
-        this.t7 = AssetsTrajectoryManager.load("BackToStackLeft", telemetry);
-        this.t8 = AssetsTrajectoryManager.load("JunctionToParkingBlueLeft", telemetry);
-        this.t16 = AssetsTrajectoryManager.load("JunctionToParkingGreenRight", telemetry);
+        this.t5 = AssetsTrajectoryManager.load("toLeftPole");
+        this.t6 = AssetsTrajectoryManager.load("MoveToHighLeft");
+        this.t7 = AssetsTrajectoryManager.load("BackToStackLeft");
+        this.t8 = AssetsTrajectoryManager.load("JunctionToParkingBlueLeft");
+        this.t16 = AssetsTrajectoryManager.load("JunctionToParkingGreenRight");
         telemetry.log().add("DONE2");
     });
     Thread load3 = new Thread(() -> {
-        this.t9 = AssetsTrajectoryManager.load("toRightPole", telemetry);
-        this.t10 = AssetsTrajectoryManager.load("MoveToHighRight", telemetry);
-        this.t11 = AssetsTrajectoryManager.load("BackToStackRight", telemetry);
-        this.t12 = AssetsTrajectoryManager.load("JunctionToParkingBlueRight", telemetry);
-        this.t14 = AssetsTrajectoryManager.load("JunctionToParkingPinkLeft", telemetry);
+        this.t9 = AssetsTrajectoryManager.load("toRightPole");
+        this.t10 = AssetsTrajectoryManager.load("MoveToHighRight");
+        this.t11 = AssetsTrajectoryManager.load("BackToStackRight");
+        this.t12 = AssetsTrajectoryManager.load("JunctionToParkingBlueRight");
+        this.t14 = AssetsTrajectoryManager.load("JunctionToParkingPinkLeft");
         telemetry.log().add("DONE3");
     });
     Thread load4 = new Thread(() -> {
-        this.t17 = AssetsTrajectoryManager.load("ToMiddlePoleLeft", telemetry);
-        this.t18 = AssetsTrajectoryManager.load("ToStackLeftMiddle", telemetry);
-        this.t19 = AssetsTrajectoryManager.load("BackToMiddleLeft", telemetry);
-        this.t20 = AssetsTrajectoryManager.load("Batra.RR", telemetry);
+        this.t17 = AssetsTrajectoryManager.load("ToMiddlePoleLeft");
+        this.t18 = AssetsTrajectoryManager.load("ToStackLeftMiddle");
+        this.t19 = AssetsTrajectoryManager.load("BackToMiddleLeft");
+        this.t20 = AssetsTrajectoryManager.load("Batra.RR");
         telemetry.log().add("DONE4");
     });
-    Thread load5 = new Thread(() -> this.tSeqTest = AssetsTrajectoryManager.loadSequence("TrajSeqEx", telemetry));
+    Thread load5 = new Thread(() -> this.tSeqTest = AssetsTrajectoryManager.loadSequence("TrajSeqEx"));
     private double firstWheelLastRotation, secondWheelLastRotation, lastHeading;
     private static final Pose2d[] nonono = {new Pose2d(-120, 48), new Pose2d(-72, 48), new Pose2d(-24, 48), new Pose2d(-24, 0), new Pose2d(-120, 0), new Pose2d(-72, 0), new Pose2d(-24, -48), new Pose2d(-120, -48), new Pose2d(-72, -48)};
 
@@ -270,6 +269,11 @@ public class RoadRunnerManager extends FeatureManager {
 
 
     }
+    /**
+     * Moves the robot to the given id's position and rotates it to the id's given rotation asynchrounously, meaning you can use other robot methods at the same time.
+     *
+     * @param id The id for the specified movement
+     */
     public void moveToPosWithIDAsync(int id) {
         switch (id) {
             case 1:
@@ -390,6 +394,11 @@ public class RoadRunnerManager extends FeatureManager {
 
 
     }
+    /**
+     * Moves the robot to the given ids' position and rotates it to the id's given rotation
+     *
+     * @param id The id for the specified movement
+     */
     public void moveToPosWithIDs(int... ids) {
         for (int id : ids) {
             switch (id) {
@@ -511,6 +520,10 @@ public class RoadRunnerManager extends FeatureManager {
         return;
     }
 
+    /**
+     * activates a quick macro to move the robot to the given position
+     * @param id the id of the macro
+     */
     public void activateMacro(int id){
         switch (id) {
             case 1:
@@ -525,6 +538,9 @@ public class RoadRunnerManager extends FeatureManager {
         }
     }
 
+    /**
+     * Deprecated method: Does not work in setting isBusy in RoadRunner
+     */
     @Deprecated
     public void setBusy() {
         driveRR.isBusy();
@@ -547,6 +563,9 @@ public class RoadRunnerManager extends FeatureManager {
         }
         opMode.stop();
     }
+    /**
+     * Stops the robot from following
+     */
     public void stopDrive() {
         driveRR.breakFollowing();
         driveRR.setDriveSignal(new DriveSignal());

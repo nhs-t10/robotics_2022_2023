@@ -30,6 +30,18 @@ public class InputManager extends FeatureManager {
             gp.rumble(100);
         }
     }
+    public static void ledgp1() {
+        if(gp!= null) {
+            gp.runLedEffect(new Gamepad.LedEffect.Builder().addStep(0, 0, 255, 200).addStep(0, 0, 0, 200).addStep(0, 0, 255, 200).build());
+            gp.runLedEffect(new Gamepad.LedEffect.Builder().addStep(0, 255, 0, 200).setRepeating(true).build());
+        }
+    }
+    public static void ledgp2() {
+        if(gp2!= null) {
+            gp2.runLedEffect(new Gamepad.LedEffect.Builder().addStep(0, 255, 0, 200).addStep(0, 0, 0, 200).addStep(0, 255, 0, 200).addStep(0, 0, 0, 200).build());
+            gp2.runLedEffect(new Gamepad.LedEffect.Builder().addStep(0, 255, 0, 200).setRepeating(true).build());
+        }
+    }
     public InputOverlapResolutionMethod overlapResolutionMethod = InputOverlapResolutionMethod.BOTH_CHILDREN_CAN_SPEAK;
 
     private final HashMap<String, InputManagerInputNode> nodes;

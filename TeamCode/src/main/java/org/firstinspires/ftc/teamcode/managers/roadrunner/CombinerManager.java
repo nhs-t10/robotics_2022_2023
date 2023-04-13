@@ -80,7 +80,10 @@ public class CombinerManager extends FeatureManager {
         rr.stopDrive();
         rr.getDrive().setDriveSignal(new DriveSignal());
         bigArm.stopThreadedMovement();
-        crashDetect.interrupt();
+        if(this.crashDetect!= null){
+            this.crashDetect.interrupt();
+        }
+
     }
 
     /**

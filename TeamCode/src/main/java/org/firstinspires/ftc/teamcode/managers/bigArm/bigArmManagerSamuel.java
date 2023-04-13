@@ -6,7 +6,7 @@ import com.qualcomm.robotcore.hardware.DcMotor;
 import org.firstinspires.ftc.teamcode.managers.feature.FeatureManager;
 import org.firstinspires.ftc.teamcode.managers.manipulation.ManipulationManager;
 
-@Config
+@Config(value = "Samuel Arm")
 public class bigArmManagerSamuel extends bigArmManager {
 
     DcMotor hands;
