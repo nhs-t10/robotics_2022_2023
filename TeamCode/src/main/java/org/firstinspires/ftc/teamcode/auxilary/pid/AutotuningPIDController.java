@@ -62,7 +62,7 @@ public class AutotuningPIDController extends NormalizedPIDController {
 
         //only do things if we've gotten to a symmetrical measurement point
         if (period != -1) {
-            InputManager.vibrategp2();
+            InputManager.vibrategp2(1);
             if(period >= TUNING_PERIODS) {
                 periodEndFinal = RobotTime.nanoTime();
                 tuning = false;

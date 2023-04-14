@@ -20,14 +20,26 @@ public class InputManager extends FeatureManager {
     private static Gamepad gp;
     private static Gamepad gp2;
 
-    public static void vibrategp2() {
+    public static void vibrategp2(int count) {
         if(gp2 != null) {
-            gp2.rumbleBlips(3);
+            Gamepad.RumbleEffect.Builder builder = new Gamepad.RumbleEffect.Builder();
+
+            for(int i = 0; i < count; ++i) {
+                builder.addStep(1.0D, 1.0D, 250).addStep(0.0D, 0.0D, 100);
+            }
+
+            gp2.runRumbleEffect(builder.build());
         }
     }
-    public static void vibrategp() {
+    public static void vibrategp(int count) {
         if(gp != null) {
-            gp.rumbleBlips(3);
+            Gamepad.RumbleEffect.Builder builder = new Gamepad.RumbleEffect.Builder();
+
+            for(int i = 0; i < count; ++i) {
+                builder.addStep(1.0D, 1.0D, 250).addStep(0.0D, 0.0D, 100);
+            }
+
+            gp.runRumbleEffect(builder.build());
         }
     }
     public static void ledgp1() {

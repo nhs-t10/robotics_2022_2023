@@ -13,11 +13,11 @@ public class SwitchNode extends InputManagerInputNode {
     private enum State {GAMEPAD_1, GAMEPAD_2}
     private final InputManagerInputNode node;
     private final InputManagerInputNode node1;
-    public static boolean led = true;
+    public static boolean led = false;
     private boolean isPressed;
-    private boolean wasPressed;
+    private boolean wasPressed = false;
     private boolean isPressed2;
-    private boolean wasPressed2;
+    private boolean wasPressed2 = false;
     private State state = State.GAMEPAD_1;
 
 
@@ -49,6 +49,8 @@ public class SwitchNode extends InputManagerInputNode {
     public void init(InputManager boss) {
         input1.init(boss);
         input2.init(boss);
+        node.init(boss);
+        node1.init(boss);
     }
 
     public void update() {
@@ -58,20 +60,24 @@ public class SwitchNode extends InputManagerInputNode {
         node1.update();
         isPressed = node.getResult().getBool();
         isPressed2 = node1.getResult().getBool();
+
         if(state == State.GAMEPAD_1 && isPressed && !wasPressed) {
             state = State.GAMEPAD_2;
-            InputManager.vibrategp2();
+
             if(led) {
+                InputManager.vibrategp2(3);
                 InputManager.ledgp2();
             }
         }else if(state == State.GAMEPAD_2 && isPressed2 && !wasPressed2) {
             state = State.GAMEPAD_1;
-            InputManager.vibrategp();
+
             if(led) {
+                InputManager.vibrategp(3);
                 InputManager.ledgp1();
             }
         }
-
+        wasPressed = isPressed;
+        wasPressed2 = isPressed2;
     }
 
     @NonNull

@@ -80,7 +80,7 @@ public class samuelDual extends OpMode {
         FeatureManager.logger.setBackend(telemetry.log());
 
         rr = new RoadRunnerManager(hardwareMap, new Pose2d(0, 0), telemetryManager, this, true);
-        combinerManager = new CombinerManager(rr, monkeyArm, sensor, telemetryManager, false);
+
         DcMotor fl = hardwareMap.get(DcMotor.class, "fl");
         DcMotor fr = hardwareMap.get(DcMotor.class, "fr");
         DcMotor br = hardwareMap.get(DcMotor.class, "br");
@@ -102,7 +102,7 @@ public class samuelDual extends OpMode {
         );
         monkeyArm = new bigArmManagerSamuel(arm, hands);
         input = new InputManager(gamepad1, gamepad2);
-
+        combinerManager = new CombinerManager(rr, monkeyArm, sensor, telemetryManager, false);
         hands.setZeroPowerBehavior("monkeyShoulder",DcMotor.ZeroPowerBehavior.BRAKE);
         input.registerInput("drivingControls",
             new SwitchNode(
